@@ -184,7 +184,7 @@
         <!-- Auth Button / Profile Slot -->
         <div id="nav-auth-slot">
           <button type="button" class="btn-nav-outline" onclick="window.openAuthModal()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Login
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Login with OTP
           </button>
         </div>
 
@@ -1263,7 +1263,7 @@
     </div>
   </div>
 
-  <!-- Modal 9: Passenger Login, Real Number Verification & ₹100 Welcome Reward Modal -->
+  <!-- Modal 9: Passenger SMS OTP Login & ₹100 Welcome Reward Modal -->
   <div class="modal-overlay" id="modal-auth">
     <div class="modal-dialog-box small">
       <div class="modal-header">
@@ -1286,8 +1286,8 @@
           <div class="auth-logo-badge">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
           </div>
-          <h3 id="auth-modal-title" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Login &amp; Claim ₹100 in Wallet</h3>
-          <p id="auth-modal-sub" style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px;">Get ₹100 Welcome Bonus on your first cab booking with real mobile number verification.</p>
+          <h3 id="auth-modal-title" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">SMS OTP Login &amp; ₹100 Wallet Reward</h3>
+          <p id="auth-modal-sub" style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px;">Enter your name &amp; mobile number. We will send a secure 6-digit SMS OTP to your phone.</p>
 
           <!-- Step 1: Name and Phone Input -->
           <div id="auth-step-phone">
@@ -1319,76 +1319,14 @@
               </div>
             </div>
 
-            <!-- Primary Direct Login Action (Criteria 1: Zero OTP Needed) -->
-            <button type="button" class="check-fare-primary-btn" id="btn-auth-direct-login" onclick="window.handleDirectLogin()" style="width: 100%; margin-bottom: 10px; font-size: 15px; font-weight: 800; padding: 13px;">
-              Instant 1-Click Login &amp; Claim ₹100 →
-            </button>
-
-            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 4px 0 8px 0;">
-              <span style="height: 1px; flex: 1; background: var(--owc-border);"></span>
-              <span style="font-size: 11px; color: var(--owc-text-dim); text-transform: uppercase; font-weight: 700;">or verify via code</span>
-              <span style="height: 1px; flex: 1; background: var(--owc-border);"></span>
-            </div>
-
-            <!-- Optional OTP code verification -->
-            <button type="button" class="btn-nav-outline" id="btn-auth-send-code" onclick="window.handleSendVerificationCode()" style="width: 100%; margin-bottom: 12px; font-size: 13px; font-weight: 700; padding: 9px; justify-content: center;">
-              Request SMS / WhatsApp OTP Code
+            <!-- Primary Action: Send SMS OTP -->
+            <button type="button" class="check-fare-primary-btn" id="btn-auth-send-code" onclick="window.handleSendVerificationCode()" style="width: 100%; margin-bottom: 12px; font-size: 15px; font-weight: 800; padding: 13px;">
+              Send SMS OTP to Login →
             </button>
 
             <div style="font-size: 11.5px; color: var(--owc-text-dim); text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>Instant login with verified mobile &bull; ₹100 credited to wallet</span>
-            </div>
-          </div>
-
-          <!-- Step 2: Real Number Verification (OTP) -->
-          <div id="auth-step-otp" style="display: none;">
-            <p style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 10px;">
-              Enter 4-digit verification code sent to <strong id="auth-target-phone-label" style="color: var(--owc-text);">+91</strong>
-            </p>
-
-            <!-- Delivered Code Alert Banner (Genuine delivery preview for instant testing) -->
-            <div id="auth-otp-delivery-notice" style="background: rgba(16, 185, 129, 0.1); border: 1.5px solid #059669; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; font-size: 12.5px; color: #047857; text-align: left; display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <span style="font-weight: 600; display: block; font-size: 11.5px; text-transform: uppercase;">SMS &amp; WhatsApp Code:</span>
-                <span style="font-size: 11.5px; color: #065f46;">Auto-generated verification code:</span>
-              </div>
-              <strong id="auth-delivered-code" style="font-size: 20px; letter-spacing: 3px; color: #047857; font-weight: 900; background: #ffffff; padding: 2px 8px; border-radius: 4px; border: 1px solid #10b981;"></strong>
-            </div>
-
-            <!-- 4-Digit Input Boxes -->
-            <div class="auth-otp-inputs-row">
-              <input type="tel" maxlength="1" class="otp-box-digit" id="otp-digit-1" inputmode="numeric" autocomplete="one-time-code">
-              <input type="tel" maxlength="1" class="otp-box-digit" id="otp-digit-2" inputmode="numeric">
-              <input type="tel" maxlength="1" class="otp-box-digit" id="otp-digit-3" inputmode="numeric">
-              <input type="tel" maxlength="1" class="otp-box-digit" id="otp-digit-4" inputmode="numeric">
-            </div>
-
-            <!-- 1-Tap WhatsApp Verification Button -->
-            <a id="auth-wa-verify-link" href="https://wa.me/917281851011" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid #10b981; color: #047857; background: #ecfdf5; font-size: 13px; font-weight: 800; text-decoration: none; margin-bottom: 12px; box-sizing: border-box;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-              Verify via WhatsApp (72818 51011)
-            </a>
-
-            <button type="button" class="check-fare-primary-btn" id="btn-auth-verify-code" onclick="window.handleVerifyOtpCode()" style="width: 100%; margin-bottom: 10px;">
-              Verify Code &amp; Claim ₹100 →
-            </button>
-
-            <!-- Direct bypass option if SMS code not received -->
-            <button type="button" onclick="window.handleDirectLogin()" style="width: 100%; padding: 8px; background: rgba(2, 132, 199, 0.1); border: 1px dashed #0284c7; border-radius: var(--radius-md); color: #0284c7; font-weight: 800; font-size: 12.5px; cursor: pointer; margin-bottom: 14px;">
-              ⚡ Skip Verification &amp; Login Directly →
-            </button>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 0 4px;">
-              <button type="button" onclick="window.showAuthPhoneStep()" style="background: none; border: none; color: var(--owc-primary); font-weight: 700; cursor: pointer; padding: 4px;">
-                ← Change Number
-              </button>
-              <span id="auth-resend-wrap" style="color: var(--owc-text-muted);">
-                Resend in <span id="auth-countdown" style="font-weight: 700; color: var(--owc-text);">30</span>s
-              </span>
-              <button type="button" id="auth-resend-btn" onclick="window.handleSendVerificationCode(true)" style="display: none; background: none; border: none; color: var(--owc-primary); font-weight: 800; cursor: pointer; padding: 4px;">
-                Resend Code
-              </button>
+              <span>Secure 6-digit SMS OTP authentication &bull; ₹100 Welcome Bonus</span>
             </div>
           </div>
 

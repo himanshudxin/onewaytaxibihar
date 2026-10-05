@@ -269,14 +269,14 @@ function renderNavAuth() {
   } else {
     const htmlDesktop = `
       <button type="button" class="btn-nav-outline" onclick="window.openAuthModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Login
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Login with OTP
       </button>
     `;
     const htmlMobile = `
       <div class="drawer-user-card" onclick="window.closeMobileDrawer(); window.openAuthModal();" style="cursor: pointer;">
         <div class="drawer-user-avatar">?</div>
         <div class="drawer-user-info">
-          <div class="drawer-user-name">Login / Register</div>
+          <div class="drawer-user-name">Login with OTP</div>
           <div class="drawer-user-phone">Claim ₹100 Welcome Bonus</div>
         </div>
       </div>
@@ -333,8 +333,8 @@ window.openAuthModal = (bookingContext = null) => {
     if (modalSub) modalSub.textContent = "Verify your mobile number to lock in your cab reservation with ₹100 instant discount.";
   } else {
     if (contextBanner) contextBanner.style.display = "none";
-    if (modalTitle) modalTitle.textContent = "Login & Claim ₹100 in Wallet";
-    if (modalSub) modalSub.textContent = "Get ₹100 Welcome Bonus on your first cab booking with real mobile number verification.";
+    if (modalTitle) modalTitle.textContent = "SMS OTP Login & Claim ₹100 Reward";
+    if (modalSub) modalSub.textContent = "Enter your name & mobile number. We will send a secure 6-digit SMS OTP to your phone.";
   }
 
   if (modal) {
@@ -346,7 +346,7 @@ window.openAuthModal = (bookingContext = null) => {
       phoneInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          window.handleDirectLogin();
+          window.handleSendVerificationCode();
         }
       });
     }
@@ -358,7 +358,7 @@ window.openAuthModal = (bookingContext = null) => {
           if (phoneInput && !phoneInput.value) {
             phoneInput.focus();
           } else {
-            window.handleDirectLogin();
+            window.handleSendVerificationCode();
           }
         }
       });
@@ -404,18 +404,22 @@ window.handleSendVerificationCode = async (isResend = false) => {
   if (window.firebaseOtpService) {
     window.firebaseOtpService.requestVerification(phone, name, (verifyResult) => {
       window.closeAllModals(false);
-      window.currentUser = {
+      currentUser = {
         name: name,
         phone: `+91 ${phone}`,
         walletBalance: 100,
         isPhoneVerified: true
       };
+      window.currentUser = currentUser;
       localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
       if (window.renderNavAuth) window.renderNavAuth();
       if (window.bookingManager && window.bookingManager.pendingCheckout) {
         const { cabTier, cabId, price } = window.bookingManager.pendingCheckout;
         window.bookingManager.pendingCheckout = null;
+        window.showToast(`🎉 Phone verified! Welcome, ${name}! ₹100 Ride Reward applied.`, "success");
         window.bookingManager.startCheckout(cabId || cabTier || "sedan", price);
+      } else {
+        window.showToast(`🎉 Welcome, ${name}! You are logged in with ₹100 Welcome Bonus in your wallet.`, "success");
       }
     });
   }
@@ -528,66 +532,9 @@ window.handleVerifyOtpCode = async () => {
   }
 };
 
-// Genuine Instant 1-Click Direct Passenger Login (Criteria 1: Name + Mobile, Zero OTP required)
+// Enforce SMS OTP Verification for Passenger Login
 window.handleDirectLogin = async () => {
-  const nameInput = document.getElementById("auth-name-input");
-  const phoneInput = document.getElementById("auth-mobile-input");
-  const name = nameInput ? nameInput.value.trim() : "";
-  const phone = phoneInput ? phoneInput.value.trim().replace(/\D/g, "").slice(-10) : "";
-
-  if (!name || name.length < 2 || name.length > 60) {
-    window.showToast("Please enter your full name (2 to 60 characters)", "warning");
-    if (nameInput) nameInput.focus();
-    return;
-  }
-
-  if (!phone || phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
-    window.showToast("Please enter a valid 10-digit Indian mobile number starting with 6-9", "warning");
-    if (phoneInput) phoneInput.focus();
-    return;
-  }
-
-  const btnDirect = document.getElementById("btn-auth-direct-login");
-  const origText = btnDirect ? btnDirect.textContent : "";
-  if (btnDirect) {
-    btnDirect.disabled = true;
-    btnDirect.textContent = "Logging In...";
-  }
-
-  try {
-    const res = await ApiClient.directLogin(name, phone);
-    if (res && res.success && res.user) {
-      currentUser = res.user;
-      window.currentUser = res.user;
-      renderNavAuth();
-
-      // Check if this was initiated by tapping a cab to book
-      if (window.bookingManager && window.bookingManager.pendingCheckout) {
-        const { cabId, price } = window.bookingManager.pendingCheckout;
-        window.bookingManager.pendingCheckout = null;
-
-        window.closeAllModals(false);
-        const rewardMsg = `🎉 Welcome, ${currentUser.name}! Logged in successfully & ₹100 Welcome Reward applied!`;
-        window.showToast(rewardMsg, "success");
-
-        // Automatically launch checkout for the selected cab
-        window.bookingManager.startCheckout(cabId, price);
-      } else {
-        window.closeAllModals();
-        window.showToast(`🎉 Welcome, ${currentUser.name}! You are logged in with ₹100 in your wallet.`, "success");
-      }
-    } else {
-      window.showToast(res?.message || "Login failed. Please check your credentials.", "warning");
-    }
-  } catch (err) {
-    console.error("directLogin error:", err);
-    window.showToast("Connection error during login. Please try again.", "warning");
-  } finally {
-    if (btnDirect) {
-      btnDirect.disabled = false;
-      btnDirect.textContent = origText || "Instant 1-Click Login & Claim ₹100 →";
-    }
-  }
+  return window.handleSendVerificationCode();
 };
 
 /* ==========================================================================

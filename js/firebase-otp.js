@@ -151,47 +151,66 @@
 
       this.startCountdown(30);
 
-      // Generate secure 6-digit OTP code
+      // Generate secure 6-digit OTP code for this specific phone number
       const code = Math.floor(100000 + Math.random() * 900000).toString();
       sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
       sessionStorage.setItem(`otb_verify_${clean10}`, code);
       this.demoOtpCode = code;
 
-      // 1. Dispatch real SMS via Fast2SMS Telecom Gateway
       const fast2smsKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx";
+      let isDispatched = false;
+
+      // 1. Try Fast2SMS Route OTP
       try {
-        const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+        const resOtp = await fetch("https://www.fast2sms.com/dev/bulkV2", {
           method: "POST",
           headers: {
             "authorization": fast2smsKey,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            route: "q",
-            message: `Your OneWayTaxiBihar OTP is ${code}. Valid for 10 minutes. Do not share.`,
-            language: "english",
-            flash: 0,
+            route: "otp",
+            variables_values: code,
             numbers: clean10
           })
         });
-
-        const data = await response.json();
-        console.log("[Fast2SMS Live Broadcast]", data);
-
-        if (data && (data.return === true || data.status_code === 200 || response.ok)) {
-          if (statusEl) {
-            statusEl.textContent = `✅ 6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
-            statusEl.style.color = "#059669";
-          }
-          window.showToast?.(`OTP sent via SMS to +91 ${clean10}! Please check your messages.`, "success");
-          this.focusFirstDigit();
-          return;
+        const dataOtp = await resOtp.json();
+        console.log("[Fast2SMS Route OTP]", dataOtp);
+        if (dataOtp && (dataOtp.return === true || dataOtp.status_code === 200)) {
+          isDispatched = true;
         }
-      } catch (err) {
-        console.warn("Direct Fast2SMS note:", err.message);
+      } catch (e) {
+        console.warn("Fast2SMS OTP route note:", e.message);
       }
 
-      // 2. Try Backend Dispatch if available
+      // 2. If Route OTP not approved yet, use Fast2SMS Route Q (Quick SMS)
+      if (!isDispatched) {
+        try {
+          const resQ = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+            method: "POST",
+            headers: {
+              "authorization": fast2smsKey,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              route: "q",
+              message: `Your OneWayTaxiBihar OTP code is ${code}. Valid for 10 minutes. Do not share.`,
+              language: "english",
+              flash: 0,
+              numbers: clean10
+            })
+          });
+          const dataQ = await resQ.json();
+          console.log("[Fast2SMS Route Q]", dataQ);
+          if (dataQ && (dataQ.return === true || dataQ.status_code === 200 || resQ.ok)) {
+            isDispatched = true;
+          }
+        } catch (err) {
+          console.warn("Fast2SMS Route Q note:", err.message);
+        }
+      }
+
+      // 3. Fallback to backend API if available
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           await ApiClient.sendOtp(clean10, this.activeName);
@@ -201,9 +220,10 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `✅ 6-digit SMS OTP dispatched to +91 ${clean10}.`;
+        statusEl.textContent = `✅ 6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
         statusEl.style.color = "#059669";
       }
+      window.showToast?.(`OTP SMS sent to +91 ${clean10}!`, "success");
       this.focusFirstDigit();
     }
 

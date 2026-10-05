@@ -1154,18 +1154,80 @@ try {
 
                 # 7b. Payment Gateway Endpoints (Razorpay & UPI Configuration)
                 if ($urlPath -eq "/api/payments/config" -and $httpMethod -eq "GET") {
+                    $pSet = if ($db.settings -and $db.settings.payment) { $db.settings.payment } else { @{} }
                     Send-JsonResponse $response 200 @{
                         success = $true
-                        upiId = "8002141816@ybl"
-                        payeeName = "HIMANSHU KUMAR DUBEY"
-                        defaultAdvanceAmount = 299
-                        enableRazorpay = $true
-                        enableDirectUpi = $true
-                        enableCashToDriver = $true
-                        enableTokenAdvance = $true
-                        autoConfirmOnAdvance = $true
+                        upiId = if ($pSet.upiId) { $pSet.upiId } else { "8002141816@ybl" }
+                        payeeName = if ($pSet.payeeName) { $pSet.payeeName } else { "HIMANSHU KUMAR DUBEY" }
+                        qrImageUrl = if ($pSet.qrImageUrl) { $pSet.qrImageUrl } else { "images/phonepe-qr.png" }
+                        bankName = if ($pSet.bankName) { $pSet.bankName } else { "State Bank of India" }
+                        accountNumber = if ($pSet.accountNumber) { $pSet.accountNumber } else { "" }
+                        accountHolderName = if ($pSet.accountHolderName) { $pSet.accountHolderName } else { "HIMANSHU KUMAR DUBEY" }
+                        ifscCode = if ($pSet.ifscCode) { $pSet.ifscCode } else { "" }
+                        branchName = if ($pSet.branchName) { $pSet.branchName } else { "Patna Main Branch" }
+                        accountType = if ($pSet.accountType) { $pSet.accountType } else { "Current Account" }
+                        defaultAdvanceAmount = if ($pSet.defaultAdvanceAmount) { [int]$pSet.defaultAdvanceAmount } else { 299 }
+                        enableRazorpay = if ($pSet.enableRazorpay -ne $null) { [bool]$pSet.enableRazorpay } else { $true }
+                        enableDirectUpi = if ($pSet.enableDirectUpi -ne $null) { [bool]$pSet.enableDirectUpi } else { $true }
+                        enableCashToDriver = if ($pSet.enableCashToDriver -ne $null) { [bool]$pSet.enableCashToDriver } else { $true }
+                        enableTokenAdvance = if ($pSet.enableTokenAdvance -ne $null) { [bool]$pSet.enableTokenAdvance } else { $true }
+                        autoConfirmOnAdvance = if ($pSet.autoConfirmOnAdvance -ne $null) { [bool]$pSet.autoConfirmOnAdvance } else { $true }
                         supportedCurrencies = @("INR")
                     }
+                    continue
+                }
+
+                if ($urlPath -eq "/api/admin/payment-settings" -and $httpMethod -eq "GET") {
+                    $pSet = if ($db.settings -and $db.settings.payment) { $db.settings.payment } else { @{} }
+                    Send-JsonResponse $response 200 @{
+                        success = $true
+                        settings = @{
+                            upiId = if ($pSet.upiId) { $pSet.upiId } else { "8002141816@ybl" }
+                            payeeName = if ($pSet.payeeName) { $pSet.payeeName } else { "HIMANSHU KUMAR DUBEY" }
+                            qrImageUrl = if ($pSet.qrImageUrl) { $pSet.qrImageUrl } else { "images/phonepe-qr.png" }
+                            bankName = if ($pSet.bankName) { $pSet.bankName } else { "State Bank of India" }
+                            accountNumber = if ($pSet.accountNumber) { $pSet.accountNumber } else { "" }
+                            accountHolderName = if ($pSet.accountHolderName) { $pSet.accountHolderName } else { "HIMANSHU KUMAR DUBEY" }
+                            ifscCode = if ($pSet.ifscCode) { $pSet.ifscCode } else { "" }
+                            branchName = if ($pSet.branchName) { $pSet.branchName } else { "Patna Main Branch" }
+                            accountType = if ($pSet.accountType) { $pSet.accountType } else { "Current Account" }
+                            razorpayKeyId = if ($pSet.razorpayKeyId) { $pSet.razorpayKeyId } else { "" }
+                            razorpayKeySecretSet = [bool]$pSet.razorpayKeySecret
+                            defaultAdvanceAmount = if ($pSet.defaultAdvanceAmount) { [int]$pSet.defaultAdvanceAmount } else { 299 }
+                            enableRazorpay = if ($pSet.enableRazorpay -ne $null) { [bool]$pSet.enableRazorpay } else { $true }
+                            enableDirectUpi = if ($pSet.enableDirectUpi -ne $null) { [bool]$pSet.enableDirectUpi } else { $true }
+                            enableCashToDriver = if ($pSet.enableCashToDriver -ne $null) { [bool]$pSet.enableCashToDriver } else { $true }
+                            enableTokenAdvance = if ($pSet.enableTokenAdvance -ne $null) { [bool]$pSet.enableTokenAdvance } else { $true }
+                            autoConfirmOnAdvance = if ($pSet.autoConfirmOnAdvance -ne $null) { [bool]$pSet.autoConfirmOnAdvance } else { $true }
+                        }
+                    }
+                    continue
+                }
+
+                if ($urlPath -eq "/api/admin/payment-settings" -and $httpMethod -eq "POST") {
+                    $body = Read-RequestBody $request
+                    if (-not $db.settings) { $db | Add-Member -MemberType NoteProperty -Name "settings" -Value @{} -Force }
+                    if (-not $db.settings.payment) { $db.settings | Add-Member -MemberType NoteProperty -Name "payment" -Value @{} -Force }
+                    
+                    $pSet = $db.settings.payment
+                    if ($body.upiId) { $pSet | Add-Member -MemberType NoteProperty -Name "upiId" -Value $body.upiId -Force }
+                    if ($body.payeeName) { $pSet | Add-Member -MemberType NoteProperty -Name "payeeName" -Value $body.payeeName -Force }
+                    if ($body.qrImageUrl) { $pSet | Add-Member -MemberType NoteProperty -Name "qrImageUrl" -Value $body.qrImageUrl -Force }
+                    if ($body.bankName) { $pSet | Add-Member -MemberType NoteProperty -Name "bankName" -Value $body.bankName -Force }
+                    if ($body.accountNumber) { $pSet | Add-Member -MemberType NoteProperty -Name "accountNumber" -Value $body.accountNumber -Force }
+                    if ($body.accountHolderName) { $pSet | Add-Member -MemberType NoteProperty -Name "accountHolderName" -Value $body.accountHolderName -Force }
+                    if ($body.ifscCode) { $pSet | Add-Member -MemberType NoteProperty -Name "ifscCode" -Value $body.ifscCode -Force }
+                    if ($body.branchName) { $pSet | Add-Member -MemberType NoteProperty -Name "branchName" -Value $body.branchName -Force }
+                    if ($body.accountType) { $pSet | Add-Member -MemberType NoteProperty -Name "accountType" -Value $body.accountType -Force }
+                    if ($body.razorpayKeyId) { $pSet | Add-Member -MemberType NoteProperty -Name "razorpayKeyId" -Value $body.razorpayKeyId -Force }
+                    if ($body.razorpayKeySecret -and -not $body.razorpayKeySecret.Contains("•")) { $pSet | Add-Member -MemberType NoteProperty -Name "razorpayKeySecret" -Value $body.razorpayKeySecret -Force }
+                    if ($body.defaultAdvanceAmount) { $pSet | Add-Member -MemberType NoteProperty -Name "defaultAdvanceAmount" -Value ([int]$body.defaultAdvanceAmount) -Force }
+                    if ($body.enableRazorpay -ne $null) { $pSet | Add-Member -MemberType NoteProperty -Name "enableRazorpay" -Value ([bool]$body.enableRazorpay) -Force }
+                    if ($body.enableDirectUpi -ne $null) { $pSet | Add-Member -MemberType NoteProperty -Name "enableDirectUpi" -Value ([bool]$body.enableDirectUpi) -Force }
+                    if ($body.enableCashToDriver -ne $null) { $pSet | Add-Member -MemberType NoteProperty -Name "enableCashToDriver" -Value ([bool]$body.enableCashToDriver) -Force }
+                    
+                    Save-Db $db
+                    Send-JsonResponse $response 200 @{ success = $true; message = "Payment configuration updated successfully!" }
                     continue
                 }
 

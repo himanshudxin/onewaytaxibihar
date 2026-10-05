@@ -2287,16 +2287,16 @@ class BookingManager {
 
               <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: none; margin-top: 10px; background: #fdf4ff; border: 1.5px solid #d946ef; border-radius: 10px; padding: 12px; text-align: center;">
                 <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 6px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
-                <img src="images/phonepe-qr.png" alt="PhonePe QR Code - Himanshu Kumar Dubey" class="checkout-qr-img" style="width: 140px; height: 140px; border-radius: 8px; border: 1px solid #cbd5e1; margin: 0 auto; display: block;">
-                <div style="margin-top: 8px; font-size: 13px; font-weight: 800; color: #0f172a;">HIMANSHU KUMAR DUBEY</div>
+                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="PhonePe QR Code - Himanshu Kumar Dubey" class="checkout-qr-img" style="width: 140px; height: 140px; border-radius: 8px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white;">
+                <div id="chk-payee-name" style="margin-top: 8px; font-size: 13px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
                 
                 <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 20px; margin-top: 6px;">
-                  <span style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">8002141816@ybl</span>
-                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId('8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">📋 Copy</button>
+                  <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
+                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">📋 Copy</button>
                 </div>
 
                 <div style="margin-top: 8px;">
-                  <a href="upi://pay?pa=8002141816@ybl&pn=Himanshu%20Kumar%20Dubey&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800;">
+                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800;">
                     Pay ₹299 with PhonePe / GPay App ➔
                   </a>
                 </div>
@@ -2362,6 +2362,7 @@ class BookingManager {
     this.saveState();
     this.setupCheckoutLocationAutocomplete();
     this.setupCheckoutFormPersistence();
+    this.syncPaymentConfig();
   }
 
   goToCheckoutStep(step) {
@@ -2653,10 +2654,39 @@ class BookingManager {
       sumWalletUsed.style.color = isUsing ? "#059669" : "#94a3b8";
     }
 
+    const upiId = this.dynamicPaymentConfig?.upiId || '8002141816@ybl';
+    const payeeName = encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey');
     const upiLink = document.getElementById("chk-upi-intent-link");
     if (upiLink) {
-      upiLink.href = `upi://pay?pa=8002141816@ybl&pn=Himanshu%20Kumar%20Dubey&am=${payableNow || 299}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+      upiLink.href = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${payableNow || 299}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
       upiLink.textContent = `Pay ₹${payableNow || 299} with PhonePe / GPay App ➔`;
+    }
+  }
+
+  async syncPaymentConfig() {
+    try {
+      const res = await ApiClient.getPaymentConfig();
+      if (res && res.success) {
+        this.dynamicPaymentConfig = res;
+        const qrEl = document.getElementById("chk-qr-img");
+        if (qrEl && res.qrImageUrl) qrEl.src = res.qrImageUrl;
+
+        const payeeEl = document.getElementById("chk-payee-name");
+        if (payeeEl && res.payeeName) payeeEl.textContent = res.payeeName;
+
+        const upiLabel = document.getElementById("chk-upi-id-label");
+        if (upiLabel && res.upiId) upiLabel.textContent = res.upiId;
+
+        const upiLink = document.getElementById("chk-upi-intent-link");
+        if (upiLink) {
+          const upiId = res.upiId || '8002141816@ybl';
+          const payeeName = encodeURIComponent(res.payeeName || 'Himanshu Kumar Dubey');
+          const amt = document.getElementById("chk-total-payable")?.textContent?.replace(/\D/g, '') || '299';
+          upiLink.href = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+        }
+      }
+    } catch (e) {
+      console.warn("Payment config sync note:", e);
     }
   }
 

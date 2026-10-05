@@ -1588,6 +1588,13 @@ module.exports = async (req, res) => {
 
       if (body.upiId !== undefined) current.upiId = String(body.upiId).trim();
       if (body.payeeName !== undefined) current.payeeName = String(body.payeeName).trim();
+      if (body.qrImageUrl !== undefined) current.qrImageUrl = String(body.qrImageUrl).trim();
+      if (body.bankName !== undefined) current.bankName = String(body.bankName).trim();
+      if (body.accountNumber !== undefined) current.accountNumber = String(body.accountNumber).trim();
+      if (body.accountHolderName !== undefined) current.accountHolderName = String(body.accountHolderName).trim();
+      if (body.ifscCode !== undefined) current.ifscCode = String(body.ifscCode).trim();
+      if (body.branchName !== undefined) current.branchName = String(body.branchName).trim();
+      if (body.accountType !== undefined) current.accountType = String(body.accountType).trim();
       if (body.razorpayKeyId !== undefined) current.razorpayKeyId = String(body.razorpayKeyId).trim();
       if (body.razorpayKeySecret !== undefined && !isMasked(body.razorpayKeySecret)) {
         current.razorpayKeySecret = String(body.razorpayKeySecret).trim();

@@ -843,7 +843,7 @@
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 18px;">📲</span>
-                <strong style="font-size: 14.5px; color: #f8fafc;">Direct PhonePe / BHIM UPI</strong>
+                <strong style="font-size: 14.5px; color: #f8fafc;">Direct PhonePe / BHIM UPI &amp; QR Code</strong>
               </div>
               <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">0% Gateway Fee</span>
             </div>
@@ -857,8 +857,70 @@
                 <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">PAYEE ACCOUNT NAME *</label>
                 <input type="text" id="set-payee-name" placeholder="e.g. HIMANSHU KUMAR DUBEY" value="HIMANSHU KUMAR DUBEY" style="width: 100%; box-sizing: border-box; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-weight: 700; font-size: 13.5px; margin-top: 4px;">
               </div>
+              <div>
+                <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">QR CODE IMAGE (CUSTOM OR UPLOAD)</label>
+                <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                  <img id="preview-qr-img" src="images/phonepe-qr.png" alt="Merchant QR Preview" style="width: 72px; height: 72px; border-radius: 8px; border: 1.5px solid #0284c7; background: #fff; padding: 2px; object-fit: contain;">
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                    <input type="text" id="set-qr-image-url" placeholder="images/phonepe-qr.png or https://..." value="images/phonepe-qr.png" oninput="document.getElementById('preview-qr-img').src = this.value || 'images/phonepe-qr.png'" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #e2e8f0; font-size: 12px;">
+                    <div style="display: flex; gap: 8px;">
+                      <input type="file" id="set-qr-file-input" accept="image/*" onchange="handleQrFileUpload(this)" style="display: none;">
+                      <button type="button" onclick="document.getElementById('set-qr-file-input').click()" style="background: #0284c7; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">📁 Upload QR Image</button>
+                      <button type="button" onclick="resetQrToDefault()" style="background: #334155; color: #cbd5e1; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">↺ Reset</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div style="background: #0f172a; padding: 10px; border-radius: 6px; font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">
-                💡 Directly generates dynamic PhonePe, GPay, Paytm, and BHIM intent buttons and QR codes on passenger checkout without 2% gateway deductions.
+                💡 Instantly generates dynamic PhonePe, GPay, Paytm, and BHIM intent buttons and QR codes on passenger checkout without 2% gateway deductions.
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 1B: Official Bank Account Details (NEFT / RTGS / IMPS) -->
+          <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🏦</span>
+                <strong style="font-size: 14.5px; color: #f8fafc;">Official Banking &amp; Settlement Account</strong>
+              </div>
+              <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">Direct Settlement</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">BANK NAME</label>
+                  <input type="text" id="set-bank-name" placeholder="e.g. State Bank of India" value="State Bank of India" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 12.5px; margin-top: 4px;">
+                </div>
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">ACCOUNT TYPE</label>
+                  <select id="set-bank-type" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 12.5px; margin-top: 4px;">
+                    <option value="Current Account" selected>Current Account</option>
+                    <option value="Savings Account">Savings Account</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">ACCOUNT NUMBER *</label>
+                <input type="text" id="set-bank-account" placeholder="e.g. 412356789012" value="412356789012" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #34d399; font-family: monospace; font-weight: 700; font-size: 13px; margin-top: 4px;">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">IFSC CODE *</label>
+                  <input type="text" id="set-bank-ifsc" placeholder="e.g. SBIN0001234" value="SBIN0001234" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #38bdf8; font-family: monospace; font-weight: 700; text-transform: uppercase; font-size: 12.5px; margin-top: 4px;">
+                </div>
+                <div>
+                  <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">BRANCH NAME</label>
+                  <input type="text" id="set-bank-branch" placeholder="e.g. Patna Main Branch" value="Patna Main Branch" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-size: 12.5px; margin-top: 4px;">
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">BENEFICIARY / HOLDER NAME</label>
+                <input type="text" id="set-bank-holder" placeholder="e.g. HIMANSHU KUMAR DUBEY" value="HIMANSHU KUMAR DUBEY" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: white; font-weight: 700; font-size: 12.5px; margin-top: 4px;">
               </div>
             </div>
           </div>
@@ -2679,6 +2741,33 @@
       }).join("");
     }
 
+    // QR Code Image Helper Functions
+    function handleQrFileUpload(input) {
+      if (!input || !input.files || !input.files[0]) return;
+      const file = input.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image file size should be less than 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const urlInput = document.getElementById("set-qr-image-url");
+        const preview = document.getElementById("preview-qr-img");
+        if (urlInput) urlInput.value = dataUrl;
+        if (preview) preview.src = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetQrToDefault() {
+      const defaultUrl = "images/phonepe-qr.png";
+      const urlInput = document.getElementById("set-qr-image-url");
+      const preview = document.getElementById("preview-qr-img");
+      if (urlInput) urlInput.value = defaultUrl;
+      if (preview) preview.src = defaultUrl;
+    }
+
     // Payment & Gateway Settings Controller
     async function loadPaymentSettings() {
       const alertEl = document.getElementById("pay-settings-alert");
@@ -2693,6 +2782,17 @@
 
           setVal("set-upi-id", s.upiId || "8002141816@ybl");
           setVal("set-payee-name", s.payeeName || "HIMANSHU KUMAR DUBEY");
+          setVal("set-qr-image-url", s.qrImageUrl || "images/phonepe-qr.png");
+          const qrPrev = document.getElementById("preview-qr-img");
+          if (qrPrev) qrPrev.src = s.qrImageUrl || "images/phonepe-qr.png";
+
+          setVal("set-bank-name", s.bankName || "State Bank of India");
+          setVal("set-bank-type", s.accountType || "Current Account");
+          setVal("set-bank-account", s.accountNumber || "");
+          setVal("set-bank-ifsc", s.ifscCode || "");
+          setVal("set-bank-branch", s.branchName || "Patna Main Branch");
+          setVal("set-bank-holder", s.accountHolderName || "HIMANSHU KUMAR DUBEY");
+
           setVal("set-rzp-key-id", s.razorpayKeyId || "");
           setVal("set-rzp-key-secret", s.razorpayKeySecret || "");
           setVal("set-rzp-webhook-secret", s.razorpayWebhookSecret || "");
@@ -2741,6 +2841,13 @@
       const payload = {
         upiId: getVal("set-upi-id") || "8002141816@ybl",
         payeeName: getVal("set-payee-name") || "HIMANSHU KUMAR DUBEY",
+        qrImageUrl: getVal("set-qr-image-url") || "images/phonepe-qr.png",
+        bankName: getVal("set-bank-name") || "State Bank of India",
+        accountType: getVal("set-bank-type") || "Current Account",
+        accountNumber: getVal("set-bank-account"),
+        ifscCode: getVal("set-bank-ifsc"),
+        branchName: getVal("set-bank-branch"),
+        accountHolderName: getVal("set-bank-holder") || "HIMANSHU KUMAR DUBEY",
         razorpayKeyId: getVal("set-rzp-key-id"),
         razorpayKeySecret: getVal("set-rzp-key-secret"),
         razorpayWebhookSecret: getVal("set-rzp-webhook-secret"),

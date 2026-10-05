@@ -382,7 +382,7 @@ window.showAuthPhoneStep = () => {
   if (_authCountdownTimer) clearInterval(_authCountdownTimer);
 };
 
-// Send Real Verification Code (SMS & WhatsApp)
+// Send Real Verification Code (Firebase SMS & WhatsApp)
 window.handleSendVerificationCode = async (isResend = false) => {
   const nameInput = document.getElementById("auth-name-input");
   const phoneInput = document.getElementById("auth-mobile-input");
@@ -401,63 +401,23 @@ window.handleSendVerificationCode = async (isResend = false) => {
     return;
   }
 
-  const btnSend = document.getElementById("btn-auth-send-code");
-  if (btnSend) {
-    btnSend.disabled = true;
-    btnSend.textContent = "Sending Verification Code...";
-  }
-
-  try {
-    const res = await ApiClient.sendOtp(phone, name);
-    if (res && res.success) {
-      // Setup Step 2 UI
-      const stepPhone = document.getElementById("auth-step-phone");
-      const stepOtp = document.getElementById("auth-step-otp");
-      const targetPhoneLabel = document.getElementById("auth-target-phone-label");
-      const deliveredCodeEl = document.getElementById("auth-delivered-code");
-      const waLinkEl = document.getElementById("auth-wa-verify-link");
-
-      if (targetPhoneLabel) targetPhoneLabel.textContent = `+91 ${phone}`;
-      if (deliveredCodeEl && res.otpCode) deliveredCodeEl.textContent = res.otpCode;
-      if (waLinkEl && res.whatsappUrl) waLinkEl.setAttribute("href", res.whatsappUrl);
-
-      if (stepPhone) stepPhone.style.display = "none";
-      if (stepOtp) stepOtp.style.display = "block";
-
-      // Set & focus digit inputs
-      for (let i = 1; i <= 4; i++) {
-        const dInput = document.getElementById(`otp-digit-${i}`);
-        if (dInput) {
-          dInput.value = (res.otpCode && res.otpCode[i - 1]) ? res.otpCode[i - 1] : "";
-          setupOtpDigitInput(dInput, i);
-        }
+  if (window.firebaseOtpService) {
+    window.firebaseOtpService.requestVerification(phone, name, (verifyResult) => {
+      window.closeAllModals(false);
+      window.currentUser = {
+        name: name,
+        phone: `+91 ${phone}`,
+        walletBalance: 100,
+        isPhoneVerified: true
+      };
+      localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
+      if (window.renderNavAuth) window.renderNavAuth();
+      if (window.bookingManager && window.bookingManager.pendingCheckout) {
+        const { cabTier, cabId, price } = window.bookingManager.pendingCheckout;
+        window.bookingManager.pendingCheckout = null;
+        window.bookingManager.startCheckout(cabId || cabTier || "sedan", price);
       }
-      setTimeout(() => {
-        const d4 = document.getElementById("otp-digit-4");
-        if (d4 && d4.value) {
-          d4.focus();
-        } else {
-          document.getElementById("otp-digit-1")?.focus();
-        }
-      }, 100);
-
-      // Start 30s Countdown
-      startAuthCountdown();
-
-      window.showToast(isResend 
-        ? `New verification code dispatched to +91 ${phone}!` 
-        : `Verification code dispatched to +91 ${phone}!`, "success");
-    } else {
-      window.showToast(res?.message || "Failed to dispatch verification code. Please try again.", "warning");
-    }
-  } catch (err) {
-    console.error("sendOtp error:", err);
-    window.showToast("Network error while requesting verification code.", "warning");
-  } finally {
-    if (btnSend) {
-      btnSend.disabled = false;
-      btnSend.textContent = "Verify Mobile & Claim ₹100 Reward →";
-    }
+    });
   }
 };
 

@@ -134,21 +134,7 @@
       this.activeName = name || "Passenger";
       this.onSuccessCallback = onSuccess;
 
-      // Check if already verified in this session for this exact number
-      const verifiedSession = sessionStorage.getItem(`otb_verified_${clean10}`);
-      if (verifiedSession === "true") {
-        if (typeof this.onSuccessCallback === "function") {
-          this.onSuccessCallback({
-            phone: clean10,
-            verified: true,
-            method: "Session Cache",
-            verifiedAt: new Date().toISOString()
-          });
-        }
-        return true;
-      }
-
-      // Open Modal UI immediately with loading state
+      // Always open Modal UI and send fresh 6-digit SMS OTP
       this.openOtpModal(clean10);
       await this.sendOtpCode(clean10);
       return true;

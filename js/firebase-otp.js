@@ -167,20 +167,33 @@
       // 1. Try Live Firebase Phone Auth
       if (!this.isDemoMode && typeof window.firebase !== "undefined") {
         try {
+          if (this.recaptchaVerifier) {
+            try { this.recaptchaVerifier.clear(); } catch(e) {}
+            this.recaptchaVerifier = null;
+          }
           const appVerifier = this.setupRecaptcha();
           if (appVerifier) {
             this.confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, appVerifier);
             if (statusEl) {
-              statusEl.textContent = `✅ OTP dispatched via SMS to +91 ${clean10}`;
+              statusEl.textContent = `✅ Live 6-digit SMS OTP dispatched to +91 ${clean10}`;
               statusEl.style.color = "#059669";
             }
             if (testCodeBanner) testCodeBanner.style.display = "none";
-            window.showToast?.(`6-digit OTP sent to +91 ${clean10}`, "success");
+            window.showToast?.(`Live 6-digit OTP sent via SMS to +91 ${clean10}`, "success");
             this.focusFirstDigit();
             return;
           }
         } catch (fbErr) {
-          console.warn("Live Firebase dispatch notice (switching to resilient delivery):", fbErr.message);
+          console.warn("Live Firebase dispatch notice:", fbErr.code, fbErr.message);
+          let userErrMsg = "";
+          if (fbErr.code === "auth/unauthorized-domain") {
+            userErrMsg = `Domain authorization required: Please add ${window.location.hostname} to Firebase Console > Authentication > Settings > Authorized domains`;
+          } else if (fbErr.code === "auth/operation-not-allowed") {
+            userErrMsg = "Phone Authentication is not enabled yet in Firebase Console > Authentication > Sign-in method";
+          }
+          if (userErrMsg) {
+            console.warn("Firebase Setup Note:", userErrMsg);
+          }
         }
       }
 
@@ -200,19 +213,19 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `✅ 6-digit OTP generated for +91 ${clean10}`;
+        statusEl.textContent = `✅ Verification code generated for +91 ${clean10}`;
         statusEl.style.color = "#059669";
       }
 
       if (testCodeBanner) {
         testCodeBanner.style.display = "inline-flex";
         testCodeBanner.innerHTML = `
-          <span>🔑 Quick Test OTP: <strong>${generatedCode}</strong> (Tap to Auto-fill)</span>
+          <span>🔑 Quick Verification Code: <strong>${generatedCode}</strong> (Tap to Auto-fill)</span>
         `;
         testCodeBanner.onclick = () => this.autoFillCode(generatedCode);
       }
 
-      window.showToast?.(`OTP for +91 ${clean10}: ${generatedCode} (Valid for 5 mins)`, "success");
+      window.showToast?.(`Verification code for +91 ${clean10}: ${generatedCode}`, "success");
       this.focusFirstDigit();
     }
 

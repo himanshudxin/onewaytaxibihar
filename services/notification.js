@@ -33,22 +33,14 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
   }
 
   try {
-    let bodyPayload = {};
-    if (otp) {
-      bodyPayload = {
-        route: 'otp',
-        variables_values: String(otp),
-        numbers: cleanPhone
-      };
-    } else {
-      bodyPayload = {
-        route: 'q',
-        message: message,
-        language: 'english',
-        flash: 0,
-        numbers: cleanPhone
-      };
-    }
+    const textMessage = message || (otp ? `Your OneWayTaxiBihar OTP code is ${otp}. Valid for 10 minutes. Do not share with anyone.` : 'Welcome to OneWayTaxiBihar.');
+    const bodyPayload = {
+      route: 'q',
+      message: textMessage,
+      language: 'english',
+      flash: 0,
+      numbers: cleanPhone
+    };
 
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',

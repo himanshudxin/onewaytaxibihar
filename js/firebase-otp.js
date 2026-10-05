@@ -87,26 +87,27 @@
       if (typeof window.firebase === "undefined" || this.isDemoMode) return null;
 
       try {
-        if (!this.recaptchaVerifier) {
-          const container = document.getElementById("recaptcha-container");
-          if (!container) {
-            const div = document.createElement("div");
-            div.id = "recaptcha-container";
-            div.style.display = "none";
-            document.body.appendChild(div);
-          }
-
-          this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
-            size: "invisible",
-            callback: (response) => {
-              // reCAPTCHA solved automatically
-            },
-            "expired-callback": () => {
-              console.warn("reCAPTCHA expired, resetting...");
-              if (this.recaptchaVerifier) this.recaptchaVerifier.render();
-            }
-          });
+        let container = document.getElementById("recaptcha-container");
+        if (!container) {
+          container = document.createElement("div");
+          container.id = "recaptcha-container";
+          document.body.appendChild(container);
         }
+
+        if (this.recaptchaVerifier) {
+          try { this.recaptchaVerifier.clear(); } catch(e) {}
+          this.recaptchaVerifier = null;
+        }
+
+        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(container, {
+          size: "invisible",
+          callback: (response) => {
+            console.log("reCAPTCHA verified");
+          },
+          "expired-callback": () => {
+            console.warn("reCAPTCHA expired");
+          }
+        });
         return this.recaptchaVerifier;
       } catch (err) {
         console.warn("reCAPTCHA setup warning:", err.message);
@@ -166,15 +167,11 @@
       // 1. Live Firebase Phone Auth (Google SMS Telecom Gateway)
       if (!this.isDemoMode && typeof window.firebase !== "undefined") {
         try {
-          if (this.recaptchaVerifier) {
-            try { this.recaptchaVerifier.clear(); } catch(e) {}
-            this.recaptchaVerifier = null;
-          }
           const appVerifier = this.setupRecaptcha();
           if (appVerifier) {
             this.confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, appVerifier);
             if (statusEl) {
-              statusEl.textContent = `✅ 6-digit OTP sent via SMS to +91 ${clean10}. Please check your phone.`;
+              statusEl.textContent = `✅ 6-digit OTP sent via SMS to +91 ${clean10}. Please check your phone messages.`;
               statusEl.style.color = "#059669";
             }
             window.showToast?.(`OTP SMS sent to +91 ${clean10}! Please check your messages.`, "success");
@@ -182,16 +179,19 @@
             return;
           }
         } catch (fbErr) {
-          console.warn("Live Firebase dispatch notice:", fbErr.code, fbErr.message);
-          let userErrMsg = "";
+          console.error("Live Firebase dispatch error:", fbErr.code, fbErr.message);
+          let userErrMsg = fbErr.message || "Failed to deliver SMS.";
           if (fbErr.code === "auth/unauthorized-domain") {
-            userErrMsg = `Domain authorization required: Please add ${window.location.hostname} to Firebase Console > Authentication > Settings > Authorized domains`;
+            userErrMsg = `Domain authorization required: Please add "${window.location.hostname}" to Firebase Console > Authentication > Settings > Authorized domains`;
           } else if (fbErr.code === "auth/operation-not-allowed") {
-            userErrMsg = "Phone Authentication is not enabled yet in Firebase Console > Authentication > Sign-in method";
+            userErrMsg = "Phone Authentication is not enabled yet in Firebase Console > Authentication > Sign-in method > Phone (Click Enable)";
+          } else if (fbErr.code === "auth/quota-exceeded" || fbErr.code === "auth/too-many-requests") {
+            userErrMsg = "SMS quota exceeded on Firebase. Please wait or use WhatsApp verification.";
           }
-          if (userErrMsg) {
-            console.warn("Firebase Setup Note:", userErrMsg);
+          if (statusEl) {
+            statusEl.innerHTML = `<span style="color:#ef4444; font-size:11.5px; line-height:1.45; display:block;">⚠️ ${userErrMsg}</span>`;
           }
+          window.showToast?.(userErrMsg, "warning");
         }
       }
 

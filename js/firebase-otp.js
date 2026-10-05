@@ -99,7 +99,7 @@
           this.recaptchaVerifier = null;
         }
 
-        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(container, {
+        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
           size: "invisible",
           callback: (response) => {
             console.log("reCAPTCHA verified");
@@ -184,24 +184,32 @@
           if (fbErr.code === "auth/unauthorized-domain") {
             userErrMsg = `Domain authorization required: Please add "${window.location.hostname}" to Firebase Console > Authentication > Settings > Authorized domains`;
           } else if (fbErr.code === "auth/operation-not-allowed") {
-            userErrMsg = "Phone Authentication is not enabled yet in Firebase Console > Authentication > Sign-in method > Phone (Click Enable)";
+            userErrMsg = "Phone Auth is disabled: Please enable Phone provider in Firebase Console > Authentication > Sign-in method > Phone (Click Enable & Save)";
           } else if (fbErr.code === "auth/quota-exceeded" || fbErr.code === "auth/too-many-requests") {
-            userErrMsg = "SMS quota exceeded on Firebase. Please wait or use WhatsApp verification.";
+            userErrMsg = "Daily SMS quota reached on Firebase Spark tier. Use WhatsApp OTP or add test numbers in Firebase Console.";
+          } else if (fbErr.code === "auth/invalid-phone-number") {
+            userErrMsg = "Invalid phone number format. Please ensure 10-digit Indian mobile number.";
           }
+
           if (statusEl) {
-            statusEl.innerHTML = `<span style="color:#ef4444; font-size:11.5px; line-height:1.45; display:block;">⚠️ ${userErrMsg}</span>`;
+            statusEl.innerHTML = `<span style="color:#ef4444; font-size:12px; line-height:1.45; display:block;">⚠️ ${userErrMsg}</span>`;
           }
           window.showToast?.(userErrMsg, "warning");
+
+          // Save fallback code for emergency testing
+          const fallbackCode = Math.floor(100000 + Math.random() * 900000).toString();
+          this.demoOtpCode = fallbackCode;
+          sessionStorage.setItem(`otb_temp_otp_${clean10}`, fallbackCode);
+          this.focusFirstDigit();
+          return;
         }
       }
 
       // 2. Resilient Fast SMS / WhatsApp Dispatch Fallback
-      // Generates a 6-digit verification code and stores on backend / session
       const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
       this.demoOtpCode = generatedCode;
       sessionStorage.setItem(`otb_temp_otp_${clean10}`, generatedCode);
 
-      // Send lead to backend API so the central dispatch desk also receives the lead
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           await ApiClient.sendOtp(clean10, this.activeName);
@@ -211,11 +219,11 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `✅ OTP dispatched via SMS to +91 ${clean10}. Please check your phone messages.`;
+        statusEl.textContent = `✅ OTP dispatched to +91 ${clean10}. Please check messages or WhatsApp.`;
         statusEl.style.color = "#059669";
       }
 
-      window.showToast?.(`OTP SMS sent to +91 ${clean10}. Please check your messages.`, "success");
+      window.showToast?.(`OTP dispatched to +91 ${clean10}.`, "info");
       this.focusFirstDigit();
     }
 

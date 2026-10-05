@@ -2235,90 +2235,119 @@ class BookingManager {
             <div id="chk-coupon-msg" style="font-size: 11.5px; margin-top: 6px; display: none;"></div>
           </div>
 
-          <!-- Payment Options -->
-          <div class="checkout-methods-list" style="margin-top: 10px;">
+          <!-- Payment Options Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; margin-bottom: 8px;">
+            <div style="font-size: 13px; font-weight: 800; color: var(--owc-text); text-transform: uppercase; letter-spacing: 0.4px;">
+              💳 Select Payment Mode
+            </div>
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; font-weight: 700;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>100% Safe &amp; Encrypted</span>
+            </div>
+          </div>
+
+          <!-- Payment Options List -->
+          <div class="checkout-methods-list" style="display: flex; flex-direction: column; gap: 8px;">
             
             <!-- Method 1: Token Advance ₹299 (Recommended) -->
-            <label class="checkout-method-item active" id="pay-card-razorpay" style="border: 1.5px solid #0070f3; background: rgba(0, 112, 243, 0.04); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
-              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="Razorpay Online Advance (₹299)" checked onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0070f3; width: 17px; height: 17px;">
+            <label class="checkout-method-item active" id="pay-card-razorpay" style="border: 1.5px solid #0070f3; background: rgba(0, 112, 243, 0.04); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
+                <input type="radio" name="pay-method" value="Razorpay Online Advance (₹299)" checked onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0070f3; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
-                  <strong style="color: #0070f3; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>⚡ Pay ₹299 Token Advance (Instant Cab Lock)</span>
-                    <span style="font-size: 9.5px; background: #0070f3; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">RECOMMENDED</span>
-                  </strong>
-                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px; line-height: 1.4;">
-                    Pay ₹299 now via UPI (PhonePe/GPay/Paytm), Cards or Netbanking. Balance payable directly to your captain after reaching destination safely.
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <strong style="color: #0070f3; font-size: 14px; font-weight: 800;">
+                      ⚡ Pay ₹299 Token Advance (Instant Cab Lock)
+                    </strong>
+                    <div style="display: flex; gap: 5px;">
+                      <span style="font-size: 9.5px; background: #0070f3; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">RECOMMENDED</span>
+                      <span style="font-size: 9.5px; background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid #10b981; padding: 1px 6px; border-radius: 4px; font-weight: 800;">100% REFUNDABLE</span>
+                    </div>
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px; line-height: 1.45;">
+                    Lock your confirmed cab &amp; chauffeur instantly. Pay ₹299 online now via <strong>UPI (GPay / PhonePe / Paytm), Cards, or NetBanking</strong>. Remaining fare payable directly to driver at destination.
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 10.5px; color: #475569;">
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">GPay</span>
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">PhonePe</span>
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Paytm</span>
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Cards / UPI</span>
+                    <span style="color: #059669; font-weight: 700; margin-left: auto;">✓ 0% Gateway Fees</span>
                   </div>
                 </div>
               </div>
             </label>
 
             <!-- Method 2: Cash on Ride (Zero Advance) -->
-            <label class="checkout-method-item" id="pay-card-cash" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
-              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="Cash on Ride (Zero Advance)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #059669; width: 17px; height: 17px;">
+            <label class="checkout-method-item" id="pay-card-cash" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
+                <input type="radio" name="pay-method" value="Cash on Ride (Zero Advance)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #059669; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
-                  <strong style="color: var(--owc-text); font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>💵 100% Cash on Ride (Zero Advance)</span>
-                    <span style="font-size: 9.5px; background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">ZERO ADVANCE</span>
-                  </strong>
-                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px; line-height: 1.4;">
-                    ₹0 payable now! Pay total trip fare in cash or driver UPI upon completing your journey.
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
+                      💵 100% Cash on Ride (Zero Advance)
+                    </strong>
+                    <span style="font-size: 9.5px; background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">ZERO ADVANCE</span>
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px; line-height: 1.45;">
+                    ₹0 payable now! Pay entire trip fare directly to your assigned chauffeur via Cash or Driver UPI upon reaching your destination safely.
                   </div>
                 </div>
               </div>
             </label>
 
             <!-- Method 3: Direct PhonePe / UPI QR -->
-            <label class="checkout-method-item" id="pay-card-upi" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
-              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="Direct UPI / QR Advance (₹299)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 17px; height: 17px;">
+            <label class="checkout-method-item" id="pay-card-upi" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
+                <input type="radio" name="pay-method" value="Direct UPI / QR Advance (₹299)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
-                  <strong style="color: var(--owc-text); font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>📱 Direct PhonePe / BHIM UPI QR Code (₹299)</span>
-                    <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">INSTANT SCAN</span>
-                  </strong>
-                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px;">
-                    Scan QR or tap to open PhonePe / GPay / Paytm directly.
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
+                      📱 Direct PhonePe / BHIM UPI QR Code (₹299)
+                    </strong>
+                    <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">INSTANT SCAN</span>
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px;">
+                    Scan verified merchant QR code or tap to launch PhonePe / GPay / Paytm directly.
                   </div>
                 </div>
               </div>
 
-              <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: none; margin-top: 10px; background: #fdf4ff; border: 1.5px solid #d946ef; border-radius: 10px; padding: 12px; text-align: center;">
-                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 6px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
-                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="PhonePe QR Code - Himanshu Kumar Dubey" class="checkout-qr-img" style="width: 140px; height: 140px; border-radius: 8px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white;">
-                <div id="chk-payee-name" style="margin-top: 8px; font-size: 13px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
+              <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: none; margin-top: 12px; background: #faf5ff; border: 1.5px solid #d946ef; border-radius: 12px; padding: 14px; text-align: center;">
+                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 8px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
+                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="Merchant Payment QR Code" class="checkout-qr-img" style="width: 144px; height: 144px; border-radius: 10px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(95,37,159,0.1);">
+                <div id="chk-payee-name" style="margin-top: 8px; font-size: 13.5px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
                 
-                <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 20px; margin-top: 6px;">
+                <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; margin-top: 6px;">
                   <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
                   <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">📋 Copy</button>
                 </div>
 
-                <div style="margin-top: 8px;">
-                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800;">
+                <div style="margin-top: 10px;">
+                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 800; box-shadow: 0 3px 10px rgba(95,37,159,0.25);">
                     Pay ₹299 with PhonePe / GPay App ➔
                   </a>
                 </div>
 
-                <div style="margin-top: 10px; text-align: left;">
-                  <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 3px;">UTR / UPI Reference No. (Optional):</label>
-                  <input type="text" id="chk-upi-utr" placeholder="e.g. 4235XXXXXXXX" style="width: 100%; box-sizing: border-box; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;">
+                <div style="margin-top: 12px; text-align: left; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                  <label style="font-size: 11px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; text-transform: uppercase;">ENTER UPI TRANSACTION ID / UTR NUMBER (AFTER SCANNING):</label>
+                  <input type="text" id="chk-upi-utr" placeholder="Enter 12-digit UPI UTR number (e.g. 4235XXXXXXXX)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-family: monospace;">
                 </div>
               </div>
             </label>
 
             <!-- Method 4: 100% Full Pre-payment Online -->
-            <label class="checkout-method-item" id="pay-card-full" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
-              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="Full Online Payment" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0284c7; width: 17px; height: 17px;">
+            <label class="checkout-method-item" id="pay-card-full" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+              <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
+                <input type="radio" name="pay-method" value="Full Online Payment" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0284c7; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
-                  <strong style="color: var(--owc-text); font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>💳 100% Full Pre-payment Online</span>
-                    <span style="font-size: 9.5px; background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">CASHLESS</span>
-                  </strong>
-                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px; line-height: 1.4;">
-                    Pay full ride amount online now. Enjoy complete hassle-free travel with zero driver cash payments.
+                  <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
+                      💳 100% Full Pre-payment Online (Cashless Ride)
+                    </strong>
+                    <span style="font-size: 9.5px; background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">CASHLESS</span>
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px; line-height: 1.45;">
+                    Pay full ride amount online now. Enjoy complete hassle-free travel with zero driver cash payments. Instant digital GST receipt provided.
                   </div>
                 </div>
               </div>
@@ -2326,11 +2355,23 @@ class BookingManager {
 
           </div>
 
-          <!-- Official 5-Minute Agent Confirmation & Zero Fake Driver Notice -->
-          <div class="checkout-notice-card" style="margin-top: 10px; background: rgba(16, 185, 129, 0.06); border: 1.5px solid #059669; border-radius: 10px; padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #065f46;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0; margin-top: 1px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <div>
-              <strong>Dispatch Guarantee:</strong> Our operations desk will call you within 5 minutes to confirm booking. Genuine driver details and OTP shared 15 mins prior to departure. (Zero fake drivers).
+          <!-- Trust & Service Guarantee Badges (Uber / MakeMyTrip style) -->
+          <div style="margin-top: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; color: #334155;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #059669; font-size: 14px;">🛡️</span>
+              <span><strong>Verified Chauffeurs</strong> &amp; clean AC cabs</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #0284c7; font-size: 14px;">⏱️</span>
+              <span><strong>5-Min Dispatch</strong> call confirmation</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #059669; font-size: 14px;">🚫</span>
+              <span><strong>Zero Surge Pricing</strong> (Fixed Fare)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #0284c7; font-size: 14px;">🔒</span>
+              <span><strong>256-Bit SSL</strong> RBI Safe Checkout</span>
             </div>
           </div>
 
@@ -3266,21 +3307,44 @@ class BookingManager {
     const advancePaid = Number(booking.advancePaid) || 0;
     const totalFare = Number(booking.totalFare) || 0;
     const balanceDue = (booking.balanceDue !== undefined) ? Number(booking.balanceDue) : Math.max(0, totalFare - advancePaid);
+    const isPaidOnline = Boolean(booking.paymentStatus && (booking.paymentStatus.includes('PAID') || booking.paymentStatus.includes('Online')));
 
     confBody.innerHTML = `
-      <div class="booking-confirmation-voucher" style="text-align: center; padding: 6px 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; width: 100%; box-sizing: border-box; min-width: 0; overflow-x: hidden;">
+      <div class="booking-confirmation-voucher" style="text-align: center; padding: 4px 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; width: 100%; box-sizing: border-box; min-width: 0; overflow-x: hidden;">
         
-        <!-- Verification Emblem -->
-        <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #059669; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; border: 1.5px solid rgba(16, 185, 129, 0.3); animation: pulse 2s infinite;">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <!-- Verification Header Badge -->
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         
-        <h2 style="font-size: 20px; font-weight: 900; color: var(--owc-text); margin: 0 0 4px 0; letter-spacing: -0.3px; line-height: 1.3;">🎉 Ride Confirmed!</h2>
-        <p style="font-size: 13px; color: var(--owc-text-muted); margin: 0 0 12px 0;">We have received your trip request. Your cab is being scheduled.</p>
+        <h2 style="font-size: 21px; font-weight: 900; color: var(--owc-text); margin: 0 0 4px 0; letter-spacing: -0.4px; line-height: 1.25;">Ride Confirmed &amp; Dispatched!</h2>
+        <p style="font-size: 13px; color: var(--owc-text-muted); margin: 0 0 12px 0;">Your cab reservation has been secured. Our central dispatch is preparing your ride.</p>
         
-        <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.3); color: #0284c7; padding: 6px 14px; border-radius: 20px; font-size: 11.5px; font-weight: 800; margin-bottom: 14px; letter-spacing: 0.3px;">
-          <span>BOOKING ID: <strong>${booking.bookingId}</strong></span>
-          ${booking.tripOtp ? `<span style="background:#0284c7; color:#fff; padding:1px 6px; border-radius:4px; font-size:10px;">OTP: ${booking.tripOtp}</span>` : ''}
+        <!-- Booking Ref & Security OTP Pill -->
+        <div style="display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; background: #f0fdf4; border: 1.5px solid #86efac; padding: 6px 14px; border-radius: 24px; font-size: 12px; font-weight: 800; margin-bottom: 14px;">
+          <span style="color: #166534;">BOOKING ID: <strong style="font-family: monospace; font-size: 13px;">${booking.bookingId}</strong></span>
+          ${booking.tripOtp ? `<span style="background: #0284c7; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;">TRIP START OTP: ${booking.tripOtp}</span>` : ''}
+        </div>
+
+        <!-- Live 3-Stage Dispatch Timeline -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; text-align: left;">
+          <div style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Live Dispatch Tracker</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; position: relative;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">✓</span>
+              <span style="font-size: 10px; font-weight: 800; color: #0f172a;">Requested</span>
+            </div>
+            <div style="flex: 1; height: 2px; background: #10b981; margin: 0 4px -14px 4px;"></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #0284c7; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; animation: pulse 1.5s infinite;">2</span>
+              <span style="font-size: 10px; font-weight: 800; color: #0284c7;">5-Min Call</span>
+            </div>
+            <div style="flex: 1; height: 2px; background: #cbd5e1; margin: 0 4px -14px 4px;"></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: #cbd5e1; color: #475569; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">3</span>
+              <span style="font-size: 10px; font-weight: 700; color: #94a3b8;">Driver OTP</span>
+            </div>
+          </div>
         </div>
 
         <!-- Official Central Dispatch 5-Minute Call Guarantee -->
@@ -3292,7 +3356,7 @@ class BookingManager {
             <div style="flex: 1; min-width: 0; word-break: break-word; overflow-wrap: anywhere;">
               <div style="font-size: 13.5px; font-weight: 800; color: #065f46; margin-bottom: 2px;">Central Dispatch Call Within 5 Minutes</div>
               <p style="font-size: 12px; color: #047857; margin: 0; line-height: 1.45;">
-                Our Patna Central Operations room will call you at <strong>${booking.passengerPhone}</strong> within 5 minutes to confirm departure details and chauffeur assignment.
+                Our Patna Operations room will call you at <strong>${booking.passengerPhone}</strong> within 5 minutes to confirm departure details and chauffeur assignment.
               </p>
             </div>
           </div>

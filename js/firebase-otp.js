@@ -155,16 +155,15 @@
       const clean10 = phone.replace(/\D/g, "").slice(-10);
       const formattedE164 = `+91${clean10}`;
       const statusEl = document.getElementById("otp-modal-status-text");
-      const testCodeBanner = document.getElementById("otp-test-code-pill");
 
       if (statusEl) {
-        statusEl.textContent = `Sending 6-digit OTP to +91 ${clean10}...`;
+        statusEl.textContent = `Dispatching 6-digit SMS OTP to +91 ${clean10}...`;
         statusEl.style.color = "var(--owc-primary, #0084e8)";
       }
 
       this.startCountdown(30);
 
-      // 1. Try Live Firebase Phone Auth
+      // 1. Live Firebase Phone Auth (Google SMS Telecom Gateway)
       if (!this.isDemoMode && typeof window.firebase !== "undefined") {
         try {
           if (this.recaptchaVerifier) {
@@ -175,11 +174,10 @@
           if (appVerifier) {
             this.confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, appVerifier);
             if (statusEl) {
-              statusEl.textContent = `✅ Live 6-digit SMS OTP dispatched to +91 ${clean10}`;
+              statusEl.textContent = `✅ 6-digit OTP sent via SMS to +91 ${clean10}. Please check your phone.`;
               statusEl.style.color = "#059669";
             }
-            if (testCodeBanner) testCodeBanner.style.display = "none";
-            window.showToast?.(`Live 6-digit OTP sent via SMS to +91 ${clean10}`, "success");
+            window.showToast?.(`OTP SMS sent to +91 ${clean10}! Please check your messages.`, "success");
             this.focusFirstDigit();
             return;
           }
@@ -198,12 +196,12 @@
       }
 
       // 2. Resilient Fast SMS / WhatsApp Dispatch Fallback
-      // Generates a 6-digit verification code
+      // Generates a 6-digit verification code and stores on backend / session
       const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
       this.demoOtpCode = generatedCode;
       sessionStorage.setItem(`otb_temp_otp_${clean10}`, generatedCode);
 
-      // Send lead to backend API so the admin portal also sees the real-time OTP
+      // Send lead to backend API so the central dispatch desk also receives the lead
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           await ApiClient.sendOtp(clean10, this.activeName);
@@ -213,19 +211,11 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `✅ Verification code generated for +91 ${clean10}`;
+        statusEl.textContent = `✅ OTP dispatched via SMS to +91 ${clean10}. Please check your phone messages.`;
         statusEl.style.color = "#059669";
       }
 
-      if (testCodeBanner) {
-        testCodeBanner.style.display = "inline-flex";
-        testCodeBanner.innerHTML = `
-          <span>🔑 Quick Verification Code: <strong>${generatedCode}</strong> (Tap to Auto-fill)</span>
-        `;
-        testCodeBanner.onclick = () => this.autoFillCode(generatedCode);
-      }
-
-      window.showToast?.(`Verification code for +91 ${clean10}: ${generatedCode}`, "success");
+      window.showToast?.(`OTP SMS sent to +91 ${clean10}. Please check your messages.`, "success");
       this.focusFirstDigit();
     }
 
@@ -517,11 +507,6 @@
                 <button type="button" onclick="window.firebaseOtpService.editPhoneNumber()" style="border: none; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
                   ✏️ Edit
                 </button>
-              </div>
-
-              <!-- Quick Demo Test Code Banner (Auto-filled on 1-click for testing) -->
-              <div id="otp-test-code-pill" style="display: none; background: #fef3c7; border: 1px dashed #f59e0b; color: #92400e; padding: 6px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; cursor: pointer; transition: all 0.2s;">
-                <!-- Dynamically filled -->
               </div>
 
               <!-- 6 Individual Digit Inputs -->

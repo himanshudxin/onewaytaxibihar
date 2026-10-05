@@ -27,7 +27,8 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     return { success: false, error: 'Invalid 10-digit Indian phone number' };
   }
 
-  if (!FAST2SMS_API_KEY) {
+  const apiKey = process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY;
+  if (!apiKey) {
     return { success: false, error: 'FAST2SMS_API_KEY missing' };
   }
 
@@ -52,14 +53,16 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
-        'authorization': FAST2SMS_API_KEY,
+        'authorization': apiKey,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(bodyPayload)
     });
 
     const data = await response.json();
-    return { success: data.return === true || response.ok, provider: 'fast2sms', response: data };
+    const isSuccess = Boolean(data.return === true || (data.status_code === 200) || response.ok);
+    console.log(`[Fast2SMS Dispatch] +91 ${cleanPhone} ->`, data);
+    return { success: isSuccess, provider: 'fast2sms', response: data };
   } catch (err) {
     console.error('[Notification Service] Fast2SMS error:', err.message);
     return { success: false, error: err.message };

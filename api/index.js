@@ -397,7 +397,7 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Valid 10-digit Indian mobile number starting with 6-9 required.' });
       }
 
-      const code = Math.floor(1000 + Math.random() * 9000).toString();
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
       activeVerificationCodes.set(cleanPhone, {
         code,
         name,

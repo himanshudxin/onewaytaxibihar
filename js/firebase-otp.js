@@ -156,7 +156,6 @@
 
     async sendOtpCode(phone) {
       const clean10 = phone.replace(/\D/g, "").slice(-10);
-      const formattedE164 = `+91${clean10}`;
       const statusEl = document.getElementById("otp-modal-status-text");
 
       if (statusEl) {
@@ -166,54 +165,57 @@
 
       this.startCountdown(30);
 
-      // 1. Dispatch real SMS via Backend Telecom Gateway (Fast2SMS)
+      // Generate secure 6-digit OTP code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
+      sessionStorage.setItem(`otb_verify_${clean10}`, code);
+      this.demoOtpCode = code;
+
+      // 1. Dispatch real SMS via Fast2SMS Telecom Gateway
+      const fast2smsKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx";
+      try {
+        const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+          method: "POST",
+          headers: {
+            "authorization": fast2smsKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            route: "q",
+            message: `Your OneWayTaxiBihar OTP is ${code}. Valid for 10 minutes. Do not share.`,
+            language: "english",
+            flash: 0,
+            numbers: clean10
+          })
+        });
+
+        const data = await response.json();
+        console.log("[Fast2SMS Live Broadcast]", data);
+
+        if (data && (data.return === true || data.status_code === 200 || response.ok)) {
+          if (statusEl) {
+            statusEl.textContent = `✅ 6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
+            statusEl.style.color = "#059669";
+          }
+          window.showToast?.(`OTP sent via SMS to +91 ${clean10}! Please check your messages.`, "success");
+          this.focusFirstDigit();
+          return;
+        }
+      } catch (err) {
+        console.warn("Direct Fast2SMS note:", err.message);
+      }
+
+      // 2. Try Backend Dispatch if available
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
-          const apiRes = await ApiClient.sendOtp(clean10, this.activeName);
-          if (apiRes && apiRes.success) {
-            if (apiRes.otpCode) {
-              this.demoOtpCode = apiRes.otpCode;
-              sessionStorage.setItem(`otb_temp_otp_${clean10}`, apiRes.otpCode);
-            }
-            if (statusEl) {
-              statusEl.textContent = `✅ 6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
-              statusEl.style.color = "#059669";
-            }
-            window.showToast?.(`OTP sent via SMS to +91 ${clean10}!`, "success");
-            this.focusFirstDigit();
-            return;
-          }
+          await ApiClient.sendOtp(clean10, this.activeName);
         }
-      } catch (apiErr) {
-        console.warn("Backend SMS dispatch note:", apiErr.message);
+      } catch (e) {
+        // Continue
       }
-
-      // 2. Firebase Phone Auth (Optional Parallel Fallback)
-      if (!this.isDemoMode && typeof window.firebase !== "undefined") {
-        try {
-          const appVerifier = this.setupRecaptcha();
-          if (appVerifier) {
-            this.confirmationResult = await firebase.auth().signInWithPhoneNumber(formattedE164, appVerifier);
-            if (statusEl) {
-              statusEl.textContent = `✅ 6-digit OTP sent via SMS to +91 ${clean10}. Please check your phone messages.`;
-              statusEl.style.color = "#059669";
-            }
-            window.showToast?.(`OTP SMS sent to +91 ${clean10}! Please check your messages.`, "success");
-            this.focusFirstDigit();
-            return;
-          }
-        } catch (fbErr) {
-          console.error("Firebase dispatch note:", fbErr.code, fbErr.message);
-        }
-      }
-
-      // 3. Fallback
-      const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-      this.demoOtpCode = generatedCode;
-      sessionStorage.setItem(`otb_temp_otp_${clean10}`, generatedCode);
 
       if (statusEl) {
-        statusEl.textContent = `✅ OTP dispatched to +91 ${clean10}. Please check messages.`;
+        statusEl.textContent = `✅ 6-digit SMS OTP dispatched to +91 ${clean10}.`;
         statusEl.style.color = "#059669";
       }
       this.focusFirstDigit();
@@ -324,33 +326,23 @@
       try {
         let isVerified = false;
 
-        // 1. Verify via Backend API
-        try {
-          if (window.ApiClient && ApiClient.verifyOtp) {
-            const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
-            if (verifyRes && verifyRes.success) {
-              isVerified = true;
-            }
-          }
-        } catch (e) {
-          console.warn("Backend verify note:", e);
+        // 1. Check genuine sent OTP code from session
+        const storedOtp = sessionStorage.getItem(`otb_temp_otp_${this.activePhone}`) || sessionStorage.getItem(`otb_verify_${this.activePhone}`);
+        if (storedOtp && enteredCode === storedOtp) {
+          isVerified = true;
         }
 
-        // 2. Firebase Confirmation
-        if (!isVerified && this.confirmationResult && !this.isDemoMode) {
-          try {
-            const result = await this.confirmationResult.confirm(enteredCode);
-            if (result && result.user) isVerified = true;
-          } catch (fbErr) {
-            console.warn("Firebase code verification mismatch:", fbErr.message);
-          }
-        }
-
-        // 3. Local session fallback
+        // 2. Try Backend API verification
         if (!isVerified) {
-          const storedOtp = sessionStorage.getItem(`otb_temp_otp_${this.activePhone}`) || this.demoOtpCode;
-          if (enteredCode === storedOtp || enteredCode === "123456" || enteredCode === "999999") {
-            isVerified = true;
+          try {
+            if (window.ApiClient && ApiClient.verifyOtp) {
+              const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
+              if (verifyRes && verifyRes.success) {
+                isVerified = true;
+              }
+            }
+          } catch (e) {
+            console.warn("Backend verify note:", e);
           }
         }
 
@@ -392,7 +384,7 @@
 
         } else {
           if (statusEl) {
-            statusEl.textContent = "❌ Invalid OTP code. Please check and retry.";
+            statusEl.textContent = "❌ Invalid OTP code. Please enter the 6 digits sent to your phone.";
             statusEl.style.color = "#ef4444";
           }
           window.showToast?.("Invalid OTP code. Please enter the 6 digits sent to your phone.", "error");
@@ -550,9 +542,6 @@
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
                   <span>Didn't receive SMS? Get OTP via WhatsApp</span>
                 </a>
-                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">
-                  (If testing with Firebase test numbers, enter your test code e.g. <strong>123456</strong>)
-                </div>
               </div>
 
             </div>

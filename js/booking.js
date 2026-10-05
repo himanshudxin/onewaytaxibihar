@@ -1960,16 +1960,36 @@ class BookingManager {
 
     const fleet = OTB_FLEET.find(f => f.id === cabId) || OTB_FLEET[1];
 
-    // Intercept checkout: Prompt passenger to login/verify & claim ₹100 reward
-    if (!window.currentUser) {
-      this.pendingCheckout = { cabId, price };
-      if (window.openAuthModal) {
-        window.openAuthModal({
-          cabTier: cabId,
-          cabName: fleet.category || "Outstation Cab",
-          price: price
-        });
+    // Phone verification at time of booking: Require Firebase OTP verification
+    const phoneInputHero = document.getElementById("input-fare-phone");
+    const rawPhone = (phoneInputHero?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || window.currentUser?.phone || "").replace(/\D/g, "").slice(-10);
+
+    if (!rawPhone || rawPhone.length !== 10 || !/^[6-9]\d{9}$/.test(rawPhone)) {
+      window.showToast?.("Please enter your 10-digit mobile number to proceed with cab booking", "warning");
+      const hero = document.getElementById("booking-hero");
+      if (hero) hero.scrollIntoView({ behavior: "smooth" });
+      if (phoneInputHero) {
+        phoneInputHero.focus();
+        const phoneGroup = document.getElementById("phone-check-group");
+        if (phoneGroup) {
+          phoneGroup.classList.add("shake-error");
+          setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
+        }
       }
+      return;
+    }
+
+    const isVerifiedSession = sessionStorage.getItem(`otb_verified_${rawPhone}`) === "true" ||
+      (window.currentUser && window.currentUser.isPhoneVerified && window.currentUser.phone?.includes(rawPhone));
+
+    if (!isVerifiedSession && window.firebaseOtpService) {
+      this.pendingCheckout = { cabId, price };
+      const passengerName = this.passengerDetails.name || window.currentUser?.name || "Passenger";
+      window.firebaseOtpService.requestVerification(rawPhone, passengerName, (verifyResult) => {
+        this.userPhone = rawPhone;
+        this.passengerDetails.phone = `+91 ${rawPhone}`;
+        this.startCheckout(cabId, price);
+      });
       return;
     }
 
@@ -1980,6 +2000,8 @@ class BookingManager {
       if (window.currentUser.phone && (!this.passengerDetails.phone || this.passengerDetails.phone === "+91")) {
         this.passengerDetails.phone = window.currentUser.phone;
       }
+    } else {
+      this.passengerDetails.phone = `+91 ${rawPhone}`;
     }
     const checkoutModal = document.getElementById("modal-checkout");
     const checkoutBody = document.getElementById("modal-checkout-body");
@@ -2487,6 +2509,20 @@ class BookingManager {
       if (!phone || phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
         window.showToast("Please enter a valid 10-digit Indian mobile number", "warning");
         phoneInput?.focus();
+        return;
+      }
+
+      // Check if this specific phone number is OTP verified
+      const isVerified = sessionStorage.getItem(`otb_verified_${phone}`) === "true" ||
+        (window.currentUser && window.currentUser.isPhoneVerified && window.currentUser.phone?.includes(phone));
+
+      if (!isVerified && window.firebaseOtpService) {
+        window.firebaseOtpService.requestVerification(phone, name, (verifyResult) => {
+          this.userPhone = phone;
+          this.passengerDetails.name = name;
+          this.passengerDetails.phone = `+91 ${phone}`;
+          this.goToCheckoutStep(2);
+        });
         return;
       }
 

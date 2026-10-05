@@ -58,11 +58,11 @@ class OneWayMapManager {
       scrollWheelZoom: false
     });
 
-    // Clean, high-density, professional CartoDB Voyager tiles
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      subdomains: "abcd",
+    // Clean, high-density, professional OpenStreetMap tiles (free & no watermark)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      subdomains: "abc",
       maxZoom: 19,
-      attribution: '&copy; CartoDB &copy; OpenStreetMap'
+      attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
   }
 

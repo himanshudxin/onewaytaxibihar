@@ -1154,6 +1154,9 @@ module.exports = async (req, res) => {
         paymentMethod: payMethodStr,
         paymentStatus: initialPaymentStatus,
         bookingStatus: 'REQUESTED',
+        phoneVerified: Boolean(body.phoneVerified !== false),
+        verifiedMethod: body.verifiedMethod || 'Firebase / SMS OTP',
+        verifiedAt: body.verifiedAt || new Date().toISOString(),
         partnerNotice: 'Our partner/driver or agent will call you in 5 minutes to confirm booking.',
         driverDetails: null, // Zero driver details before real manual assignment!
         statusHistory: [

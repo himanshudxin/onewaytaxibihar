@@ -100,6 +100,9 @@ module.exports = async (req, res) => {
         paymentMethod: body.paymentMethod || 'Cash / UPI to Driver',
         paymentStatus: (body.paymentMethod && body.paymentMethod.includes('Advance')) ? 'TOKEN ADVANCE VERIFIED' : 'PAYABLE TO DRIVER',
         paymentUtr: body.paymentUtr || '',
+        phoneVerified: Boolean(body.phoneVerified !== false),
+        verifiedMethod: body.verifiedMethod || 'Firebase / SMS OTP',
+        verifiedAt: body.verifiedAt || new Date().toISOString(),
         driverDetails: null,
         createdAt: new Date().toISOString()
       };

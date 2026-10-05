@@ -87,19 +87,21 @@
       if (typeof window.firebase === "undefined" || this.isDemoMode) return null;
 
       try {
-        let container = document.getElementById("recaptcha-container");
-        if (!container) {
-          container = document.createElement("div");
-          container.id = "recaptcha-container";
-          document.body.appendChild(container);
+        let oldContainer = document.getElementById("recaptcha-container");
+        if (oldContainer) {
+          oldContainer.remove();
         }
+
+        const newContainer = document.createElement("div");
+        newContainer.id = "recaptcha-container";
+        document.body.appendChild(newContainer);
 
         if (this.recaptchaVerifier) {
           try { this.recaptchaVerifier.clear(); } catch(e) {}
           this.recaptchaVerifier = null;
         }
 
-        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(newContainer, {
           size: "invisible",
           callback: (response) => {
             console.log("reCAPTCHA verified");

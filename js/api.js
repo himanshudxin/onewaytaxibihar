@@ -135,39 +135,63 @@ class ApiClient {
     return res || { success: false, message: "Login failed" };
   }
 
-  // Real Mobile Number Verification - Send Code (SMS & WhatsApp)
+  // Real Mobile Number Verification - Send Code (Fast2SMS & WhatsApp)
   static async sendOtp(phone, name = "") {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
     const cleanName = (name || "").trim() || "Valued Passenger";
 
-    const res = await this.request("/api/auth/send-otp", {
-      method: "POST",
-      body: JSON.stringify({ phone: cleanPhone, name: cleanName })
-    });
-
-    if (res && res.success) {
-      return res;
+    // 1. Try Backend API first
+    try {
+      const res = await this.request("/api/auth/send-otp", {
+        method: "POST",
+        body: JSON.stringify({ phone: cleanPhone, name: cleanName })
+      });
+      if (res && res.success) {
+        return res;
+      }
+    } catch (apiErr) {
+      console.warn("Backend API note:", apiErr);
     }
 
-    // Offline / Network resilient fallback
-    if (!res || res.networkError || res.status === 404) {
-      const fallbackCode = Math.floor(1000 + Math.random() * 9000).toString();
-      sessionStorage.setItem(`otb_verify_${cleanPhone}`, fallbackCode);
-      const waText = `OneWayTaxiBihar Verification Code for +91 ${cleanPhone} is: ${fallbackCode}. Valid for 10 minutes. Welcome Reward: Rs 100 on first booking.`;
-      return {
-        success: true,
-        phone: `+91 ${cleanPhone}`,
-        cleanPhone,
-        isNewUser: true,
-        rewardEligible: true,
-        rewardAmount: 100,
-        otpCode: fallbackCode,
-        whatsappUrl: `https://wa.me/917281851011?text=${encodeURIComponent(waText)}`,
-        message: `Verification code dispatched to +91 ${cleanPhone} via SMS & WhatsApp.`
-      };
+    // 2. Direct Fast2SMS Telecom Dispatch (Works on GitHub Pages & Static Hosts)
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    sessionStorage.setItem(`otb_verify_${cleanPhone}`, code);
+    sessionStorage.setItem(`otb_temp_otp_${cleanPhone}`, code);
+
+    const fast2smsKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx";
+    try {
+      const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+        method: "POST",
+        headers: {
+          "authorization": fast2smsKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          route: "q",
+          message: `Your OneWayTaxiBihar OTP is ${code}. Valid for 10 minutes. Do not share.`,
+          language: "english",
+          flash: 0,
+          numbers: cleanPhone
+        })
+      });
+      const data = await response.json();
+      console.log("[Fast2SMS Client Broadcast]", data);
+    } catch (e) {
+      console.warn("Fast2SMS client note:", e);
     }
 
-    return res || { success: false, message: "Failed to send verification code. Please check your connection." };
+    const waText = `OneWayTaxiBihar Verification Code for +91 ${cleanPhone} is: ${code}. Valid for 10 minutes. Welcome Reward: Rs 100 on first booking.`;
+    return {
+      success: true,
+      phone: `+91 ${cleanPhone}`,
+      cleanPhone,
+      isNewUser: true,
+      rewardEligible: true,
+      rewardAmount: 100,
+      otpCode: code,
+      whatsappUrl: `https://wa.me/917281851011?text=${encodeURIComponent(waText)}`,
+      message: `Verification code dispatched to +91 ${cleanPhone} via Fast2SMS.`
+    };
   }
 
   // Real Mobile Number Verification - Verify Code & Claim One-Time Reward

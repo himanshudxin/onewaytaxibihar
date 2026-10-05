@@ -12,15 +12,15 @@
 (function () {
   'use strict';
 
-  // Default / Configurable Firebase Project Credentials
-  // These can be updated via window.FIREBASE_CONFIG or from the Admin Portal Settings
+  // Live Firebase Project Credentials for onewaytaxibihar-5ef8a
   const DEFAULT_FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDemoPlaceholderKeyForOneWayTaxiBihar",
-    authDomain: "onewaytaxibihar-auth.firebaseapp.com",
-    projectId: "onewaytaxibihar-auth",
-    storageBucket: "onewaytaxibihar-auth.appspot.com",
-    messagingSenderId: "109876543210",
-    appId: "1:109876543210:web:abcdef1234567890"
+    apiKey: "AIzaSyDyxnCuhzJP7uQuRMlW097X5qrdBe0zIp4",
+    authDomain: "onewaytaxibihar-5ef8a.firebaseapp.com",
+    projectId: "onewaytaxibihar-5ef8a",
+    storageBucket: "onewaytaxibihar-5ef8a.firebasestorage.app",
+    messagingSenderId: "325588842888",
+    appId: "1:325588842888:web:5df3985eda89605fb0e23d",
+    measurementId: "G-1YTK7M3FS3"
   };
 
   class FirebaseOtpService {
@@ -35,8 +35,8 @@
       this.countdownTimer = null;
       this.remainingSeconds = 30;
       this.isVerifying = false;
-      this.demoOtpCode = "123456"; // Fallback demo code if offline or placeholder key
-      this.isDemoMode = true;
+      this.demoOtpCode = "123456"; // Fallback demo code if offline or network failure
+      this.isDemoMode = false;
 
       this.init();
     }
@@ -50,7 +50,6 @@
           const parsed = JSON.parse(stored);
           if (parsed && parsed.apiKey && !parsed.apiKey.includes("DemoPlaceholder")) {
             config = parsed;
-            this.isDemoMode = false;
           }
         }
       } catch (e) {
@@ -59,10 +58,10 @@
 
       if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !window.FIREBASE_CONFIG.apiKey.includes("DemoPlaceholder")) {
         config = window.FIREBASE_CONFIG;
-        this.isDemoMode = false;
       }
 
       this.config = config;
+      this.isDemoMode = Boolean(!this.config.apiKey || this.config.apiKey.includes("Placeholder"));
 
       // Initialize Firebase App if SDK is loaded
       if (typeof window.firebase !== "undefined") {
@@ -70,9 +69,9 @@
           if (!firebase.apps.length) {
             firebase.initializeApp(this.config);
           }
-          this.isFirebaseReady = !this.isDemoMode;
+          this.isFirebaseReady = true;
           this.isInitialized = true;
-          console.log("🔥 Firebase Auth Service initialized successfully (Mode: " + (this.isDemoMode ? "Development / Demo fallback" : "Live Firebase Production") + ")");
+          console.log("🔥 Firebase Auth Service initialized successfully (Project: " + (this.config.projectId || 'Live') + ")");
         } catch (err) {
           console.warn("Firebase Init fallback mode active:", err.message);
           this.isDemoMode = true;

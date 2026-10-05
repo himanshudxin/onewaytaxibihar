@@ -1070,6 +1070,10 @@ module.exports = async (req, res) => {
         advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
         balanceDue = Math.max(0, finalPayable - advancePaid);
         initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Online Advance Verified)' : 'PARTIALLY PAID (Awaiting Advance Verification)';
+      } else if (payMethodStr.includes('UPI') || payMethodStr.includes('PhonePe') || payMethodStr.includes('QR Code')) {
+        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+        balanceDue = Math.max(0, finalPayable - advancePaid);
+        initialPaymentStatus = 'PARTIALLY PAID (Awaiting Advance Verification)';
       } else if (payMethodStr.includes('₹200') || payMethodStr.includes('Advance (₹200)')) {
         advancePaid = Math.min(200, finalPayable);
         balanceDue = Math.max(0, finalPayable - advancePaid);
@@ -1077,7 +1081,7 @@ module.exports = async (req, res) => {
       } else if (payMethodStr.includes('Full') || payMethodStr.includes('100% Pre-paid')) {
         advancePaid = finalPayable;
         balanceDue = 0;
-        initialPaymentStatus = body.paymentTxnId ? 'PAID' : 'PENDING FULL PAYMENT';
+        initialPaymentStatus = body.paymentTxnId ? 'PAID (100% Online Verified)' : 'PENDING FULL PAYMENT';
       } else {
         // Cash / UPI to Driver (Zero Advance)
         advancePaid = 0;
@@ -1474,8 +1478,8 @@ module.exports = async (req, res) => {
         if (b) {
           b.advancePaid = advanceAmt;
           b.balanceDue = Math.max(0, (b.totalFare || b.originalFare || 0) - advanceAmt);
-          b.paymentStatus = 'PARTIALLY PAID (Token Advance Verified)';
-          b.paymentMethod = 'Razorpay UPI / Cards';
+          b.paymentStatus = b.balanceDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (Token Advance Verified)';
+          b.paymentMethod = b.balanceDue <= 0 ? '100% Full Pre-payment Online (Paid)' : 'Razorpay Online Advance (₹299 Paid)';
           b.bookingStatus = 'CONFIRMED';
           if (!b.statusHistory) b.statusHistory = [];
           b.statusHistory.push({

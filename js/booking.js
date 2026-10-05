@@ -2199,7 +2199,7 @@ class BookingManager {
               <div class="summary-row">
                 <span class="summary-row-label">Payment Mode</span>
                 <span class="summary-row-val">
-                  <span id="sum-method-val" style="color: #5f259f; font-weight: 800;">UPI / PhonePe QR Code</span>
+                  <span id="sum-method-val" style="color: #0070f3; font-weight: 800;">⚡ Pay ₹299 Token Advance (Instant Cab Lock)</span>
                 </span>
               </div>
 
@@ -2525,10 +2525,26 @@ class BookingManager {
     const isCash = method.includes("Cash");
     const isFull = method.includes("Full");
 
-    if (cardRzp) cardRzp.classList.toggle("active", isRzp);
-    if (cardUpi) cardUpi.classList.toggle("active", isUpi);
-    if (cardCash) cardCash.classList.toggle("active", isCash);
-    if (cardFull) cardFull.classList.toggle("active", isFull);
+    if (cardRzp) {
+      cardRzp.classList.toggle("active", isRzp);
+      cardRzp.style.borderColor = isRzp ? "#0070f3" : "var(--owc-border)";
+      cardRzp.style.background = isRzp ? "rgba(0, 112, 243, 0.04)" : "var(--owc-card-bg)";
+    }
+    if (cardUpi) {
+      cardUpi.classList.toggle("active", isUpi);
+      cardUpi.style.borderColor = isUpi ? "#5f259f" : "var(--owc-border)";
+      cardUpi.style.background = isUpi ? "rgba(95, 37, 159, 0.04)" : "var(--owc-card-bg)";
+    }
+    if (cardCash) {
+      cardCash.classList.toggle("active", isCash);
+      cardCash.style.borderColor = isCash ? "#059669" : "var(--owc-border)";
+      cardCash.style.background = isCash ? "rgba(5, 150, 105, 0.04)" : "var(--owc-card-bg)";
+    }
+    if (cardFull) {
+      cardFull.classList.toggle("active", isFull);
+      cardFull.style.borderColor = isFull ? "#0284c7" : "var(--owc-border)";
+      cardFull.style.background = isFull ? "rgba(2, 132, 199, 0.04)" : "var(--owc-card-bg)";
+    }
 
     if (qrBox) {
       qrBox.style.display = isUpi ? "block" : "none";
@@ -2536,7 +2552,22 @@ class BookingManager {
 
     const sumMethodVal = document.getElementById("sum-method-val");
     if (sumMethodVal) {
-      sumMethodVal.textContent = method;
+      if (isRzp) {
+        sumMethodVal.textContent = "⚡ Razorpay Online Advance (₹299)";
+        sumMethodVal.style.color = "#0070f3";
+      } else if (isCash) {
+        sumMethodVal.textContent = "💵 100% Cash / UPI to Driver (Zero Advance)";
+        sumMethodVal.style.color = "#059669";
+      } else if (isUpi) {
+        sumMethodVal.textContent = "📱 Direct PhonePe / BHIM UPI QR Code";
+        sumMethodVal.style.color = "#5f259f";
+      } else if (isFull) {
+        sumMethodVal.textContent = "💳 100% Full Pre-payment Online";
+        sumMethodVal.style.color = "#0284c7";
+      } else {
+        sumMethodVal.textContent = method;
+        sumMethodVal.style.color = "var(--owc-text)";
+      }
     }
 
     this.updateCheckoutPayable(this.currentCheckoutPrice || 2198);
@@ -3001,16 +3032,24 @@ class BookingManager {
     const utrInput = document.getElementById("chk-upi-utr");
     let utrVal = utrInput?.value.trim() || "";
 
-    // Payment Mode Verification Step
-    if (method.includes("UPI") || method.includes("PhonePe")) {
-      if (!utrVal) {
-        const enterUtr = prompt("📱 UPI Payment Verification:\nPlease enter the 12-digit UPI / UTR Reference Number from your PhonePe/GPay/Paytm app (or type 'CONFIRMED'):", "");
-        if (enterUtr === null) {
-          return;
-        }
-        utrVal = enterUtr.trim() || `UPI_CONFIRMED_${Date.now()}`;
-        if (utrInput) utrInput.value = utrVal;
-      }
+    const netTripFare = Math.max(0, price - (isUsingWallet ? 100 : 0) - (this.appliedCouponDiscount || 0));
+    const isFullPayment = method.includes("Full");
+    const isRzpAdvance = method.includes("Razorpay") || method.includes("Advance (₹299)");
+    const isUpiQr = method.includes("UPI") || method.includes("PhonePe");
+    const isCash = method.includes("Cash");
+
+    let amountToCharge = 0;
+    if (isFullPayment) {
+      amountToCharge = netTripFare;
+    } else if (isRzpAdvance || isUpiQr) {
+      amountToCharge = Math.min(299, netTripFare);
+    } else {
+      amountToCharge = 0;
+    }
+
+    if (isUpiQr && !utrVal) {
+      utrVal = `UPI_SCAN_${Date.now()}`;
+      if (utrInput) utrInput.value = utrVal;
     }
 
     const btnConfirm = document.getElementById("chk-confirm-cta-btn") || document.querySelector("#modal-checkout .check-fare-primary-btn");
@@ -3018,7 +3057,7 @@ class BookingManager {
       btnConfirm.disabled = true;
       btnConfirm.innerHTML = `
         <span style="display:inline-block; width:15px; height:15px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:8px;"></span>
-        Submitting Booking Request...
+        Processing Booking &amp; Payment...
       `;
     }
     this.isSubmittingBooking = true;
@@ -3040,29 +3079,31 @@ class BookingManager {
         couponCode: this.appliedCouponCode || "",
         couponDiscount: this.appliedCouponDiscount || 0,
         totalFare: price,
+        advancePaid: amountToCharge,
+        balanceDue: Math.max(0, netTripFare - amountToCharge),
         upiUtr: utrVal
       };
 
-      // Live Razorpay Checkout flow if Razorpay is selected
-      if ((method.includes('Razorpay') || method.includes('Online Advance')) && typeof window.Razorpay !== 'undefined') {
+      // Live Razorpay Checkout flow if online payment is selected
+      if ((isRzpAdvance || isFullPayment) && typeof window.Razorpay !== 'undefined') {
         try {
           const tempBId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
           const orderRes = await ApiClient.createPaymentOrder({
-            amount: 299,
+            amount: amountToCharge,
             bookingId: tempBId,
             passengerName: name,
             passengerPhone: phone,
-            notes: { origin: this.originCity.name, dest: this.destCity.name }
+            notes: { origin: this.originCity.name, dest: this.destCity.name, mode: method }
           });
 
-          if (orderRes && orderRes.orderId && typeof window.Razorpay !== 'undefined' && !orderRes.isSandbox) {
+          if (orderRes && orderRes.orderId && orderRes.keyId && !orderRes.keyId.includes('placeholder')) {
             const self = this;
             const rzp = new window.Razorpay({
-              key: orderRes.keyId || "rzp_test_placeholder_key",
-              amount: orderRes.amount,
+              key: orderRes.keyId,
+              amount: orderRes.amount || (amountToCharge * 100),
               currency: "INR",
               name: "OneWayTaxiBihar",
-              description: `Cab Advance: ${this.originCity.name} to ${this.destCity.name}`,
+              description: isFullPayment ? `Full Cab Fare: ${this.originCity.name} to ${this.destCity.name}` : `Cab Token Advance: ${this.originCity.name} to ${this.destCity.name}`,
               image: "https://onewaytaxibihar.com/favicon.svg",
               order_id: orderRes.orderId,
               prefill: { name: name, contact: phone, email: email },
@@ -3077,19 +3118,24 @@ class BookingManager {
                 }
               },
               handler: async function (paymentResp) {
-                payload.paymentMethod = "Razorpay Online Advance (₹299 Paid)";
+                payload.paymentMethod = isFullPayment ? "100% Full Pre-payment Online (Paid)" : "Razorpay Online Advance (₹299 Paid)";
                 payload.paymentTxnId = paymentResp.razorpay_payment_id || `pay_rzp_${Date.now()}`;
-                payload.advancePaid = orderRes.advanceAmount || 299;
+                payload.advancePaid = amountToCharge;
+                payload.balanceDue = Math.max(0, netTripFare - amountToCharge);
                 
                 const finalRes = await ApiClient.createBooking(payload);
                 if (finalRes && finalRes.booking) {
-                  await ApiClient.verifyPayment({
-                    orderId: paymentResp.razorpay_order_id || orderRes.orderId,
-                    paymentId: paymentResp.razorpay_payment_id || payload.paymentTxnId,
-                    signature: paymentResp.razorpay_signature || "sig_verified",
-                    bookingId: finalRes.booking.bookingId,
-                    amount: orderRes.advanceAmount || 299
-                  });
+                  try {
+                    await ApiClient.verifyPayment({
+                      orderId: paymentResp.razorpay_order_id || orderRes.orderId,
+                      paymentId: paymentResp.razorpay_payment_id || payload.paymentTxnId,
+                      signature: paymentResp.razorpay_signature || "sig_verified",
+                      bookingId: finalRes.booking.bookingId,
+                      amount: amountToCharge
+                    });
+                  } catch (vErr) {
+                    console.warn('[Payment Verify Sync Note]:', vErr.message);
+                  }
                   window.closeAllModals(false);
                   self.renderBookingConfirmation(finalRes.booking);
                 }
@@ -3098,7 +3144,7 @@ class BookingManager {
 
             rzp.on('payment.failed', function (resp) {
               console.warn('Razorpay payment failed:', resp.error);
-              window.showToast?.('Payment cancelled. You can also pay via Direct UPI QR or Cash to Driver.', 'info');
+              window.showToast?.('Payment cancelled or declined. You can retry or choose Direct PhonePe QR / Cash to Driver.', 'info');
               if (btnConfirm) {
                 btnConfirm.disabled = false;
                 self.updateCheckoutPayable(price);
@@ -3110,13 +3156,8 @@ class BookingManager {
             return;
           }
         } catch (rzpErr) {
-          console.warn('[Razorpay Flow Note]', rzpErr.message);
+          console.warn('[Razorpay Flow Note]:', rzpErr.message);
         }
-      }
-
-      // If Direct UPI or Cash or Fallback
-      if (method.includes('Razorpay') || method.includes('Advance (₹299)')) {
-        payload.advancePaid = 299;
       }
 
       const res = await ApiClient.createBooking(payload);

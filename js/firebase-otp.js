@@ -545,10 +545,15 @@
                 </button>
               </div>
 
-              <div style="margin-top: 12px; text-align: center;">
-                <a href="javascript:void(0)" onclick="window.firebaseOtpService.sendOtpViaWhatsApp()" style="font-size: 11.5px; color: #15803d; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-                  <span>💬 Didn't receive SMS? Get OTP via WhatsApp</span>
+              <!-- Instant WhatsApp Verification Pill -->
+              <div style="margin-top: 14px; text-align: center;">
+                <a href="javascript:void(0)" onclick="window.firebaseOtpService.sendOtpViaWhatsApp()" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #047857; text-decoration: none; font-size: 12.5px; font-weight: 700;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+                  <span>Didn't receive SMS? Get OTP via WhatsApp</span>
                 </a>
+                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">
+                  (If testing with Firebase test numbers, enter your test code e.g. <strong>123456</strong>)
+                </div>
               </div>
 
             </div>

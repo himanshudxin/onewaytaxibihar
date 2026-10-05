@@ -964,23 +964,32 @@ try {
                         $riskLevel = if ($riskScore -ge 60) { "HIGH RISK" } elseif ($riskScore -ge 30) { "MEDIUM RISK" } else { "LOW RISK" }
 
                         # Standardized Payment Calculation & Status
-                        $payMethodStr = if ($body.paymentMethod) { [string]$body.paymentMethod } else { "Cash / UPI to Driver" }
+                        $payMethodStr = if ($body.paymentMethod) { [string]$body.paymentMethod } else { "Cash on Ride (Zero Advance)" }
                         $advancePaid = 0
                         $balanceDue = $finalPayable
-                        $initialPaymentStatus = "PENDING"
+                        $initialPaymentStatus = "PAYABLE TO DRIVER"
 
-                        if ($payMethodStr -like "*Razorpay*" -or $payMethodStr -like "*Advance (₹299)*" -or $payMethodStr -like "*Online Advance*") {
-                            $advancePaid = if ($body.advancePaid) { [int]$body.advancePaid } else { [Math]::Min(299, $finalPayable) }
-                            $balanceDue = [Math]::Max(0, $finalPayable - $advancePaid)
-                            $initialPaymentStatus = if ($body.paymentTxnId) { "PARTIALLY PAID (Online Advance Verified)" } else { "PARTIALLY PAID (Awaiting Advance Verification)" }
-                        } elseif ($payMethodStr -like "*UPI*" -or $payMethodStr -like "*PhonePe*" -or $payMethodStr -like "*QR Code*") {
-                            $advancePaid = if ($body.advancePaid) { [int]$body.advancePaid } else { [Math]::Min(299, $finalPayable) }
-                            $balanceDue = [Math]::Max(0, $finalPayable - $advancePaid)
-                            $initialPaymentStatus = "PARTIALLY PAID (Awaiting Advance Verification)"
-                        } elseif ($payMethodStr -like "*Full*" -or $payMethodStr -like "*100%*") {
+                        $isCash = ($payMethodStr -like "*Cash*") -or ($payMethodStr -like "*Zero Advance*") -or ($payMethodStr -like "*to Driver*")
+                        $isFull = (-not $isCash) -and (($payMethodStr -like "*Full*") -or ($payMethodStr -like "*100%*"))
+                        $isRzp = (-not $isCash) -and (($payMethodStr -like "*Razorpay*") -or ($payMethodStr -like "*Advance (₹299)*") -or ($payMethodStr -like "*Online Advance*"))
+                        $isUpiQr = (-not $isCash) -and (($payMethodStr -like "*QR*") -or ($payMethodStr -like "*PhonePe*") -or ($payMethodStr -like "*UPI*"))
+
+                        if ($isCash) {
+                            $advancePaid = 0
+                            $balanceDue = $finalPayable
+                            $initialPaymentStatus = "PAYABLE TO DRIVER"
+                        } elseif ($isFull) {
                             $advancePaid = $finalPayable
                             $balanceDue = 0
-                            $initialPaymentStatus = if ($body.paymentTxnId) { "PAID (100% Online Verified)" } else { "PENDING FULL PAYMENT" }
+                            $initialPaymentStatus = if ($body.paymentTxnId) { "PAID (100% Online Verified)" } else { "AWAITING FULL PAYMENT VERIFICATION" }
+                        } elseif ($isRzp) {
+                            $advancePaid = if ($body.advancePaid) { [int]$body.advancePaid } else { [Math]::Min(299, $finalPayable) }
+                            $balanceDue = [Math]::Max(0, $finalPayable - $advancePaid)
+                            $initialPaymentStatus = if ($body.paymentTxnId) { "PARTIALLY PAID (Online Advance Verified)" } else { "AWAITING ADVANCE PAYMENT VERIFICATION" }
+                        } elseif ($isUpiQr) {
+                            $advancePaid = if ($body.advancePaid) { [int]$body.advancePaid } else { [Math]::Min(299, $finalPayable) }
+                            $balanceDue = [Math]::Max(0, $finalPayable - $advancePaid)
+                            $initialPaymentStatus = "AWAITING ADVANCE PAYMENT VERIFICATION"
                         } else {
                             $advancePaid = 0
                             $balanceDue = $finalPayable
@@ -1556,16 +1565,25 @@ try {
 
                 if ($urlPath -eq "/api/admin/verify-payment" -and $httpMethod -eq "POST") {
                     $body = Read-RequestBody $request
-                    $b = $db.bookings | Where-Object { $_.bookingId -eq $body.bookingId } | Select-Object -First 1
+                    $b = $db.bookings | Where-Object { $_.bookingId -eq $body.bookingId -or $_.id -eq $body.bookingId } | Select-Object -First 1
                     if ($b) {
-                        $txn = if ($body.txnRef) { $body.txnRef } else { "UPI-VER-" + (Get-Random -Minimum 1000 -Maximum 9999) }
-                        $b | Add-Member -MemberType NoteProperty -Name "paymentStatus" -Value "PAID" -Force
+                        $txn = if ($body.txnRef) { [string]$body.txnRef } else { "UPI-VER-" + (Get-Random -Minimum 1000 -Maximum 9999) }
+                        $verifiedAmt = if ($body.amount) { [int]$body.amount } elseif ($b.advancePaid) { [int]$b.advancePaid } else { 299 }
+                        $isFull = ($b.balanceDue -le 0) -or ($verifiedAmt -ge $b.totalFare)
+                        
+                        $statusStr = if ($isFull) { "PAID (100% Full Payment)" } else { "PARTIALLY PAID (Advance ₹$verifiedAmt Verified)" }
+                        $b | Add-Member -MemberType NoteProperty -Name "paymentStatus" -Value $statusStr -Force
                         $b | Add-Member -MemberType NoteProperty -Name "paymentTxnRef" -Value $txn -Force
+                        $b | Add-Member -MemberType NoteProperty -Name "advancePaid" -Value $verifiedAmt -Force
+                        $b | Add-Member -MemberType NoteProperty -Name "balanceDue" -Value ([Math]::Max(0, $b.totalFare - $verifiedAmt)) -Force
+                        $b | Add-Member -MemberType NoteProperty -Name "bookingStatus" -Value "CONFIRMED" -Force
 
-                        $pay = $db.payments | Where-Object { $_.bookingId -eq $body.bookingId } | Select-Object -First 1
+                        $pay = $db.payments | Where-Object { $_.bookingId -eq $body.bookingId -or $_.bookingId -eq $b.bookingId } | Select-Object -First 1
                         if ($pay) {
-                            $pay.status = "PAID"
+                            $pay.status = if ($isFull) { "PAID" } else { "PARTIALLY_PAID" }
                             $pay.upiUtr = $txn
+                            $pay.advancePaid = $verifiedAmt
+                            $pay.balanceDue = $b.balanceDue
                             $pay.verifiedBy = "Admin Dispatcher"
                             $pay.verifiedAt = (Get-Date).ToString("o")
                         }
@@ -1576,7 +1594,42 @@ try {
                             entityId = if ($b.paymentTxnId) { $b.paymentTxnId } else { $b.bookingId }
                             action = "VERIFY_PAYMENT"
                             actor = "admin"
-                            details = "Verified ₹$($b.totalFare) with UTR: $txn"
+                            details = "Verified ₹$verifiedAmt with UTR: $txn. Status set to CONFIRMED."
+                            createdAt = (Get-Date).ToString("o")
+                        }
+
+                        Save-Db $db
+                        Send-JsonResponse $response 200 @{ success = $true; booking = $b; payment = $pay }
+                    } else {
+                        Send-JsonResponse $response 404 @{ success = $false; message = "Booking not found" }
+                    }
+                    continue
+                }
+
+                if ($urlPath -eq "/api/admin/deny-payment" -and $httpMethod -eq "POST") {
+                    $body = Read-RequestBody $request
+                    $b = $db.bookings | Where-Object { $_.bookingId -eq $body.bookingId -or $_.id -eq $body.bookingId } | Select-Object -First 1
+                    if ($b) {
+                        $reason = if ($body.reason) { [string]$body.reason } else { "Payment not received in merchant bank/UPI account" }
+                        $b | Add-Member -MemberType NoteProperty -Name "paymentStatus" -Value "PAYMENT DENIED (Unreceived)" -Force
+                        $b | Add-Member -MemberType NoteProperty -Name "bookingStatus" -Value "REJECTED" -Force
+                        $b | Add-Member -MemberType NoteProperty -Name "rejectionReason" -Value $reason -Force
+
+                        $pay = $db.payments | Where-Object { $_.bookingId -eq $body.bookingId -or $_.bookingId -eq $b.bookingId } | Select-Object -First 1
+                        if ($pay) {
+                            $pay.status = "PAYMENT_DENIED"
+                            $pay.deniedBy = "Admin Dispatcher"
+                            $pay.deniedAt = (Get-Date).ToString("o")
+                            $pay.reason = $reason
+                        }
+
+                        $db.audit_logs += @{
+                            id = "AUD_" + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+                            entity = "PAYMENT"
+                            entityId = if ($b.paymentTxnId) { $b.paymentTxnId } else { $b.bookingId }
+                            action = "DENY_PAYMENT"
+                            actor = "admin"
+                            details = "Payment denied for booking $($b.bookingId): $reason"
                             createdAt = (Get-Date).ToString("o")
                         }
 

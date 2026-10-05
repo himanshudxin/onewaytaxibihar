@@ -2254,17 +2254,17 @@ class BookingManager {
               </div>
             </label>
 
-            <!-- Method 2: Cash / UPI to Driver (Zero Advance) -->
+            <!-- Method 2: Cash on Ride (Zero Advance) -->
             <label class="checkout-method-item" id="pay-card-cash" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
               <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="Cash / UPI to Driver" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #059669; width: 17px; height: 17px;">
+                <input type="radio" name="pay-method" value="Cash on Ride (Zero Advance)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #059669; width: 17px; height: 17px;">
                 <div style="flex: 1;">
                   <strong style="color: var(--owc-text); font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>💵 100% Cash / UPI to Driver (Zero Advance)</span>
+                    <span>💵 100% Cash on Ride (Zero Advance)</span>
                     <span style="font-size: 9.5px; background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">ZERO ADVANCE</span>
                   </strong>
                   <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px; line-height: 1.4;">
-                    ₹0 payable now! Pay total trip fare directly to your assigned driver upon completing your journey.
+                    ₹0 payable now! Pay total trip fare in cash or driver UPI upon completing your journey.
                   </div>
                 </div>
               </div>
@@ -2273,10 +2273,10 @@ class BookingManager {
             <!-- Method 3: Direct PhonePe / UPI QR -->
             <label class="checkout-method-item" id="pay-card-upi" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); margin-bottom: 8px; border-radius: 12px; padding: 12px 14px; cursor: pointer; display: block;">
               <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 10px;">
-                <input type="radio" name="pay-method" value="UPI / PhonePe QR Code" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 17px; height: 17px;">
+                <input type="radio" name="pay-method" value="Direct UPI / QR Advance (₹299)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 17px; height: 17px;">
                 <div style="flex: 1;">
                   <strong style="color: var(--owc-text); font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                    <span>📱 Direct PhonePe / BHIM UPI QR Code</span>
+                    <span>📱 Direct PhonePe / BHIM UPI QR Code (₹299)</span>
                     <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; white-space: nowrap;">INSTANT SCAN</span>
                   </strong>
                   <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 3px;">
@@ -2521,10 +2521,10 @@ class BookingManager {
     const cardCash = document.getElementById("pay-card-cash");
     const cardFull = document.getElementById("pay-card-full");
 
-    const isRzp = method.includes("Razorpay") || method.includes("Advance (₹299)");
-    const isUpi = method.includes("PhonePe") || method.includes("UPI");
-    const isCash = method.includes("Cash");
-    const isFull = method.includes("Full");
+    const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
+    const isFull = !isCash && (method.includes("Full") || method.includes("100%"));
+    const isRzp = !isCash && (method.includes("Razorpay") || method.includes("Advance (₹299)") || method.includes("Online Advance"));
+    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
 
     if (cardRzp) {
       cardRzp.classList.toggle("active", isRzp);
@@ -2553,21 +2553,18 @@ class BookingManager {
 
     const sumMethodVal = document.getElementById("sum-method-val");
     if (sumMethodVal) {
-      if (isRzp) {
-        sumMethodVal.textContent = "⚡ Razorpay Online Advance (₹299)";
-        sumMethodVal.style.color = "#0070f3";
-      } else if (isCash) {
-        sumMethodVal.textContent = "💵 100% Cash / UPI to Driver (Zero Advance)";
+      if (isCash) {
+        sumMethodVal.textContent = "💵 100% Cash on Ride (Zero Advance)";
         sumMethodVal.style.color = "#059669";
-      } else if (isUpi) {
-        sumMethodVal.textContent = "📱 Direct PhonePe / BHIM UPI QR Code";
-        sumMethodVal.style.color = "#5f259f";
       } else if (isFull) {
         sumMethodVal.textContent = "💳 100% Full Pre-payment Online";
         sumMethodVal.style.color = "#0284c7";
+      } else if (isUpi) {
+        sumMethodVal.textContent = "📱 Direct PhonePe / BHIM UPI QR Code (₹299)";
+        sumMethodVal.style.color = "#5f259f";
       } else {
-        sumMethodVal.textContent = method;
-        sumMethodVal.style.color = "var(--owc-text)";
+        sumMethodVal.textContent = "⚡ Razorpay Online Advance (₹299)";
+        sumMethodVal.style.color = "#0070f3";
       }
     }
 
@@ -2596,36 +2593,40 @@ class BookingManager {
       if (r.checked) method = r.value;
     }
 
+    const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
+    const isFull = !isCash && (method.includes("Full") || method.includes("100%"));
+    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
+
     let payableNow = 0;
     let balanceDue = netTripFare;
     let titleLabel = "TOKEN ADVANCE NOW";
     let subLabel = "";
     let ctaText = "Pay ₹299 & Confirm Cab →";
 
-    if (method.includes("Razorpay") || method.includes("Advance (₹299)")) {
-      payableNow = Math.min(299, netTripFare);
-      balanceDue = Math.max(0, netTripFare - payableNow);
-      titleLabel = "TOKEN ADVANCE NOW";
-      subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
-      ctaText = `Pay ₹${payableNow} & Confirm Cab →`;
-    } else if (method.includes("Cash")) {
+    if (isCash) {
       payableNow = 0;
       balanceDue = netTripFare;
       titleLabel = "ADVANCE PAYABLE";
       subLabel = `Total ₹${netTripFare.toLocaleString('en-IN')} payable to driver upon arrival`;
       ctaText = `Confirm Booking (₹0 Advance) →`;
-    } else if (method.includes("UPI") || method.includes("PhonePe")) {
-      payableNow = Math.min(299, netTripFare);
-      balanceDue = Math.max(0, netTripFare - payableNow);
-      titleLabel = "SCAN & PAY ADVANCE";
-      subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
-      ctaText = `Confirm QR Payment (₹${payableNow}) →`;
-    } else if (method.includes("Full")) {
+    } else if (isFull) {
       payableNow = netTripFare;
       balanceDue = 0;
       titleLabel = "FULL ONLINE FARE";
       subLabel = `Zero balance payable to driver`;
       ctaText = `Pay ₹${payableNow.toLocaleString('en-IN')} & Confirm Cab →`;
+    } else if (isUpi) {
+      payableNow = Math.min(299, netTripFare);
+      balanceDue = Math.max(0, netTripFare - payableNow);
+      titleLabel = "SCAN & PAY ADVANCE";
+      subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
+      ctaText = `Submit QR Advance (₹${payableNow}) →`;
+    } else {
+      payableNow = Math.min(299, netTripFare);
+      balanceDue = Math.max(0, netTripFare - payableNow);
+      titleLabel = "TOKEN ADVANCE NOW";
+      subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
+      ctaText = `Pay ₹${payableNow} & Confirm Cab →`;
     }
 
     if (deductLabel) {
@@ -3063,13 +3064,15 @@ class BookingManager {
     let utrVal = utrInput?.value.trim() || "";
 
     const netTripFare = Math.max(0, price - (isUsingWallet ? 100 : 0) - (this.appliedCouponDiscount || 0));
-    const isFullPayment = method.includes("Full");
-    const isRzpAdvance = method.includes("Razorpay") || method.includes("Advance (₹299)");
-    const isUpiQr = method.includes("UPI") || method.includes("PhonePe");
-    const isCash = method.includes("Cash");
+    const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
+    const isFullPayment = !isCash && (method.includes("Full") || method.includes("100%"));
+    const isRzpAdvance = !isCash && (method.includes("Razorpay") || method.includes("Advance (₹299)") || method.includes("Online Advance"));
+    const isUpiQr = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
 
     let amountToCharge = 0;
-    if (isFullPayment) {
+    if (isCash) {
+      amountToCharge = 0;
+    } else if (isFullPayment) {
       amountToCharge = netTripFare;
     } else if (isRzpAdvance || isUpiQr) {
       amountToCharge = Math.min(299, netTripFare);

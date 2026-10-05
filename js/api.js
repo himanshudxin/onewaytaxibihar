@@ -740,11 +740,19 @@ class ApiClient {
     return res && res.success ? res : { success: true, message: "Driver assigned successfully" };
   }
 
-  static async adminVerifyPayment(bookingId, txnRef, token) {
+  static async adminVerifyPayment(bookingId, txnRef, token, amount = null) {
     return await this.request("/api/admin/verify-payment", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ bookingId, txnRef })
+      body: JSON.stringify({ bookingId, txnRef, amount })
+    });
+  }
+
+  static async adminDenyPayment(bookingId, reason, token) {
+    return await this.request("/api/admin/deny-payment", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ bookingId, reason })
     });
   }
 

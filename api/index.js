@@ -1061,32 +1061,46 @@ module.exports = async (req, res) => {
       const tripOtp = `${Math.floor(1000 + Math.random() * 9000)}`;
 
       // Determine advance amount and balance due based on payment method
-      const payMethodStr = String(paymentMethod || 'Cash / UPI to Driver');
+      const payMethodStr = String(paymentMethod || 'Cash on Ride (Zero Advance)');
       let advancePaid = 0;
       let balanceDue = finalPayable;
-      let initialPaymentStatus = 'PENDING';
+      let initialPaymentStatus = 'PAYABLE TO DRIVER';
+      let initialBookingStatus = 'REQUESTED';
 
-      if (payMethodStr.includes('Razorpay') || payMethodStr.includes('Advance (₹299)') || payMethodStr.includes('Online Advance')) {
-        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
-        balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Online Advance Verified)' : 'PARTIALLY PAID (Awaiting Advance Verification)';
-      } else if (payMethodStr.includes('UPI') || payMethodStr.includes('PhonePe') || payMethodStr.includes('QR Code')) {
-        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
-        balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = 'PARTIALLY PAID (Awaiting Advance Verification)';
-      } else if (payMethodStr.includes('₹200') || payMethodStr.includes('Advance (₹200)')) {
-        advancePaid = Math.min(200, finalPayable);
-        balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = 'PARTIALLY PAID (Awaiting Advance Verification)';
-      } else if (payMethodStr.includes('Full') || payMethodStr.includes('100% Pre-paid')) {
-        advancePaid = finalPayable;
-        balanceDue = 0;
-        initialPaymentStatus = body.paymentTxnId ? 'PAID (100% Online Verified)' : 'PENDING FULL PAYMENT';
-      } else {
-        // Cash / UPI to Driver (Zero Advance)
+      const isCash = payMethodStr.includes('Cash') || payMethodStr.includes('Zero Advance') || payMethodStr.includes('to Driver');
+      const isFull = !isCash && (payMethodStr.includes('Full') || payMethodStr.includes('100%'));
+      const isRzp = !isCash && (payMethodStr.includes('Razorpay') || payMethodStr.includes('Advance (₹299)') || payMethodStr.includes('Online Advance'));
+      const isUpiQr = !isCash && (payMethodStr.includes('QR') || payMethodStr.includes('PhonePe') || payMethodStr.includes('UPI'));
+
+      if (isCash) {
+        // Zero Advance: 100% payable to driver
         advancePaid = 0;
         balanceDue = finalPayable;
         initialPaymentStatus = 'PAYABLE TO DRIVER';
+        initialBookingStatus = 'REQUESTED';
+      } else if (isFull) {
+        // 100% Full Pre-payment Online
+        advancePaid = finalPayable;
+        balanceDue = 0;
+        initialPaymentStatus = body.paymentTxnId ? 'PAID (100% Online Verified)' : 'AWAITING FULL PAYMENT VERIFICATION';
+        initialBookingStatus = body.paymentTxnId ? 'CONFIRMED' : 'AWAITING PAYMENT';
+      } else if (isRzp) {
+        // Razorpay Online Advance (₹299 default)
+        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+        balanceDue = Math.max(0, finalPayable - advancePaid);
+        initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Online Advance Verified)' : 'AWAITING ADVANCE PAYMENT VERIFICATION';
+        initialBookingStatus = body.paymentTxnId ? 'CONFIRMED' : 'AWAITING PAYMENT';
+      } else if (isUpiQr) {
+        // Direct UPI / PhonePe QR Code Advance (₹299)
+        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+        balanceDue = Math.max(0, finalPayable - advancePaid);
+        initialPaymentStatus = 'AWAITING ADVANCE PAYMENT VERIFICATION';
+        initialBookingStatus = 'AWAITING PAYMENT';
+      } else {
+        advancePaid = 0;
+        balanceDue = finalPayable;
+        initialPaymentStatus = 'PAYABLE TO DRIVER';
+        initialBookingStatus = 'REQUESTED';
       }
 
       const paymentRecord = {
@@ -1971,27 +1985,35 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      const { bookingId, txnRef } = body;
-      const booking = (db.bookings || []).find(b => b.bookingId === bookingId);
+      const { bookingId, txnRef, amount, approveBooking } = body;
+      const booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
       const utr = txnRef || `UPI-VER-${Date.now()}`;
-      booking.paymentStatus = 'PAID';
-      booking.paymentTxnRef = utr;
+      const verifiedAmt = Number(amount) || (booking.advancePaid ? Number(booking.advancePaid) : 299);
+      const isFull = (booking.balanceDue <= 0) || (verifiedAmt >= booking.totalFare);
 
-      const payment = (db.payments || []).find(p => p.bookingId === bookingId);
+      booking.advancePaid = verifiedAmt;
+      booking.balanceDue = Math.max(0, (booking.totalFare || 0) - verifiedAmt);
+      booking.paymentStatus = isFull ? 'PAID (100% Full Payment)' : `PARTIALLY PAID (Advance ₹${verifiedAmt} Verified)`;
+      booking.paymentTxnRef = utr;
+      booking.bookingStatus = 'CONFIRMED';
+
+      const payment = (db.payments || []).find(p => p.bookingId === bookingId || p.bookingId === booking.bookingId);
       if (payment) {
-        payment.status = 'PAID';
+        payment.status = isFull ? 'PAID' : 'PARTIALLY_PAID';
+        payment.advancePaid = verifiedAmt;
+        payment.balanceDue = booking.balanceDue;
         payment.upiUtr = utr;
         payment.verifiedBy = admin.name || 'Admin Dispatcher';
         payment.verifiedAt = new Date().toISOString();
       }
 
       booking.statusHistory.push({
-        status: booking.bookingStatus,
+        status: 'CONFIRMED',
         timestamp: new Date().toISOString(),
         actor: 'Admin Finance',
-        note: `Payment verified for ₹${booking.totalFare}. Txn: ${utr}`
+        note: `Payment verified (₹${verifiedAmt}). UTR: ${utr}. Ride Confirmed.`
       });
 
       // Audit Log
@@ -2001,7 +2023,49 @@ module.exports = async (req, res) => {
         entityId: booking.paymentTxnId || bookingId,
         action: 'VERIFY_PAYMENT',
         actor: admin.username || 'admin',
-        details: `Verified ₹${booking.totalFare} with UTR: ${utr}`,
+        details: `Verified ₹${verifiedAmt} with UTR: ${utr}. Status set to CONFIRMED.`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, booking, payment });
+    }
+
+    if (pathname === '/admin/deny-payment' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { bookingId, reason } = body;
+      const booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
+
+      const denyReason = reason || 'Payment not received in merchant UPI/Bank account';
+      booking.paymentStatus = 'PAYMENT DENIED (Unreceived)';
+      booking.bookingStatus = 'REJECTED';
+      booking.rejectionReason = denyReason;
+
+      const payment = (db.payments || []).find(p => p.bookingId === bookingId || p.bookingId === booking.bookingId);
+      if (payment) {
+        payment.status = 'PAYMENT_DENIED';
+        payment.deniedBy = admin.name || 'Admin Dispatcher';
+        payment.deniedAt = new Date().toISOString();
+        payment.reason = denyReason;
+      }
+
+      booking.statusHistory.push({
+        status: 'REJECTED',
+        timestamp: new Date().toISOString(),
+        actor: 'Admin Finance',
+        note: `Payment Denied: ${denyReason}`
+      });
+
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'PAYMENT',
+        entityId: booking.paymentTxnId || bookingId,
+        action: 'DENY_PAYMENT',
+        actor: admin.username || 'admin',
+        details: `Payment denied for booking ${bookingId}: ${denyReason}`,
         createdAt: new Date().toISOString()
       });
 

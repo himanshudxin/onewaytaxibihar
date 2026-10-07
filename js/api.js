@@ -104,10 +104,17 @@ class ApiClient {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
     const cleanName = (name || "").trim() || "Valued Passenger";
 
-    const res = await this.request("/api/auth/login", {
+    let res = await this.request("/api/auth/login", {
       method: "POST",
-      body: JSON.stringify({ name: cleanName, phone: cleanPhone, email })
+      body: JSON.stringify({ name: cleanName, phone: cleanPhone, email, action: "login" })
     });
+
+    if (!res || !res.success) {
+      res = await this.request("/api/auth?action=login", {
+        method: "POST",
+        body: JSON.stringify({ name: cleanName, phone: cleanPhone, email, action: "login" })
+      });
+    }
 
     if (res && res.success && res.token) {
       localStorage.setItem("otb_auth_token", res.token);
@@ -140,12 +147,18 @@ class ApiClient {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
     const cleanName = (name || "").trim() || "Valued Passenger";
 
-    // 1. Try Backend API first
+    // 1. Try Backend API with Vercel and local multi-route resilience
     try {
-      const res = await this.request("/api/auth/send-otp", {
+      let res = await this.request("/api/auth/send-otp", {
         method: "POST",
-        body: JSON.stringify({ phone: cleanPhone, name: cleanName })
+        body: JSON.stringify({ phone: cleanPhone, name: cleanName, action: "send-otp" })
       });
+      if (!res || !res.success) {
+        res = await this.request("/api/auth?action=send-otp", {
+          method: "POST",
+          body: JSON.stringify({ phone: cleanPhone, name: cleanName, action: "send-otp" })
+        });
+      }
       if (res && res.success) {
         if (res.otpCode) {
           sessionStorage.setItem(`otb_verify_${cleanPhone}`, res.otpCode.toString());
@@ -205,10 +218,16 @@ class ApiClient {
     const cleanName = (name || "").trim() || "Valued Passenger";
 
     try {
-      const res = await this.request("/api/auth/verify-otp", {
+      let res = await this.request("/api/auth/verify-otp", {
         method: "POST",
-        body: JSON.stringify({ phone: cleanPhone, otp: cleanOtp, name: cleanName })
+        body: JSON.stringify({ phone: cleanPhone, otp: cleanOtp, name: cleanName, action: "verify-otp" })
       });
+      if (!res || !res.success) {
+        res = await this.request("/api/auth?action=verify-otp", {
+          method: "POST",
+          body: JSON.stringify({ phone: cleanPhone, otp: cleanOtp, name: cleanName, action: "verify-otp" })
+        });
+      }
 
       if (res && res.success && res.token) {
         localStorage.setItem("otb_auth_token", res.token);

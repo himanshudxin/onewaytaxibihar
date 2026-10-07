@@ -21,7 +21,9 @@ function cleanIndianPhone(phone) {
   return (phone || '').replace(/\D/g, '').slice(-10);
 }
 
-// 1. Fast2SMS Indian Gateway Integration (Ultra-low cost: ~₹0.20-₹0.25 vs Firebase ₹5.15)
+// 1. Fast2SMS Indian Gateway Integration
+// Route OTP = ~₹0.20/SMS (Requires Fast2SMS website/Aadhaar KYC)
+// Route Q (Quick SMS) = ₹5.00/SMS (No KYC/DLT required, bypasses via international gateway)
 async function sendViaFast2SMS({ phone, message, otp = null }) {
   const cleanPhone = cleanIndianPhone(phone);
   if (!cleanPhone || cleanPhone.length !== 10) {
@@ -34,9 +36,42 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
   }
 
   try {
+    // 1. Try Route OTP first if numeric OTP is available (~₹0.20 / SMS once KYC verified in Fast2SMS panel)
+    if (otp) {
+      try {
+        const otpRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+          method: 'POST',
+          headers: {
+            'authorization': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            route: 'otp',
+            variables_values: otp.toString(),
+            numbers: cleanPhone
+          })
+        });
+        const otpData = await otpRes.json();
+        if (otpData && otpData.return === true) {
+          console.log(`[Fast2SMS Route OTP] +91 ${cleanPhone} | Cost: ₹0.20 | Success`);
+          return {
+            success: true,
+            provider: 'fast2sms',
+            route: 'otp',
+            cost: '₹0.20',
+            message: otpData.message || 'OTP sent via dedicated OTP route',
+            response: otpData
+          };
+        } else {
+          console.log(`[Fast2SMS Route OTP KYC Note] ${otpData?.message || 'KYC required for ₹0.20 route'}. Falling back to Quick SMS.`);
+        }
+      } catch (otpErr) {
+        console.warn('Fast2SMS Route OTP attempt note:', otpErr.message);
+      }
+    }
+
+    // 2. Fallback to Route Q (Quick SMS) - ₹5.00 per SMS (Universal delivery without KYC)
     const textMessage = message || (otp ? `Your OneWayTaxiBihar OTP code is ${otp}. Valid for 10 minutes. Do not share with anyone.` : 'Welcome to OneWayTaxiBihar.');
-    
-    // Route Q (Quick SMS) - Direct, high-delivery Indian telecom route (~₹0.25/SMS)
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
@@ -54,14 +89,14 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
 
     const data = await response.json();
     const isSuccess = Boolean(data && data.return === true);
-    console.log(`[Fast2SMS Dispatch] +91 ${cleanPhone} | Cost: ~₹0.25 | Return: ${isSuccess} | Message: ${data?.message || 'OK'}`);
+    console.log(`[Fast2SMS Route Q] +91 ${cleanPhone} | Cost: ₹5.00 | Return: ${isSuccess} | Message: ${data?.message || 'OK'}`);
 
     return {
       success: isSuccess,
       provider: 'fast2sms',
       route: 'q',
-      cost: '₹0.25',
-      message: data?.message || (isSuccess ? 'SMS sent successfully' : 'SMS dispatch failed'),
+      cost: '₹5.00',
+      message: data?.message || (isSuccess ? 'SMS sent successfully via Quick SMS' : 'SMS dispatch failed'),
       response: data
     };
   } catch (err) {

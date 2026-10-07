@@ -220,31 +220,54 @@ module.exports = async (req, res) => {
     console.warn('MongoDB OTP write error:', e.message);
   }
 
-  // Dispatch Live Fast2SMS (~₹0.20-₹0.25 vs Firebase ₹5.15)
-  let smsStatus = { success: false, provider: 'fast2sms', cost: '₹0.25', route: 'q' };
+  // Dispatch Live Fast2SMS: Try Route OTP first (~₹0.20), fallback to Route Q (₹5.00)
+  let smsStatus = { success: false, provider: 'fast2sms', cost: '₹5.00', route: 'q' };
   try {
-    const textMsg = `Your OneWayTaxiBihar OTP code is ${code}. Valid for 10 minutes. Do not share.`;
-    const fRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+    // Try Route OTP first
+    let fRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: { 'authorization': FAST2SMS_API_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        route: 'q',
-        message: textMsg,
-        language: 'english',
-        flash: 0,
+        route: 'otp',
+        variables_values: code,
         numbers: cleanPhone
       })
     });
-    const fData = await fRes.json();
-    const isSuccess = Boolean(fData && fData.return === true);
-    smsStatus = {
-      success: isSuccess,
-      provider: 'fast2sms',
-      route: 'q',
-      cost: '₹0.25',
-      message: fData?.message || (isSuccess ? 'SMS sent' : 'SMS dispatch failed'),
-      response: fData
-    };
+    let fData = await fRes.json();
+    if (fData && fData.return === true) {
+      smsStatus = {
+        success: true,
+        provider: 'fast2sms',
+        route: 'otp',
+        cost: '₹0.20',
+        message: fData?.message || 'OTP sent via OTP route',
+        response: fData
+      };
+    } else {
+      // Fallback to Quick SMS (₹5.00)
+      const textMsg = `Your OneWayTaxiBihar OTP code is ${code}. Valid for 10 minutes. Do not share.`;
+      fRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+        method: 'POST',
+        headers: { 'authorization': FAST2SMS_API_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          route: 'q',
+          message: textMsg,
+          language: 'english',
+          flash: 0,
+          numbers: cleanPhone
+        })
+      });
+      fData = await fRes.json();
+      const isSuccess = Boolean(fData && fData.return === true);
+      smsStatus = {
+        success: isSuccess,
+        provider: 'fast2sms',
+        route: 'q',
+        cost: '₹5.00',
+        message: fData?.message || (isSuccess ? 'SMS sent' : 'SMS dispatch failed'),
+        response: fData
+      };
+    }
   } catch (err) {
     smsStatus.error = err.message;
   }

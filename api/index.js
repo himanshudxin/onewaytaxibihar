@@ -430,8 +430,9 @@ module.exports = async (req, res) => {
         otpCode: code,
         whatsappUrl: waUrl,
         smsStatus: smsDispatch,
-        provider: 'Fast2SMS Indian Telecom Gateway (~₹0.20/SMS)',
-        cost: '₹0.25',
+        provider: smsDispatch?.provider || 'fast2sms',
+        route: smsDispatch?.route || 'q',
+        cost: smsDispatch?.cost || '₹5.00',
         message: `Verification code dispatched to +91 ${cleanPhone} via Fast2SMS & WhatsApp.`
       });
     }

@@ -35,7 +35,7 @@
       this.countdownTimer = null;
       this.remainingSeconds = 30;
       this.isVerifying = false;
-      this.demoOtpCode = "123456"; // Fallback demo code if offline or network failure
+      this.generatedOtpCode = "";
       this.isDemoMode = false;
 
       this.init();
@@ -48,7 +48,7 @@
         const stored = localStorage.getItem("otb_firebase_config");
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (parsed && parsed.apiKey && !parsed.apiKey.includes("DemoPlaceholder")) {
+          if (parsed && parsed.apiKey && !parsed.apiKey.includes("Placeholder")) {
             config = parsed;
           }
         }
@@ -56,7 +56,7 @@
         console.warn("Stored Firebase config note:", e);
       }
 
-      if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !window.FIREBASE_CONFIG.apiKey.includes("DemoPlaceholder")) {
+      if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !window.FIREBASE_CONFIG.apiKey.includes("Placeholder")) {
         config = window.FIREBASE_CONFIG;
       }
 
@@ -152,71 +152,24 @@
       this.startCountdown(30);
 
       // Generate secure 6-digit OTP code for this specific phone number
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      let code = Math.floor(100000 + Math.random() * 900000).toString();
       sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
       sessionStorage.setItem(`otb_verify_${clean10}`, code);
-      this.demoOtpCode = code;
+      this.generatedOtpCode = code;
 
-      const fast2smsKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx";
-      let isDispatched = false;
-
-      // 1. Try Fast2SMS Route OTP
-      try {
-        const resOtp = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-          method: "POST",
-          headers: {
-            "authorization": fast2smsKey,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            route: "otp",
-            variables_values: code,
-            numbers: clean10
-          })
-        });
-        const dataOtp = await resOtp.json();
-        console.log("[Fast2SMS Route OTP]", dataOtp);
-        if (dataOtp && (dataOtp.return === true || dataOtp.status_code === 200)) {
-          isDispatched = true;
-        }
-      } catch (e) {
-        console.warn("Fast2SMS OTP route note:", e.message);
-      }
-
-      // 2. If Route OTP not approved yet, use Fast2SMS Route Q (Quick SMS)
-      if (!isDispatched) {
-        try {
-          const resQ = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-            method: "POST",
-            headers: {
-              "authorization": fast2smsKey,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              route: "q",
-              message: `Your OneWayTaxiBihar OTP code is ${code}. Valid for 10 minutes. Do not share.`,
-              language: "english",
-              flash: 0,
-              numbers: clean10
-            })
-          });
-          const dataQ = await resQ.json();
-          console.log("[Fast2SMS Route Q]", dataQ);
-          if (dataQ && (dataQ.return === true || dataQ.status_code === 200 || resQ.ok)) {
-            isDispatched = true;
-          }
-        } catch (err) {
-          console.warn("Fast2SMS Route Q note:", err.message);
-        }
-      }
-
-      // 3. Fallback to backend API if available
+      // Trigger backend API (server.ps1 / Node backend) to register code and dispatch via telecom SMS & WhatsApp
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
-          await ApiClient.sendOtp(clean10, this.activeName);
+          const apiRes = await ApiClient.sendOtp(clean10, this.activeName);
+          if (apiRes && apiRes.otpCode) {
+            code = apiRes.otpCode.toString();
+            sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
+            sessionStorage.setItem(`otb_verify_${clean10}`, code);
+            this.generatedOtpCode = code;
+          }
         }
       } catch (e) {
-        // Continue
+        console.warn("Backend API send OTP note:", e);
       }
 
       if (statusEl) {
@@ -460,7 +413,7 @@
     sendOtpViaWhatsApp() {
       const clean10 = this.activePhone;
       if (!clean10) return;
-      const code = sessionStorage.getItem(`otb_temp_otp_${clean10}`) || this.demoOtpCode;
+      const code = sessionStorage.getItem(`otb_temp_otp_${clean10}`) || sessionStorage.getItem(`otb_verify_${clean10}`) || this.generatedOtpCode;
       const text = `Hi OneWayTaxiBihar, please verify my mobile number +91 ${clean10}. My verification code is: ${code}`;
       const url = `https://wa.me/917281851011?text=${encodeURIComponent(text)}`;
       window.open(url, "_blank");
@@ -575,15 +528,16 @@
 
           if (val && i < 6) {
             const next = document.getElementById(`otp-box-${i + 1}`);
-            if (next) next.focus();
+            if (next) {
+              next.focus();
+              next.select();
+            }
           }
 
           // Check if all 6 digits entered, auto submit!
-          if (i === 6 && val) {
-            const fullCode = this.getEnteredCode();
-            if (fullCode.length === 6) {
-              setTimeout(() => this.verifyEnteredCode(), 150);
-            }
+          const fullCode = this.getEnteredCode();
+          if (fullCode.length === 6) {
+            setTimeout(() => this.verifyEnteredCode(), 150);
           }
         });
 

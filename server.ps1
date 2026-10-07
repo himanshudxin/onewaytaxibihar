@@ -79,6 +79,33 @@ function Save-Db($dbObj) {
     }
 }
 
+function Send-SmsFast2SMS($phone, $message, $otp = "") {
+    try {
+        $cleanPhone = ($phone -replace '\D', '')
+        if ($cleanPhone.Length -gt 10) { $cleanPhone = $cleanPhone.Substring($cleanPhone.Length - 10) }
+        $apiKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx"
+        
+        $bodyObj = @{
+            route = "q"
+            message = if ($message) { $message } else { "Your OneWayTaxiBihar OTP code is $otp. Valid for 10 minutes. Do not share." }
+            language = "english"
+            flash = 0
+            numbers = $cleanPhone
+        }
+        $jsonPayload = $bodyObj | ConvertTo-Json
+        $headers = @{
+            "authorization" = $apiKey
+            "Content-Type" = "application/json"
+        }
+        $res = Invoke-RestMethod -Uri "https://www.fast2sms.com/dev/bulkV2" -Method Post -Headers $headers -Body $jsonPayload -TimeoutSec 10 -ErrorAction SilentlyContinue
+        Write-Host "[Fast2SMS PowerShell Dispatch] +91 $cleanPhone OTP: $otp Result: $($res | ConvertTo-Json -Compress)" -ForegroundColor Green
+        return $res
+    } catch {
+        Write-Host "[Fast2SMS PowerShell Error] $($_.Exception.Message)" -ForegroundColor Yellow
+        return $null
+    }
+}
+
 function Get-QueryParams($url) {
     $params = @{}
     if ($url.Query) {
@@ -337,8 +364,8 @@ try {
                         continue
                     }
 
-                    # Generate genuine 4-digit code
-                    $code = (Get-Random -Minimum 1000 -Maximum 9999).ToString()
+                    # Generate genuine 6-digit code
+                    $code = (Get-Random -Minimum 100000 -Maximum 999999).ToString()
                     if (-not $global:ActiveVerificationCodes) { $global:ActiveVerificationCodes = @{} }
                     $global:ActiveVerificationCodes[$cleanPhone] = @{
                         code = $code
@@ -355,6 +382,10 @@ try {
                     $waUrl = "https://wa.me/917281851011?text=" + [System.Uri]::EscapeDataString($waText)
                     $amt = if ($rewardEligible) { 100 } else { 0 }
 
+                    # Real Telecom SMS Dispatch via Fast2SMS
+                    $smsMsg = "Your OneWayTaxiBihar OTP code is $code. Valid for 10 minutes. Do not share."
+                    $smsRes = Send-SmsFast2SMS $cleanPhone $smsMsg $code
+
                     Send-JsonResponse $response 200 @{
                         success = $true
                         phone = "+91 $cleanPhone"
@@ -364,6 +395,7 @@ try {
                         rewardAmount = $amt
                         otpCode = $code
                         whatsappUrl = $waUrl
+                        smsDispatched = ($smsRes -ne $null)
                         message = "Verification code dispatched to +91 $cleanPhone via SMS & WhatsApp."
                     }
                     continue

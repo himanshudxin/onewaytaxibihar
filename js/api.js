@@ -147,6 +147,10 @@ class ApiClient {
         body: JSON.stringify({ phone: cleanPhone, name: cleanName })
       });
       if (res && res.success) {
+        if (res.otpCode) {
+          sessionStorage.setItem(`otb_verify_${cleanPhone}`, res.otpCode.toString());
+          sessionStorage.setItem(`otb_temp_otp_${cleanPhone}`, res.otpCode.toString());
+        }
         return res;
       }
     } catch (apiErr) {
@@ -200,21 +204,27 @@ class ApiClient {
     const cleanOtp = (otp || "").toString().trim();
     const cleanName = (name || "").trim() || "Valued Passenger";
 
-    const res = await this.request("/api/auth/verify-otp", {
-      method: "POST",
-      body: JSON.stringify({ phone: cleanPhone, otp: cleanOtp, name: cleanName })
-    });
+    try {
+      const res = await this.request("/api/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ phone: cleanPhone, otp: cleanOtp, name: cleanName })
+      });
 
-    if (res && res.success && res.token) {
-      localStorage.setItem("otb_auth_token", res.token);
-      localStorage.setItem("otb_current_user", JSON.stringify(res.user));
-      return res;
+      if (res && res.success && res.token) {
+        localStorage.setItem("otb_auth_token", res.token);
+        localStorage.setItem("otb_current_user", JSON.stringify(res.user));
+        return res;
+      }
+    } catch (err) {
+      console.warn("Backend verify API note:", err);
     }
 
     // Offline / fallback verification
-    const localOtp = sessionStorage.getItem(`otb_verify_${cleanPhone}`);
-    if (localOtp && localOtp === cleanOtp) {
+    const localOtp = sessionStorage.getItem(`otb_verify_${cleanPhone}`) || sessionStorage.getItem(`otb_temp_otp_${cleanPhone}`);
+    if (localOtp && localOtp.trim() === cleanOtp) {
       sessionStorage.removeItem(`otb_verify_${cleanPhone}`);
+      sessionStorage.removeItem(`otb_temp_otp_${cleanPhone}`);
+      sessionStorage.setItem(`otb_verified_${cleanPhone}`, "true");
       const fallbackToken = `otb_local_${cleanPhone}_${Date.now()}`;
       const fallbackUser = {
         id: `usr_${cleanPhone}`,
@@ -239,7 +249,7 @@ class ApiClient {
       };
     }
 
-    return res || { success: false, message: "Invalid verification code. Please try again." };
+    return { success: false, message: "Invalid verification code. Please try again." };
   }
 
   // Get Current User Profile (Server-Verified with local cache)

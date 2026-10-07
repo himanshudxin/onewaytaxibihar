@@ -6,7 +6,8 @@
 
 require('dotenv').config();
 
-const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || '';
+const FAST2SMS_FALLBACK_KEY = '9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx';
+const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || FAST2SMS_FALLBACK_KEY;
 const MSG91_AUTH_KEY = process.env.MSG91_AUTH_KEY || '';
 const MSG91_SENDER_ID = process.env.MSG91_SENDER_ID || 'OWTAXI';
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
@@ -27,33 +28,59 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     return { success: false, error: 'Invalid 10-digit Indian phone number' };
   }
 
-  const apiKey = process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY;
+  const apiKey = process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY || FAST2SMS_FALLBACK_KEY;
   if (!apiKey) {
     return { success: false, error: 'FAST2SMS_API_KEY missing' };
   }
 
   try {
     const textMessage = message || (otp ? `Your OneWayTaxiBihar OTP code is ${otp}. Valid for 10 minutes. Do not share with anyone.` : 'Welcome to OneWayTaxiBihar.');
-    const bodyPayload = {
-      route: 'q',
-      message: textMessage,
-      language: 'english',
-      flash: 0,
-      numbers: cleanPhone
-    };
-
+    
+    // Try Route Q (Quick SMS)
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
         'authorization': apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(bodyPayload)
+      body: JSON.stringify({
+        route: 'q',
+        message: textMessage,
+        language: 'english',
+        flash: 0,
+        numbers: cleanPhone
+      })
     });
 
     const data = await response.json();
-    const isSuccess = Boolean(data.return === true || (data.status_code === 200) || response.ok);
     console.log(`[Fast2SMS Dispatch] +91 ${cleanPhone} ->`, data);
+    const isSuccess = Boolean(data.return === true || (data.status_code === 200) || response.ok);
+
+    // If route q didn't succeed and otp is present, try route otp
+    if (!isSuccess && otp) {
+      try {
+        const otpRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+          method: 'POST',
+          headers: {
+            'authorization': apiKey,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            route: 'otp',
+            variables_values: otp.toString(),
+            numbers: cleanPhone
+          })
+        });
+        const otpData = await otpRes.json();
+        console.log(`[Fast2SMS Route OTP Dispatch] +91 ${cleanPhone} ->`, otpData);
+        if (otpData.return === true || otpData.status_code === 200) {
+          return { success: true, provider: 'fast2sms', response: otpData };
+        }
+      } catch (otpErr) {
+        console.warn('Fast2SMS Route OTP fallback note:', otpErr.message);
+      }
+    }
+
     return { success: isSuccess, provider: 'fast2sms', response: data };
   } catch (err) {
     console.error('[Notification Service] Fast2SMS error:', err.message);

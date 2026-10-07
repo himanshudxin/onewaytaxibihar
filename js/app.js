@@ -481,10 +481,14 @@ window.handleVerifyOtpCode = async () => {
   const name = nameInput ? nameInput.value.trim() : "";
   const phone = phoneInput ? phoneInput.value.trim().replace(/\D/g, "").slice(-10) : "";
 
-  const digits = [1, 2, 3, 4].map(i => document.getElementById(`otp-digit-${i}`)?.value || "").join("");
-  if (digits.length !== 4) {
-    window.showToast("Please enter the complete 4-digit verification code", "warning");
-    document.getElementById(`otp-digit-${digits.length + 1}`)?.focus();
+  let digits = "";
+  for (let i = 1; i <= 6; i++) {
+    const el = document.getElementById(`otp-digit-${i}`) || document.getElementById(`otp-box-${i}`);
+    if (el && el.value) digits += el.value.trim();
+  }
+
+  if (!digits || digits.length < 4) {
+    window.showToast("Please enter the complete verification code", "warning");
     return;
   }
 

@@ -2010,13 +2010,26 @@ window.showToast = (msg, type = "info") => {
   if (!toastContainer) {
     toastContainer = document.createElement("div");
     toastContainer.id = "owc-toast-container";
-    toastContainer.style.cssText = "position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;";
+    toastContainer.style.cssText = "position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: calc(100vw - 48px);";
     document.body.appendChild(toastContainer);
   }
 
+  // Deduplicate identical toasts appearing simultaneously
+  const existing = Array.from(toastContainer.children).find(t => t.getAttribute("data-msg") === msg);
+  if (existing) return;
+
   const toast = document.createElement("div");
-  const bg = type === "success" ? "#059669" : type === "danger" ? "#dc2626" : type === "warning" ? "#d97706" : "#05a357";
-  toast.style.cssText = `background: ${bg}; color: white; padding: 12px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.25); transform: translateY(20px); opacity: 0; transition: all 0.3s ease; pointer-events: auto;`;
+  toast.setAttribute("data-msg", msg);
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const bg = type === "success" 
+    ? (isDark ? "linear-gradient(135deg, #065f46 0%, #047857 100%)" : "linear-gradient(135deg, #059669 0%, #10b981 100%)")
+    : type === "danger" || type === "error"
+    ? "linear-gradient(135deg, #991b1b 0%, #dc2626 100%)"
+    : type === "warning"
+    ? "linear-gradient(135deg, #92400e 0%, #d97706 100%)"
+    : "linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%)";
+
+  toast.style.cssText = `background: ${bg}; color: #ffffff; padding: 10px 18px; border-radius: 9999px; font-size: 13px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.15); transform: translateY(14px); opacity: 0; transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; display: flex; align-items: center; gap: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;`;
   toast.textContent = msg;
 
   toastContainer.appendChild(toast);
@@ -2026,10 +2039,10 @@ window.showToast = (msg, type = "info") => {
   }, 10);
 
   setTimeout(() => {
-    toast.style.transform = "translateY(20px)";
+    toast.style.transform = "translateY(14px)";
     toast.style.opacity = "0";
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+    setTimeout(() => toast.remove(), 280);
+  }, 3200);
 };
 
 window.selectFleetCategory = (cabId) => {

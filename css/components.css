@@ -7,13 +7,21 @@
    ========================================================================== */
 .hero-section {
   position: relative;
-  padding: 30px 0 60px 0;
-  background: radial-gradient(circle at 50% 20%, rgba(0, 149, 246, 0.06) 0%, transparent 70%);
+  padding: 32px 0 64px 0;
+  background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(0, 149, 246, 0.16) 0%, transparent 65%),
+              radial-gradient(ellipse 60% 40% at 85% 15%, rgba(16, 185, 129, 0.06) 0%, transparent 60%);
   overflow: hidden;
 }
 
 [data-theme="dark"] .hero-section {
-  background: radial-gradient(circle at 50% 20%, rgba(0, 149, 246, 0.10) 0%, #000000 70%);
+  background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(0, 149, 246, 0.18) 0%, transparent 65%),
+              radial-gradient(ellipse 60% 40% at 85% 15%, rgba(16, 185, 129, 0.06) 0%, transparent 60%),
+              #090d16;
+}
+
+[data-theme="light"] .hero-section {
+  background: radial-gradient(ellipse 75% 50% at 50% -10%, rgba(0, 149, 246, 0.08) 0%, transparent 65%),
+              #f8fafc;
 }
 
 .hero-center-header {
@@ -263,83 +271,102 @@
   opacity: 0.5;
 }
 
-/* Centered Main Booking Card */
+/* Centered Main Booking Card - Executive Glassmorphic Surface */
 .booking-widget-card {
-  background: var(--owc-card-bg);
-  border: 1.5px solid var(--owc-border);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   border-radius: 24px;
-  box-shadow: var(--shadow-lg);
-  padding: 32px;
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.08), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  padding: 30px;
   max-width: 960px;
   margin: 0 auto;
   position: relative;
   z-index: 10;
+  transition: all 0.3s ease;
 }
 
 [data-theme="dark"] .booking-widget-card {
-  background: #121214;
-  border-color: #27272a;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.85);
+  background: rgba(15, 22, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Trip Tabs (4 Large Tabs) */
+/* Segmented Trip Tabs (4 Segmented Controls) */
 .trip-tabs-header {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 6px;
+  border-radius: 16px;
+  margin-bottom: 22px;
+}
+
+[data-theme="dark"] .trip-tabs-header {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
 }
 
 .trip-tab-btn {
-  background: var(--owc-slate-50);
-  border: 1px solid var(--owc-border);
-  border-radius: var(--radius-md);
-  padding: 14px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--owc-text-muted);
   cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-[data-theme="dark"] .trip-tab-btn {
-  background: #18181b;
-  border-color: #27272a;
-  color: var(--owc-text-muted);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
 
 .trip-tab-btn .tab-icon {
-  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.trip-tab-btn .tab-icon svg {
+  width: 19px;
+  height: 19px;
+  transition: transform 0.2s ease;
 }
 
 .trip-tab-btn:hover {
-  background: var(--owc-border-light);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--owc-text);
 }
 
-[data-theme="dark"] .trip-tab-btn:hover {
-  background: #242429;
-  color: #ffffff;
+[data-theme="light"] .trip-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--owc-text);
 }
 
 .trip-tab-btn.active {
-  background: linear-gradient(135deg, #0095f6 0%, #0084e8 100%);
-  color: #ffffff;
-  border-color: #0084e8;
-  box-shadow: var(--shadow-blue-glow);
+  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35) !important;
+  font-weight: 700;
 }
 
 [data-theme="dark"] .trip-tab-btn.active {
-  background: linear-gradient(135deg, #0095f6 0%, #1877f2 100%);
-  color: #ffffff;
-  border-color: #0095f6;
+  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.4) !important;
+}
+
+.trip-tab-btn.active .tab-icon svg {
+  transform: scale(1.08);
 }
 
 /* Route Inputs Grid */
@@ -361,7 +388,7 @@
   align-items: center;
   background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 12px 16px;
   gap: 14px;
   min-height: 64px;
@@ -370,18 +397,19 @@
 }
 
 [data-theme="dark"] .input-field-group {
-  background: #141416;
-  border-color: #27272a;
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .input-field-group:hover {
-  border-color: var(--owc-slate-400);
+  border-color: rgba(0, 149, 246, 0.4);
 }
 
 .input-field-group:focus-within {
-  border-color: #009af4;
-  box-shadow: 0 0 0 3px rgba(0, 154, 244, 0.15);
+  border-color: #0095f6 !important;
+  box-shadow: 0 0 0 3.5px rgba(0, 149, 246, 0.16), 0 4px 16px rgba(0, 149, 246, 0.08) !important;
+  background: rgba(0, 149, 246, 0.02) !important;
 }
 
 .route-point-marker {
@@ -571,29 +599,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: 0;
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .route-swap-btn {
-  background: #18181b;
-  border-color: #2e2e33;
-  color: #a1a1aa;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background: #141b2e;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #38bdf8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .route-swap-btn:hover {
   background: var(--owc-slate-100);
-  color: #009af4;
-  border-color: #009af4;
-  transform: rotate(180deg);
+  color: #0095f6;
+  border-color: #0095f6;
+  transform: rotate(180deg) scale(1.08);
+  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.25);
 }
 
 [data-theme="dark"] .route-swap-btn:hover {
-  background: #27272a;
+  background: #1e293b;
   color: #38bdf8;
   border-color: #38bdf8;
+  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
 }
 
 /* Autocomplete Dropdown */
@@ -968,7 +999,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   padding: 0 4px;
 }
 
@@ -985,6 +1016,7 @@
   letter-spacing: 0.7px;
   text-transform: uppercase;
   color: var(--owc-text-muted);
+  white-space: nowrap;
 }
 
 .schedule-ethical-badge {
@@ -999,6 +1031,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 [data-theme="dark"] .schedule-ethical-badge {
@@ -1014,6 +1047,7 @@
   font-size: 11px;
   font-weight: 700;
   color: var(--owc-text-muted);
+  white-space: nowrap;
 }
 
 .schedule-live-dot {
@@ -1022,6 +1056,7 @@
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
+  flex-shrink: 0;
 }
 
 .schedule-row {
@@ -1032,9 +1067,9 @@
 }
 
 .exec-picker-card {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(226, 232, 240, 0.9);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 14px;
   padding: 12px 14px;
   cursor: pointer;
   position: relative;
@@ -1047,22 +1082,21 @@
 }
 
 [data-theme="dark"] .exec-picker-card {
-  background: rgba(18, 24, 38, 0.75);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .exec-picker-card:hover {
   border-color: var(--owc-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 149, 246, 0.16);
-  background: #ffffff;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(0, 149, 246, 0.14);
 }
 
 [data-theme="dark"] .exec-picker-card:hover {
-  background: rgba(26, 35, 54, 0.95);
+  background: rgba(255, 255, 255, 0.04);
   border-color: #38bdf8;
-  box-shadow: 0 8px 26px rgba(0, 149, 246, 0.25);
+  box-shadow: 0 6px 22px rgba(0, 149, 246, 0.22);
 }
 
 .exec-picker-card:focus-visible {
@@ -1932,7 +1966,7 @@
   margin-bottom: 16px;
   position: relative;
   background: var(--owc-surface);
-  border: 1.5px solid var(--owc-border);
+  border: 1px solid var(--owc-border);
   border-radius: 14px;
   padding: 10px 16px;
   min-height: 68px;
@@ -1945,9 +1979,9 @@
 
 [data-theme="dark"] .phone-field-group,
 [data-theme="dark"] .phone-check-fare-card {
-  background: #141b26;
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .phone-field-group:hover {
@@ -2033,12 +2067,13 @@
   font-weight: 600;
   color: #059669;
   background: rgba(16, 185, 129, 0.1);
-  padding: 1px 7px;
+  padding: 1.5px 8px;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 [data-theme="dark"] .phone-trust-tag {
@@ -2301,17 +2336,17 @@
    ========================================================================== */
 .check-fare-primary-btn {
   width: 100%;
-  height: 52px;
+  height: 54px;
   padding: 0 24px;
-  border-radius: 12px;
-  font-size: 15.5px;
-  font-weight: 750;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
   letter-spacing: 0.3px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   text-transform: none;
   position: relative;
   overflow: hidden;
@@ -2321,30 +2356,30 @@
   user-select: none;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   
-  /* Executive Corporate Royal Blue */
-  background: linear-gradient(135deg, #0284c7 0%, #0095f6 50%, #0369a1 100%) !important;
+  /* Executive Stripe/Uber Grade Blue Gradient */
+  background: linear-gradient(135deg, #0095f6 0%, #0070f3 50%, #0056b3 100%) !important;
   color: #ffffff !important;
-  border: 1px solid #0284c7 !important;
-  box-shadow: 0 4px 18px rgba(0, 149, 246, 0.35), 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 6px 20px -2px rgba(0, 149, 246, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 [data-theme="dark"] .check-fare-primary-btn {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #075985 100%) !important;
+  background: linear-gradient(135deg, #0095f6 0%, #0070f3 60%, #0056b3 100%) !important;
   color: #ffffff !important;
-  border-color: #38bdf8 !important;
-  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.45), 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 6px 24px -2px rgba(0, 149, 246, 0.5), 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 .check-fare-primary-btn:hover {
-  background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0084e8 100%) !important;
-  border-color: #0284c7 !important;
+  background: linear-gradient(135deg, #0084e8 0%, #0060d4 50%, #004ba3 100%) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0, 149, 246, 0.45), 0 3px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 28px -2px rgba(0, 149, 246, 0.55), 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
 .check-fare-primary-btn:active {
-  transform: translateY(0) scale(0.985);
-  box-shadow: 0 2px 10px rgba(0, 149, 246, 0.3) !important;
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 3px 12px rgba(0, 149, 246, 0.35) !important;
 }
 
 /* Arrow Icon inside button */
@@ -4373,15 +4408,15 @@
   }
 
   .trip-tab-btn.active {
-    background: #ffffff;
-    color: var(--owc-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(0, 149, 246, 0.35) !important;
   }
 
   [data-theme="dark"] .trip-tab-btn.active {
-    background: #27272e;
-    color: #38bdf8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(0, 149, 246, 0.45) !important;
   }
 
   /* Connected Visual Route Inputs on Mobile */
@@ -4486,6 +4521,41 @@
     padding: 3px 8px;
   }
 
+  /* Schedule Section Header on Mobile */
+  .schedule-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding: 0 2px;
+  }
+
+  .schedule-header-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .schedule-header-title {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .schedule-ethical-badge {
+    font-size: 9.5px;
+    padding: 1.5px 6px;
+    white-space: nowrap;
+  }
+
+  .schedule-header-right {
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   /* Schedule Date & Time Row (50/50 Mobile Grid) */
   .schedule-row {
     display: grid;
@@ -4500,11 +4570,18 @@
 
   /* Clean Phone Input on Mobile */
   .phone-field-group {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    padding: 8px 12px;
+  }
+
+  .phone-trust-tag {
+    font-size: 9px;
+    padding: 1px 6px;
+    white-space: nowrap;
   }
 
   .phone-country-code {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
   }
 
@@ -4516,20 +4593,23 @@
   /* Primary Check Fare Button on Mobile */
   .check-fare-primary-btn {
     height: 52px;
-    font-size: 15px;
+    font-size: 15.5px;
     font-weight: 700;
     letter-spacing: 0.2px;
     border-radius: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: none;
     touch-action: manipulation;
+    background: linear-gradient(135deg, #0095f6 0%, #0070f3 50%, #0056b3 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(0, 149, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   }
 
   .check-fare-primary-btn.ready {
-    box-shadow: 0 4px 16px rgba(0, 149, 246, 0.35);
+    box-shadow: 0 6px 22px rgba(0, 149, 246, 0.5) !important;
   }
 
   .check-fare-primary-btn.ready:active {
@@ -5365,38 +5445,40 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 14px;
-  padding: 10px 18px;
-  background: rgba(0, 149, 246, 0.05);
-  border: 1px solid rgba(0, 149, 246, 0.16);
+  gap: 16px;
+  padding: 10px 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
   margin: 0 auto 20px auto;
   width: fit-content;
   max-width: 100%;
 }
 
-[data-theme="dark"] .trust-metrics-strip {
-  background: rgba(0, 149, 246, 0.08);
-  border-color: rgba(0, 149, 246, 0.22);
+[data-theme="light"] .trust-metrics-strip {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .trust-metric-item {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--owc-text);
   display: inline-flex;
   align-items: center;
+  gap: 5px;
 }
 
 .trust-divider {
-  color: rgba(0, 149, 246, 0.25);
-  font-size: 13px;
+  color: var(--owc-slate-400);
+  opacity: 0.4;
+  font-size: 12px;
 }
 
 /* 3. Return Fare Banner Box */
 .return-fare-banner {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(0, 149, 246, 0.06) 100%);
-  border: 1.5px solid rgba(5, 150, 105, 0.25);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(0, 149, 246, 0.06) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 16px;
   padding: 14px 20px;
   margin: 18px auto 0 auto;
@@ -5405,8 +5487,8 @@
 }
 
 [data-theme="dark"] .return-fare-banner {
-  background: rgba(5, 150, 105, 0.12);
-  border-color: rgba(5, 150, 105, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
 }
 
 .rf-main-text {
@@ -5418,7 +5500,7 @@
 .rf-bold-highlight {
   font-size: 14.5px;
   font-weight: 800;
-  color: #059669;
+  color: #10b981;
   letter-spacing: 0.2px;
 }
 
@@ -5438,7 +5520,7 @@
   letter-spacing: 0.8px;
   color: var(--owc-text-dim);
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .quick-routes-chips {
@@ -5448,12 +5530,30 @@
   gap: 8px;
 }
 
+@media (max-width: 768px) {
+  .quick-routes-chips {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 4px 8px 4px;
+  }
+  .quick-routes-chips::-webkit-scrollbar {
+    display: none;
+  }
+  .quick-route-chip {
+    flex-shrink: 0;
+  }
+}
+
 .quick-route-chip {
   background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  padding: 7px 15px;
+  padding: 8px 16px;
   border-radius: 9999px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--owc-text);
   cursor: pointer;
@@ -5462,17 +5562,17 @@
 }
 
 [data-theme="dark"] .quick-route-chip {
-  background: #18181b;
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #f4f4f6;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
 }
 
 .quick-route-chip:hover {
-  background: var(--owc-primary);
+  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%);
   color: #ffffff;
-  border-color: var(--owc-primary);
+  border-color: transparent;
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35);
 }
 
 /* 5. Cab Selection & Fleet Cards Elevation */
@@ -6510,64 +6610,81 @@ body.modal-open .mobile-call-bar {
 .booking-stepper-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 auto 20px auto;
+  justify-content: flex-start;
+  margin: 0 auto 24px auto;
   max-width: 860px;
-  background: var(--owc-card-bg);
+  background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  border-radius: 14px;
-  padding: 10px 14px;
+  border-radius: 9999px;
+  padding: 8px 14px;
   overflow-x: auto;
-  gap: 6px;
+  gap: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.booking-stepper-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .stepper-node {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 11.5px;
   font-weight: 700;
   color: var(--owc-text-muted);
   white-space: nowrap;
-  padding: 4px 8px;
-  border-radius: 8px;
+  padding: 5px 10px;
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.stepper-node:hover {
+  color: var(--owc-text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .stepper-node.active {
-  background: rgba(2, 132, 199, 0.12);
-  color: #0284c7;
+  background: rgba(0, 149, 246, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.28);
 }
 
 .stepper-node.completed {
-  color: #059669;
+  color: #10b981;
 }
 
 .stepper-num {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--owc-slate-200);
-  color: var(--owc-text);
-  font-size: 11px;
-  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--owc-text-muted);
+  font-size: 10.5px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
 }
 
 .stepper-node.active .stepper-num {
-  background: #0284c7;
+  background: linear-gradient(135deg, #0070f3, #00b4d8);
   color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 112, 243, 0.4);
 }
 
 .stepper-node.completed .stepper-num {
-  background: #059669;
+  background: #10b981;
   color: #ffffff;
 }
 
 .stepper-arrow {
-  color: var(--owc-border);
+  color: var(--owc-text-muted);
+  opacity: 0.4;
   font-size: 10px;
+  flex-shrink: 0;
 }

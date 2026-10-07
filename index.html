@@ -122,18 +122,24 @@
 
   <!-- Sticky Navbar Header -->
   <header class="navbar">
-    <!-- Top Blue Call Bar (Collapsible) -->
+    <!-- Top Executive Dispatch & Call Bar (Collapsible) -->
     <div class="header-top-bar" id="header-top-bar">
       <div class="container header-top-inner">
-        <a href="tel:+918002141816" class="top-help-link" id="top-help-link" title="Call +91 80021 41816" aria-label="Call">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="lucide-phone-icon">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-          </svg>
-          <span>Call: +91 80021 41816</span>
-        </a>
-        <button type="button" class="call-bar-collapse-btn" id="call-bar-collapse-btn" onclick="window.toggleCallBar(true)" title="Collapse Call Bar" aria-label="Collapse Call Bar">
-          &times;
-        </button>
+        <div class="top-bar-left-status">
+          <span class="top-status-live-dot"></span>
+          <span class="top-status-text">Bihar State-Wide 24×7 Dispatch Desk • All 38 Districts • Zero Dead Mileage</span>
+        </div>
+        <div class="header-top-actions">
+          <a href="tel:+918002141816" class="top-help-link" id="top-help-link" title="Call 24x7 Helpdesk: +91 80021 41816" aria-label="Call 24x7 Helpdesk">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="lucide-phone-icon">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span>24×7 Hotline: +91 80021 41816</span>
+          </a>
+          <button type="button" class="call-bar-collapse-btn" id="call-bar-collapse-btn" onclick="window.toggleCallBar(true)" title="Collapse Banner" aria-label="Collapse Banner">
+            &times;
+          </button>
+        </div>
       </div>
     </div>
 
@@ -154,7 +160,6 @@
         <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
         <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
         <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
-        <li><a href="driver.html" style="color: #10b981; font-weight: 800;">Drive With Us ↗</a></li>
       </ul>
 
       <!-- Nav Actions -->
@@ -165,7 +170,27 @@
           <span>Call</span>
         </a>
 
-        <!-- Theme Toggle Switch (Desktop - No Text on Front) -->
+        <!-- Drive With Us Partner Pill -->
+        <a href="driver.html" class="btn-nav-partner" title="Driver Partner Desk & Registration">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span>Drive With Us</span>
+        </a>
+
+        <!-- My Trips Button -->
+        <button type="button" class="btn-nav-outline btn-nav-trips" onclick="window.openMyTripsModal()" title="View Active & Past Bookings">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span>My Trips</span>
+        </button>
+
+        <!-- Auth Button / Profile Slot -->
+        <div id="nav-auth-slot">
+          <button type="button" class="btn-nav-outline btn-nav-auth" onclick="window.openAuthModal()" title="Login with OTP">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Login with OTP</span>
+          </button>
+        </div>
+
+        <!-- Theme Toggle Switch (Desktop) -->
         <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Dark / Light Theme" title="Toggle Light / Dark Mode">
           <span class="theme-switch-track">
             <span class="theme-switch-thumb">
@@ -175,18 +200,6 @@
             </span>
           </span>
         </button>
-
-        <!-- My Trips Button -->
-        <button type="button" class="btn-nav-outline" onclick="window.openMyTripsModal()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> My Trips
-        </button>
-
-        <!-- Auth Button / Profile Slot -->
-        <div id="nav-auth-slot">
-          <button type="button" class="btn-nav-outline" onclick="window.openAuthModal()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Login with OTP
-          </button>
-        </div>
 
         <!-- Mobile Direct WhatsApp Pill -->
         <a href="https://wa.me/917281851011?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="mobile-nav-wa-pill" title="WhatsApp">
@@ -395,7 +408,7 @@
                 <span class="route-point-marker pickup-marker" title="Pickup Point"></span>
                 <div class="input-content">
                   <label id="lbl-pickup" for="input-pickup">PICKUP LOCATION</label>
-                  <input type="text" id="input-pickup" autocomplete="off" placeholder="Enter pickup city, district or airport">
+                  <input type="text" id="input-pickup" autocomplete="off" placeholder="Enter pickup city or airport">
                 </div>
                 <div class="input-actions-cluster">
                   <button type="button" id="btn-clear-pickup" class="booking-clear-btn" title="Clear Pickup" aria-label="Clear pickup">✕</button>
@@ -427,7 +440,7 @@
                 <span class="route-point-marker drop-marker" title="Destination Point"></span>
                 <div class="input-content">
                   <label id="lbl-drop" for="input-drop">DROP LOCATION</label>
-                  <input type="text" id="input-drop" autocomplete="off" placeholder="Enter drop city, district or airport">
+                  <input type="text" id="input-drop" autocomplete="off" placeholder="Enter destination city or airport">
                 </div>
                 <div class="input-actions-cluster">
                   <button type="button" id="btn-clear-drop" class="booking-clear-btn" title="Clear Drop" aria-label="Clear drop">✕</button>
@@ -595,7 +608,7 @@
                   </svg>
                   <span class="phone-country-code">+91</span>
                 </div>
-                <input type="tel" id="input-fare-phone" maxlength="10" placeholder="Enter 10-digit mobile number to view fares" autocomplete="tel" inputmode="numeric" class="phone-native-input" spellcheck="false">
+                <input type="tel" id="input-fare-phone" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" class="phone-native-input" spellcheck="false">
                 <span class="phone-valid-badge" id="phone-valid-badge" title="Valid Mobile Number">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>

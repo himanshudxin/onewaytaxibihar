@@ -1637,8 +1637,8 @@ class BookingManager {
 
       if (aiData && aiData.success) {
         textEl.innerHTML = `
-          ⚡ <strong>AI Demand Index: ${aiData.demandIndex}/100</strong> (${aiData.demandLevel || 'Optimal Booking Window'}) • 
-          🌱 <strong>Eco-Save:</strong> ~${aiData.carbonSavedKg || 16} kg CO₂ vs empty return • 
+          <strong>AI Demand Index: ${aiData.demandIndex}/100</strong> (${aiData.demandLevel || 'Optimal Booking Window'}) • 
+          <strong>Eco-Save:</strong> ~${aiData.carbonSavedKg || 16} kg CO₂ vs empty return • 
           ${aiData.explanation || ''}
         `;
       }
@@ -2054,7 +2054,7 @@ class BookingManager {
           </div>
 
           <div class="checkout-meta-row">
-            <span>📅 ${this.pickupDate} at ${this.pickupTime} • 🛣️ ${km} KM</span>
+            <span>${this.pickupDate} at ${this.pickupTime} • ${km} KM</span>
             <button type="button" class="checkout-breakdown-btn" id="checkout-breakdown-toggle-btn" onclick="window.bookingManager.toggleFareBreakdown()">
               <span>Fare Breakdown</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -2188,7 +2188,7 @@ class BookingManager {
                 <span class="summary-row-label">Pickup</span>
                 <span class="summary-row-val">
                   <span id="sum-pickup-val">${this.originCity.name}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('pickup')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('pickup')">Edit</button>
                 </span>
               </div>
 
@@ -2197,7 +2197,7 @@ class BookingManager {
                 <span class="summary-row-label">Drop</span>
                 <span class="summary-row-val">
                   <span id="sum-drop-val">${this.destCity.name}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('drop')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('drop')">Edit</button>
                 </span>
               </div>
 
@@ -2206,7 +2206,7 @@ class BookingManager {
                 <span class="summary-row-label">Travel Date</span>
                 <span class="summary-row-val">
                   <span id="sum-date-val">${this.pickupDate}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('date')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('date')">Edit</button>
                 </span>
               </div>
 
@@ -2215,7 +2215,7 @@ class BookingManager {
                 <span class="summary-row-label">Pickup Time</span>
                 <span class="summary-row-val">
                   <span id="sum-time-val">${this.pickupTime}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('time')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('time')">Edit</button>
                 </span>
               </div>
 
@@ -2224,7 +2224,7 @@ class BookingManager {
                 <span class="summary-row-label">Passenger</span>
                 <span class="summary-row-val">
                   <span id="sum-name-val">${this.passengerDetails.name || 'Passenger'}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('name')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('name')">Edit</button>
                 </span>
               </div>
 
@@ -2233,7 +2233,7 @@ class BookingManager {
                 <span class="summary-row-label">Phone</span>
                 <span class="summary-row-val">
                   <span id="sum-phone-val">${this.passengerDetails.phone || ''}</span>
-                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('phone')">✏️ Edit</button>
+                  <button type="button" class="btn-edit-field" onclick="window.bookingManager.editField('phone')">Edit</button>
                 </span>
               </div>
 
@@ -2281,7 +2281,7 @@ class BookingManager {
               <div class="summary-row">
                 <span class="summary-row-label">Payment Mode</span>
                 <span class="summary-row-val">
-                  <span id="sum-method-val" style="color: #0070f3; font-weight: 800;">⚡ Pay ₹299 Token Advance (Instant Cab Lock)</span>
+                  <span id="sum-method-val" style="color: #0070f3; font-weight: 800;">Pay ₹299 Token Advance (Instant Cab Lock)</span>
                 </span>
               </div>
 
@@ -2305,7 +2305,7 @@ class BookingManager {
           <!-- Promo Coupon Box -->
           <div class="checkout-coupon-box" style="margin-top: 10px; background: rgba(2, 132, 199, 0.04); border: 1px dashed #38bdf8; border-radius: 12px; padding: 12px 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 11.5px; font-weight: 800; color: #0284c7; text-transform: uppercase; letter-spacing: 0.5px;">🎟️ Apply Promo Coupon</span>
+              <span style="font-size: 11.5px; font-weight: 800; color: #0284c7; text-transform: uppercase; letter-spacing: 0.5px;">Apply Promo Coupon</span>
               <span style="font-size: 10.5px; color: var(--owc-text-muted);">Try: <strong style="color: #0284c7;">FIRST100</strong>, <strong style="color: #0284c7;">BIHAR50</strong>, <strong style="color: #0284c7;">FESTIVE10</strong></span>
             </div>
             <div style="display: flex; gap: 8px;">
@@ -2320,7 +2320,7 @@ class BookingManager {
           <!-- Payment Options Header -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 14px; margin-bottom: 8px;">
             <div style="font-size: 13px; font-weight: 800; color: var(--owc-text); text-transform: uppercase; letter-spacing: 0.4px;">
-              💳 Select Payment Mode
+              Select Payment Mode
             </div>
             <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; font-weight: 700;">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -2338,7 +2338,7 @@ class BookingManager {
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <strong style="color: #0070f3; font-size: 14px; font-weight: 800;">
-                      ⚡ Pay ₹299 Token Advance (Instant Cab Lock)
+                      Pay ₹299 Token Advance (Instant Cab Lock)
                     </strong>
                     <div style="display: flex; gap: 5px;">
                       <span style="font-size: 9.5px; background: #0070f3; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">RECOMMENDED</span>
@@ -2366,7 +2366,7 @@ class BookingManager {
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
-                      💵 100% Cash on Ride (Zero Advance)
+                      100% Cash on Ride (Zero Advance)
                     </strong>
                     <span style="font-size: 9.5px; background: #059669; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">ZERO ADVANCE</span>
                   </div>
@@ -2384,7 +2384,7 @@ class BookingManager {
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
-                      📱 Direct PhonePe / BHIM UPI QR Code (₹299)
+                      Direct PhonePe / BHIM UPI QR Code (₹299)
                     </strong>
                     <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">INSTANT SCAN</span>
                   </div>
@@ -2401,7 +2401,7 @@ class BookingManager {
                 
                 <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; margin-top: 6px;">
                   <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
-                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">📋 Copy</button>
+                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy</button>
                 </div>
 
                 <div style="margin-top: 10px;">
@@ -2424,7 +2424,7 @@ class BookingManager {
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
-                      💳 100% Full Pre-payment Online (Cashless Ride)
+                      100% Full Pre-payment Online (Cashless Ride)
                     </strong>
                     <span style="font-size: 9.5px; background: #0284c7; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">CASHLESS</span>
                   </div>
@@ -2440,19 +2440,19 @@ class BookingManager {
           <!-- Trust & Service Guarantee Badges (Uber / MakeMyTrip style) -->
           <div style="margin-top: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11.5px; color: #334155;">
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="color: #059669; font-size: 14px;">🛡️</span>
+              <span style="color: #059669; font-weight: 800; font-size: 13px;">✓</span>
               <span><strong>Verified Chauffeurs</strong> &amp; clean AC cabs</span>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="color: #0284c7; font-size: 14px;">⏱️</span>
+              <span style="color: #0284c7; font-weight: 800; font-size: 13px;">✓</span>
               <span><strong>5-Min Dispatch</strong> call confirmation</span>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="color: #059669; font-size: 14px;">🚫</span>
+              <span style="color: #059669; font-weight: 800; font-size: 13px;">✓</span>
               <span><strong>Zero Surge Pricing</strong> (Fixed Fare)</span>
             </div>
             <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="color: #0284c7; font-size: 14px;">🔒</span>
+              <span style="color: #0284c7; font-weight: 800; font-size: 13px;">✓</span>
               <span><strong>256-Bit SSL</strong> RBI Safe Checkout</span>
             </div>
           </div>
@@ -2691,16 +2691,16 @@ class BookingManager {
     const sumMethodVal = document.getElementById("sum-method-val");
     if (sumMethodVal) {
       if (isCash) {
-        sumMethodVal.textContent = "💵 100% Cash on Ride (Zero Advance)";
+        sumMethodVal.textContent = "100% Cash on Ride (Zero Advance)";
         sumMethodVal.style.color = "#059669";
       } else if (isFull) {
-        sumMethodVal.textContent = "💳 100% Full Pre-payment Online";
+        sumMethodVal.textContent = "100% Full Pre-payment Online";
         sumMethodVal.style.color = "#0284c7";
       } else if (isUpi) {
-        sumMethodVal.textContent = "📱 Direct PhonePe / BHIM UPI QR Code (₹299)";
+        sumMethodVal.textContent = "Direct PhonePe / BHIM UPI QR Code (₹299)";
         sumMethodVal.style.color = "#5f259f";
       } else {
-        sumMethodVal.textContent = "⚡ Razorpay Online Advance (₹299)";
+        sumMethodVal.textContent = "Razorpay Online Advance (₹299)";
         sumMethodVal.style.color = "#0070f3";
       }
     }
@@ -2855,7 +2855,7 @@ class BookingManager {
 
         msgEl.style.display = "block";
         msgEl.style.color = "#10b981";
-        msgEl.innerHTML = `✅ <strong>${res.code} applied!</strong> You saved ₹${res.discount.toLocaleString('en-IN')}.`;
+        msgEl.innerHTML = `✓ <strong>${res.code} applied!</strong> You saved ₹${res.discount.toLocaleString('en-IN')}.`;
 
         const row = document.getElementById("sum-coupon-row");
         const codeEl = document.getElementById("sum-coupon-code");
@@ -2871,7 +2871,7 @@ class BookingManager {
         this.appliedCouponDiscount = 0;
         msgEl.style.display = "block";
         msgEl.style.color = "#ef4444";
-        msgEl.textContent = `❌ ${res?.message || 'Invalid or expired coupon code'}`;
+        msgEl.textContent = res?.message || 'Invalid or expired coupon code';
 
         const row = document.getElementById("sum-coupon-row");
         if (row) row.style.display = "none";
@@ -3360,23 +3360,23 @@ class BookingManager {
         localStorage.removeItem("oneway_fare_phone");
 
         // Format detailed WhatsApp dispatch and customer ticket text
-        const couponDetail = (b.couponDiscount > 0) ? `🎟️ *Coupon Applied:* ${b.couponCode} (-₹${b.couponDiscount.toLocaleString('en-IN')})\n` : "";
+        const couponDetail = (b.couponDiscount > 0) ? `Coupon Applied: ${b.couponCode} (-₹${b.couponDiscount.toLocaleString('en-IN')})\n` : "";
         const waMsg = 
-          `🚕 *NEW BOOKING CONFIRMATION - OneWayTaxiBihar*\n` +
+          `*NEW BOOKING CONFIRMATION - OneWayTaxiBihar*\n` +
           `━━━━━━━━━━━━━━━━━━━━━━\n` +
-          `📋 *Booking ID:* ${b.bookingId}\n` +
-          `🔐 *Trip OTP:* ${b.tripOtp || 'Shared prior to trip'}\n` +
-          `👤 *Passenger:* ${b.passengerName}\n` +
-          `📞 *Mobile:* ${b.passengerPhone}\n` +
-          `📍 *Route:* ${b.originCity} ➔ ${b.destCity} (${b.distanceKm} KM)\n` +
-          `🕒 *Pickup Time:* ${b.pickupDate} at ${b.pickupTime}\n` +
-          `🏠 *Pickup Address:* ${b.pickupAddress}\n` +
-          `🎯 *Drop Address:* ${b.dropAddress}\n` +
-          `🚘 *Cab Tier:* ${b.fleetClass} (${b.fleetModel || 'Verified AC Cab'})\n` +
+          `Booking ID: ${b.bookingId}\n` +
+          `Trip OTP: ${b.tripOtp || 'Shared prior to trip'}\n` +
+          `Passenger: ${b.passengerName}\n` +
+          `Mobile: ${b.passengerPhone}\n` +
+          `Route: ${b.originCity} ➔ ${b.destCity} (${b.distanceKm} KM)\n` +
+          `Pickup Time: ${b.pickupDate} at ${b.pickupTime}\n` +
+          `Pickup Address: ${b.pickupAddress}\n` +
+          `Drop Address: ${b.dropAddress}\n` +
+          `Cab Tier: ${b.fleetClass} (${b.fleetModel || 'Verified AC Cab'})\n` +
           couponDetail +
-          `💰 *Total Fare:* ₹${(b.totalFare || 0).toLocaleString('en-IN')} (Advance: ₹${b.advancePaid || 0}, Balance Due: ₹${b.balanceDue || 0})\n` +
-          `💳 *Payment Method:* ${b.paymentMethod}\n` +
-          `📌 *Status:* REQUESTED / CONFIRMED\n` +
+          `Total Fare: ₹${(b.totalFare || 0).toLocaleString('en-IN')} (Advance: ₹${b.advancePaid || 0}, Balance Due: ₹${b.balanceDue || 0})\n` +
+          `Payment Method: ${b.paymentMethod}\n` +
+          `Status: REQUESTED / CONFIRMED\n` +
           `━━━━━━━━━━━━━━━━━━━━━━\n` +
           `Our central dispatch agent will call you within 5 minutes.`;
 

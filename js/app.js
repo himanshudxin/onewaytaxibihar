@@ -327,7 +327,7 @@ window.openAuthModal = (bookingContext = null) => {
     if (cabTitleEl) cabTitleEl.textContent = `Selected Cab: ${bookingContext.cabName || 'Outstation Cab'} (₹${(bookingContext.price || 0).toLocaleString('en-IN')})`;
     if (discountNoteEl) {
       const discounted = Math.max(0, (bookingContext.price || 0) - 100);
-      discountNoteEl.innerHTML = `🎁 <strong>₹100 Welcome Reward</strong> will apply automatically! (Payable: ₹${discounted.toLocaleString('en-IN')})`;
+      discountNoteEl.innerHTML = `✓ <strong>₹100 Welcome Reward</strong> will apply automatically! (Payable: ₹${discounted.toLocaleString('en-IN')})`;
     }
     if (modalTitle) modalTitle.textContent = "Login & Claim ₹100 Ride Reward";
     if (modalSub) modalSub.textContent = "Verify your mobile number to lock in your cab reservation with ₹100 instant discount.";
@@ -416,10 +416,10 @@ window.handleSendVerificationCode = async (isResend = false) => {
       if (window.bookingManager && window.bookingManager.pendingCheckout) {
         const { cabTier, cabId, price } = window.bookingManager.pendingCheckout;
         window.bookingManager.pendingCheckout = null;
-        window.showToast(`🎉 Phone verified! Welcome, ${name}! ₹100 Ride Reward applied.`, "success");
+        window.showToast(`Phone verified! Welcome, ${name}! ₹100 Ride Reward applied.`, "success");
         window.bookingManager.startCheckout(cabId || cabTier || "sedan", price);
       } else {
-        window.showToast(`🎉 Welcome, ${name}! You are logged in with ₹100 Welcome Bonus in your wallet.`, "success");
+        window.showToast(`Welcome, ${name}! You are logged in with ₹100 Welcome Bonus in your wallet.`, "success");
       }
     });
   }
@@ -512,8 +512,8 @@ window.handleVerifyOtpCode = async () => {
 
         window.closeAllModals(false);
         const rewardMsg = res.isFirstTimeUser
-          ? `🎉 Phone verified! ₹100 Welcome Reward applied to your ${cabId.toUpperCase()} cab!`
-          : `🎉 Verified! Welcome back, ${currentUser.name}!`;
+          ? `Phone verified! ₹100 Welcome Reward applied to your ${cabId.toUpperCase()} cab!`
+          : `Verified! Welcome back, ${currentUser.name}!`;
         window.showToast(rewardMsg, "success");
 
         // Automatically launch checkout for the selected cab
@@ -929,7 +929,7 @@ window.openMyTripsModal = async () => {
               ${r.originCity} ➔ ${r.destCity}
             </h4>
             <div style="font-size: 11.5px; color: var(--owc-text-muted);">
-              📍 Pickup: ${r.pickupAddress || `${r.originCity} Doorstep`} • Drop: ${r.dropAddress || `${r.destCity} Destination`}
+              Pickup: ${r.pickupAddress || `${r.originCity} Doorstep`} • Drop: ${r.dropAddress || `${r.destCity} Destination`}
             </div>
           </div>
 
@@ -942,9 +942,9 @@ window.openMyTripsModal = async () => {
         </div>
 
         <div style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--owc-text-muted); background: var(--owc-slate-50); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px;">
-          <span>📅 <strong>${r.pickupDate}</strong> at <strong>${r.pickupTime}</strong></span>
-          <span>🚗 <strong>${r.fleetClass}</strong> (${r.fleetModel})</span>
-          <span>👤 ${r.passengerName} (${r.passengerPhone})</span>
+          <span>Schedule: <strong>${r.pickupDate}</strong> at <strong>${r.pickupTime}</strong></span>
+          <span>Cab: <strong>${r.fleetClass}</strong> (${r.fleetModel})</span>
+          <span>Passenger: ${r.passengerName} (${r.passengerPhone})</span>
         </div>
 
         <!-- Driver Info / 5-Minute Confirmation Note -->
@@ -986,8 +986,8 @@ window.openMyTripsModal = async () => {
 
   const renderEmptyState = (msg, iconSvg) => `
     <div style="text-align: center; padding: 36px 16px; background: var(--owc-slate-50); border-radius: var(--radius-lg); border: 1.5px dashed var(--owc-border);">
-      <div style="font-size: 32px; color: var(--owc-text-muted); margin-bottom: 8px;">
-        ${iconSvg || '🚕'}
+      <div style="font-size: 28px; color: var(--owc-text-muted); margin-bottom: 8px;">
+        ${iconSvg || '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'}
       </div>
       <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--owc-text);">${msg}</h4>
       <p style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 14px;">Travel intercity anywhere in Bihar with certified AC cabs and transparent fares.</p>
@@ -1060,7 +1060,9 @@ window.openMyTripsModal = async () => {
           <div style="font-size: 28px; font-weight: 900;">₹${currentUser ? (currentUser.walletBalance || 100) : 100}</div>
           <div style="font-size: 12px; opacity: 0.95; margin-top: 2px;">Applicable automatically for ₹100 instant discount on bookings</div>
         </div>
-        <div style="font-size: 36px; opacity: 0.85;">👛</div>
+        <div style="opacity: 0.9; color: white;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg>
+        </div>
       </div>
 
       <div style="font-size: 13px; font-weight: 800; color: var(--owc-text); margin-bottom: 8px;">WALLET TRANSACTION AUDIT TRAIL</div>
@@ -2263,21 +2265,21 @@ window.handleAiSubmit = async (e) => {
       const botBubble = document.createElement("div");
       botBubble.className = "ai-bubble ai-bubble-bot";
       botBubble.innerHTML = `
-        <div class="ai-bot-name">⚡ OneWay AI Route Engine</div>
+        <div class="ai-bot-name">OneWay AI Route Engine</div>
         <div>I analyzed your travel request and extracted your Bihar trip parameters:</div>
         <div style="background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.3); border-radius: 10px; padding: 10px 12px; margin: 10px 0;">
           <div style="font-weight: 800; color: #0284c7; font-size: 13.5px;">
             ${parsedIntent.origin} ➔ ${parsedIntent.destination}
           </div>
           <div style="font-size: 12px; color: var(--owc-text); margin-top: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-            <div>📅 <strong>Date:</strong> ${parsedIntent.pickupDate || 'Today'}</div>
-            <div>⏰ <strong>Time:</strong> ${parsedIntent.pickupTime || '10:00 AM'}</div>
-            <div>👥 <strong>Pax:</strong> ${parsedIntent.passengers || 4} Passengers</div>
-            <div>🚘 <strong>Cab:</strong> ${(parsedIntent.recommendedTier || 'sedan').toUpperCase()}</div>
+            <div><strong>Date:</strong> ${parsedIntent.pickupDate || 'Today'}</div>
+            <div><strong>Time:</strong> ${parsedIntent.pickupTime || '10:00 AM'}</div>
+            <div><strong>Pax:</strong> ${parsedIntent.passengers || 4} Passengers</div>
+            <div><strong>Cab:</strong> ${(parsedIntent.recommendedTier || 'sedan').toUpperCase()}</div>
           </div>
         </div>
         <button type="button" class="btn-check-fare-primary" style="width: 100%; padding: 10px; font-size: 12.5px; font-weight: 800; border-radius: 8px; cursor: pointer;" onclick='window.applyAiParsedTrip(${JSON.stringify(parsedIntent).replace(/'/g, "&#39;")})'>
-          ⚡ Autofill Trip & View Fares Now →
+          Autofill Trip &amp; View Fares Now →
         </button>
       `;
       msgsArea.appendChild(botBubble);
@@ -2309,7 +2311,7 @@ window.handleAiSubmit = async (e) => {
           waEscalateBtn = `
             <div style="margin-top: 10px;">
               <a href="${waUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: #25d366; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none;">
-                💬 Speak with Dispatch Captain on WhatsApp
+                Speak with Dispatch Captain on WhatsApp
               </a>
             </div>
           `;

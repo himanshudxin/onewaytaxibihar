@@ -71,13 +71,13 @@
           }
           this.isFirebaseReady = true;
           this.isInitialized = true;
-          console.log("🔥 Firebase Auth Service initialized successfully (Project: " + (this.config.projectId || 'Live') + ")");
+          console.log("[Firebase Auth] Service initialized successfully (Project: " + (this.config.projectId || 'Live') + ")");
         } catch (err) {
           console.warn("Firebase Init fallback mode active:", err.message);
           this.isDemoMode = true;
         }
       } else {
-        console.log("🔥 Firebase SDK loaded in lightweight resilient mode.");
+        console.log("[Firebase Auth] SDK loaded in lightweight resilient mode.");
       }
 
       this.setupGlobalHandlers();
@@ -173,7 +173,7 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `✅ 6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
+        statusEl.textContent = `6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
         statusEl.style.color = "#059669";
       }
       window.showToast?.(`OTP SMS sent to +91 ${clean10}!`, "success");
@@ -267,7 +267,7 @@
       if (!enteredCode || enteredCode.length !== 6) {
         window.showToast?.("Please enter the complete 6-digit OTP code", "warning");
         if (statusEl) {
-          statusEl.textContent = "❌ Please enter all 6 digits of your OTP";
+          statusEl.textContent = "Please enter all 6 digits of your OTP";
           statusEl.style.color = "#ef4444";
         }
         return;
@@ -323,11 +323,11 @@
           localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
 
           if (statusEl) {
-            statusEl.textContent = "✅ Mobile Number Verified Successfully!";
+            statusEl.textContent = "Mobile Number Verified Successfully!";
             statusEl.style.color = "#059669";
           }
 
-          window.showToast?.("Mobile number verified successfully! 🛡️", "success");
+          window.showToast?.("Mobile number verified successfully!", "success");
 
           setTimeout(() => {
             this.closeOtpModal();
@@ -343,7 +343,7 @@
 
         } else {
           if (statusEl) {
-            statusEl.textContent = "❌ Invalid OTP code. Please enter the 6 digits sent to your phone.";
+            statusEl.textContent = "Invalid OTP code. Please enter the 6 digits sent to your phone.";
             statusEl.style.color = "#ef4444";
           }
           window.showToast?.("Invalid OTP code. Please enter the 6 digits sent to your phone.", "error");
@@ -463,7 +463,7 @@
                   <strong id="otp-modal-phone-display" style="font-size: 14px; color: var(--owc-text, #0f172a); font-weight: 800;">+91 98765 43210</strong>
                 </div>
                 <button type="button" onclick="window.firebaseOtpService.editPhoneNumber()" style="border: none; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
-                  ✏️ Edit
+                  Edit
                 </button>
               </div>
 

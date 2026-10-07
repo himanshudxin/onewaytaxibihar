@@ -630,7 +630,7 @@ module.exports = async (req, res) => {
       db.notifications.unshift({
         id: `NOTIF_USER_${Date.now()}`,
         type: 'PASSENGER_LOGIN',
-        title: `👤 Passenger Signed In: ${user.name}`,
+        title: `Passenger Signed In: ${user.name}`,
         message: `${user.name} (+91 ${cleanPhone}) active on portal.`,
         createdAt: new Date().toISOString()
       });
@@ -1169,8 +1169,8 @@ module.exports = async (req, res) => {
             note: 'Booking request placed. Agent call in 5 mins.'
           }
         ],
-        whatsappMessage: `🚕 *NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* ${bookingId}\n*Passenger:* ${safePassengerName} (+91 ${cleanPhone})\n*Route:* ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'} (${distanceKm} KM)\n*Schedule:* ${safePickupDate} at ${pickupTime || '10:00 AM'}\n*Total Fare:* ₹${finalPayable} (Advance: ₹${advancePaid}, Balance Due: ₹${balanceDue})\n*Status:* REQUESTED / CONFIRMED`,
-        whatsappDispatchUrl: `https://wa.me/917281851011?text=${encodeURIComponent(`🚕 *NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n*Booking ID:* ${bookingId}\n*Passenger:* ${safePassengerName} (+91 ${cleanPhone})\n*Route:* ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'}\n*Total Fare:* ₹${finalPayable}`)}`,
+        whatsappMessage: `*NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* ${bookingId}\n*Passenger:* ${safePassengerName} (+91 ${cleanPhone})\n*Route:* ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'} (${distanceKm} KM)\n*Schedule:* ${safePickupDate} at ${pickupTime || '10:00 AM'}\n*Total Fare:* ₹${finalPayable} (Advance: ₹${advancePaid}, Balance Due: ₹${balanceDue})\n*Status:* REQUESTED / CONFIRMED`,
+        whatsappDispatchUrl: `https://wa.me/917281851011?text=${encodeURIComponent(`*NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n*Booking ID:* ${bookingId}\n*Passenger:* ${safePassengerName} (+91 ${cleanPhone})\n*Route:* ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'}\n*Total Fare:* ₹${finalPayable}`)}`,
         createdAt: new Date().toISOString()
       };
 
@@ -1182,7 +1182,7 @@ module.exports = async (req, res) => {
       db.notifications.unshift({
         id: `NOTIF_BOOK_${Date.now()}`,
         type: 'NEW_BOOKING_REQUEST',
-        title: `🚨 New Cab Booking: ${bookingId}`,
+        title: `New Cab Booking: ${bookingId}`,
         message: `${passengerName.trim()} (+91 ${cleanPhone}) requested ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'} (${serverFare.tierName}). Total Fare: ₹${finalPayable}.`,
         bookingId,
         createdAt: new Date().toISOString()
@@ -1888,7 +1888,7 @@ module.exports = async (req, res) => {
         db.notifications.unshift({
           id: `NOTIF_LEAD_${Date.now()}`,
           type: 'NEW_ROUTE_INQUIRY',
-          title: `⚡ New Route Inquiry: ${orig} ➔ ${dest}`,
+          title: `New Route Inquiry: ${orig} ➔ ${dest}`,
           message: `Visitor (+91 ${cleanPhone}) checked fare for ${orig} ➔ ${dest} (${body.distanceKm || 100} KM). Sedan Rate: ₹${body.estFareSedan || 2198}.`,
           leadId: lead.id,
           createdAt: new Date().toISOString()
@@ -2396,7 +2396,7 @@ module.exports = async (req, res) => {
       db.notifications.unshift({
         id: `NOTIF_DRV_${Date.now()}`,
         type: 'NEW_DRIVER_REGISTERED',
-        title: `🚖 New Driver Registered: ${name.trim()}`,
+        title: `New Driver Registered: ${name.trim()}`,
         message: `Chauffeur ${name.trim()} (+91 ${cleanPhone}) from ${city || 'Patna'} joined fleet with ${vehicleNumber}. Document verification helpline: 6206494214.`,
         driverPhone: `+91 ${cleanPhone}`,
         createdAt: new Date().toISOString()
@@ -2508,7 +2508,7 @@ module.exports = async (req, res) => {
       db.notifications.unshift({
         id: `NOTIF_LOGIN_${Date.now()}`,
         type: 'DRIVER_LOGGED_IN',
-        title: `🟢 Driver Online: ${driver.name}`,
+        title: `Driver Online: ${driver.name}`,
         message: `Chauffeur ${driver.name} (${driver.phone}) is active on duty. Direct Contact: ${driver.phone}, Admin Support: 6206494214.`,
         createdAt: new Date().toISOString()
       });

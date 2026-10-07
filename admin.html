@@ -462,7 +462,7 @@
         </div>
         <h2 style="font-size: 20px; font-weight: 900; margin: 0; color: #f8fafc;">Admin Dispatch Portal</h2>
         <div style="display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; background: rgba(16, 185, 129, 0.12); border: 1px solid #059669; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #34d399;">
-          <span>💬 WhatsApp 2FA Secured</span>
+          <span>WhatsApp 2FA Secured</span>
         </div>
       </div>
 
@@ -473,10 +473,10 @@
       <div id="admin-auth-step-1">
         <div style="display: flex; gap: 8px; margin-bottom: 16px;">
           <button type="button" class="auth-tab-btn active" id="tab-auth-cred" onclick="switchAdminAuthMode('cred')">
-            🔑 Dispatcher ID
+            Dispatcher ID
           </button>
           <button type="button" class="auth-tab-btn" id="tab-auth-phone" onclick="switchAdminAuthMode('phone')">
-            📱 Owner WhatsApp
+            Owner WhatsApp
           </button>
         </div>
 
@@ -490,7 +490,7 @@
             <div style="margin-bottom: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <label style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">PASSWORD</label>
-                <button type="button" onclick="toggleAdminPassVisibility()" style="background: none; border: none; color: #38bdf8; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0;" id="btn-toggle-pass">👁️ Show</button>
+                <button type="button" onclick="toggleAdminPassVisibility()" style="background: none; border: none; color: #38bdf8; font-size: 11px; font-weight: 700; cursor: pointer; padding: 0;" id="btn-toggle-pass">Show</button>
               </div>
               <input type="password" id="admin-pass-input" placeholder="Enter secure admin password" required autocomplete="current-password" style="width: 100%; box-sizing: border-box; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; margin-top: 4px; font-size: 14px;">
             </div>
@@ -502,19 +502,19 @@
             <div style="display: flex; align-items: center; margin-top: 4px; background: #0f172a; border: 1.5px solid #059669; border-radius: 8px; padding: 0 10px;">
               <span style="color: #34d399; font-weight: 800; font-size: 14px; margin-right: 6px;">+91</span>
               <input type="tel" id="admin-phone-input" value="6206494214" readonly style="width: 100%; box-sizing: border-box; padding: 12px 0; background: transparent; border: none; color: #38bdf8; font-size: 15px; font-weight: 800; font-family: monospace; outline: none; cursor: not-allowed;">
-              <span style="font-size: 11px; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 8px; border-radius: 6px; font-weight: 800; white-space: nowrap;">🔒 Fixed</span>
+              <span style="font-size: 11px; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 8px; border-radius: 6px; font-weight: 800; white-space: nowrap;">Fixed</span>
             </div>
             <div style="font-size: 11px; color: #94a3b8; margin-top: 5px;">Strictly bound to Owner WhatsApp (+91 6206494214).</div>
           </div>
 
           <!-- Primary: Direct Admin Login -->
           <button type="submit" id="btn-admin-direct-login" style="width: 100%; padding: 13px; background: #0284c7; color: white; font-weight: 800; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
-            <span>🔒 Secure Sign In</span> →
+            <span>Secure Sign In</span> →
           </button>
 
           <!-- Optional 2FA WhatsApp OTP trigger -->
           <button type="button" onclick="handleAdminRequestOtp(event)" id="btn-admin-request-otp" style="width: 100%; padding: 9px; background: transparent; color: #94a3b8; font-weight: 700; border: 1px dashed #334155; border-radius: 8px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <span>💬 Or Request 2FA WhatsApp Code (+91 62064 94214)</span>
+            <span>Or Request 2FA WhatsApp Code (+91 62064 94214)</span>
           </button>
         </form>
       </div>
@@ -524,7 +524,7 @@
         <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid #059669; border-radius: 10px; padding: 14px; margin-bottom: 16px; text-align: left;">
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="font-size: 11.5px; font-weight: 800; color: #34d399; text-transform: uppercase; letter-spacing: 0.5px;">
-              💬 2FA Code Sent to Owner
+              2FA Code Sent to Owner
             </div>
             <span style="font-size: 11px; background: #059669; color: white; padding: 2px 7px; border-radius: 10px; font-weight: 800;">Owner Permission Required</span>
           </div>
@@ -537,7 +537,7 @@
           <!-- Clickable WhatsApp link -->
           <div style="margin-top: 10px;">
             <a id="admin-wa-direct-link" href="https://wa.me/916206494214" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; background: #059669; color: white; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; text-decoration: none;">
-              📲 Request OTP from Owner on WhatsApp
+              Request OTP from Owner on WhatsApp
             </a>
           </div>
         </div>
@@ -604,7 +604,7 @@
         </div>
 
         <button type="button" onclick="loadBookings(); loadLeads(); checkLiveDbStatus();" style="background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;" title="Force refresh live database">
-          🔄 Sync Now
+          Sync Now
         </button>
 
         <!-- Live Real-Time Device Notifications Control -->
@@ -615,8 +615,7 @@
 
         <!-- Executive Audio Chime Toggle -->
         <button type="button" id="btn-audio-alerts" onclick="toggleAudioAlerts()" class="nav-sound-btn active" title="Toggle executive notification chime sound">
-          <span id="icon-sound">🔊</span>
-          <span id="txt-audio-alerts">Chime: ON</span>
+          <span id="icon-sound">Chime: ON</span>
         </button>
 
         <a href="index.html" target="_blank" style="color: var(--admin-muted); font-size: 12px; text-decoration: none; font-weight: 600; padding: 5px 8px; background: rgba(255,255,255,0.05); border-radius: 6px;">Passenger Site ↗</a>
@@ -629,31 +628,31 @@
       <!-- Top Primary Navigation Tabs -->
       <nav class="admin-main-tabs">
         <button type="button" class="admin-nav-tab active" id="main-tab-leads" onclick="switchMainTab('leads')">
-          ⚡ Live Leads &amp; Inquiries <span id="leads-count-badge" style="background: #ef4444; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px;">0</span>
+          Live Leads &amp; Inquiries <span id="leads-count-badge" style="background: #ef4444; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px;">0</span>
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-bookings" onclick="switchMainTab('bookings')">
-          🚖 Bookings &amp; Dispatch <span id="bookings-count-badge" style="background: #0284c7; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px; display: none;">0</span>
+          Bookings &amp; Dispatch <span id="bookings-count-badge" style="background: #0284c7; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px; display: none;">0</span>
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-payments" onclick="switchMainTab('payments')">
-          💳 Payments &amp; UTR Verification
+          Payments &amp; UTR Verification
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-pay-settings" onclick="switchMainTab('pay-settings')">
-          ⚙️ Payment &amp; Gateway Settings
+          Payment &amp; Gateway Settings
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-wallet" onclick="switchMainTab('wallet')">
-          👛 Customer Wallet Ledger
+          Customer Wallet Ledger
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-drivers" onclick="switchMainTab('drivers')">
-          👨‍✈️ Chauffeurs &amp; Fleet
+          Chauffeurs &amp; Fleet
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-vehicles" onclick="switchMainTab('vehicles')">
-          🚗 Vehicle Expiry Radar
+          Vehicle Expiry Radar
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-coupons" onclick="switchMainTab('coupons')">
-          🎟️ Promo Coupons
+          Promo Coupons
         </button>
         <button type="button" class="admin-nav-tab" id="main-tab-audit" onclick="switchMainTab('audit')">
-          📜 Audit Logs
+          Audit Logs
         </button>
       </nav>
 
@@ -682,8 +681,8 @@
         <!-- Search & Status Bar -->
         <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
           <div style="display: flex; gap: 8px; flex: 1; min-width: 280px;">
-            <input type="text" id="admin-leads-search" placeholder="🔍 Search by passenger phone or city..." style="flex: 1; padding: 10px 14px; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 8px; color: white; font-size: 13px;" oninput="applyLeadsFilters()">
-            <button type="button" style="padding: 10px 14px; background: #334155; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;" onclick="loadLeads()">🔄 Refresh</button>
+            <input type="text" id="admin-leads-search" placeholder="Search by passenger phone or city..." style="flex: 1; padding: 10px 14px; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 8px; color: white; font-size: 13px;" oninput="applyLeadsFilters()">
+            <button type="button" style="padding: 10px 14px; background: #334155; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;" onclick="loadLeads()">Refresh</button>
           </div>
           <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #94a3b8;">
             <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
@@ -694,9 +693,9 @@
         <!-- Filter pills -->
         <div class="admin-filter-bar">
           <button type="button" class="admin-filter-pill active" onclick="setLeadsFilter('ALL', this)">All Inquiries</button>
-          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('NEW', this)">🔥 Uncontacted New</button>
-          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('CONTACTED', this)">📞 Contacted</button>
-          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('CONVERTED', this)">✅ Converted to Booking</button>
+          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('NEW', this)">Uncontacted New</button>
+          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('CONTACTED', this)">Contacted</button>
+          <button type="button" class="admin-filter-pill" onclick="setLeadsFilter('CONVERTED', this)">Converted to Booking</button>
         </div>
 
         <!-- Leads Table -->
@@ -752,7 +751,7 @@
 
         <!-- Search & Date Filter Bar (Req 159, 160, 161) -->
         <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-          <input type="text" id="admin-search-input" placeholder="🔍 Search Booking ID, passenger, phone, city..." style="flex: 1; min-width: 260px; padding: 10px 14px; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 8px; color: white; font-size: 13px;" oninput="applyFilters()">
+          <input type="text" id="admin-search-input" placeholder="Search Booking ID, passenger, phone, city..." style="flex: 1; min-width: 260px; padding: 10px 14px; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 8px; color: white; font-size: 13px;" oninput="applyFilters()">
           <input type="date" id="admin-date-filter" style="padding: 10px 14px; background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 8px; color: white; font-size: 13px;" onchange="applyFilters()">
           <button type="button" style="padding: 10px 16px; background: #334155; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;" onclick="clearFilters()">Reset Filters</button>
         </div>
@@ -798,7 +797,7 @@
             <p style="font-size: 12.5px; color: var(--admin-muted); margin: 3px 0 0 0;">Review bank settlements, UPI UTR numbers, and manual dispatch verifications.</p>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn-action-sm btn-assign" onclick="switchMainTab('pay-settings')">⚙️ Configure Gateways</button>
+            <button type="button" class="btn-action-sm btn-assign" onclick="switchMainTab('pay-settings')">Configure Gateways</button>
             <button type="button" class="btn-action-sm btn-confirm" onclick="loadPayments()">↻ Refresh Payments</button>
           </div>
         </div>
@@ -828,10 +827,10 @@
       <div id="view-pay-settings" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <div>
-            <h3 style="margin: 0; font-size: 17px; font-weight: 800;">⚙️ Payment Gateway &amp; UPI Collection Settings</h3>
+            <h3 style="margin: 0; font-size: 17px; font-weight: 800;">Payment Gateway &amp; UPI Collection Settings</h3>
             <p style="font-size: 12.5px; color: var(--admin-muted); margin: 3px 0 0 0;">Manage live bank credentials, UPI QR VPA parameters, advance token amount, and passenger checkout options.</p>
           </div>
-          <button type="button" class="btn-action-sm btn-confirm" onclick="savePaymentSettings()">💾 Save All Payment Settings</button>
+          <button type="button" class="btn-action-sm btn-confirm" onclick="savePaymentSettings()">Save All Payment Settings</button>
         </div>
 
         <div id="pay-settings-alert" style="display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: 700;"></div>
@@ -842,7 +841,6 @@
           <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">📲</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Direct PhonePe / BHIM UPI &amp; QR Code</strong>
               </div>
               <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">0% Gateway Fee</span>
@@ -865,14 +863,14 @@
                     <input type="text" id="set-qr-image-url" placeholder="images/phonepe-qr.png or https://..." value="images/phonepe-qr.png" oninput="document.getElementById('preview-qr-img').src = this.value || 'images/phonepe-qr.png'" style="width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #e2e8f0; font-size: 12px;">
                     <div style="display: flex; gap: 8px;">
                       <input type="file" id="set-qr-file-input" accept="image/*" onchange="handleQrFileUpload(this)" style="display: none;">
-                      <button type="button" onclick="document.getElementById('set-qr-file-input').click()" style="background: #0284c7; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">📁 Upload QR Image</button>
+                      <button type="button" onclick="document.getElementById('set-qr-file-input').click()" style="background: #0284c7; color: white; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">Upload QR Image</button>
                       <button type="button" onclick="resetQrToDefault()" style="background: #334155; color: #cbd5e1; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">↺ Reset</button>
                     </div>
                   </div>
                 </div>
               </div>
               <div style="background: #0f172a; padding: 10px; border-radius: 6px; font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">
-                💡 Instantly generates dynamic PhonePe, GPay, Paytm, and BHIM intent buttons and QR codes on passenger checkout without 2% gateway deductions.
+                Instantly generates dynamic PhonePe, GPay, Paytm, and BHIM intent buttons and QR codes on passenger checkout without 2% gateway deductions.
               </div>
             </div>
           </div>
@@ -881,7 +879,6 @@
           <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">🏦</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Official Banking &amp; Settlement Account</strong>
               </div>
               <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">Direct Settlement</span>
@@ -929,7 +926,6 @@
           <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">💳</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Razorpay Gateway (Instant Confirmation)</strong>
               </div>
               <span id="badge-rzp-status" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">Active / Ready</span>
@@ -955,7 +951,6 @@
           <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">🛡️</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Advance Booking Policy &amp; Checkout</strong>
               </div>
             </div>
@@ -975,23 +970,23 @@
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
                     <input type="checkbox" id="set-enable-rzp" checked>
-                    <span>⚡ Razorpay Online UPI / Cards Advance (Instant Confirm)</span>
+                    <span>Razorpay Online UPI / Cards Advance (Instant Confirm)</span>
                   </label>
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
                     <input type="checkbox" id="set-enable-upi" checked>
-                    <span>📲 PhonePe / BHIM UPI QR Code Direct</span>
+                    <span>PhonePe / BHIM UPI QR Code Direct</span>
                   </label>
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
                     <input type="checkbox" id="set-enable-cash" checked>
-                    <span>💵 100% Cash / UPI to Driver upon Arrival</span>
+                    <span>100% Cash / UPI to Driver upon Arrival</span>
                   </label>
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
                     <input type="checkbox" id="set-enable-token" checked>
-                    <span>🎟️ Token Advance Option (₹200 Confirm)</span>
+                    <span>Token Advance Option (₹200 Confirm)</span>
                   </label>
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer;">
                     <input type="checkbox" id="set-autoconfirm" checked>
-                    <span>✅ Auto-Confirm Ride on Verified Advance Payment</span>
+                    <span>Auto-Confirm Ride on Verified Advance Payment</span>
                   </label>
                 </div>
               </div>
@@ -1002,7 +997,6 @@
           <div style="background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">🏦</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Cashfree PG (Secondary Backup)</strong>
               </div>
             </div>
@@ -1030,7 +1024,6 @@
           <div style="background: var(--admin-card); border: 1.5px solid #0284c7; border-radius: 12px; padding: 18px;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 18px;">🔥</span>
                 <strong style="font-size: 14.5px; color: #f8fafc;">Firebase Phone OTP Authentication</strong>
               </div>
               <span id="badge-fb-status" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">10,000 Free OTPs / Mo</span>
@@ -1038,7 +1031,7 @@
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
               <div style="background: rgba(2, 132, 199, 0.1); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: 8px; padding: 9px 12px; font-size: 11.5px; color: #cbd5e1; line-height: 1.45;">
-                ✨ Zero DLT registration required. First 10,000 SMS OTP verifications every month are 100% Free via Google Firebase.
+                Zero DLT registration required. First 10,000 SMS OTP verifications every month are 100% Free via Google Firebase.
               </div>
 
               <div>
@@ -1065,7 +1058,7 @@
               <div style="border-top: 1px dashed #334155; padding-top: 8px; margin-top: 4px;">
                 <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #34d399; font-weight: 700;">
                   <input type="checkbox" id="set-enable-otp" checked>
-                  <span>🛡️ Require OTP Verification Before Booking Confirmation</span>
+                  <span>Require OTP Verification Before Booking Confirmation</span>
                 </label>
               </div>
             </div>
@@ -1075,7 +1068,7 @@
 
         <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
           <button type="button" class="btn-action-sm btn-confirm" style="padding: 12px 24px; font-size: 14px;" onclick="savePaymentSettings()">
-            💾 Save Payment Settings
+            Save Payment Settings
           </button>
         </div>
       </div>
@@ -1468,10 +1461,10 @@
       if (!passEl) return;
       if (passEl.type === "password") {
         passEl.type = "text";
-        if (btnEl) btnEl.textContent = "🔒 Hide";
+        if (btnEl) btnEl.textContent = "Hide";
       } else {
         passEl.type = "password";
-        if (btnEl) btnEl.textContent = "👁️ Show";
+        if (btnEl) btnEl.textContent = "Show";
       }
     }
 
@@ -1599,10 +1592,10 @@
       if (btnAudio && txtAudio) {
         if (_audioAlertsEnabled) {
           btnAudio.className = "nav-sound-btn active";
-          btnAudio.innerHTML = `<span>🔊</span><span>Chime: ON</span>`;
+          btnAudio.innerHTML = `<span>Chime: ON</span>`;
         } else {
           btnAudio.className = "nav-sound-btn";
-          btnAudio.innerHTML = `<span>🔇</span><span>Chime: OFF</span>`;
+          btnAudio.innerHTML = `<span>Chime: OFF</span>`;
         }
       }
     }
@@ -1770,7 +1763,7 @@
                 const fareStr = `₹${(b.totalFare || 0).toLocaleString('en-IN')}`;
                 // Trigger Native Browser / Phone Device Notification
                 sendDeviceNotification(
-                  "🚨 OneWayTaxiBihar | New Cab Booking Request",
+                  "OneWayTaxiBihar | New Cab Booking Request",
                   `Booking ${b.bookingId}: ${b.originCity} ➔ ${b.destCity} (${b.fleetClass || 'Sedan'}) by ${b.passengerName} (${b.passengerPhone}) • Fare: ${fareStr}`,
                   `booking_${b.bookingId}`,
                   "bookings"
@@ -1886,7 +1879,7 @@
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<span>🔒 Secure Sign In</span> →`;
+          btn.innerHTML = `<span>Secure Sign In</span> →`;
         }
       }
     }
@@ -1960,7 +1953,7 @@
       } finally {
         if (reqBtn) {
           reqBtn.disabled = false;
-          reqBtn.innerHTML = `<span>💬 Send WhatsApp OTP to Owner (+91 62064 94214)</span> →`;
+          reqBtn.innerHTML = `<span>Send WhatsApp OTP to Owner (+91 62064 94214)</span> →`;
         }
       }
     }
@@ -2237,12 +2230,12 @@
           <tr>
             <td>
               <strong style="color: #38bdf8; font-size: 12px; font-family: monospace;">${l.id || 'LEAD'}</strong>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">⏱ ${timeAgo}</div>
+              <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">${timeAgo}</div>
             </td>
             <td>
               <div style="display: flex; align-items: center; gap: 6px;">
                 <a href="tel:${pDisplay}" style="color: #34d399; font-weight: 800; text-decoration: none; font-size: 14px;">
-                  📞 ${pDisplay}
+                  ${pDisplay}
                 </a>
               </div>
               <div style="font-size: 11px; color: var(--admin-muted);">${l.source || 'Fare Check'}</div>
@@ -2269,24 +2262,24 @@
             </td>
             <td>
               <span class="admin-status-badge ${statusClass}" style="border-color: ${statusColor}; color: ${statusColor};">
-                ${l.status === 'NEW' ? '🔥 NEW' : l.status}
+                ${l.status}
               </span>
             </td>
             <td>
               <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                 <a href="tel:${pDisplay}" class="btn-action-sm btn-confirm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 3px;" onclick="markLeadStatus('${l.id}', 'CONTACTED')">
-                  📞 Call
+                  Call
                 </a>
                 <a href="${waLink}" target="_blank" class="btn-action-sm btn-assign" style="background: #059669; border-color: #059669; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;" onclick="markLeadStatus('${l.id}', 'CONTACTED')">
-                  💬 WhatsApp
+                  WhatsApp
                 </a>
                 ${l.status !== 'CONVERTED' ? `
                   <button type="button" class="btn-action-sm btn-verify-pay" style="background: #0284c7; border-color: #0284c7; color: white;" onclick="convertLeadToBooking('${l.id}')">
-                    🚖 Convert
+                    Convert
                   </button>
                 ` : '<span style="font-size: 11.5px; color: #34d399; font-weight: 700;">✓ Booked</span>'}
                 <button type="button" class="btn-action-sm" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5;" onclick="deleteLeadAdmin('${l.id}')" title="Permanently delete inquiry">
-                  🗑️ Delete
+                  Delete
                 </button>
               </div>
             </td>
@@ -2472,7 +2465,7 @@
         } else if (isDenied) {
           payBadgeHtml = `<span style="display:inline-block; font-size: 10px; font-weight:800; color:#f87171; background:rgba(239,68,68,0.15); border:1px solid #ef4444; border-radius:4px; padding:2px 6px; margin-top:3px;">✕ Pay Denied</span>`;
         } else {
-          payBadgeHtml = `<span style="display:inline-block; font-size: 10px; font-weight:800; color:#94a3b8; background:rgba(148,163,184,0.12); border:1px solid #64748b; border-radius:4px; padding:2px 6px; margin-top:3px;">💵 Cash (₹0 Adv)</span>`;
+          payBadgeHtml = `<span style="display:inline-block; font-size: 10px; font-weight:800; color:#94a3b8; background:rgba(148,163,184,0.12); border:1px solid #64748b; border-radius:4px; padding:2px 6px; margin-top:3px;">Cash (₹0 Adv)</span>`;
         }
 
         return `
@@ -2485,7 +2478,7 @@
               <strong>${pName}</strong>
               <div style="display: flex; align-items: center; gap: 5px; margin-top: 3px; flex-wrap: wrap;">
                 <a href="tel:${pPhone}" style="color: #34d399; text-decoration: none; font-weight: 700;">${pPhone}</a>
-                <span style="display: inline-block; font-size: 9.5px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1px solid #059669; border-radius: 4px; padding: 1px 5px;" title="Passenger Mobile Number Verified via Firebase/SMS OTP">🛡️ OTP Verified</span>
+                <span style="display: inline-block; font-size: 9.5px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1px solid #059669; border-radius: 4px; padding: 1px 5px;" title="Passenger Mobile Number Verified via Firebase/SMS OTP">OTP Verified</span>
               </div>
             </td>
             <td>
@@ -2533,16 +2526,16 @@
                   <button type="button" class="btn-action-sm btn-cancel" onclick="cancelRideAdmin('${bId}')">✕ Cancel</button>
                 ` : ''}
                 <a href="https://wa.me/91${pPhone.replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(`Namaste ${pName}! OneWayTaxiBihar Dispatch here regarding Booking ${bId} (${origCity} to ${dstCity}) on ${pDate} at ${pTime}. Fare: ₹${totalFare}. Status: ${b.bookingStatus || 'REQUESTED'}. ${b.driverDetails ? 'Assigned Driver: ' + b.driverDetails.name + ' (' + b.driverDetails.vehicleNumber + ')' : 'Our agent will call you shortly.'}`)}" target="_blank" class="btn-action-sm" style="background: #059669; border-color: #059669; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;" title="Send WhatsApp to Passenger">
-                  💬 WhatsApp
+                  WhatsApp
                 </a>
                 ${b.tripOtp ? `
                   <a href="https://wa.me/91${pPhone.replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(`OneWayTaxiBihar Passenger Security Alert:` + '\n' + `Booking ID: ${bId}` + '\n' + `Trip: ${origCity} to ${dstCity}` + '\n' + `Your Trip Start OTP is: ${b.tripOtp}` + '\n' + `Please share this OTP with your chauffeur upon vehicle arrival.`)}" target="_blank" class="btn-action-sm" style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;" title="Dispatch Trip Start OTP via WhatsApp">
-                    🔑 OTP: ${b.tripOtp}
+                    OTP: ${b.tripOtp}
                   </a>
                 ` : ''}
                 <button type="button" class="btn-action-sm btn-details" onclick="openDetailsModal('${bId}')">Details</button>
                 <button type="button" class="btn-action-sm" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5;" onclick="deleteBookingAdmin('${bId}')" title="Permanently delete booking">
-                  🗑️ Delete
+                  Delete
                 </button>
               </div>
             </td>
@@ -2552,17 +2545,17 @@
     }
 
     async function deleteBookingAdmin(bookingId) {
-      const pass = prompt(`⚠️ PERMANENT RIDE DELETION\n\nTo completely delete booking ${bookingId} from MongoDB Atlas Cloud, please enter the deletion password:`);
+      const pass = prompt(`PERMANENT RIDE DELETION\n\nTo completely delete booking ${bookingId} from MongoDB Atlas Cloud, please enter the deletion password:`);
       if (pass === null) return;
 
       if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
-        alert("❌ Access Denied: Incorrect deletion password. The ride was NOT deleted.");
+        alert("Access Denied: Incorrect deletion password. The ride was NOT deleted.");
         return;
       }
 
       const res = await ApiClient.adminDeleteBooking(bookingId, pass.trim(), _adminToken);
       if (res && res.success) {
-        alert(`✅ Booking ${bookingId} permanently deleted from database.`);
+        alert(`Booking ${bookingId} permanently deleted from database.`);
         _allBookings = _allBookings.filter(b => b.bookingId !== bookingId && b.id !== bookingId);
         renderMetrics();
         applyFilters();
@@ -2573,17 +2566,17 @@
     }
 
     async function deleteLeadAdmin(leadId) {
-      const pass = prompt(`⚠️ PERMANENT INQUIRY DELETION\n\nTo completely delete inquiry lead (${leadId}) from MongoDB Atlas Cloud, please enter the deletion password:`);
+      const pass = prompt(`PERMANENT INQUIRY DELETION\n\nTo completely delete inquiry lead (${leadId}) from MongoDB Atlas Cloud, please enter the deletion password:`);
       if (pass === null) return;
 
       if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
-        alert("❌ Access Denied: Incorrect deletion password. The inquiry was NOT deleted.");
+        alert("Access Denied: Incorrect deletion password. The inquiry was NOT deleted.");
         return;
       }
 
       const res = await ApiClient.adminDeleteLead(leadId, pass.trim(), _adminToken);
       if (res && res.success) {
-        alert(`✅ Inquiry lead permanently deleted from database.`);
+        alert(`Inquiry lead permanently deleted from database.`);
         _allLeads = _allLeads.filter(l => l.id !== leadId && l.cleanPhone !== leadId);
         renderLeadsMetrics();
         applyLeadsFilters();
@@ -2642,7 +2635,7 @@
 
       const res = await ApiClient.adminVerifyPayment(bookingId, txn, _adminToken, adv);
       if (res && res.success) {
-        alert(`✅ Payment Verified & Ride Confirmed for ${bookingId}!\nAdvance Amount: ₹${adv}\nUTR Reference: ${txn}`);
+        alert(`Payment Verified & Ride Confirmed for ${bookingId}!\nAdvance Amount: ₹${adv}\nUTR Reference: ${txn}`);
         await loadBookings();
       } else {
         alert(res?.message || "Failed to verify payment");
@@ -2651,12 +2644,12 @@
 
     async function denyPaymentAdmin(bookingId) {
       const b = _allBookings.find(x => x.bookingId === bookingId || x.id === bookingId);
-      const reason = prompt(`⚠️ DENY PAYMENT & REJECT BOOKING\n\nBooking ID: ${bookingId}\nPassenger: ${b?.passengerName || 'Customer'}\n\nEnter reason for payment denial:`, "Payment not received in merchant UPI/Bank account");
+      const reason = prompt(`DENY PAYMENT & REJECT BOOKING\n\nBooking ID: ${bookingId}\nPassenger: ${b?.passengerName || 'Customer'}\n\nEnter reason for payment denial:`, "Payment not received in merchant UPI/Bank account");
       if (reason === null) return;
 
       const res = await ApiClient.adminDenyPayment(bookingId, reason.trim() || "Payment not received", _adminToken);
       if (res && res.success) {
-        alert(`❌ Payment marked as DENIED for ${bookingId}. Booking status set to REJECTED.`);
+        alert(`Payment marked as DENIED for ${bookingId}. Booking status set to REJECTED.`);
         await loadBookings();
       } else {
         alert(res?.message || "Failed to deny payment");
@@ -2769,11 +2762,11 @@
             <div><strong>Highway Trip OTP:</strong> <code style="font-size: 14px; font-weight: 900; color: #38bdf8; background: #1e293b; padding: 2px 8px; border-radius: 4px;">${b.tripOtp || '----'}</code></div>
             <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
               <a href="https://wa.me/91${(b.passengerPhone || '').replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(`Namaste ${b.passengerName}! OneWayTaxiBihar Dispatch here regarding Booking ${b.bookingId} (${b.originCity} to ${b.destCity}) on ${b.pickupDate} at ${b.pickupTime}. Fare: ₹${b.totalFare}. Status: ${b.bookingStatus}. ${b.driverDetails ? 'Assigned Driver: ' + b.driverDetails.name + ' (' + b.driverDetails.vehicleNumber + ')' : 'Our agent will call you shortly.'}`)}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #059669; color: white; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 12px;">
-                💬 Open WhatsApp Chat with Passenger
+                Open WhatsApp Chat with Passenger
               </a>
               ${b.tripOtp ? `
                 <a href="https://wa.me/91${(b.passengerPhone || '').replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(`OneWayTaxiBihar Passenger Security Alert:` + '\n' + `Booking ID: ${b.bookingId}` + '\n' + `Route: ${b.originCity} to ${b.destCity}` + '\n' + `Your Trip Start OTP is: ${b.tripOtp}` + '\n' + `Please share this OTP with your chauffeur upon vehicle arrival.`)}" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 12px;">
-                  🔑 Send OTP via WhatsApp
+                  Send OTP via WhatsApp
                 </a>
               ` : ''}
             </div>
@@ -2922,7 +2915,7 @@
             } else {
               fbBadge.style.background = "rgba(56, 189, 248, 0.15)";
               fbBadge.style.color = "#38bdf8";
-              fbBadge.textContent = "⚡ 10,000 Free OTPs (Active)";
+              fbBadge.textContent = "10,000 Free OTPs (Active)";
             }
           }
 
@@ -2935,7 +2928,7 @@
             } else {
               rzpBadge.style.background = "rgba(56, 189, 248, 0.15)";
               rzpBadge.style.color = "#38bdf8";
-              rzpBadge.textContent = "⚡ Demo / Sandbox Mode";
+              rzpBadge.textContent = "Demo / Sandbox Mode";
             }
           }
         }
@@ -3098,10 +3091,10 @@
           </div>
           <div style="margin-top: 10px; display: flex; gap: 6px;">
             <a href="https://wa.me/91${(d.phone || '').replace(/\D/g, '').slice(-10)}?text=${encodeURIComponent(`Namaste Partner ${d.name}! OneWayTaxiBihar Central Dispatch here regarding upcoming trip assignments.`)}" target="_blank" style="flex: 1; text-align: center; background: #059669; color: white; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 11.5px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
-              💬 WhatsApp Partner
+              WhatsApp Partner
             </a>
             <a href="tel:${d.phone}" style="padding: 6px 12px; background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; color: #38bdf8; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 11.5px;">
-              📞 Call
+              Call
             </a>
           </div>
         </div>
@@ -3200,7 +3193,7 @@
         if (res && res.success) {
           ansCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-size: 11.5px; font-weight: 800; color: #10b981; text-transform: uppercase;">🤖 COPILOT TELEMETRY ANALYSIS</span>
+              <span style="font-size: 11.5px; font-weight: 800; color: #10b981; text-transform: uppercase;">COPILOT TELEMETRY ANALYSIS</span>
               <span style="font-size: 11px; color: var(--admin-muted);">${new Date().toLocaleTimeString()}</span>
             </div>
             <div style="font-size: 13.5px; color: #e2e8f0; line-height: 1.6; white-space: pre-line;">${res.answer}</div>
@@ -3257,9 +3250,9 @@
         if (!dateStr) return `<span style="color: var(--admin-muted);">N/A</span>`;
         const d = new Date(dateStr);
         if (d < now) {
-          return `<span style="background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">⚠️ EXPIRED (${dateStr})</span>`;
+          return `<span style="background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">EXPIRED (${dateStr})</span>`;
         } else if (d < in30Days) {
-          return `<span style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">⚠️ RENEW (${dateStr})</span>`;
+          return `<span style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">RENEW (${dateStr})</span>`;
         } else {
           return `<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px;">✓ Valid (${dateStr})</span>`;
         }

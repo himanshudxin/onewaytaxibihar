@@ -280,7 +280,7 @@
       "tripOtp": "9022",
       "walletUsed": 0,
       "whatsappDispatchUrl": "https://wa.me/917281851011?text=%F0%9F%9A%95%20*NEW%20BOOKING%20CONFIRMED%20-%20OneWayTaxiBihar*%0A*Booking%20ID%3A*%20OTB-2026-9377%0A*Passenger%3A*%20yuyuy%20(%2B91%206206494214)%0A*Route%3A*%20Patna%20%E2%9E%94%20Muzaffarpur%0A*Total%20Fare%3A*%20%E2%82%B92198",
-      "whatsappMessage": "🚕 *NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* OTB-2026-9377\n*Passenger:* yuyuy (+91 6206494214)\n*Route:* Patna ➔ Muzaffarpur (75 KM)\n*Schedule:* 2026-10-03 at 10:00 AM\n*Total Fare:* ₹2198 (Advance: ₹299, Balance Due: ₹1899)\n*Status:* REQUESTED / CONFIRMED"
+      "whatsappMessage": "*NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* OTB-2026-9377\n*Passenger:* yuyuy (+91 6206494214)\n*Route:* Patna ➔ Muzaffarpur (75 KM)\n*Schedule:* 2026-10-03 at 10:00 AM\n*Total Fare:* ₹2198 (Advance: ₹299, Balance Due: ₹1899)\n*Status:* REQUESTED / CONFIRMED"
     },
     {
       "bookingId": "OTB-2026-5113",
@@ -381,7 +381,7 @@
       "tripOtp": "7639",
       "walletUsed": 0,
       "whatsappDispatchUrl": "https://wa.me/917281851011?text=%F0%9F%9A%95%20*NEW%20BOOKING%20CONFIRMED%20-%20OneWayTaxiBihar*%0A*Booking%20ID%3A*%20OTB-2026-6560%0A*Passenger%3A*%20Simulated%20Phone%20Passenger%20(%2B91%209835111222)%0A*Route%3A*%20Patna%20%E2%9E%94%20Gaya%0A*Total%20Fare%3A*%20%E2%82%B92198",
-      "whatsappMessage": "🚕 *NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* OTB-2026-6560\n*Passenger:* Simulated Phone Passenger (+91 9835111222)\n*Route:* Patna ➔ Gaya (104 KM)\n*Schedule:* 2026-10-18 at 10:00 AM\n*Total Fare:* ₹2198 (Advance: ₹0, Balance Due: ₹2198)\n*Status:* REQUESTED / CONFIRMED"
+      "whatsappMessage": "*NEW BOOKING CONFIRMED - OneWayTaxiBihar*\n━━━━━━━━━━━━━━━━━━━━━━\n*Booking ID:* OTB-2026-6560\n*Passenger:* Simulated Phone Passenger (+91 9835111222)\n*Route:* Patna ➔ Gaya (104 KM)\n*Schedule:* 2026-10-18 at 10:00 AM\n*Total Fare:* ₹2198 (Advance: ₹0, Balance Due: ₹2198)\n*Status:* REQUESTED / CONFIRMED"
     }
   ],
   "drivers": [
@@ -861,7 +861,7 @@
       "bookingId": "OTB-2026-9377",
       "createdAt": "2026-10-03T18:54:06.071Z",
       "message": "yuyuy (+91 6206494214) requested Patna ➔ Muzaffarpur (Prime Sedan). Total Fare: ₹2198.",
-      "title": "🚨 New Cab Booking: OTB-2026-9377",
+      "title": "New Cab Booking: OTB-2026-9377",
       "type": "NEW_BOOKING_REQUEST"
     },
     {
@@ -869,14 +869,14 @@
       "createdAt": "2026-10-03T18:54:01.141Z",
       "leadId": "LEAD_1791053641141_771",
       "message": "Visitor (+91 6206494214) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
       "id": "NOTIF_USER_1791053634053",
       "createdAt": "2026-10-03T18:53:54.053Z",
       "message": "yuyuy (+91 6206494214) active on portal.",
-      "title": "👤 Passenger Signed In: yuyuy",
+      "title": "Passenger Signed In: yuyuy",
       "type": "PASSENGER_LOGIN"
     },
     {
@@ -884,7 +884,7 @@
       "createdAt": "2026-10-03T18:53:43.271Z",
       "leadId": "LEAD_1791053623271_563",
       "message": "Visitor (+91 6206494214) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -892,7 +892,7 @@
       "createdAt": "2026-10-03T18:53:43.212Z",
       "leadId": "LEAD_1791053623212_855",
       "message": "Visitor (+91 6206494214) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -900,14 +900,14 @@
       "createdAt": "2026-10-03T18:53:41.538Z",
       "leadId": "LEAD_1791053621537_350",
       "message": "Visitor (+91 6206494214) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
       "id": "NOTIF_USER_1791051776873",
       "createdAt": "2026-10-03T18:22:56.873Z",
       "message": "aman kumar (+91 7687687687) active on portal.",
-      "title": "👤 Passenger Signed In: aman kumar",
+      "title": "Passenger Signed In: aman kumar",
       "type": "PASSENGER_LOGIN"
     },
     {
@@ -915,7 +915,7 @@
       "createdAt": "2026-10-03T17:19:39.539Z",
       "leadId": "LEAD_1791047979539_326",
       "message": "Visitor (+91 7687687687) checked fare for Nalanda (Bihar Sharif) ➔ Danapur (88 KM). Sedan Rate: ₹2200.",
-      "title": "⚡ New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
+      "title": "New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -923,7 +923,7 @@
       "createdAt": "2026-10-03T17:19:39.508Z",
       "leadId": "LEAD_1791047979508_626",
       "message": "Visitor (+91 7687687687) checked fare for Nalanda (Bihar Sharif) ➔ Danapur (104 KM). Sedan Rate: ₹2600.",
-      "title": "⚡ New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
+      "title": "New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -931,7 +931,7 @@
       "createdAt": "2026-10-03T17:18:41.594Z",
       "leadId": "LEAD_1791047921593_946",
       "message": "Visitor (+91 7687687687) checked fare for Nalanda (Bihar Sharif) ➔ Danapur (104 KM). Sedan Rate: ₹2600.",
-      "title": "⚡ New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
+      "title": "New Route Inquiry: Nalanda (Bihar Sharif) ➔ Danapur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -939,7 +939,7 @@
       "bookingId": "OTB-2026-6560",
       "createdAt": "2026-10-03T17:07:30.068Z",
       "message": "Simulated Phone Passenger (+91 9835111222) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹2198.",
-      "title": "🚨 New Cab Booking: OTB-2026-6560",
+      "title": "New Cab Booking: OTB-2026-6560",
       "type": "NEW_BOOKING_REQUEST"
     },
     {
@@ -947,7 +947,7 @@
       "createdAt": "2026-10-03T16:32:28.563Z",
       "leadId": "LEAD_1791045148563_832",
       "message": "Visitor (+91 9876768785) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -955,7 +955,7 @@
       "createdAt": "2026-10-03T16:32:28.530Z",
       "leadId": "LEAD_1791045148530_281",
       "message": "Visitor (+91 9876768785) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -963,7 +963,7 @@
       "createdAt": "2026-10-03T16:32:10.175Z",
       "leadId": "LEAD_1791045130175_456",
       "message": "Visitor (+91 9876768785) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -971,7 +971,7 @@
       "createdAt": "2026-10-03T16:32:09.994Z",
       "leadId": "LEAD_1791045129994_253",
       "message": "Visitor (+91 9876768785) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -979,7 +979,7 @@
       "createdAt": "2026-10-03T16:25:15.971Z",
       "leadId": "LEAD_1791044715971_883",
       "message": "Visitor (+91 6299375016) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -987,7 +987,7 @@
       "createdAt": "2026-10-03T16:25:15.957Z",
       "leadId": "LEAD_1791044715957_865",
       "message": "Visitor (+91 6299375016) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     },
     {
@@ -995,7 +995,7 @@
       "createdAt": "2026-10-03T16:25:14.223Z",
       "leadId": "LEAD_1791044714223_602",
       "message": "Visitor (+91 6299375016) checked fare for Patna ➔ Muzaffarpur (78 KM). Sedan Rate: ₹2198.",
-      "title": "⚡ New Route Inquiry: Patna ➔ Muzaffarpur",
+      "title": "New Route Inquiry: Patna ➔ Muzaffarpur",
       "type": "NEW_ROUTE_INQUIRY"
     }
   ],

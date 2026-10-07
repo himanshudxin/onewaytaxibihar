@@ -3219,55 +3219,58 @@
   line-height: 1.5;
 }
 
-/* Why Choose 10 Cards Grid */
+/* Why Choose 10 Cards Grid (Balanced 2-Column Corporate Grid) */
 .why-choose-grid-10 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
 }
 
 .why-feature-card {
-  background: var(--owc-card-bg);
+  background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  border-radius: var(--radius-xl);
-  padding: 24px;
+  border-radius: 16px;
+  padding: 22px;
   display: flex;
   gap: 18px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
 
 .why-feature-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .why-num-box {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #009af4, #0086d6);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0070f3 0%, #0095f6 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   flex-shrink: 0;
-  box-shadow: var(--shadow-blue-glow);
+  box-shadow: 0 4px 14px rgba(0, 112, 243, 0.35);
 }
 
 .why-feature-card h3 {
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--owc-text);
   margin-bottom: 6px;
+  letter-spacing: -0.2px;
 }
 
 .why-feature-card p {
   font-size: 13px;
   color: var(--owc-text-muted);
-  line-height: 1.5;
+  line-height: 1.55;
+  margin: 0;
 }
 
 /* ==========================================================================
@@ -3420,38 +3423,73 @@
 .popular-cities-cards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 30px;
 }
 
 .city-hub-card {
-  background: var(--owc-card-bg);
+  background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
+  border-radius: 14px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   text-decoration: none;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .city-hub-card:hover {
-  border-color: var(--owc-primary);
+  border-color: rgba(56, 189, 248, 0.35);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 24px rgba(0, 149, 246, 0.15);
 }
 
 .city-hub-icon {
-  font-size: 22px;
-  color: var(--owc-primary);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(0, 149, 246, 0.1);
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.city-hub-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.city-hub-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
 }
 
 .city-hub-name {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--owc-text);
+  letter-spacing: -0.2px;
+}
+
+.city-hindi-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+[data-theme="light"] .city-hindi-tag {
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .city-hub-state {
@@ -3522,7 +3560,7 @@
    8. FAQ ACCORDION
    ========================================================================== */
 .faq-accordion-list {
-  max-width: 850px;
+  max-width: 860px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -3530,24 +3568,30 @@
 }
 
 .faq-item {
-  background: var(--owc-card-bg);
+  background: var(--owc-surface);
   border: 1px solid var(--owc-border);
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-item:hover {
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .faq-item.active {
-  border-color: var(--owc-primary);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 149, 246, 0.12);
 }
 
 .faq-question-btn {
   width: 100%;
   background: none;
   border: none;
-  padding: 18px 24px;
-  font-size: 16px;
+  padding: 18px 22px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--owc-text);
   display: flex;
@@ -3556,25 +3600,49 @@
   cursor: pointer;
   text-align: left;
   gap: 16px;
+  transition: color 0.2s ease;
+}
+
+.faq-question-btn:hover {
+  color: #38bdf8;
+}
+
+.faq-question-text {
+  flex: 1;
+  letter-spacing: -0.2px;
 }
 
 .faq-chevron {
-  font-size: 18px;
-  color: var(--owc-primary);
-  transition: transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: #38bdf8;
+  flex-shrink: 0;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+}
+
+[data-theme="light"] .faq-chevron {
+  background: #f1f5f9;
+  color: #0284c7;
 }
 
 .faq-item.active .faq-chevron {
   transform: rotate(180deg);
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
 }
 
 .faq-answer-pane {
   display: none;
-  padding: 0 24px 20px 24px;
-  font-size: 14.5px;
+  padding: 0 22px 20px 22px;
+  font-size: 14px;
   color: var(--owc-text-muted);
-  line-height: 1.6;
-  border-top: 1px solid var(--owc-border-light);
+  line-height: 1.65;
+  border-top: 1px solid var(--owc-border);
   padding-top: 14px;
 }
 
@@ -6687,4 +6755,10 @@ body.modal-open .mobile-call-bar {
   opacity: 0.4;
   font-size: 10px;
   flex-shrink: 0;
+}
+
+body.modal-open .mobile-sticky-bottom-bar,
+body.drawer-open .mobile-sticky-bottom-bar {
+  display: none !important;
+  pointer-events: none !important;
 }

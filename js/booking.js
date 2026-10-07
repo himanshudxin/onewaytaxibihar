@@ -1888,10 +1888,13 @@ class BookingManager {
     container.innerHTML = filtered.map(c => `
       <div class="city-hub-card" onclick="window.bookingManager.loadRoutePreset('patna', '${c.id}')">
         <div class="city-hub-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
-        <div>
-          <div class="city-hub-name">${c.name} (${c.hindiName})</div>
+        <div class="city-hub-content">
+          <div class="city-hub-title-row">
+            <span class="city-hub-name">${c.name}</span>
+            ${c.hindiName ? `<span class="city-hindi-tag">${c.hindiName}</span>` : ''}
+          </div>
           <div class="city-hub-state">${c.division} Division • ${c.tag}</div>
         </div>
       </div>
@@ -1904,9 +1907,13 @@ class BookingManager {
 
     container.innerHTML = OTB_FAQS.map((faq, idx) => `
       <div class="faq-item ${idx === 0 ? 'active' : ''}">
-        <button type="button" class="faq-question-btn" onclick="this.parentElement.classList.toggle('active')">
-          <span>${faq.q}</span>
-          <span class="faq-chevron">▼</span>
+        <button type="button" class="faq-question-btn" onclick="this.parentElement.classList.toggle('active')" aria-expanded="${idx === 0 ? 'true' : 'false'}">
+          <span class="faq-question-text">${faq.q}</span>
+          <span class="faq-chevron">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
         </button>
         <div class="faq-answer-pane">
           ${faq.a}
@@ -1920,8 +1927,9 @@ class BookingManager {
     if (!container) return;
 
     container.innerHTML = OTB_POPULAR_ROUTES.map(r => `
-      <a href="javascript:void(0)" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-        ${r.from} to ${r.to} Taxi (from ₹${r.baseFareHatchback})
+      <a href="javascript:void(0)" class="footer-route-pill" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')" title="Book ${r.from} to ${r.to} One-Way Cab">
+        <span class="frp-route">${r.from} ➔ ${r.to}</span>
+        <span class="frp-price">from ₹${r.baseFareHatchback}</span>
       </a>
     `).join("");
   }

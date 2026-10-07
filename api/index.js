@@ -336,6 +336,8 @@ module.exports = async (req, res) => {
     }
   }
 
+  const action = (body.action || url.searchParams.get('action') || '').toLowerCase();
+
   const sendJson = (status, data) => {
     res.statusCode = status;
     res.setHeader('Content-Type', 'application/json');
@@ -389,7 +391,7 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // 2A. PASSENGER AUTH: Real Number Verification - Send Code
     // -------------------------------------------------------------
-    if (pathname === '/auth/send-otp' && method === 'POST') {
+    if ((pathname === '/auth/send-otp' || action === 'send-otp' || (pathname === '/auth' && !body.otp && !body.password && !action.includes('verify'))) && method === 'POST') {
       const cleanPhone = (body.phone || '').replace(/\D/g, '').slice(-10);
       const name = (body.name || '').trim() || 'Valued Passenger';
 
@@ -435,7 +437,7 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // 2B. PASSENGER AUTH: Real Number Verification - Verify Code & One-Time Reward
     // -------------------------------------------------------------
-    if (pathname === '/auth/verify-otp' && method === 'POST') {
+    if ((pathname === '/auth/verify-otp' || action === 'verify-otp' || (pathname === '/auth' && Boolean(body.otp))) && method === 'POST') {
       const cleanPhone = (body.phone || '').replace(/\D/g, '').slice(-10);
       const inputCode = (body.otp || '').toString().trim();
       const name = (body.name || '').trim();
@@ -538,7 +540,7 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // 2. PASSENGER AUTH (Direct Login - Name + Phone)
     // -------------------------------------------------------------
-    if (pathname === '/auth/login' && method === 'POST') {
+    if ((pathname === '/auth/login' || action === 'login') && method === 'POST') {
       const cleanPhone = (body.phone || '').replace(/\D/g, '').slice(-10);
       const cleanName = (body.name || '').trim();
 
@@ -1733,7 +1735,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/admin/send-whatsapp-otp' && method === 'POST') {
+    if ((pathname === '/admin/send-whatsapp-otp' || action === 'send-whatsapp-otp') && method === 'POST') {
       const AUTHORIZED_ADMIN_PHONE = '6206494214';
       const rawPhone = (body.phone || AUTHORIZED_ADMIN_PHONE).toString();
       let cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
@@ -1770,7 +1772,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/admin/verify-whatsapp-otp' && method === 'POST') {
+    if ((pathname === '/admin/verify-whatsapp-otp' || action === 'verify-whatsapp-otp') && method === 'POST') {
       const AUTHORIZED_ADMIN_PHONE = '6206494214';
       const rawPhone = (body.phone || AUTHORIZED_ADMIN_PHONE).toString();
       let cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);

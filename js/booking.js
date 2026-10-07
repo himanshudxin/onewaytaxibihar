@@ -3271,7 +3271,7 @@ class BookingManager {
         couponDiscount: this.appliedCouponDiscount || 0,
         totalFare: price,
         phoneVerified: true,
-        verifiedMethod: window.firebaseOtpService?.isDemoMode ? "SMS OTP (Verified)" : "Firebase Phone Auth (Verified)",
+        verifiedMethod: "Fast2SMS Telecom OTP (Verified)",
         verifiedAt: new Date().toISOString(),
         advancePaid: amountToCharge,
         balanceDue: Math.max(0, netTripFare - amountToCharge),

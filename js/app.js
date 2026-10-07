@@ -382,7 +382,7 @@ window.showAuthPhoneStep = () => {
   if (_authCountdownTimer) clearInterval(_authCountdownTimer);
 };
 
-// Send Real Verification Code (Firebase SMS & WhatsApp)
+// Send Real Verification Code (Fast2SMS Telecom SMS & WhatsApp)
 window.handleSendVerificationCode = async (isResend = false) => {
   const nameInput = document.getElementById("auth-name-input");
   const phoneInput = document.getElementById("auth-mobile-input");
@@ -401,8 +401,9 @@ window.handleSendVerificationCode = async (isResend = false) => {
     return;
   }
 
-  if (window.firebaseOtpService) {
-    window.firebaseOtpService.requestVerification(phone, name, (verifyResult) => {
+  const otpSvc = window.otpService || window.firebaseOtpService;
+  if (otpSvc) {
+    otpSvc.requestVerification(phone, name, (verifyResult) => {
       window.closeAllModals(false);
       currentUser = {
         name: name,

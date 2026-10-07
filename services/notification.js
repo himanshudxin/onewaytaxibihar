@@ -21,7 +21,7 @@ function cleanIndianPhone(phone) {
   return (phone || '').replace(/\D/g, '').slice(-10);
 }
 
-// 1. Fast2SMS Indian Gateway Integration
+// 1. Fast2SMS Indian Gateway Integration (Ultra-low cost: ~₹0.20-₹0.25 vs Firebase ₹5.15)
 async function sendViaFast2SMS({ phone, message, otp = null }) {
   const cleanPhone = cleanIndianPhone(phone);
   if (!cleanPhone || cleanPhone.length !== 10) {
@@ -36,7 +36,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
   try {
     const textMessage = message || (otp ? `Your OneWayTaxiBihar OTP code is ${otp}. Valid for 10 minutes. Do not share with anyone.` : 'Welcome to OneWayTaxiBihar.');
     
-    // Try Route Q (Quick SMS)
+    // Route Q (Quick SMS) - Direct, high-delivery Indian telecom route (~₹0.25/SMS)
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
@@ -53,38 +53,20 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     });
 
     const data = await response.json();
-    console.log(`[Fast2SMS Dispatch] +91 ${cleanPhone} ->`, data);
-    const isSuccess = Boolean(data.return === true || (data.status_code === 200) || response.ok);
+    const isSuccess = Boolean(data && data.return === true);
+    console.log(`[Fast2SMS Dispatch] +91 ${cleanPhone} | Cost: ~₹0.25 | Return: ${isSuccess} | Message: ${data?.message || 'OK'}`);
 
-    // If route q didn't succeed and otp is present, try route otp
-    if (!isSuccess && otp) {
-      try {
-        const otpRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
-          method: 'POST',
-          headers: {
-            'authorization': apiKey,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            route: 'otp',
-            variables_values: otp.toString(),
-            numbers: cleanPhone
-          })
-        });
-        const otpData = await otpRes.json();
-        console.log(`[Fast2SMS Route OTP Dispatch] +91 ${cleanPhone} ->`, otpData);
-        if (otpData.return === true || otpData.status_code === 200) {
-          return { success: true, provider: 'fast2sms', response: otpData };
-        }
-      } catch (otpErr) {
-        console.warn('Fast2SMS Route OTP fallback note:', otpErr.message);
-      }
-    }
-
-    return { success: isSuccess, provider: 'fast2sms', response: data };
+    return {
+      success: isSuccess,
+      provider: 'fast2sms',
+      route: 'q',
+      cost: '₹0.25',
+      message: data?.message || (isSuccess ? 'SMS sent successfully' : 'SMS dispatch failed'),
+      response: data
+    };
   } catch (err) {
     console.error('[Notification Service] Fast2SMS error:', err.message);
-    return { success: false, error: err.message };
+    return { success: false, provider: 'fast2sms', error: err.message };
   }
 }
 

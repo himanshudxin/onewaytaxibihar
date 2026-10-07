@@ -1,34 +1,24 @@
 /**
- * OneWayTaxiBihar - Firebase Phone Authentication & OTP Verification Service
+ * OneWayTaxiBihar - Dedicated Indian Telecom OTP & Verification Service
  * 
- * Provides:
- * 1. 100% Free OTP SMS verification (Up to 10,000 verifications/month via Firebase)
- * 2. Invisible reCAPTCHA verification to eliminate spam & bots
+ * Powered by Fast2SMS Indian SMS Gateway (~₹0.20/SMS) + 24x7 WhatsApp Fallback (₹0)
+ * Completely eliminates the expensive ~$0.057 (~₹5.15/SMS) Google Firebase Identity Platform fees.
+ * 
+ * Features:
+ * 1. Ultra-Low Cost (~₹0.20 per OTP via Fast2SMS Indian Telecom route)
+ * 2. Instant Zero-Cost WhatsApp fallback link for DND / delayed network SIMs
  * 3. 6-Digit Auto-Focusing Digit UI with copy-paste & auto-advance support
- * 4. WhatsApp & SMS fallback for guaranteed 100% delivery across Bihar
- * 5. Seamless integration with Admin Operations & Booking Dispatch Desk
+ * 4. Backward compatible with all existing window.firebaseOtpService calls
+ * 5. Integrated with Mongo Atlas backend and booking dispatch desk
  */
 
 (function () {
   'use strict';
 
-  // Live Firebase Project Credentials for onewaytaxibihar-5ef8a
-  const DEFAULT_FIREBASE_CONFIG = {
-    apiKey: "AIzaSyDyxnCuhzJP7uQuRMlW097X5qrdBe0zIp4",
-    authDomain: "onewaytaxibihar-5ef8a.firebaseapp.com",
-    projectId: "onewaytaxibihar-5ef8a",
-    storageBucket: "onewaytaxibihar-5ef8a.firebasestorage.app",
-    messagingSenderId: "325588842888",
-    appId: "1:325588842888:web:5df3985eda89605fb0e23d",
-    measurementId: "G-1YTK7M3FS3"
-  };
-
-  class FirebaseOtpService {
+  class TelecomOtpService {
     constructor() {
-      this.isInitialized = false;
-      this.isFirebaseReady = false;
-      this.confirmationResult = null;
-      this.recaptchaVerifier = null;
+      this.isInitialized = true;
+      this.provider = "Fast2SMS Indian Telecom Gateway";
       this.activePhone = "";
       this.activeName = "";
       this.onSuccessCallback = null;
@@ -38,83 +28,7 @@
       this.generatedOtpCode = "";
       this.isDemoMode = false;
 
-      this.init();
-    }
-
-    init() {
-      // Load stored custom config if set by Admin
-      let config = DEFAULT_FIREBASE_CONFIG;
-      try {
-        const stored = localStorage.getItem("otb_firebase_config");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.apiKey && !parsed.apiKey.includes("Placeholder")) {
-            config = parsed;
-          }
-        }
-      } catch (e) {
-        console.warn("Stored Firebase config note:", e);
-      }
-
-      if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey && !window.FIREBASE_CONFIG.apiKey.includes("Placeholder")) {
-        config = window.FIREBASE_CONFIG;
-      }
-
-      this.config = config;
-      this.isDemoMode = Boolean(!this.config.apiKey || this.config.apiKey.includes("Placeholder"));
-
-      // Initialize Firebase App if SDK is loaded
-      if (typeof window.firebase !== "undefined") {
-        try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(this.config);
-          }
-          this.isFirebaseReady = true;
-          this.isInitialized = true;
-          console.log("[Firebase Auth] Service initialized successfully (Project: " + (this.config.projectId || 'Live') + ")");
-        } catch (err) {
-          console.warn("Firebase Init fallback mode active:", err.message);
-          this.isDemoMode = true;
-        }
-      } else {
-        console.log("[Firebase Auth] SDK loaded in lightweight resilient mode.");
-      }
-
       this.setupGlobalHandlers();
-    }
-
-    setupRecaptcha() {
-      if (typeof window.firebase === "undefined" || this.isDemoMode) return null;
-
-      try {
-        let oldContainer = document.getElementById("recaptcha-container");
-        if (oldContainer) {
-          oldContainer.remove();
-        }
-
-        const newContainer = document.createElement("div");
-        newContainer.id = "recaptcha-container";
-        document.body.appendChild(newContainer);
-
-        if (this.recaptchaVerifier) {
-          try { this.recaptchaVerifier.clear(); } catch(e) {}
-          this.recaptchaVerifier = null;
-        }
-
-        this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(newContainer, {
-          size: "invisible",
-          callback: (response) => {
-            console.log("reCAPTCHA verified");
-          },
-          "expired-callback": () => {
-            console.warn("reCAPTCHA expired");
-          }
-        });
-        return this.recaptchaVerifier;
-      } catch (err) {
-        console.warn("reCAPTCHA setup warning:", err.message);
-        return null;
-      }
     }
 
     /**
@@ -134,7 +48,7 @@
       this.activeName = name || "Passenger";
       this.onSuccessCallback = onSuccess;
 
-      // Always open Modal UI and send fresh 6-digit SMS OTP
+      // Always open Modal UI and send fresh 6-digit SMS OTP via Fast2SMS
       this.openOtpModal(clean10);
       await this.sendOtpCode(clean10);
       return true;
@@ -157,7 +71,7 @@
       sessionStorage.setItem(`otb_verify_${clean10}`, code);
       this.generatedOtpCode = code;
 
-      // Trigger backend API (server.ps1 / Node backend) to register code and dispatch via telecom SMS & WhatsApp
+      // Trigger backend API (Node backend / Fast2SMS) to register code and dispatch via telecom SMS
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           const apiRes = await ApiClient.sendOtp(clean10, this.activeName);
@@ -169,7 +83,7 @@
           }
         }
       } catch (e) {
-        console.warn("Backend API send OTP note:", e);
+        console.warn("[Telecom OTP] Backend API send note:", e);
       }
 
       if (statusEl) {
@@ -301,7 +215,7 @@
               }
             }
           } catch (e) {
-            console.warn("Backend verify note:", e);
+            console.warn("[Telecom OTP] Backend verify note:", e);
           }
         }
 
@@ -355,7 +269,7 @@
           }
         }
       } catch (err) {
-        console.error("OTP verification error:", err);
+        console.error("[Telecom OTP] Verification error:", err);
         window.showToast?.("Verification failed. Please try resending OTP.", "error");
       } finally {
         this.isVerifying = false;
@@ -437,9 +351,9 @@
         <div class="modal-overlay" id="modal-otp-verification" role="dialog" aria-modal="true" aria-labelledby="otp-modal-title">
           <div class="modal-dialog-box small" style="max-width: 440px; padding: 0; overflow: hidden; border-radius: 16px; border: 1px solid var(--owc-border, #e2e8f0); box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
             
-            <!-- Modal Header with Security Branding -->
+            <!-- Modal Header with Security & Telecom Branding -->
             <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 22px 20px 18px; color: #ffffff; text-align: center; position: relative;">
-              <button type="button" class="modal-close-btn" onclick="window.firebaseOtpService.closeOtpModal()" aria-label="Close" style="position: absolute; right: 14px; top: 14px; color: #94a3b8; background: rgba(255,255,255,0.08); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+              <button type="button" class="modal-close-btn" onclick="window.otpService.closeOtpModal()" aria-label="Close" style="position: absolute; right: 14px; top: 14px; color: #94a3b8; background: rgba(255,255,255,0.08); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
               
               <div style="width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; background: rgba(0, 154, 244, 0.15); border: 2px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -459,10 +373,10 @@
               <!-- Sent To Phone Number Bar -->
               <div style="background: rgba(0, 154, 244, 0.06); border: 1px solid rgba(0, 154, 244, 0.2); border-radius: 10px; padding: 9px 12px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="text-align: left;">
-                  <span style="font-size: 10.5px; color: var(--owc-text-muted, #64748b); text-transform: uppercase; font-weight: 700; display: block;">OTP SENT TO:</span>
+                  <span style="font-size: 10.5px; color: var(--owc-text-muted, #64748b); text-transform: uppercase; font-weight: 700; display: block;">SMS OTP SENT TO:</span>
                   <strong id="otp-modal-phone-display" style="font-size: 14px; color: var(--owc-text, #0f172a); font-weight: 800;">+91 98765 43210</strong>
                 </div>
-                <button type="button" onclick="window.firebaseOtpService.editPhoneNumber()" style="border: none; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                <button type="button" onclick="window.otpService.editPhoneNumber()" style="border: none; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
                   Edit
                 </button>
               </div>
@@ -483,23 +397,23 @@
               </div>
 
               <!-- Submit Button -->
-              <button type="button" id="btn-otp-submit-verify" class="check-fare-primary-btn" style="width: 100%; min-height: 48px; font-size: 14.5px; font-weight: 800; margin-bottom: 14px;" onclick="window.firebaseOtpService.verifyEnteredCode()">
+              <button type="button" id="btn-otp-submit-verify" class="check-fare-primary-btn" style="width: 100%; min-height: 48px; font-size: 14.5px; font-weight: 800; margin-bottom: 14px;" onclick="window.otpService.verifyEnteredCode()">
                 Verify &amp; Confirm Booking →
               </button>
 
-              <!-- Resend Timer & WhatsApp Fallback Row -->
+              <!-- Resend Timer Row -->
               <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; border-top: 1px solid var(--owc-border, #e2e8f0); padding-top: 14px; margin-top: 4px;">
                 <span id="otp-resend-timer-label" style="color: var(--owc-text-muted, #64748b); font-weight: 600;">Resend code in 30s</span>
-                <button type="button" id="btn-otp-resend" onclick="window.firebaseOtpService.resendOtp()" style="border: none; background: transparent; color: var(--owc-primary, #0084e8); font-weight: 700; font-size: 12px; cursor: pointer; text-decoration: underline;" disabled>
+                <button type="button" id="btn-otp-resend" onclick="window.otpService.resendOtp()" style="border: none; background: transparent; color: var(--owc-primary, #0084e8); font-weight: 700; font-size: 12px; cursor: pointer; text-decoration: underline;" disabled>
                   Resend OTP
                 </button>
               </div>
 
-              <!-- Instant WhatsApp Verification Pill -->
+              <!-- Instant WhatsApp Verification Fallback -->
               <div style="margin-top: 14px; text-align: center;">
-                <a href="javascript:void(0)" onclick="window.firebaseOtpService.sendOtpViaWhatsApp()" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #047857; text-decoration: none; font-size: 12.5px; font-weight: 700;">
+                <a href="javascript:void(0)" onclick="window.otpService.sendOtpViaWhatsApp()" style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #047857; text-decoration: none; font-size: 12.5px; font-weight: 700;">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-                  <span>Didn't receive SMS? Get OTP via WhatsApp</span>
+                  <span>Didn't receive SMS? Get OTP via WhatsApp (Free &amp; Instant)</span>
                 </a>
               </div>
 
@@ -616,7 +530,9 @@
   `;
   document.head.appendChild(style);
 
-  // Initialize service instance
-  window.firebaseOtpService = new FirebaseOtpService();
+  // Initialize service instance & provide backwards-compatible alias
+  const instance = new TelecomOtpService();
+  window.otpService = instance;
+  window.firebaseOtpService = instance; // Backwards-compatible alias for existing booking.js calls
 
 })();

@@ -220,8 +220,8 @@ module.exports = async (req, res) => {
     console.warn('MongoDB OTP write error:', e.message);
   }
 
-  // Dispatch Live Fast2SMS
-  let smsStatus = { success: false, provider: 'fast2sms' };
+  // Dispatch Live Fast2SMS (~₹0.20-₹0.25 vs Firebase ₹5.15)
+  let smsStatus = { success: false, provider: 'fast2sms', cost: '₹0.25', route: 'q' };
   try {
     const textMsg = `Your OneWayTaxiBihar OTP code is ${code}. Valid for 10 minutes. Do not share.`;
     const fRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
@@ -236,9 +236,13 @@ module.exports = async (req, res) => {
       })
     });
     const fData = await fRes.json();
+    const isSuccess = Boolean(fData && fData.return === true);
     smsStatus = {
-      success: Boolean(fData && (fData.return === true || fData.status_code === 200 || fRes.ok)),
+      success: isSuccess,
       provider: 'fast2sms',
+      route: 'q',
+      cost: '₹0.25',
+      message: fData?.message || (isSuccess ? 'SMS sent' : 'SMS dispatch failed'),
       response: fData
     };
   } catch (err) {

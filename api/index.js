@@ -430,7 +430,9 @@ module.exports = async (req, res) => {
         otpCode: code,
         whatsappUrl: waUrl,
         smsStatus: smsDispatch,
-        message: `Verification code dispatched to +91 ${cleanPhone} via SMS & WhatsApp.`
+        provider: 'Fast2SMS Indian Telecom Gateway (~₹0.20/SMS)',
+        cost: '₹0.25',
+        message: `Verification code dispatched to +91 ${cleanPhone} via Fast2SMS & WhatsApp.`
       });
     }
 
@@ -1157,7 +1159,7 @@ module.exports = async (req, res) => {
         paymentStatus: initialPaymentStatus,
         bookingStatus: 'REQUESTED',
         phoneVerified: Boolean(body.phoneVerified !== false),
-        verifiedMethod: body.verifiedMethod || 'Firebase / SMS OTP',
+        verifiedMethod: body.verifiedMethod || 'Fast2SMS Telecom OTP (Verified)',
         verifiedAt: body.verifiedAt || new Date().toISOString(),
         partnerNotice: 'Our partner/driver or agent will call you in 5 minutes to confirm booking.',
         driverDetails: null, // Zero driver details before real manual assignment!

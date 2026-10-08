@@ -540,32 +540,37 @@ class ApiClient {
   // SILENT LEAD GENERATION (Captured when user checks fare - Zero noise to user)
   // =========================================================================
   static async sendLead(leadData) {
+    if (!leadData) return { success: false };
+    const cleanP = (leadData.cleanPhone || leadData.rawPhone || leadData.phone || "").replace(/\D/g, "").slice(-10);
+    if (!cleanP || cleanP.length !== 10) return { success: false };
+
     // 1. Always cache in localStorage for instant admin desk access
     try {
       const existing = JSON.parse(localStorage.getItem("otb_leads") || "[]");
-      const cleanP = (leadData.cleanPhone || leadData.rawPhone || leadData.phone || "").replace(/\D/g, "").slice(-10);
-      
-      // Update existing lead or prepend new
-      const foundIdx = existing.findIndex(l => (l.cleanPhone === cleanP || l.phone?.includes(cleanP)) && l.originCity === leadData.originCity && l.destCity === leadData.destCity);
-      
+      const foundIdx = existing.findIndex(l => (l.cleanPhone === cleanP || l.phone?.includes(cleanP)));
       const leadObj = {
-        id: leadData.id || `LEAD_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        id: leadData.id || `LEAD_${cleanP}_${Date.now().toString().slice(-4)}`,
         phone: leadData.phone || `+91 ${cleanP}`,
         cleanPhone: cleanP,
+        rawPhone: cleanP,
         passengerName: leadData.passengerName || "Fare Check Visitor",
         originCity: leadData.originCity || "Patna",
         destCity: leadData.destCity || "Gaya",
         tripType: leadData.tripType || "oneway",
         pickupDate: leadData.pickupDate || new Date().toISOString().split("T")[0],
         pickupTime: leadData.pickupTime || "Immediate",
-        distanceKm: leadData.distanceKm || 100,
+        distanceKm: Number(leadData.distanceKm) || 100,
         duration: leadData.duration || "2h 00m",
-        estFareHatch: leadData.estFareHatch || 1698,
-        estFareSedan: leadData.estFareSedan || 2198,
-        estFareSuv: leadData.estFareSuv || 3398,
-        source: leadData.source || "Fare Check Button",
-        status: "NEW",
-        createdAt: new Date().toISOString(),
+        selectedCab: leadData.selectedCab || "sedan",
+        cabName: leadData.cabName || "Prime Sedan",
+        cabPrice: Number(leadData.cabPrice || leadData.estFareSedan || 2198),
+        estFareHatch: Number(leadData.estFareHatch || 1698),
+        estFareSedan: Number(leadData.estFareSedan || 2198),
+        estFareSuv: Number(leadData.estFareSuv || 3398),
+        source: leadData.source || "Website Fare Check",
+        status: leadData.status || "NEW",
+        notes: leadData.notes || "",
+        createdAt: leadData.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
@@ -577,12 +582,19 @@ class ApiClient {
       localStorage.setItem("otb_leads", JSON.stringify(existing.slice(0, 100)));
     } catch (e) {}
 
-    // 2. Dispatch to backend API silently (no popup/toast shown to user)
+    // 2. Dispatch to backend API silently (tries /api/leads with fallback to /api/admin/leads)
     try {
-      return await this.request("/api/leads", {
+      let res = await this.request("/api/leads", {
         method: "POST",
         body: JSON.stringify(leadData)
       });
+      if (!res || !res.success) {
+        res = await this.request("/api/admin/leads", {
+          method: "POST",
+          body: JSON.stringify(leadData)
+        });
+      }
+      return res || { success: true, cached: true };
     } catch (err) {
       return { success: true, cached: true };
     }
@@ -705,12 +717,17 @@ class ApiClient {
   }
 
   static async adminGetLeads(token) {
-    const res = await this.request("/api/admin/leads", {
+    let res = await this.request("/api/admin/leads", {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     if (res && res.status === 401) {
       return res;
+    }
+
+    if (!res || !res.success || !Array.isArray(res.leads)) {
+      // High-resilience fallback to /api/leads directly
+      res = await this.request("/api/leads");
     }
 
     let leads = [];

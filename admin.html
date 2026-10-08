@@ -1440,6 +1440,7 @@
     let _adminToken = localStorage.getItem("otb_admin_token");
     let _allBookings = [];
     let _allLeads = [];
+    let _lastLeadsFingerprint = "";
     let _currentFilter = "ALL";
     let _currentLeadsFilter = "ALL";
     let _currentMainTab = "leads";
@@ -1761,9 +1762,13 @@
               playExecutiveChime("lead");
             }
           }
-          _allLeads = freshLeads;
-          renderLeadsMetrics();
-          if (_currentMainTab === "leads") applyLeadsFilters();
+          const leadsFingerprint = JSON.stringify(freshLeads.map(l => `${l.id}_${l.status}_${l.updatedAt || l.createdAt}`));
+          if (leadsFingerprint !== _lastLeadsFingerprint) {
+            _lastLeadsFingerprint = leadsFingerprint;
+            _allLeads = freshLeads;
+            renderLeadsMetrics();
+            if (_currentMainTab === "leads") applyLeadsFilters();
+          }
         }
 
         // 2. Poll Cab Bookings
@@ -2179,6 +2184,7 @@
         const res = await ApiClient.adminGetLeads(_adminToken);
         if (res && res.success && Array.isArray(res.leads)) {
           _allLeads = res.leads.sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
+          _lastLeadsFingerprint = JSON.stringify(_allLeads.map(l => `${l.id}_${l.status}_${l.updatedAt || l.createdAt}`));
           renderLeadsMetrics();
           applyLeadsFilters();
         } else if (res && res.status === 401) {

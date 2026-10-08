@@ -334,6 +334,7 @@ module.exports = async (req, res) => {
         body = {};
       }
     }
+    req.body = body;
   }
 
   const action = (body.action || url.searchParams.get('action') || '').toLowerCase();
@@ -1908,84 +1909,16 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // 9b. LIVE LEADS & FARE ENQUIRIES (Silent Lead Generation)
     // -------------------------------------------------------------
-    if (pathname === '/leads' && method === 'POST') {
-      const rawPhone = body.rawPhone || body.phone || '';
-      const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
-      if (!cleanPhone || cleanPhone.length !== 10) {
-        return sendJson(400, { success: false, message: 'Invalid 10-digit mobile number' });
-      }
-
-      if (!db.leads) db.leads = [];
-
-      const orig = body.originCity || 'Patna';
-      const dest = body.destCity || 'Gaya';
-
-      // Check existing lead to update
-      let lead = db.leads.find(l => l.cleanPhone === cleanPhone && l.originCity === orig && l.destCity === dest);
-
-      if (lead) {
-        lead.updatedAt = new Date().toISOString();
-        lead.distanceKm = body.distanceKm || lead.distanceKm;
-        lead.duration = body.duration || lead.duration;
-        lead.estFareHatch = body.estFareHatch || lead.estFareHatch;
-        lead.estFareSedan = body.estFareSedan || lead.estFareSedan;
-        lead.estFareSuv = body.estFareSuv || lead.estFareSuv;
-        lead.pickupDate = body.pickupDate || lead.pickupDate;
-        lead.pickupTime = body.pickupTime || lead.pickupTime;
-      } else {
-        lead = {
-          id: `LEAD_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-          phone: `+91 ${cleanPhone}`,
-          cleanPhone,
-          passengerName: body.passengerName || 'Fare Check Passenger',
-          originCity: orig,
-          destCity: dest,
-          tripType: body.tripType || 'oneway',
-          pickupDate: body.pickupDate || new Date().toISOString().split('T')[0],
-          pickupTime: body.pickupTime || 'Immediate',
-          distanceKm: body.distanceKm || 100,
-          duration: body.duration || '2h 00m',
-          estFareHatch: body.estFareHatch || 1698,
-          estFareSedan: body.estFareSedan || 2198,
-          estFareSuv: body.estFareSuv || 3398,
-          source: body.source || 'Fare Check Inquiry',
-          status: 'NEW',
-          notes: '',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        // Push Notification Alert for Admin Central Dispatch
-        if (!db.notifications) db.notifications = [];
-        db.notifications.unshift({
-          id: `NOTIF_LEAD_${Date.now()}`,
-          type: 'NEW_ROUTE_INQUIRY',
-          title: `New Route Inquiry: ${orig} ➔ ${dest}`,
-          message: `Visitor (+91 ${cleanPhone}) checked fare for ${orig} ➔ ${dest} (${body.distanceKm || 100} KM). Sedan Rate: ₹${body.estFareSedan || 2198}.`,
-          leadId: lead.id,
-          createdAt: new Date().toISOString()
-        });
-      }
-
-      await saveDb(db);
-      return sendJson(200, { success: true, message: 'Lead captured successfully', lead });
-    }
-
-    if (pathname === '/admin/leads' && method === 'GET') {
-      if (!db.leads) db.leads = [];
-      return sendJson(200, { success: true, leads: db.leads, count: db.leads.length });
-    }
-
-    if (pathname === '/admin/leads/status' && method === 'POST') {
-      if (!db.leads) db.leads = [];
-      const lead = db.leads.find(l => l.id === body.leadId);
-      if (lead) {
-        if (body.status) lead.status = body.status;
-        if (body.note) lead.notes = body.note;
-        lead.updatedAt = new Date().toISOString();
-        await saveDb(db);
-        return sendJson(200, { success: true, lead });
-      }
-      return sendJson(404, { success: false, message: 'Lead not found' });
+    // 9b. LIVE LEADS & FARE ENQUIRIES (Ultra-Fast Unified Engine)
+    // -------------------------------------------------------------
+    if (
+      pathname === '/leads' ||
+      pathname === '/admin/leads' ||
+      pathname.startsWith('/admin/leads') ||
+      pathname.startsWith('/leads')
+    ) {
+      const leadsHandler = require('./leads.js');
+      return leadsHandler(req, res);
     }
 
     if (pathname === '/admin/bookings' && method === 'GET') {

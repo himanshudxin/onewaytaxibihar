@@ -1460,6 +1460,7 @@ class BookingManager {
       distanceKm: this.calculatedDistanceKm || 100,
       duration: this.calculatedDuration || "2h",
       selectedCab: extra.selectedCab || this.selectedCabId || "sedan",
+      cabPrice: Number(extra.cabPrice || (extra.selectedCab === 'suv' ? suvPrice : (extra.selectedCab === 'hatchback' ? hatchPrice : sedanPrice))),
       estFareHatch: hatchPrice,
       estFareSedan: sedanPrice,
       estFareSuv: suvPrice,
@@ -1769,6 +1770,7 @@ class BookingManager {
         }, 120);
       }
       window.showToast(`Selected route: ${from.name} → ${to.name}`, "success");
+      this.transferLeadToHelpdesk(rawPhone, true, { source: `Route Selected: ${from.name} to ${to.name}` });
     } else {
       this.isFareUnlocked = false;
       const section = document.getElementById("cab-selection-section");
@@ -2011,6 +2013,14 @@ class BookingManager {
     } else {
       this.passengerDetails.phone = `+91 ${rawPhone}`;
     }
+
+    // Auto-sync lead to Admin Portal with exact cab and price
+    this.transferLeadToHelpdesk(rawPhone, true, {
+      selectedCab: cabId,
+      cabPrice: price,
+      source: `Cab Selected: ${fleet.category || cabId}`
+    });
+
     const checkoutModal = document.getElementById("modal-checkout");
     const checkoutBody = document.getElementById("modal-checkout-body");
 

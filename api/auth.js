@@ -147,15 +147,11 @@ module.exports = async (req, res) => {
     });
   }
 
-  // 1C. ADMIN GET LEADS (Fallback if routed to /api/auth)
-  if (pathname.includes('/leads') || action === 'get-leads') {
-    try {
-      const db = await connectToDatabase();
-      const leads = await db.collection('leads').find({}).sort({ createdAt: -1 }).limit(100).toArray();
-      return sendJson(200, { success: true, count: leads.length, leads });
-    } catch (e) {
-      return sendJson(200, { success: true, count: 0, leads: [] });
-    }
+  // 1C. LEADS ROUTING FALLBACK
+  if (pathname.includes('/leads') || action === 'get-leads' || action === 'leads') {
+    req.body = body;
+    const leadsHandler = require('./leads.js');
+    return leadsHandler(req, res);
   }
 
   // 2. ADMIN 2FA: Verify WhatsApp OTP

@@ -4,7 +4,8 @@
   "rewrites": [
     { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/bookings", "destination": "/api/bookings" },
-    { "source": "/api/leads", "destination": "/api/leads" },
+    { "source": "/api/admin/leads(.*)", "destination": "/api/leads" },
+    { "source": "/api/leads(.*)", "destination": "/api/leads" },
     { "source": "/api/auth/(.*)", "destination": "/api/auth" },
     { "source": "/api/admin/(.*)", "destination": "/api/admin" },
     { "source": "/api/auth", "destination": "/api/auth" },

@@ -65,21 +65,18 @@
 
       this.startCountdown(30);
 
-      // Generate secure 6-digit OTP code for this specific phone number
-      let code = Math.floor(100000 + Math.random() * 900000).toString();
-      sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
-      sessionStorage.setItem(`otb_verify_${clean10}`, code);
-      this.generatedOtpCode = code;
-
-      // Trigger backend API (Node backend / Fast2SMS) to register code and dispatch via telecom SMS
+      // Trigger authoritative backend API to dispatch code via telecom SMS & WhatsApp
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           const apiRes = await ApiClient.sendOtp(clean10, this.activeName);
-          if (apiRes && apiRes.otpCode) {
-            code = apiRes.otpCode.toString();
-            sessionStorage.setItem(`otb_temp_otp_${clean10}`, code);
-            sessionStorage.setItem(`otb_verify_${clean10}`, code);
-            this.generatedOtpCode = code;
+          if (!apiRes || !apiRes.success) {
+            const errMsg = apiRes?.message || "Failed to send OTP. Please try again.";
+            if (statusEl) {
+              statusEl.textContent = errMsg;
+              statusEl.style.color = "#ef4444";
+            }
+            window.showToast?.(errMsg, "error");
+            return;
           }
         }
         if (window.ApiClient && ApiClient.sendLead) {
@@ -94,7 +91,7 @@
       }
 
       if (statusEl) {
-        statusEl.textContent = `6-digit SMS OTP sent to +91 ${clean10}. Please check your phone messages.`;
+        statusEl.textContent = `6-digit SMS OTP dispatched to +91 ${clean10}. Please check your phone messages.`;
         statusEl.style.color = "#059669";
       }
       window.showToast?.(`OTP SMS sent to +91 ${clean10}!`, "success");
@@ -205,25 +202,23 @@
 
       try {
         let isVerified = false;
+        let serverErrorMsg = "Invalid OTP code. Please enter the 6 digits sent to your phone.";
 
-        // 1. Check genuine sent OTP code from session
-        const storedOtp = sessionStorage.getItem(`otb_temp_otp_${this.activePhone}`) || sessionStorage.getItem(`otb_verify_${this.activePhone}`);
-        if (storedOtp && enteredCode === storedOtp) {
-          isVerified = true;
-        }
-
-        // 2. Try Backend API verification
-        if (!isVerified) {
-          try {
-            if (window.ApiClient && ApiClient.verifyOtp) {
-              const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
-              if (verifyRes && verifyRes.success) {
-                isVerified = true;
+        try {
+          if (window.ApiClient && ApiClient.verifyOtp) {
+            const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
+            if (verifyRes && verifyRes.success) {
+              isVerified = true;
+              if (verifyRes.user) {
+                window.currentUser = verifyRes.user;
+                localStorage.setItem("otb_current_user", JSON.stringify(verifyRes.user));
               }
+            } else if (verifyRes && verifyRes.message) {
+              serverErrorMsg = verifyRes.message;
             }
-          } catch (e) {
-            console.warn("[Telecom OTP] Backend verify note:", e);
           }
+        } catch (e) {
+          console.warn("[Telecom OTP] Backend verify error:", e);
         }
 
         if (isVerified) {
@@ -266,17 +261,17 @@
                 phone: this.activePhone,
                 verified: true,
                 verifiedAt: new Date().toISOString(),
-                method: "Fast2SMS Telecom OTP (Verified)"
+                method: "Authoritative Telecom OTP (Verified)"
               });
             }
           }, 450);
 
         } else {
           if (statusEl) {
-            statusEl.textContent = "Invalid OTP code. Please enter the 6 digits sent to your phone.";
+            statusEl.textContent = serverErrorMsg;
             statusEl.style.color = "#ef4444";
           }
-          window.showToast?.("Invalid OTP code. Please enter the 6 digits sent to your phone.", "error");
+          window.showToast?.(serverErrorMsg, "error");
 
           const grid = document.querySelector(".otp-digit-grid");
           if (grid) {

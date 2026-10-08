@@ -142,12 +142,15 @@ class ApiClient {
     return res || { success: false, message: "Login failed" };
   }
 
-  // Real Mobile Number Verification - Send Code (Fast2SMS & WhatsApp)
+  // Authoritative Server-Side Mobile Number Verification - Send Code
   static async sendOtp(phone, name = "") {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
     const cleanName = (name || "").trim() || "Valued Passenger";
 
-    // 1. Try Backend API with Vercel and local multi-route resilience
+    if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return { success: false, message: "Valid 10-digit Indian mobile number required." };
+    }
+
     try {
       let res = await this.request("/api/auth/send-otp", {
         method: "POST",
@@ -159,63 +162,25 @@ class ApiClient {
           body: JSON.stringify({ phone: cleanPhone, name: cleanName, action: "send-otp" })
         });
       }
-      if (res && res.success) {
-        if (res.otpCode) {
-          sessionStorage.setItem(`otb_verify_${cleanPhone}`, res.otpCode.toString());
-          sessionStorage.setItem(`otb_temp_otp_${cleanPhone}`, res.otpCode.toString());
-        }
-        return res;
-      }
+      return res || { success: false, message: "Unable to send verification OTP. Please try again." };
     } catch (apiErr) {
-      console.warn("Backend API note:", apiErr);
+      console.warn("Backend API send-otp note:", apiErr);
+      return { success: false, message: "Network connection error while sending OTP." };
     }
-
-    // 2. Direct Fast2SMS Telecom Dispatch (Works on GitHub Pages & Static Hosts)
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    sessionStorage.setItem(`otb_verify_${cleanPhone}`, code);
-    sessionStorage.setItem(`otb_temp_otp_${cleanPhone}`, code);
-
-    const fast2smsKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx";
-    try {
-      const response = await fetch("https://www.fast2sms.com/dev/bulkV2", {
-        method: "POST",
-        headers: {
-          "authorization": fast2smsKey,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          route: "q",
-          message: `Your OneWayTaxiBihar OTP is ${code}. Valid for 10 minutes. Do not share.`,
-          language: "english",
-          flash: 0,
-          numbers: cleanPhone
-        })
-      });
-      const data = await response.json();
-      console.log("[Fast2SMS Client Broadcast]", data);
-    } catch (e) {
-      console.warn("Fast2SMS client note:", e);
-    }
-
-    const waText = `OneWayTaxiBihar Verification Code for +91 ${cleanPhone} is: ${code}. Valid for 10 minutes. Welcome Reward: Rs 100 on first booking.`;
-    return {
-      success: true,
-      phone: `+91 ${cleanPhone}`,
-      cleanPhone,
-      isNewUser: true,
-      rewardEligible: true,
-      rewardAmount: 100,
-      otpCode: code,
-      whatsappUrl: `https://wa.me/917281851011?text=${encodeURIComponent(waText)}`,
-      message: `Verification code dispatched to +91 ${cleanPhone} via Fast2SMS.`
-    };
   }
 
-  // Real Mobile Number Verification - Verify Code & Claim One-Time Reward
+  // Authoritative Server-Side Mobile Number Verification - Verify Code & Issue Session
   static async verifyOtp(phone, otp, name = "") {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
     const cleanOtp = (otp || "").toString().trim();
     const cleanName = (name || "").trim() || "Valued Passenger";
+
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      return { success: false, message: "Valid 10-digit mobile number required." };
+    }
+    if (!cleanOtp || cleanOtp.length !== 6) {
+      return { success: false, message: "Please enter a valid 6-digit verification code." };
+    }
 
     try {
       let res = await this.request("/api/auth/verify-otp", {
@@ -234,41 +199,31 @@ class ApiClient {
         localStorage.setItem("otb_current_user", JSON.stringify(res.user));
         return res;
       }
+      return res || { success: false, message: "Invalid verification code. Please try again." };
     } catch (err) {
       console.warn("Backend verify API note:", err);
+      return { success: false, message: "Verification failed. Please check network connection." };
     }
+  }
 
-    // Offline / fallback verification
-    const localOtp = sessionStorage.getItem(`otb_verify_${cleanPhone}`) || sessionStorage.getItem(`otb_temp_otp_${cleanPhone}`);
-    if (localOtp && localOtp.trim() === cleanOtp) {
-      sessionStorage.removeItem(`otb_verify_${cleanPhone}`);
-      sessionStorage.removeItem(`otb_temp_otp_${cleanPhone}`);
-      sessionStorage.setItem(`otb_verified_${cleanPhone}`, "true");
-      const fallbackToken = `otb_local_${cleanPhone}_${Date.now()}`;
-      const fallbackUser = {
-        id: `usr_${cleanPhone}`,
-        name: cleanName,
-        phone: `+91 ${cleanPhone}`,
-        walletBalance: 100,
-        isPhoneVerified: true,
-        rewardClaimed: true,
-        memberSince: new Date().getFullYear().toString(),
-        createdAt: new Date().toISOString()
-      };
-      localStorage.setItem("otb_auth_token", fallbackToken);
-      localStorage.setItem("otb_current_user", JSON.stringify(fallbackUser));
-      return {
-        success: true,
-        token: fallbackToken,
-        user: fallbackUser,
-        isFirstTimeUser: true,
-        rewardGranted: true,
-        rewardAmount: 100,
-        message: "Mobile verified successfully! ₹100 Welcome Reward credited to your wallet."
-      };
-    }
+  // Privacy-Secured Official GST Tax Invoice Lookup (Booking ID + Phone verification)
+  static async lookupInvoice(bookingId, phone = "") {
+    const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+    const cleanBId = (bookingId || "").trim().toUpperCase();
+    return await this.request("/api/invoice/lookup", {
+      method: "POST",
+      body: JSON.stringify({ bookingId: cleanBId, phone: cleanPhone })
+    });
+  }
 
-    return { success: false, message: "Invalid verification code. Please try again." };
+  // Privacy-Secured Live GPS Trip Tracking Status
+  static async getTrackingStatus(bookingId, phone = "") {
+    const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+    const cleanBId = (bookingId || "").trim().toUpperCase();
+    return await this.request("/api/tracking/status", {
+      method: "POST",
+      body: JSON.stringify({ bookingId: cleanBId, phone: cleanPhone })
+    });
   }
 
   // Get Current User Profile (Server-Verified with local cache)
@@ -487,7 +442,37 @@ class ApiClient {
       };
     }
 
+    if (res && res.servicePaused) {
+      return res;
+    }
+
     return res || { success: false, message: "Booking creation failed" };
+  }
+
+  // Check Emergency Booking Pause Status
+  static async checkEmergencyPause() {
+    try {
+      const res = await this.request("/api/emergency-pause");
+      return res || { paused: false };
+    } catch (e) {
+      return { paused: false };
+    }
+  }
+
+  // Submit Customer Support or Booking Complaint Ticket
+  static async submitSupportTicket(ticketPayload) {
+    return await this.request("/api/support/tickets", {
+      method: "POST",
+      body: JSON.stringify(ticketPayload)
+    });
+  }
+
+  // Reconcile Orphan Payment
+  static async reconcileOrphanPayment(payload) {
+    return await this.request("/api/payments/reconcile-orphan", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
   }
 
   // Cancel Booking

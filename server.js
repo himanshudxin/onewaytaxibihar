@@ -117,6 +117,61 @@ const server = http.createServer(async (req, res) => {
   res.end('404 Not Found');
 });
 
+// Enterprise Process Resilience & Disaster Recovery Handlers (Scenario 12)
+process.on('uncaughtException', (err) => {
+  console.error('[CRITICAL UNCAUGHT EXCEPTION]:', err);
+  try {
+    const dbService = require('./services/db.js');
+    const db = dbService.getDb();
+    if (db) {
+      if (!db.error_logs) db.error_logs = [];
+      db.error_logs.unshift({
+        id: `crit_${Date.now()}`,
+        type: 'UNCAUGHT_EXCEPTION',
+        message: err?.message || 'Uncaught process exception',
+        stack: (err?.stack || '').split('\n').slice(0, 8).join('\n'),
+        timestamp: new Date().toISOString()
+      });
+      const dbPath = path.join(__dirname, 'data', 'db.json');
+      fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf8');
+    }
+  } catch (e) {
+    console.error('Failed to flush state during uncaught exception:', e.message);
+  }
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.warn('[UNHANDLED PROMISE REJECTION]:', reason);
+  try {
+    const dbService = require('./services/db.js');
+    const db = dbService.getDb();
+    if (db) {
+      if (!db.error_logs) db.error_logs = [];
+      db.error_logs.unshift({
+        id: `rej_${Date.now()}`,
+        type: 'UNHANDLED_REJECTION',
+        message: reason?.message || String(reason),
+        timestamp: new Date().toISOString()
+      });
+    }
+  } catch (e) {}
+});
+
+function gracefulShutdown(signal) {
+  console.log(`[OneWayTaxiBihar] Received ${signal}. Gracefully stopping server...`);
+  server.close(() => {
+    console.log('[OneWayTaxiBihar] HTTP connections closed. Process terminating safely.');
+    process.exit(0);
+  });
+  setTimeout(() => {
+    console.error('[OneWayTaxiBihar] Forced termination after timeout.');
+    process.exit(1);
+  }, 10000).unref();
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
 if (require.main === module) {
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`[OneWayTaxiBihar] 🚀 High-Performance HTTP server running on http://0.0.0.0:${PORT}`);

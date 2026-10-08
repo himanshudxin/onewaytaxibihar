@@ -25,6 +25,8 @@ const ALL_COLLECTIONS = [
   'coupons',
   'audit_logs',
   'sessions',
+  'support_tickets',
+  'error_logs',
   'settings'
 ];
 
@@ -88,6 +90,8 @@ function loadLocalDb() {
       audit_logs: [],
       admins: [],
       coupons: [],
+      support_tickets: [],
+      error_logs: [],
       settings: {}
     };
   }
@@ -154,7 +158,10 @@ async function initMongo() {
           mongoDbInstance.collection('users').createIndex({ phone: 1 }),
           mongoDbInstance.collection('drivers').createIndex({ phone: 1 }),
           mongoDbInstance.collection('notifications').createIndex({ createdAt: -1 }),
-          mongoDbInstance.collection('sessions').createIndex({ token: 1 })
+          mongoDbInstance.collection('sessions').createIndex({ token: 1 }),
+          mongoDbInstance.collection('support_tickets').createIndex({ id: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('support_tickets').createIndex({ bookingId: 1 }),
+          mongoDbInstance.collection('support_tickets').createIndex({ createdAt: -1 })
         ]);
       } catch (idxErr) {}
     })();
@@ -253,11 +260,23 @@ async function pullFromRemoteCloud(targetCollection = null) {
               memoryDb.settings = rest;
             }
           } else {
-            // Lean projection and sorted fetch for high speed
             const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(300).toArray();
             if (Array.isArray(docs)) {
               const sanitized = docs.map(({ _id, ...rest }) => rest);
-              memoryDb[colName] = sanitized;
+              if (colName === 'bookings' || colName === 'leads') {
+                const map = new Map();
+                for (const item of sanitized) {
+                  const k = item.bookingId || item.id || item.cleanPhone;
+                  if (k) map.set(k, item);
+                }
+                for (const memItem of (memoryDb[colName] || [])) {
+                  const k = memItem.bookingId || memItem.id || memItem.cleanPhone;
+                  if (k && !map.has(k)) map.set(k, memItem);
+                }
+                memoryDb[colName] = Array.from(map.values());
+              } else {
+                memoryDb[colName] = sanitized;
+              }
             }
           }
         } catch (colErr) {
@@ -357,6 +376,7 @@ async function getDbAsync(forceRefresh = false) {
 
 function saveDb(data) {
   memoryDb = data;
+  lastHydrationTime = Date.now();
   try {
     const targetPath = getLocalDbPath();
     const dir = path.dirname(targetPath);
@@ -369,6 +389,7 @@ function saveDb(data) {
 
 async function saveDbAsync(data) {
   memoryDb = data;
+  lastHydrationTime = Date.now();
   try {
     const targetPath = getLocalDbPath();
     const dir = path.dirname(targetPath);

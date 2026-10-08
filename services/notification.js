@@ -234,10 +234,11 @@ function generateWhatsAppDeepLink(phone, message) {
   return `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
-// 6. High-Level Domain Notification Handlers
 async function sendBookingConfirmationNotifications(booking) {
   const cleanPhone = cleanIndianPhone(booking.passengerPhone);
-  const msg = `Namaste ${booking.passengerName || 'Passenger'}! Your OneWayTaxi from ${booking.pickupCity} to ${booking.dropCity} on ${booking.pickupDate} at ${booking.pickupTime} is CONFIRMED.\nBooking ID: ${booking.bookingId}\nTotal Fare: Rs ${booking.totalFare}\nAdvance Paid: Rs ${booking.advancePaid || 0}\nBalance due to driver: Rs ${booking.balanceDue || booking.totalFare}\n24x7 Patna Helpline: +91 80021 41816.\nHave a safe and comfortable trip!`;
+  const fromCity = booking.originCity || booking.pickupCity || booking.origin || 'Patna';
+  const toCity = booking.destCity || booking.dropCity || booking.destination || 'Gaya';
+  const msg = `Namaste ${booking.passengerName || 'Passenger'}! Your OneWayTaxi from ${fromCity} to ${toCity} on ${booking.pickupDate} at ${booking.pickupTime} is CONFIRMED.\nBooking ID: ${booking.bookingId}\nTotal Fare: Rs ${booking.totalFare}\nAdvance Paid: Rs ${booking.advancePaid || 0}\nBalance due to driver: Rs ${booking.balanceDue || booking.totalFare}\n24x7 Patna Helpline: +91 80021 41816.\nHave a safe and comfortable trip!`;
 
   // SMS
   const smsRes = await sendSms({ phone: cleanPhone, message: msg });
@@ -255,7 +256,9 @@ async function sendBookingConfirmationNotifications(booking) {
 
 async function sendDriverAssignmentNotifications(booking, driver) {
   const cleanPhone = cleanIndianPhone(booking.passengerPhone);
-  const msg = `OneWayTaxi Chauffeur Allocated!\nBooking: ${booking.bookingId}\nRoute: ${booking.pickupCity} -> ${booking.dropCity}\nChauffeur: ${driver.name} (+91 ${cleanPhoneIndian(driver.phone)})\nCab: ${driver.vehicleModel || 'Sedan'} [${driver.vehicleNumber || 'Bihar Cab'}]\nRating: 4.9⭐\nYour driver will arrive 15 minutes before scheduled pickup time.`;
+  const origin = booking.originCity || booking.pickupCity || 'Patna';
+  const dest = booking.destCity || booking.dropCity || 'Bihar Outstation';
+  const msg = `OneWayTaxi Chauffeur Allocated!\nBooking: ${booking.bookingId}\nRoute: ${origin} -> ${dest}\nChauffeur: ${driver.name} (+91 ${cleanPhoneIndian(driver.phone)})\nCab: ${driver.vehicleModel || 'Sedan'} [${driver.vehicleNumber || 'Bihar Cab'}]\nRating: 4.9⭐\nYour driver will arrive 15 minutes before scheduled pickup time.`;
 
   const smsRes = await sendSms({ phone: cleanPhone, message: msg });
   return {

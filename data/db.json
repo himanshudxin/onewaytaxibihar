@@ -1,31 +1,5 @@
 {
-  "bookings": [
-    {
-      "bookingId": "OTB-2026-6252",
-      "bookingStatus": "REQUESTED",
-      "cabTier": "hatchback",
-      "createdAt": "2026-10-07T07:03:44.827Z",
-      "destCity": "Muzaffarpur",
-      "driverDetails": null,
-      "dropAddress": "Main Civil Hospital / Emergency Gate, Muzaffarpur",
-      "fleetClass": "Go Hatchback",
-      "fleetModel": "WagonR / Tiago",
-      "originCity": "Patna",
-      "passengerEmail": "",
-      "passengerName": "aman kumar",
-      "passengerPhone": "+91 6206494214",
-      "paymentMethod": "Razorpay Online Advance (₹299)",
-      "paymentStatus": "TOKEN ADVANCE VERIFIED",
-      "paymentUtr": "",
-      "phoneVerified": true,
-      "pickupAddress": "Central Bus Stand / ISBT, Patna",
-      "pickupDate": "2026-10-07",
-      "pickupTime": "10:00 AM",
-      "totalFare": 1698,
-      "verifiedAt": "2026-10-07T07:03:44.425Z",
-      "verifiedMethod": "Firebase Phone Auth (Verified)"
-    }
-  ],
+  "bookings": [],
   "drivers": [
     {
       "id": "drv_101",
@@ -78,17 +52,6 @@
   ],
   "driver_applications": [],
   "users": [
-    {
-      "id": "usr_9304123456",
-      "createdAt": "2026-10-08T00:30:39.759Z",
-      "email": "",
-      "isPhoneVerified": true,
-      "memberSince": "2026",
-      "name": "Ananya Roy",
-      "phone": "+91 9304123456",
-      "rewardClaimed": true,
-      "walletBalance": 100
-    },
     {
       "id": "usr_6206494214",
       "createdAt": "2026-09-04T11:19:01.4792083+05:30",
@@ -167,170 +130,8 @@
   ],
   "payments": [],
   "wallet_ledger": [],
-  "leads": [
-    {
-      "id": "lead_9934112233_3764",
-      "phone": "+91 9934112233",
-      "rawPhone": "9934112233",
-      "cleanPhone": "9934112233",
-      "passengerName": "Kavita Kumari",
-      "originCity": "Patna",
-      "destCity": "Bhagalpur",
-      "tripType": "oneway",
-      "pickupDate": "2026-10-08",
-      "pickupTime": "Immediate",
-      "distanceKm": 235,
-      "duration": "2h 15m",
-      "selectedCab": "sedan",
-      "cabName": "Prime Sedan",
-      "cabPrice": 4250,
-      "estFareHatch": 1698,
-      "estFareSedan": 4250,
-      "estFareSuv": 3398,
-      "source": "Hero Fare Calculator",
-      "status": "NEW",
-      "notes": "Inquiry for Patna ➔ Bhagalpur",
-      "createdAt": "2026-10-08T03:31:03.764Z",
-      "updatedAt": "2026-10-08T03:31:03.764Z"
-    },
-    {
-      "id": "lead_9431801234_3187",
-      "phone": "+91 9431801234",
-      "rawPhone": "9431801234",
-      "cleanPhone": "9431801234",
-      "passengerName": "Vikram Singh",
-      "originCity": "Patna",
-      "destCity": "Darbhanga",
-      "tripType": "oneway",
-      "pickupDate": "2026-10-08",
-      "pickupTime": "Immediate",
-      "distanceKm": 145,
-      "duration": "2h 15m",
-      "selectedCab": "sedan",
-      "cabName": "Prime Sedan",
-      "cabPrice": 2890,
-      "estFareHatch": 1698,
-      "estFareSedan": 2890,
-      "estFareSuv": 3398,
-      "source": "Website Fare Check",
-      "status": "NEW",
-      "notes": "Inquiry for Patna ➔ Darbhanga",
-      "createdAt": "2026-10-08T03:22:13.187Z",
-      "updatedAt": "2026-10-08T03:22:13.838Z"
-    },
-    {
-      "id": "lead_9304123456_9690",
-      "cleanPhone": "9304123456",
-      "createdAt": "2026-10-08T00:30:39.690Z",
-      "destCity": "Bihar Outstation",
-      "originCity": "Patna",
-      "passengerName": "Ananya Roy",
-      "phone": "+91 9304123456",
-      "rawPhone": "9304123456",
-      "source": "Customer Verified Login",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-08T00:30:39.759Z"
-    },
-    {
-      "cleanPhone": "6299375016",
-      "cabName": "Prime Sedan",
-      "cabPrice": 2600,
-      "createdAt": "2026-10-08T00:15:41.441Z",
-      "destCity": "Gaya",
-      "distanceKm": 104,
-      "duration": "2h 15m",
-      "estFareSedan": 2600,
-      "estFareSuv": 3432,
-      "id": "lead_6299375016_1441",
-      "notes": "Inquiry for Prime Sedan",
-      "originCity": "Patna",
-      "passengerName": "Himanshu Dubey",
-      "phone": "+91 6299375016",
-      "rawPhone": "6299375016",
-      "selectedCab": "sedan",
-      "source": "Check Fares & Availability Button",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-08T00:15:41.441Z"
-    },
-    {
-      "cleanPhone": "6654258846",
-      "cabName": "Prime Sedan",
-      "cabPrice": 2198,
-      "createdAt": "2026-10-07T23:59:07.528Z",
-      "destCity": "Muzaffarpur",
-      "distanceKm": 78,
-      "duration": "1h 45m",
-      "estFareSedan": 2198,
-      "estFareSuv": 3398,
-      "id": "lead_6654258846_7528",
-      "notes": "Inquiry for Prime Sedan",
-      "originCity": "Patna",
-      "passengerName": "Fare Check Visitor",
-      "phone": "+91 6654258846",
-      "rawPhone": "6654258846",
-      "selectedCab": "sedan",
-      "source": "Check Fares & Availability Button",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-07T23:59:07.528Z"
-    },
-    {
-      "cleanPhone": "9341305895",
-      "cabName": "Prime Sedan",
-      "cabPrice": 2600,
-      "createdAt": "2026-10-07T17:40:31.592Z",
-      "destCity": "Gaya",
-      "distanceKm": 104,
-      "duration": "2h 15m",
-      "estFareSedan": 2600,
-      "estFareSuv": 3432,
-      "id": "lead_9341305895_1592",
-      "notes": "Inquiry for Prime Sedan",
-      "originCity": "Patna",
-      "passengerName": "Rohit Ranjan",
-      "phone": "+91 9341305895",
-      "rawPhone": "9341305895",
-      "selectedCab": "sedan",
-      "source": "Check Fares & Availability Button",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-07T17:40:31.592Z"
-    },
-    {
-      "cleanPhone": "6206494214",
-      "cabName": "Go Hatchback",
-      "cabPrice": 2198,
-      "createdAt": "2026-10-07T07:03:36.269Z",
-      "destCity": "Muzaffarpur",
-      "distanceKm": 78,
-      "duration": "1h 45m",
-      "estFareSedan": 2198,
-      "estFareSuv": 3398,
-      "id": "lead_6206494214_6269",
-      "notes": "Inquiry for Go Hatchback",
-      "originCity": "Patna",
-      "passengerName": "aman kumar",
-      "phone": "+91 6206494214",
-      "rawPhone": "6206494214",
-      "selectedCab": "hatchback",
-      "source": "Checkout Step 1 Form",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-07T07:03:36.269Z"
-    }
-  ],
-  "notifications": [
-    {
-      "id": "ntf_1791419439759",
-      "isRead": false,
-      "message": "Ananya Roy (+91 9304123456) signed in to OneWayTaxiBihar",
-      "timestamp": "2026-10-08T00:30:39.759Z",
-      "title": "Customer Logged In",
-      "type": "CUSTOMER_LOGIN"
-    }
-  ],
+  "leads": [],
+  "notifications": [],
   "coupons": [
     {
       "code": "FIRST100",
@@ -381,15 +182,7 @@
       "usageCount": 6
     }
   ],
-  "audit_logs": [
-    {
-      "id": "AUD_1791419561820",
-      "action": "ADMIN_LOGIN_AUTHORIZED",
-      "actor": "Owner (+91 6206494214)",
-      "details": "Admin logged in with Owner WhatsApp verification (+91 6206494214)",
-      "timestamp": "2026-10-08T00:32:41.820Z"
-    }
-  ],
+  "audit_logs": [],
   "sessions": [
     {
       "token": "adm_sess_d46a78755c555e971d90df9af1f4f801",
@@ -501,14 +294,6 @@
       "phone": "+91 6206494214",
       "role": "customer",
       "userId": "usr_6206494214"
-    },
-    {
-      "token": "adm_sess_d68121fc16ad99409564effa43f62546",
-      "adminId": "adm_01",
-      "role": "admin",
-      "authMethod": "WHATSAPP_OTP",
-      "phone": "+91 6206494214",
-      "createdAt": "2026-10-08T00:32:41.820Z"
     }
   ],
   "settings": {
@@ -528,6 +313,63 @@
       "enableCashToDriver": true,
       "enableTokenAdvance": true,
       "autoConfirmOnAdvance": true
+    },
+    "emergencyBookingPause": false,
+    "emergencyPauseReason": "",
+    "emergencyPausedAt": null,
+    "emergencyPausedBy": null
+  },
+  "support_tickets": [
+    {
+      "id": "TCK-470549",
+      "ticketId": "TCK-470549",
+      "bookingId": "OTB-2026-6508",
+      "passengerPhone": "+91 9835000000",
+      "cleanPhone": "9835000000",
+      "passengerName": "Kavita Kumari",
+      "category": "DELAY",
+      "priority": "NORMAL",
+      "subject": "Support Request regarding OTB-2026-6508",
+      "message": "Driver was 10 minutes late at Bailey Road crossing.",
+      "status": "OPEN",
+      "resolutionNotes": null,
+      "resolvedAt": null,
+      "resolvedBy": null,
+      "createdAt": "2026-10-08T06:37:50.549Z",
+      "updatedAt": "2026-10-08T06:37:50.549Z"
     }
-  }
+  ],
+  "error_logs": [],
+  "refunds": [
+    {
+      "id": "REF_1791441467483_2019",
+      "bookingId": "OTB-2026-2359",
+      "amount": 299,
+      "phone": "+91 9835778899",
+      "status": "REFUND_PENDING_MANUAL_REVIEW",
+      "reason": "Customer trip cancellation",
+      "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791441467483_2019).",
+      "createdAt": "2026-10-08T06:37:47.484Z"
+    },
+    {
+      "id": "REF_1791441397619_5626",
+      "bookingId": "OTB-2026-1895",
+      "amount": 299,
+      "phone": "+91 9835778899",
+      "status": "REFUND_PENDING_MANUAL_REVIEW",
+      "reason": "Customer trip cancellation",
+      "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791441397619_5626).",
+      "createdAt": "2026-10-08T06:36:37.619Z"
+    },
+    {
+      "id": "REF_1791441068073_6338",
+      "bookingId": "OTB-2026-7373",
+      "amount": 299,
+      "phone": "+91 9835778899",
+      "status": "REFUND_PENDING_MANUAL_REVIEW",
+      "reason": "Customer trip cancellation",
+      "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791441068073_6338).",
+      "createdAt": "2026-10-08T06:31:08.073Z"
+    }
+  ]
 }

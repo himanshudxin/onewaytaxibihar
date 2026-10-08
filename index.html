@@ -369,6 +369,9 @@
     <section class="hero-section" id="booking-hero">
       <div class="container">
 
+        <!-- Emergency Incident / Booking Pause Banner Container -->
+        <div id="emergency-pause-container" style="display:none;" role="alert" aria-live="assertive"></div>
+
         <!-- Main Booking Widget Card -->
         <div class="booking-widget-card">
           
@@ -665,21 +668,18 @@
             </div>
           </div>
 
-          <!-- Social Proof Trust Metrics -->
+          <!-- Genuine Operational Guarantees -->
           <div class="trust-metrics-strip">
             <div class="trust-metric-item">
-              <span class="star-rating">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" style="vertical-align:-1px; margin-right:3px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                4.3 / 5.0 Rating
-              </span>
+              <span>Direct Patna Dispatch Desk</span>
             </div>
             <span class="trust-divider">|</span>
             <div class="trust-metric-item">
-              <span>3,000+ Outstation Trips Served</span>
+              <span>Verified Commercial Fleet</span>
             </div>
             <span class="trust-divider">|</span>
             <div class="trust-metric-item">
-              <span style="color: var(--owc-primary); font-weight: 700;">Zero Cancellation Fee</span>
+              <span style="color: var(--owc-primary); font-weight: 700;">₹0 Cancellation Fee</span>
             </div>
           </div>
 
@@ -821,8 +821,8 @@
                 <span class="fr-metric-lbl">Fixed One-Way</span>
               </div>
               <div class="fr-metric-box">
-                <span class="fr-metric-num">1,200+</span>
-                <span class="fr-metric-lbl">Verified Captains</span>
+                <span class="fr-metric-num">100%</span>
+                <span class="fr-metric-lbl">Commercial Cabs</span>
               </div>
               <div class="fr-metric-box">
                 <span class="fr-metric-num">₹0</span>
@@ -1123,7 +1123,22 @@
       <div class="footer-routes-block">
         <div class="footer-routes-title">POPULAR ONE-WAY OUTSTATION ROUTES ACROSS BIHAR</div>
         <div class="footer-routes-grid" id="footer-routes-list">
-          <!-- Injected via JavaScript as interactive route pills -->
+          <a href="patna-to-gaya-cab.html" class="footer-route-pill" title="Patna to Gaya One-Way Cab">
+            <span class="frp-route">Patna ➔ Gaya</span>
+            <span class="frp-price">from ₹1,698</span>
+          </a>
+          <a href="patna-to-muzaffarpur-cab.html" class="footer-route-pill" title="Patna to Muzaffarpur One-Way Cab">
+            <span class="frp-route">Patna ➔ Muzaffarpur</span>
+            <span class="frp-price">from ₹1,698</span>
+          </a>
+          <a href="patna-to-darbhanga-cab.html" class="footer-route-pill" title="Patna to Darbhanga One-Way Cab">
+            <span class="frp-route">Patna ➔ Darbhanga</span>
+            <span class="frp-price">from ₹2,998</span>
+          </a>
+          <a href="patna-to-bhagalpur-cab.html" class="footer-route-pill" title="Patna to Bhagalpur One-Way Cab">
+            <span class="frp-route">Patna ➔ Bhagalpur</span>
+            <span class="frp-price">from ₹4,398</span>
+          </a>
         </div>
       </div>
 
@@ -1279,9 +1294,10 @@
         <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
       </div>
       <div class="modal-body">
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-          <input type="text" id="invoice-lookup-id" class="promo-input" placeholder="Enter Booking ID (e.g. OTB-2026-8942)" style="flex: 1;">
-          <button type="button" class="btn-nav-book" onclick="window.lookupTaxInvoice()">Search Invoice</button>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+          <input type="text" id="invoice-lookup-id" class="promo-input" placeholder="Booking ID (e.g. OTB-2026-8942)" style="flex: 1; min-width: 180px;">
+          <input type="tel" id="invoice-lookup-phone" class="promo-input" placeholder="Registered 10-Digit Mobile" style="width: 210px;" maxlength="10">
+          <button type="button" class="btn-nav-book" onclick="window.lookupTaxInvoice()">Verify &amp; Generate Invoice</button>
         </div>
         <div id="invoice-render-slot">
           <!-- Rendered Tax Invoice -->
@@ -1547,7 +1563,70 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             Chat on WhatsApp
           </a>
+
+          <button type="button" class="btn-nav-outline" onclick="window.openSupportTicketModal()" style="justify-content: center; display: flex; align-items: center; gap: 8px; padding: 12px; font-weight: 700; border-color: var(--owc-primary); color: var(--owc-primary);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            Lodge Support / Complaint Ticket
+          </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 15B: Customer Support Ticket & Complaint Desk -->
+  <div class="modal-overlay" id="modal-support-ticket">
+    <div class="modal-dialog-box small">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Customer Support Ticket Desk
+        </div>
+        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <form id="form-support-ticket" onsubmit="window.handleSupportTicketSubmit(event)">
+          <div class="input-field-group" style="margin-bottom: 12px;">
+            <div class="input-content" style="width: 100%;">
+              <label for="tck-input-phone">10-DIGIT MOBILE NUMBER *</label>
+              <input type="tel" id="tck-input-phone" maxlength="10" placeholder="e.g. 9876543210" required>
+            </div>
+          </div>
+
+          <div class="input-field-group" style="margin-bottom: 12px;">
+            <div class="input-content" style="width: 100%;">
+              <label for="tck-input-booking">BOOKING ID (OPTIONAL)</label>
+              <input type="text" id="tck-input-booking" placeholder="e.g. OWB-2026-123456">
+            </div>
+          </div>
+
+          <div class="input-field-group" style="margin-bottom: 12px;">
+            <div class="input-content" style="width: 100%;">
+              <label for="tck-input-category">ISSUE CATEGORY *</label>
+              <select id="tck-input-category" style="width: 100%; border: none; background: transparent; font-size: 13.5px; color: var(--owc-text); outline: none;">
+                <option value="GENERAL">General Travel Inquiry</option>
+                <option value="BILLING">Billing / Fare Discrepancy</option>
+                <option value="DRIVER_BEHAVIOR">Driver Conduct / Chauffeur Service</option>
+                <option value="DELAY">Vehicle Arrival Delay</option>
+                <option value="VEHICLE_CONDITION">Vehicle AC / Condition</option>
+                <option value="REFUND">Refund Status / Token Advance</option>
+                <option value="CANCELLATION">Trip Cancellation Assistance</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input-field-group" style="margin-bottom: 14px;">
+            <div class="input-content" style="width: 100%;">
+              <label for="tck-input-message">COMPLAINT / FEEDBACK DETAILS *</label>
+              <textarea id="tck-input-message" rows="3" placeholder="Please describe your issue so our dispatch team can resolve it immediately..." required style="width: 100%; border: none; background: transparent; font-family: inherit; font-size: 13.5px; color: var(--owc-text); outline: none; resize: none;"></textarea>
+            </div>
+          </div>
+
+          <div id="tck-feedback-msg" style="display:none; font-size:13px; padding:10px; border-radius:8px; margin-bottom:12px;"></div>
+
+          <button type="submit" id="btn-submit-ticket" class="check-fare-primary-btn" style="width: 100%; justify-content: center; margin-bottom: 0;">
+            Submit Support Ticket →
+          </button>
+        </form>
       </div>
     </div>
   </div>

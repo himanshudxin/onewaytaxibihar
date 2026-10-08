@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 4. Setup Global UI Events
   setupGlobalModalEvents();
   setupMobileDrawer();
+
+  // 5. Emergency Incident / Booking Pause Check
+  checkAndRenderEmergencyPause();
 });
 
 /* ==========================================================================
@@ -1632,92 +1635,124 @@ window.openInvoiceModal = () => {
 };
 
 window.lookupTaxInvoice = async () => {
-  const input = document.getElementById("invoice-lookup-id");
+  const inputId = document.getElementById("invoice-lookup-id");
+  const inputPhone = document.getElementById("invoice-lookup-phone");
   const slot = document.getElementById("invoice-render-slot");
-  const bookingId = input ? input.value.trim() : "";
+  const bookingId = inputId ? inputId.value.trim().toUpperCase() : "";
+  let phone = inputPhone ? inputPhone.value.trim().replace(/\D/g, "").slice(-10) : "";
+
+  if (!phone && window.currentUser && window.currentUser.phone) {
+    phone = window.currentUser.phone.replace(/\D/g, "").slice(-10);
+    if (inputPhone) inputPhone.value = phone;
+  }
 
   if (!bookingId) {
     window.showToast("Please enter a Booking ID (e.g. OTB-2026-8942)", "warning");
     return;
   }
 
-  const rides = await ApiClient.getRides();
-  const found = rides.find(r => r.bookingId.toUpperCase() === bookingId.toUpperCase());
+  if (slot) {
+    slot.innerHTML = `<div style="text-align: center; padding: 30px; color: var(--owc-text-muted);">
+      <div class="booking-spinner" style="margin: 0 auto 12px auto;"></div>
+      <div>Verifying booking credentials and generating GST tax invoice...</div>
+    </div>`;
+  }
 
-  if (!found) {
-    slot.innerHTML = `<div style="text-align: center; color: var(--owc-danger); padding: 20px; font-weight: 700;">No booking found with ID "${bookingId}". Please check the ID in My Trips.</div>`;
+  const res = await ApiClient.lookupInvoice(bookingId, phone);
+
+  if (!res || !res.success) {
+    const errorMsg = res?.message || `No booking found with ID "${bookingId}". Please check the ID and registered mobile number.`;
+    if (slot) {
+      slot.innerHTML = `
+        <div style="text-align: center; color: var(--owc-danger); padding: 24px; background: rgba(239, 68, 68, 0.05); border-radius: var(--radius-md); border: 1px solid rgba(239, 68, 68, 0.2);">
+          <div style="font-weight: 800; margin-bottom: 6px;">Authentication / Lookup Notice</div>
+          <div style="font-size: 13.5px;">${errorMsg}</div>
+        </div>
+      `;
+    }
+    window.showToast(errorMsg, "error");
     return;
   }
 
-  const invNumber = `INV-2026-${(found.bookingId.replace(/\D/g, '') || '0000').slice(-4)}`;
+  const inv = res.invoice;
 
   slot.innerHTML = `
-    <div style="border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 24px; background: var(--owc-card-bg);">
+    <div style="border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 24px; background: var(--owc-card-bg); font-family: inherit;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--owc-primary); padding-bottom: 16px; margin-bottom: 20px;">
         <div>
-          <h2 style="font-size: 22px; font-weight: 900; color: var(--owc-primary); margin-bottom: 2px;">OneWayTaxiBihar</h2>
-          <div style="font-size: 11.5px; color: var(--owc-text-muted);">OneWayTaxiBihar Mobility (Beneficiary: HIMANSHU KUMAR DUBEY)</div>
-          <div style="font-size: 11.5px; color: var(--owc-text-muted);">Boring Road, Patna, Bihar - 800001 • 24x7 Helpdesk: +91 80021 41816</div>
+          <h2 style="font-size: 22px; font-weight: 900; color: var(--owc-primary); margin-bottom: 2px;">${inv.company.name}</h2>
+          <div style="font-size: 12px; color: var(--owc-text-muted);">${inv.company.legalEntity} • GSTIN: <strong>${inv.company.gstin}</strong></div>
+          <div style="font-size: 12px; color: var(--owc-text-muted);">${inv.company.address} • 24x7 Desk: ${inv.company.helpline}</div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 800; color: #059669; background: rgba(5, 150, 105, 0.1); padding: 2px 8px; border-radius: 4px; display: inline-block;">TAX INVOICE</div>
-          <div style="font-size: 15px; font-weight: 800; color: var(--owc-text); margin-top: 4px;">${invNumber}</div>
-          <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 2px;">Booking: ${found.bookingId}</div>
-          <div style="font-size: 11.5px; color: var(--owc-text-muted);">Date: ${found.pickupDate || new Date().toISOString().split('T')[0]}</div>
+          <div style="font-size: 11px; font-weight: 800; color: #059669; background: rgba(5, 150, 105, 0.1); padding: 3px 10px; border-radius: 4px; display: inline-block;">OFFICIAL GST TAX INVOICE</div>
+          <div style="font-size: 16px; font-weight: 800; color: var(--owc-text); margin-top: 5px;">${inv.invoiceNumber}</div>
+          <div style="font-size: 12px; color: var(--owc-text-muted); margin-top: 2px;">Booking Ref: <strong>${inv.bookingId}</strong></div>
+          <div style="font-size: 12px; color: var(--owc-text-muted);">Invoice Date: ${inv.invoiceDate}</div>
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 12.5px;">
-        <div style="background: var(--owc-slate-50); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--owc-border);">
-          <strong style="color: var(--owc-text); display: block; margin-bottom: 4px;">Billed To (Passenger):</strong>
-          <div>${found.passengerName || 'Valued Passenger'}</div>
-          <div>Phone: ${found.passengerPhone || 'Registered Contact'}</div>
-          <div>Pickup: ${found.pickupAddress || found.originCity || 'Patna'}</div>
-          <div>Drop: ${found.dropAddress || found.destCity || 'Gaya'}</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; font-size: 13px;">
+        <div style="background: var(--owc-slate-50); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--owc-border);">
+          <strong style="color: var(--owc-text); display: block; margin-bottom: 6px; font-size: 13px;">Billed To (Passenger):</strong>
+          <div><strong>${inv.passengerName}</strong></div>
+          <div>Mobile: ${inv.passengerPhone}</div>
+          <div>Pickup: ${inv.pickupAddress}</div>
+          <div>Drop: ${inv.dropAddress}</div>
         </div>
 
-        <div style="background: var(--owc-slate-50); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--owc-border);">
-          <strong style="color: var(--owc-text); display: block; margin-bottom: 4px;">Trip & Vehicle Details:</strong>
-          <div>Cab Tier: ${found.fleetClass || 'Prime Sedan'} (${found.fleetModel || 'Dzire'})</div>
-          <div>Vehicle Plate: ${found.driverDetails ? found.driverDetails.vehicleNumber : 'Shared after confirmation'}</div>
-          <div>Assigned Driver: ${found.driverDetails ? `${found.driverDetails.name} (${found.driverDetails.phone})` : 'Shared after confirmation'}</div>
-          <div>Payment Status: ${found.paymentStatus || 'Verified'} (${found.paymentMethod || 'UPI / QR'})</div>
+        <div style="background: var(--owc-slate-50); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--owc-border);">
+          <strong style="color: var(--owc-text); display: block; margin-bottom: 6px; font-size: 13px;">Trip & Service Details:</strong>
+          <div>Route: <strong>${inv.originCity} ➔ ${inv.destCity}</strong> (${inv.tripType.toUpperCase()})</div>
+          <div>Travel Date: ${inv.pickupDate} at ${inv.pickupTime}</div>
+          <div>Vehicle Tier: ${inv.vehicleModel} (${inv.cabTier.toUpperCase()})</div>
+          <div>Distance: ~${inv.distanceKm} KM</div>
+          <div>Payment Status: <span style="font-weight: 700; color: #059669;">${inv.paymentStatus}</span></div>
         </div>
       </div>
 
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
         <thead>
           <tr style="background: var(--owc-slate-100); text-align: left; border-bottom: 1px solid var(--owc-border);">
-            <th style="padding: 8px 10px;">Item Description</th>
-            <th style="padding: 8px 10px;">SAC Code</th>
-            <th style="padding: 8px 10px;">Rate Details</th>
-            <th style="padding: 8px 10px;">Amount</th>
+            <th style="padding: 10px 12px;">Item Description</th>
+            <th style="padding: 10px 12px;">SAC Code</th>
+            <th style="padding: 10px 12px;">Rate Breakdown</th>
+            <th style="padding: 10px 12px; text-align: right;">Amount (₹)</th>
           </tr>
         </thead>
         <tbody>
           <tr style="border-bottom: 1px solid var(--owc-border-light);">
-            <td style="padding: 10px;">One-Way Outstation Fare (${found.originCity || 'Patna'} to ${found.destCity || 'Gaya'})</td>
-            <td>996412</td>
-            <td>Fixed One-Way Rate</td>
-            <td>₹${Math.round(found.totalFare * 0.95).toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 12px;">Taxable Transportation Fare (${inv.originCity} to ${inv.destCity})</td>
+            <td style="padding: 10px 12px;">996412</td>
+            <td style="padding: 10px 12px;">Base + Distance (~${inv.distanceKm} KM @ ₹${inv.perKmRate}/km)</td>
+            <td style="padding: 10px 12px; text-align: right;">₹${inv.taxableAmount.toLocaleString('en-IN')}</td>
           </tr>
           <tr style="border-bottom: 1px solid var(--owc-border-light);">
-            <td style="padding: 10px;">Goods & Services Tax (GST 5%)</td>
-            <td>996412</td>
-            <td>GST @ 5%</td>
-            <td>₹${Math.round(found.totalFare * 0.05).toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 12px;">CGST (2.5%)</td>
+            <td style="padding: 10px 12px;">996412</td>
+            <td style="padding: 10px 12px;">Central Goods and Services Tax @ 2.5%</td>
+            <td style="padding: 10px 12px; text-align: right;">₹${inv.cgst.toLocaleString('en-IN')}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--owc-border-light);">
+            <td style="padding: 10px 12px;">SGST / UTGST (2.5%)</td>
+            <td style="padding: 10px 12px;">996412</td>
+            <td style="padding: 10px 12px;">State Goods and Services Tax @ 2.5%</td>
+            <td style="padding: 10px 12px; text-align: right;">₹${inv.sgst.toLocaleString('en-IN')}</td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <th colspan="3" style="text-align: right; padding-top: 10px;">Total Amount Paid:</th>
-            <th style="font-size: 16px; color: var(--owc-primary); padding-top: 10px;">₹${found.totalFare.toLocaleString('en-IN')}</th>
+            <th colspan="3" style="text-align: right; padding: 12px; font-size: 14px;">Total Inclusive Amount:</th>
+            <th style="font-size: 17px; color: var(--owc-primary); padding: 12px; text-align: right;">₹${inv.totalFare.toLocaleString('en-IN')}</th>
           </tr>
         </tfoot>
       </table>
 
-      <div style="text-align: right; margin-top: 14px;">
-        <button type="button" class="btn-select-cab" style="width: auto; padding: 8px 20px;" onclick="window.print()">Print / Save as PDF</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--owc-border);">
+        <div style="font-size: 11.5px; color: var(--owc-text-muted);">
+          Electronic Computer-Generated Tax Invoice. Tolls & FASTag, Driver Allowance, and 5% GST included.
+        </div>
+        <button type="button" class="btn-select-cab" style="width: auto; padding: 8px 24px;" onclick="window.print()">Print / Save PDF</button>
       </div>
     </div>
   `;
@@ -2635,6 +2670,129 @@ if (typeof window !== "undefined") {
   window.CustomerNotificationManager = CustomerNotificationManager;
   window.customerNotificationManager = new CustomerNotificationManager();
 }
+
+/* ==========================================================================
+   EMERGENCY BOOKING PAUSE & CUSTOMER SUPPORT TICKET HANDLERS
+   ========================================================================== */
+async function checkAndRenderEmergencyPause() {
+  try {
+    const res = await OTB_API.checkEmergencyPause();
+    const bannerEl = document.getElementById('emergency-pause-container');
+    if (!bannerEl) return;
+    if (res && res.paused) {
+      bannerEl.style.display = 'block';
+      bannerEl.innerHTML = `
+        <div style="background: linear-gradient(135deg, #991b1b, #b91c1c); color: #fff; padding: 14px 18px; border-radius: 12px; margin-bottom: 16px; border: 1px solid #f87171; box-shadow: 0 4px 14px rgba(185,28,28,0.25);">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:22px;">⚠️</span>
+              <div>
+                <strong style="display:block; font-size:14px; letter-spacing:0.3px; text-transform:uppercase;">Notice: Online Booking Temporarily Paused</strong>
+                <span style="font-size:12.5px; opacity:0.95;">${res.reason || 'Routine highway advisory or fleet maintenance'}. Urgent travel? Direct manual dispatch is standing by:</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <a href="tel:+918002141816" style="background:#fff; color:#991b1b; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12.5px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📞 Call +91 80021 41816</a>
+              <a href="https://wa.me/917281851011?text=Urgent%20Cab%20Requirement" target="_blank" style="background:#22c55e; color:#fff; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12.5px; text-decoration:none;">WhatsApp Help</a>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      bannerEl.style.display = 'none';
+      bannerEl.innerHTML = '';
+    }
+  } catch (e) {}
+}
+
+window.checkAndRenderEmergencyPause = checkAndRenderEmergencyPause;
+
+window.openSupportTicketModal = function() {
+  window.closeAllModals();
+  const modal = document.getElementById('modal-support-ticket');
+  if (modal) {
+    modal.classList.add('open');
+    const phoneInput = document.getElementById('tck-input-phone');
+    if (phoneInput) {
+      if (currentUser && currentUser.phone) {
+        phoneInput.value = currentUser.phone.replace(/\D/g, '').slice(-10);
+      }
+      phoneInput.focus();
+    }
+  }
+};
+
+window.handleSupportTicketSubmit = async function(e) {
+  if (e) e.preventDefault();
+  const phone = (document.getElementById('tck-input-phone')?.value || '').trim();
+  const bookingId = (document.getElementById('tck-input-booking')?.value || '').trim();
+  const category = document.getElementById('tck-input-category')?.value || 'GENERAL';
+  const message = (document.getElementById('tck-input-message')?.value || '').trim();
+  const feedbackEl = document.getElementById('tck-feedback-msg');
+  const btn = document.getElementById('btn-submit-ticket');
+
+  if (!phone || phone.length !== 10) {
+    if (feedbackEl) {
+      feedbackEl.style.display = 'block';
+      feedbackEl.style.background = '#fef2f2';
+      feedbackEl.style.color = '#b91c1c';
+      feedbackEl.innerText = 'Please enter a valid 10-digit mobile number.';
+    }
+    return;
+  }
+  if (!message || message.length < 5) {
+    if (feedbackEl) {
+      feedbackEl.style.display = 'block';
+      feedbackEl.style.background = '#fef2f2';
+      feedbackEl.style.color = '#b91c1c';
+      feedbackEl.innerText = 'Please describe your issue (minimum 5 characters).';
+    }
+    return;
+  }
+
+  if (btn) btn.disabled = true;
+  if (feedbackEl) {
+    feedbackEl.style.display = 'block';
+    feedbackEl.style.background = '#eff6ff';
+    feedbackEl.style.color = '#1d4ed8';
+    feedbackEl.innerText = 'Submitting support ticket to Patna central dispatch...';
+  }
+
+  try {
+    const res = await OTB_API.submitSupportTicket({
+      phone,
+      bookingId,
+      category,
+      message,
+      name: currentUser?.name || 'Valued Passenger'
+    });
+
+    if (res && res.success) {
+      if (feedbackEl) {
+        feedbackEl.style.background = '#f0fdf4';
+        feedbackEl.style.color = '#15803d';
+        feedbackEl.innerHTML = `<strong>Ticket Registered: #${res.ticketId}</strong><br>${res.message || 'Dispatch desk has received your ticket.'}`;
+      }
+      document.getElementById('form-support-ticket')?.reset();
+      if (window.showToast) window.showToast(`Ticket #${res.ticketId} submitted!`, 'success');
+    } else {
+      if (feedbackEl) {
+        feedbackEl.style.background = '#fef2f2';
+        feedbackEl.style.color = '#b91c1c';
+        feedbackEl.innerText = res?.message || 'Failed to submit ticket. Please call +91 80021 41816.';
+      }
+    }
+  } catch (err) {
+    if (feedbackEl) {
+      feedbackEl.style.background = '#fef2f2';
+      feedbackEl.style.color = '#b91c1c';
+      feedbackEl.innerText = 'Network error. Please call +91 80021 41816.';
+    }
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+};
+
 
 
 

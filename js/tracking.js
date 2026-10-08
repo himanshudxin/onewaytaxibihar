@@ -1,25 +1,32 @@
 /**
- * Live Trip Tracking & Official GST Tax Invoice Engine
+ * Live Trip Tracking & Verification Engine
  * OneWayTaxiBihar (onewaytaxibihar.com)
- * Simulates real-time driver arrival, OTP verification, highway cruise, SOS safety, and GST tax invoice generation.
+ * Real-time database status sync, verified lifecycle updates, and passenger privacy protection.
  */
 
 class TripTrackingManager {
   constructor() {
     this.currentTrip = null;
-    this.statusStep = 0;
-    this.timer = null;
-    this.statuses = [
-      { code: "ASSIGNED", title: "Captain Assigned", subtitle: "Captain is heading to your doorstep pickup location in Patna (ETA: 5 mins)", progress: 20 },
-      { code: "ARRIVED", title: "Captain Arrived at Pickup Location", subtitle: "Please share OTP with your Captain to start the highway trip", progress: 45 },
-      { code: "IN_TRANSIT", title: "Trip Started • Cruising on Highway", subtitle: "On National Highway with continuous AC and Fastag automated toll clearance", progress: 78 },
-      { code: "COMPLETED", title: "Trip Completed Successfully", subtitle: "Arrived safely at your destination in Bihar. Thank you for riding with OneWayTaxiBihar!", progress: 100 }
-    ];
+    this.pollInterval = null;
+    this.statusMap = {
+      "NEW": { title: "Booking Request Received", subtitle: "Our dispatch desk is reviewing vehicle availability in your area.", progress: 15 },
+      "REQUESTED": { title: "Booking Request Received", subtitle: "Our dispatch desk is assigning the best commercial cab for your route.", progress: 20 },
+      "CONFIRMED": { title: "Booking Confirmed", subtitle: "Cab confirmed. Dedicated chauffeur being dispatched to your location.", progress: 35 },
+      "DRIVER ASSIGNED": { title: "Chauffeur Assigned", subtitle: "Professional driver assigned with verified commercial permit & AC cab.", progress: 50 },
+      "DRIVER_ASSIGNED": { title: "Chauffeur Assigned", subtitle: "Professional driver assigned with verified commercial permit & AC cab.", progress: 50 },
+      "ACCEPTED": { title: "Chauffeur Confirmed & Dispatched", subtitle: "Driver has accepted your trip and is heading to your doorstep.", progress: 65 },
+      "ON THE WAY": { title: "Chauffeur En Route", subtitle: "Driver is on the way to your pickup doorstep. AC pre-cooling on.", progress: 75 },
+      "DRIVER ARRIVING": { title: "Chauffeur Arriving", subtitle: "Chauffeur is arriving at your doorstep in Patna/Bihar.", progress: 80 },
+      "ARRIVED": { title: "Chauffeur Arrived at Pickup Doorstep", subtitle: "Please verify cab number and share your 4-digit OTP to start journey.", progress: 85 },
+      "TRIP STARTED": { title: "Trip In Progress • Cruising on Highway", subtitle: "Safe highway journey with FASTag automated clearance and clean AC.", progress: 95 },
+      "COMPLETED": { title: "Trip Safely Completed", subtitle: "Arrived at destination. Thank you for choosing OneWayTaxiBihar!", progress: 100 },
+      "CANCELLED": { title: "Trip Cancelled", subtitle: "Booking was cancelled. ₹0 cancellation fee charged.", progress: 0 }
+    };
   }
 
-  startTrip(booking) {
+  async startTrip(booking) {
+    if (!booking) return;
     this.currentTrip = booking;
-    this.statusStep = 0;
 
     const modal = document.getElementById("trip-tracking-modal");
     if (!modal) return;
@@ -27,53 +34,95 @@ class TripTrackingManager {
     this.renderTrackingModal();
     modal.classList.add("active");
 
-    // Clear previous timer
-    if (this.timer) clearInterval(this.timer);
+    // Fetch initial status immediately from server
+    await this.fetchLiveStatus();
 
-    // Simulate real-time progress steps
-    this.timer = setInterval(() => {
-      if (this.statusStep < this.statuses.length - 1) {
-        this.statusStep++;
-        this.updateTrackingUI();
-        if (window.showToast) {
-          const cur = this.statuses[this.statusStep];
-          window.showToast(`${cur.title}`, "info");
-        }
-      } else {
-        clearInterval(this.timer);
-        if (window.showToast) {
-          window.showToast("Trip completed! You can now view and print your official GST tax invoice.", "success");
+    // Poll server every 10 seconds for real status updates
+    if (this.pollInterval) clearInterval(this.pollInterval);
+    this.pollInterval = setInterval(() => {
+      this.fetchLiveStatus();
+    }, 10000);
+  }
+
+  stopTracking() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
+    }
+    const modal = document.getElementById("trip-tracking-modal");
+    if (modal) modal.classList.remove("active");
+  }
+
+  async fetchLiveStatus() {
+    if (!this.currentTrip) return;
+    const bId = this.currentTrip.bookingId || this.currentTrip.tripId;
+    const phone = this.currentTrip.passengerPhone || (window.currentUser ? window.currentUser.phone : "");
+
+    try {
+      if (window.ApiClient && ApiClient.getTrackingStatus) {
+        const res = await ApiClient.getTrackingStatus(bId, phone);
+        if (res && res.success && res.trip) {
+          this.syncTripState(res.trip);
         }
       }
-    }, 7000);
+    } catch (err) {
+      console.warn("[Tracking] Status poll error:", err.message);
+    }
+  }
+
+  syncTripState(serverTrip) {
+    if (!serverTrip) return;
+    this.currentTrip = { ...this.currentTrip, ...serverTrip };
+    this.updateTrackingUI();
   }
 
   renderTrackingModal() {
     if (!this.currentTrip) return;
     const b = this.currentTrip;
-    const d = b.driver;
+    const d = b.driver || b.driverDetails || {
+      name: "Assigning Chauffeur...",
+      vehicleModel: b.cabTier ? `${b.cabTier.toUpperCase()} Cab` : "Commercial Cab",
+      vehicleNumber: "Dispatching",
+      rating: 4.9,
+      trips: 100
+    };
 
-    document.getElementById("tracking-trip-id").textContent = b.tripId;
-    document.getElementById("tracking-otp").textContent = b.tripOtp;
-    document.getElementById("tracking-route-label").textContent = `${b.origin} ➔ ${b.destination}`;
-    document.getElementById("tracking-pickup-address").textContent = b.pickupAddress;
-    document.getElementById("tracking-drop-address").textContent = b.dropAddress;
-    document.getElementById("tracking-fare-total").textContent = `₹${b.fare.finalTotal.toLocaleString("en-IN")}`;
-    document.getElementById("tracking-payment-method").textContent = b.paymentMethod;
+    const bId = b.bookingId || b.tripId || "OTB-BOOKING";
+    const otp = b.tripOtp || "---";
+
+    const setTxt = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setTxt("tracking-trip-id", bId);
+    setTxt("tracking-otp", otp);
+    setTxt("tracking-route-label", `${b.originCity || b.origin || 'Patna'} ➔ ${b.destCity || b.destination || 'Bihar'}`);
+    setTxt("tracking-pickup-address", b.pickupAddress || `${b.originCity || 'Patna'}, Bihar`);
+    setTxt("tracking-drop-address", b.dropAddress || `${b.destCity || 'Destination'}, Bihar`);
+    setTxt("tracking-fare-total", `₹${Number(b.totalFare || b.finalFare || 2198).toLocaleString("en-IN")}`);
+    setTxt("tracking-payment-method", b.paymentMethod || "Cash to Chauffeur");
 
     // Driver details
-    document.getElementById("tracking-driver-avatar").textContent = d.avatar;
-    document.getElementById("tracking-driver-name").textContent = d.name;
-    document.getElementById("tracking-driver-badge").textContent = d.badge;
-    document.getElementById("tracking-driver-rating").textContent = `★ ${d.rating} (${d.trips} trips)`;
-    document.getElementById("tracking-car-details").textContent = `${d.carModel} • ${d.carNumber}`;
-    document.getElementById("tracking-driver-languages").textContent = `Speaks: ${d.languages}`;
+    setTxt("tracking-driver-avatar", (d.name || "D").charAt(0).toUpperCase());
+    setTxt("tracking-driver-name", d.name || "Dispatch Desk Assigning Driver");
+    setTxt("tracking-driver-badge", d.phone ? "Verified Chauffeur" : "Dispatch in Progress");
+    setTxt("tracking-driver-rating", d.phone ? `★ ${d.rating || 4.9} Verified` : "Assigned shortly");
+    setTxt("tracking-car-details", `${d.vehicleModel || 'Commercial Cab'} • ${d.vehicleNumber || 'Plate Assigned on Confirmation'}`);
+    setTxt("tracking-driver-languages", "Bhojpuri, Hindi, Maithili");
 
     this.updateTrackingUI();
   }
 
   updateTrackingUI() {
-    const cur = this.statuses[this.statusStep];
+    if (!this.currentTrip) return;
+    const statusUpper = (this.currentTrip.bookingStatus || "NEW").toUpperCase();
+    const cur = this.statusMap[statusUpper] || {
+      title: `Trip Status: ${statusUpper}`,
+      subtitle: "OneWayTaxiBihar centralized dispatch monitoring your ride.",
+      progress: 50
+    };
+
     const statusTitle = document.getElementById("tracking-status-title");
     const statusSubtitle = document.getElementById("tracking-status-subtitle");
     const progressBar = document.getElementById("tracking-progress-bar-fill");
@@ -84,89 +133,62 @@ class TripTrackingManager {
     if (progressBar) progressBar.style.width = `${cur.progress}%`;
     if (carIcon) carIcon.style.left = `${Math.min(cur.progress, 94)}%`;
 
-    if (cur.code === "COMPLETED") {
+    if (statusUpper === "COMPLETED") {
       const invoiceBtn = document.getElementById("open-invoice-btn");
       if (invoiceBtn) invoiceBtn.style.display = "inline-flex";
+      if (this.pollInterval) clearInterval(this.pollInterval);
     }
   }
 
   shareTripWhatsApp() {
     if (!this.currentTrip) return;
     const b = this.currentTrip;
+    const d = b.driver || b.driverDetails || {};
     const text = encodeURIComponent(
-      `*OneWayTaxiBihar Trip Details*\n` +
-      `Trip ID: ${b.tripId}\n` +
-      `Route: ${b.origin} to ${b.destination}\n` +
-      `Captain: ${b.driver.name} (${b.driver.carNumber})\n` +
-      `Car: ${b.driver.carModel}\n` +
-      `OTP: ${b.tripOtp}\n` +
-      `Total Fare: ₹${b.fare.finalTotal} (Fastag & GST incl.)\n` +
-      `Status: Live Highway Ride in Progress • onewaytaxibihar.com`
+      `*OneWayTaxiBihar Live Trip Tracking*\n` +
+      `Booking ID: ${b.bookingId || b.tripId}\n` +
+      `Route: ${b.originCity || b.origin} ➔ ${b.destCity || b.destination}\n` +
+      `Chauffeur: ${d.name || 'Assigned'} (${d.vehicleNumber || 'Verified'})\n` +
+      `Trip OTP: ${b.tripOtp || 'N/A'}\n` +
+      `Total Fare: ₹${b.totalFare || b.finalFare} (All-Inclusive)\n` +
+      `Live status on onewaytaxibihar.com`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank");
-    if (window.showToast) {
-      window.showToast("Opening WhatsApp with live trip details...", "info");
-    }
   }
 
   triggerSOS() {
-    if (window.showToast) {
-      window.showToast("Emergency SOS Triggered: Bihar Police 112 alerted and GPS sent to Patrol Desk.", "error");
-    }
-    alert("EMERGENCY SOS ACTIVE\n\nBihar State Emergency Response Support System (ERSS-112) has been notified with your real-time highway GPS coordinates. OneWayTaxiBihar 24x7 Patna Emergency Safety Team is dialing your number.");
+    alert("EMERGENCY SAFETY ALERT\n\nBihar State Emergency Response Support System (ERSS-112) is available immediately. OneWayTaxiBihar 24x7 Safety Helpdesk: +91 80021 41816.");
   }
 
   simulateCaptainCall() {
     if (!this.currentTrip) return;
-    const driver = this.currentTrip.driver;
-    if (window.showToast) {
-      window.showToast(`Connecting to Captain ${driver.name} (${driver.phone})...`, "info");
+    const d = this.currentTrip.driver || this.currentTrip.driverDetails;
+    if (d && d.phone) {
+      window.location.href = `tel:${d.phone.replace(/\D/g, '')}`;
+    } else {
+      window.location.href = "tel:8002141816";
     }
-    alert(`Connecting via secure masked line to Captain ${driver.name} (${driver.phone})\n\n"Pranam Sir! Main 5 minute me aapke pickup location par pahunch raha hoon. AC on hai aur car sanitized hai."`);
   }
 
   openInvoiceModal() {
-    if (!this.currentTrip) {
-      const past = JSON.parse(localStorage.getItem("oneway_taxibihar_bookings") || "[]");
-      if (past.length > 0) this.currentTrip = past[0];
-      else {
-        if (window.showToast) window.showToast("No active trip to generate invoice for.", "warning");
-        return;
+    if (!this.currentTrip) return;
+    const bId = this.currentTrip.bookingId || this.currentTrip.tripId;
+    if (window.openInvoiceModal) {
+      window.openInvoiceModal();
+      const inputId = document.getElementById("invoice-lookup-id");
+      const inputPhone = document.getElementById("invoice-lookup-phone");
+      if (inputId) inputId.value = bId;
+      if (inputPhone && this.currentTrip.passengerPhone) {
+        inputPhone.value = this.currentTrip.passengerPhone.replace(/\D/g, '').slice(-10);
       }
+      if (window.lookupTaxInvoice) window.lookupTaxInvoice();
     }
-
-    const b = this.currentTrip;
-    const f = b.fare;
-    const modal = document.getElementById("gst-invoice-modal");
-    if (!modal) return;
-
-    // Fill Invoice Fields
-    document.getElementById("inv-trip-id").textContent = b.tripId;
-    document.getElementById("inv-date").textContent = new Date(b.createdAt || Date.now()).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    });
-    document.getElementById("inv-customer-name").textContent = b.passenger.name || "Commuter";
-    document.getElementById("inv-customer-phone").textContent = b.passenger.phone || "+91 98XXX XXXXX";
-    document.getElementById("inv-pickup-loc").textContent = `${b.origin} (${b.pickupAddress})`;
-    document.getElementById("inv-drop-loc").textContent = `${b.destination} (${b.dropAddress})`;
-    document.getElementById("inv-distance").textContent = `${f.distanceKm} km`;
-    document.getElementById("inv-cab-type").textContent = `${b.cabCategory} (${b.driver.carModel})`;
-    document.getElementById("inv-driver-name").textContent = `${b.driver.name} (Reg: ${b.driver.carNumber})`;
-
-    // Financial Breakdown
-    document.getElementById("inv-base-fare").textContent = `₹${f.baseCabCharge.toLocaleString("en-IN")}`;
-    document.getElementById("inv-driver-allowance").textContent = `₹${f.driverAllowance}`;
-    document.getElementById("inv-toll-tax").textContent = `₹${f.tollEst}`;
-    document.getElementById("inv-discount").textContent = f.savings > 0 ? `-₹${f.savings}` : "₹0";
-    document.getElementById("inv-gst").textContent = `₹${f.gstAmount}`;
-    document.getElementById("inv-grand-total").textContent = `₹${f.finalTotal.toLocaleString("en-IN")}`;
-
-    modal.classList.add("active");
   }
 
   printInvoice() {
     window.print();
   }
 }
+
+// Global singleton instance
+window.tripTracker = new TripTrackingManager();

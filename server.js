@@ -81,7 +81,11 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Type', contentType);
 
     // Static asset caching
-    if (ext === '.css' || ext === '.js') {
+    if (safePath.includes('admin')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    } else if (ext === '.css' || ext === '.js') {
       res.setHeader('Cache-Control', 'no-cache, must-revalidate');
     } else if (['.svg', '.png', '.jpg', '.webp', '.ico', '.woff2'].includes(ext)) {
       res.setHeader('Cache-Control', 'public, max-age=2592000');

@@ -591,10 +591,8 @@ class ApiClient {
   static async adminLogin(username, password) {
     const cleanUser = (username || "").trim().toLowerCase();
     const cleanPass = (password || "").trim();
-    const validAdmins = ["admin", "admin1", "admin2", "admin3", "admin4", "admin5"];
-    const validPasswords = ["harharmahadev@3", "admin123", "BiharTaxi@2026", "Admin@123"];
 
-    // 1. Try server endpoint
+    // Verify credentials securely via backend API
     const res = await this.request("/api/admin/login", {
       method: "POST",
       body: JSON.stringify({ username: cleanUser, password: cleanPass })
@@ -603,21 +601,6 @@ class ApiClient {
     if (res && res.success && res.token) {
       localStorage.setItem("otb_admin_token", res.token);
       return res;
-    }
-
-    // 2. Resilient Fallback: If network error or static hosting without backend,
-    // verify standard admin credentials directly so dispatchers are NEVER locked out!
-    if (validAdmins.includes(cleanUser) && validPasswords.includes(cleanPass)) {
-      const localAdminToken = `adm_sess_local_${Date.now()}`;
-      localStorage.setItem("otb_admin_token", localAdminToken);
-      return {
-        success: true,
-        token: localAdminToken,
-        admin: {
-          username: cleanUser,
-          name: `Dispatch Operator (${cleanUser.toUpperCase()})`
-        }
-      };
     }
 
     return res || { success: false, message: "Invalid admin credentials. Please enter your authorized Admin Username and Password." };

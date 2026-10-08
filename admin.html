@@ -2604,13 +2604,8 @@
     }
 
     async function deleteBookingAdmin(bookingId) {
-      const pass = prompt(`PERMANENT RIDE DELETION\n\nTo completely delete booking ${bookingId} from MongoDB Atlas Cloud, please enter the deletion password:`);
-      if (pass === null) return;
-
-      if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
-        alert("Access Denied: Incorrect deletion password. The ride was NOT deleted.");
-        return;
-      }
+      const pass = prompt(`PERMANENT RIDE DELETION\n\nTo completely delete booking ${bookingId} from database, please enter the deletion password:`);
+      if (pass === null || !pass.trim()) return;
 
       const res = await ApiClient.adminDeleteBooking(bookingId, pass.trim(), _adminToken);
       if (res && res.success) {
@@ -2625,13 +2620,8 @@
     }
 
     async function deleteLeadAdmin(leadId) {
-      const pass = prompt(`PERMANENT INQUIRY DELETION\n\nTo completely delete inquiry lead (${leadId}) from MongoDB Atlas Cloud, please enter the deletion password:`);
-      if (pass === null) return;
-
-      if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
-        alert("Access Denied: Incorrect deletion password. The inquiry was NOT deleted.");
-        return;
-      }
+      const pass = prompt(`PERMANENT INQUIRY DELETION\n\nTo completely delete inquiry lead (${leadId}) from database, please enter the deletion password:`);
+      if (pass === null || !pass.trim()) return;
 
       const res = await ApiClient.adminDeleteLead(leadId, pass.trim(), _adminToken);
       if (res && res.success) {
@@ -2640,7 +2630,7 @@
         renderLeadsMetrics();
         applyLeadsFilters();
       } else {
-        alert(res?.message || "Failed to delete lead.");
+        alert(res?.message || "Failed to delete lead inquiry.");
         await loadLeads();
       }
     }

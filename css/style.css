@@ -62,11 +62,12 @@
   /* Sticky / Fixed Navigation Bar Dimensions */
   --header-top-height: 33px;
   --navbar-main-height: 72px;
-  --navbar-total-height: calc(var(--header-top-height) + var(--navbar-main-height));
+  --navbar-total-height: 105px;
 }
 
 body.call-bar-collapsed {
   --header-top-height: 0px;
+  --navbar-total-height: 72px;
 }
 
 /* Executive Midnight Obsidian Dark Theme (Uber / Linear / Stripe grade) */
@@ -198,8 +199,9 @@ button, a, input, select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 28px;
+  gap: clamp(12px, 1.8vw, 24px);
   height: 70px;
+  min-width: 0;
 }
 
 .brand-wrapper {
@@ -364,7 +366,7 @@ button, a, input, select {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 0.8vw, 10px);
   flex-shrink: 0;
 }
 
@@ -563,7 +565,13 @@ button, a, input, select {
 }
 
 body.call-bar-collapsed .navbar-call-mini-pill {
-  display: inline-flex;
+  display: none !important;
+}
+
+@media (min-width: 1280px) {
+  body.call-bar-collapsed .navbar-call-mini-pill {
+    display: inline-flex !important;
+  }
 }
 
 
@@ -1891,7 +1899,40 @@ main.site-main {
 }
 
 /* Responsive Media Queries */
+@media (min-width: 993px) and (max-width: 1250px) {
+  .nav-content {
+    gap: 12px;
+  }
+  .nav-links {
+    gap: 2px;
+  }
+  .nav-links li a {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+  .btn-nav-partner,
+  .btn-nav-outline {
+    padding: 0 10px;
+    height: 36px;
+    font-size: 12px;
+  }
+}
+
 @media (max-width: 992px) {
+  :root {
+    --navbar-main-height: 62px;
+    --navbar-total-height: 95px;
+  }
+  body.call-bar-collapsed {
+    --header-top-height: 0px;
+    --navbar-total-height: 62px;
+  }
+  .navbar-call-mini-pill {
+    display: none !important;
+  }
   .nav-links, 
   .btn-nav-outline,
   .btn-nav-partner,
@@ -2014,5 +2055,115 @@ main.site-main {
   .nav-call-now-btn {
     padding: 5px 10px;
     font-size: 12px;
+  }
+}
+
+/* ==========================================================================
+   ROUTE PAGES DEDICATED FIXED HEADER & UN-CONGESTED HEADLINE LAYOUT
+   ========================================================================== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--owc-border);
+  display: flex;
+  align-items: center;
+  transition: all 0.25s ease;
+}
+
+[data-theme="dark"] .site-header {
+  background: rgba(9, 13, 22, 0.92);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.site-header .brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  color: var(--owc-text);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.site-header .brand-symbol {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0095f6 0%, #0076d1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 149, 246, 0.35);
+}
+
+.site-header .brand-accent {
+  color: #facc15;
+  background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.site-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-header .btn-nav-book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #0095f6 0%, #0076d1 100%);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(0, 149, 246, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.site-header .btn-nav-book:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.site-body main.site-main {
+  padding-top: 88px;
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    height: 60px;
+  }
+  .site-body main.site-main {
+    padding-top: 74px;
+  }
+  .site-header .btn-nav-outline {
+    display: none !important;
   }
 }

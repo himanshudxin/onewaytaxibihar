@@ -2225,15 +2225,12 @@ class ThemeManager {
    ========================================================================== */
 window.toggleCallBar = (collapse) => {
   const callBar = document.getElementById("header-top-bar");
-  const miniPill = document.getElementById("navbar-call-mini-pill");
   if (collapse) {
     if (callBar) callBar.classList.add("collapsed");
-    if (miniPill) miniPill.style.display = "inline-flex";
     document.body.classList.add("call-bar-collapsed");
     sessionStorage.setItem("call_bar_collapsed", "true");
   } else {
     if (callBar) callBar.classList.remove("collapsed");
-    if (miniPill) miniPill.style.display = "none";
     document.body.classList.remove("call-bar-collapsed");
     sessionStorage.removeItem("call_bar_collapsed");
   }

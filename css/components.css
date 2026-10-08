@@ -4322,7 +4322,7 @@
 
   /* Booking Hero Section */
   .hero-section {
-    padding: 12px 0 24px 0;
+    padding: 18px 0 28px 0;
     background: radial-gradient(circle at 85% 10%, rgba(5, 163, 87, 0.08) 0%, transparent 45%),
                 radial-gradient(circle at 15% 90%, rgba(0, 154, 244, 0.08) 0%, transparent 45%);
   }

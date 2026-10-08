@@ -10,12 +10,11 @@
     { "source": "/api/admin/(.*)", "destination": "/api/admin" },
     { "source": "/api/admin", "destination": "/api/admin" },
     { "source": "/api/auth", "destination": "/api/auth" },
-    { "source": "/api/monitoring(.*)", "destination": "/api/monitoring" },
-    { "source": "/api/support(.*)", "destination": "/api/support" },
-    { "source": "/api/payments(.*)", "destination": "/api/payments" },
+    { "source": "/api/monitoring/(.*)", "destination": "/api/monitoring?action=$1" },
+    { "source": "/api/support/(.*)", "destination": "/api/support" },
+    { "source": "/api/payments/(.*)", "destination": "/api/payments" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/driver", "destination": "/driver.html" },
-    { "source": "/api/(.*)", "destination": "/api/index" }
+    { "source": "/driver", "destination": "/driver.html" }
   ],
   "headers": [
     {

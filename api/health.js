@@ -13,6 +13,7 @@ module.exports = async (req, res) => {
   return res.end(JSON.stringify({
     success: true,
     status: 'ONLINE',
+    version: '2026.10.08-prod',
     platform: 'OneWayTaxiBihar Production Cloud',
     domain: 'onewaytaxibihar.com',
     engine: 'MongoDB Atlas Active',

@@ -6,9 +6,9 @@
     { "source": "/api/bookings", "destination": "/api/bookings" },
     { "source": "/api/leads", "destination": "/api/leads" },
     { "source": "/api/auth/(.*)", "destination": "/api/auth" },
-    { "source": "/api/admin/(.*)", "destination": "/api/auth" },
+    { "source": "/api/admin/(.*)", "destination": "/api/admin" },
     { "source": "/api/auth", "destination": "/api/auth" },
-    { "source": "/api/admin", "destination": "/api/auth" },
+    { "source": "/api/admin", "destination": "/api/admin" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/driver", "destination": "/driver.html" }
   ],

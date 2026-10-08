@@ -82,6 +82,13 @@
             this.generatedOtpCode = code;
           }
         }
+        if (window.ApiClient && ApiClient.sendLead) {
+          ApiClient.sendLead({
+            phone: clean10,
+            passengerName: this.activeName || "Website Passenger",
+            source: "Customer Mobile OTP Request"
+          }).catch(() => {});
+        }
       } catch (e) {
         console.warn("[Telecom OTP] Backend API send note:", e);
       }
@@ -235,6 +242,15 @@
             window.currentUser.phone = `+91 ${this.activePhone}`;
           }
           localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
+
+          // Auto-sync verified customer login lead to Admin Portal
+          if (window.ApiClient && ApiClient.sendLead) {
+            ApiClient.sendLead({
+              phone: this.activePhone,
+              passengerName: this.activeName || "Valued Passenger",
+              source: "Customer Mobile Verified Login"
+            }).catch(() => {});
+          }
 
           if (statusEl) {
             statusEl.textContent = "Mobile Number Verified Successfully!";

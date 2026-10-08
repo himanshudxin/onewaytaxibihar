@@ -401,6 +401,15 @@ window.handleSendVerificationCode = async (isResend = false) => {
     return;
   }
 
+  // Auto-record lead in Admin Portal
+  if (window.ApiClient && ApiClient.sendLead) {
+    ApiClient.sendLead({
+      phone: phone,
+      passengerName: name,
+      source: "Passenger Header Login"
+    }).catch(() => {});
+  }
+
   const otpSvc = window.otpService || window.firebaseOtpService;
   if (otpSvc) {
     otpSvc.requestVerification(phone, name, (verifyResult) => {

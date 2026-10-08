@@ -8,11 +8,8 @@
     { "source": "/api/leads(.*)", "destination": "/api/leads" },
     { "source": "/api/auth/(.*)", "destination": "/api/auth" },
     { "source": "/api/admin/(.*)", "destination": "/api/admin" },
-    { "source": "/api/admin", "destination": "/api/admin" },
     { "source": "/api/auth", "destination": "/api/auth" },
-    { "source": "/api/monitoring/(.*)", "destination": "/api/monitoring?action=$1" },
-    { "source": "/api/support/(.*)", "destination": "/api/support" },
-    { "source": "/api/payments/(.*)", "destination": "/api/payments" },
+    { "source": "/api/admin", "destination": "/api/admin" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/driver", "destination": "/driver.html" }
   ],
@@ -26,11 +23,15 @@
       ]
     },
     {
-      "source": "/(admin|admin.html)",
+      "source": "/admin.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" },
-        { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
       ]
     }
   ]

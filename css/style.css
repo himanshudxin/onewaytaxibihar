@@ -471,76 +471,195 @@ button, a, input, select {
 .header-top-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-left: auto;
 }
 
 .top-help-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: #f8fafc;
-  font-size: 12.5px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  padding: 3px 10px;
+  gap: 8px;
+  padding: 3px 12px 3px 6px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 [data-theme="light"] .top-help-link {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-color: rgba(203, 213, 225, 0.85);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), inset 0 1px 0 #ffffff;
+}
+
+.top-phone-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.18) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  color: #34d399;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .top-phone-badge {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(5, 150, 105, 0.1) 100%);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #059669;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.18);
+}
+
+.top-phone-badge svg {
+  display: block;
+}
+
+.top-phone-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+[data-theme="light"] .top-phone-label {
+  color: #64748b;
+}
+
+.top-phone-divider {
+  display: inline-block;
+  width: 1px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 1px;
+}
+
+[data-theme="light"] .top-phone-divider {
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.top-phone-number {
+  font-size: 12.5px;
+  font-weight: 750;
+  letter-spacing: 0.35px;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+[data-theme="light"] .top-phone-number {
   color: #0f172a;
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.top-phone-arrow {
+  display: inline-flex;
+  align-items: center;
+  color: #64748b;
+  margin-left: -2px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.top-phone-arrow svg {
+  display: block;
 }
 
 .top-help-link:hover {
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.35);
+  background: linear-gradient(135deg, rgba(0, 149, 246, 0.15) 0%, rgba(0, 149, 246, 0.05) 100%);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 2px 12px rgba(0, 149, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-0.5px);
 }
 
-.top-help-link svg {
-  width: 13px;
-  height: 13px;
-  transition: transform 0.2s ease;
+.top-help-link:hover .top-phone-label {
+  color: #38bdf8;
 }
 
-.top-help-link:hover svg {
-  transform: scale(1.15);
+.top-help-link:hover .top-phone-number {
+  color: #38bdf8;
+}
+
+.top-help-link:hover .top-phone-badge {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(5, 150, 105, 0.28) 100%);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.55);
+  color: #6ee7b7;
+}
+
+.top-help-link:hover .top-phone-arrow {
+  transform: translateX(2px);
+  color: #38bdf8;
+}
+
+[data-theme="light"] .top-help-link:hover {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.4);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.16), inset 0 1px 0 #ffffff;
+}
+
+[data-theme="light"] .top-help-link:hover .top-phone-label {
+  color: #0284c7;
+}
+
+[data-theme="light"] .top-help-link:hover .top-phone-number {
+  color: #0284c7;
+}
+
+[data-theme="light"] .top-help-link:hover .top-phone-arrow {
+  color: #0284c7;
 }
 
 .call-bar-collapse-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #94a3b8;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  line-height: 1;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 0;
+  flex-shrink: 0;
+}
+
+.call-bar-collapse-btn svg {
+  display: block;
+  pointer-events: none;
+  transition: transform 0.2s ease;
 }
 
 [data-theme="light"] .call-bar-collapse-btn {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.04);
   border-color: rgba(0, 0, 0, 0.08);
   color: #64748b;
 }
 
 .call-bar-collapse-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  transform: scale(1.1);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171;
+  transform: scale(1.08);
+}
+
+[data-theme="light"] .call-bar-collapse-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #dc2626;
 }
 
 .navbar-call-mini-pill {
@@ -1963,7 +2082,46 @@ main.site-main {
     display: none !important;
   }
   .header-top-inner {
-    justify-content: flex-end !important;
+    justify-content: center !important;
+    position: relative;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  .header-top-actions {
+    margin-left: 0 !important;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+  }
+  .call-bar-collapse-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .call-bar-collapse-btn:hover {
+    transform: translateY(-50%) scale(1.08);
+  }
+  .top-help-link {
+    padding: 3px 10px 3px 5px;
+    gap: 6px;
+  }
+  .top-phone-label {
+    font-size: 10.5px;
+  }
+  .top-phone-number {
+    font-size: 12px;
+  }
+  @media (max-width: 380px) {
+    .top-phone-arrow {
+      display: none !important;
+    }
+  }
+  @media (max-width: 340px) {
+    .top-phone-label,
+    .top-phone-divider {
+      display: none !important;
+    }
   }
   html, body {
     width: 100% !important;

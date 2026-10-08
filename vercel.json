@@ -8,10 +8,14 @@
     { "source": "/api/leads(.*)", "destination": "/api/leads" },
     { "source": "/api/auth/(.*)", "destination": "/api/auth" },
     { "source": "/api/admin/(.*)", "destination": "/api/admin" },
-    { "source": "/api/auth", "destination": "/api/auth" },
     { "source": "/api/admin", "destination": "/api/admin" },
+    { "source": "/api/auth", "destination": "/api/auth" },
+    { "source": "/api/monitoring(.*)", "destination": "/api/monitoring" },
+    { "source": "/api/support(.*)", "destination": "/api/support" },
+    { "source": "/api/payments(.*)", "destination": "/api/payments" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/driver", "destination": "/driver.html" }
+    { "source": "/driver", "destination": "/driver.html" },
+    { "source": "/api/(.*)", "destination": "/api/index" }
   ],
   "headers": [
     {

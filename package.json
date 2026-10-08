@@ -10,7 +10,7 @@
     "start": "node server.js",
     "dev": "node server.js",
     "test": "node scripts/check-syntax.js && node scripts/check-html-scripts.js",
-    "deploy": "git add -A && git commit -m \"deploy: $(date '+%Y-%m-%d %H:%M')\" && git push origin main"
+    "deploy": "node -e \"const d = new Date().toISOString().slice(0,16).replace('T',' '); require('child_process').execSync('git add -A && git commit -m \\\"deploy: ' + d + '\\\" && git push origin main', { stdio: 'inherit' });\""
   },
   "repository": {
     "type": "git",

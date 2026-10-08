@@ -373,7 +373,8 @@ module.exports = async (req, res) => {
     return res.end();
   }
 
-  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const rawUrl = req.headers['x-forwarded-uri'] || req.url;
+  const url = new URL(rawUrl, `http://${req.headers.host || 'localhost'}`);
   let pathname = url.pathname.replace(/^\/api/i, '');
   if (!pathname.startsWith('/')) pathname = '/' + pathname;
   if (pathname.length > 1 && pathname.endsWith('/')) pathname = pathname.slice(0, -1);
@@ -3763,7 +3764,7 @@ module.exports = async (req, res) => {
     }
 
     // 3. CUSTOMER SUPPORT & BOOKING COMPLAINT TICKETING SYSTEM
-    if (pathname === '/support/tickets' && method === 'POST') {
+    if ((pathname === '/support/tickets' || pathname === '/support' || pathname === '/support/') && method === 'POST') {
       const cleanPhone = (body.phone || body.passengerPhone || '').toString().replace(/\D/g, '').slice(-10);
       const message = (body.message || body.complaint || body.issue || '').toString().trim();
       const bookingId = (body.bookingId || body.rideId || '').toString().trim().toUpperCase();
@@ -3824,7 +3825,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/support/tickets' && method === 'GET') {
+    if ((pathname === '/support/tickets' || pathname === '/support' || pathname === '/support/') && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       const phoneParam = (url.searchParams.get('phone') || '').replace(/\D/g, '').slice(-10);
       const bIdParam = (url.searchParams.get('bookingId') || '').toUpperCase();
@@ -3877,7 +3878,7 @@ module.exports = async (req, res) => {
     }
 
     // 4. APPLICATION & API MONITORING, UPTIME & HEALTH CHECKS
-    if ((pathname === '/monitoring/health' || pathname === '/health/deep') && method === 'GET') {
+    if ((pathname === '/monitoring/health' || pathname === '/health/deep' || pathname === '/monitoring' || pathname === '/monitoring/' || action === 'health' || url.searchParams.get('action') === 'health') && method === 'GET') {
       const mem = process.memoryUsage();
       const uptimeSec = Math.round(process.uptime());
       const now = Date.now();
@@ -3911,7 +3912,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/monitoring/metrics' && method === 'GET') {
+    if ((pathname === '/monitoring/metrics' || ((pathname === '/monitoring' || pathname === '/monitoring/') && (action === 'metrics' || url.searchParams.get('action') === 'metrics'))) && method === 'GET') {
       const bookings = db.bookings || [];
       const totalBookings = bookings.length;
       const activeTrips = bookings.filter(b => ['DRIVER ASSIGNED', 'ACCEPTED', 'ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus)).length;

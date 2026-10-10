@@ -2,12 +2,12 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/api/admin/:path*", "destination": "/api/admin.js" },
-    { "source": "/api/auth/:path*", "destination": "/api/auth.js" },
-    { "source": "/api/leads/:path*", "destination": "/api/leads.js" },
-    { "source": "/api/monitoring/:path*", "destination": "/api/monitoring.js" },
-    { "source": "/api/support/:path*", "destination": "/api/support.js" },
-    { "source": "/api/payments/:path*", "destination": "/api/bookings.js" }
+    { "source": "/api/admin/leads/:path*", "destination": "/api/leads" },
+    { "source": "/api/admin/leads", "destination": "/api/leads" },
+    { "source": "/api/leads/:path*", "destination": "/api/leads" },
+    { "source": "/api/leads", "destination": "/api/leads" },
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/api/:path*", "destination": "/api" }
   ],
   "headers": [
     {

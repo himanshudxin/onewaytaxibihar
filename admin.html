@@ -1161,6 +1161,11 @@
               <span id="txt-audio-alerts">🔊 Chime: ON</span>
             </button>
 
+            <!-- AI Dispatch Copilot -->
+            <button type="button" class="topbar-btn" onclick="openCopilotModal()" title="AI Dispatch & Revenue Copilot" style="color: #c084fc; border-color: rgba(168, 85, 247, 0.4);">
+              <span>🤖 Copilot</span>
+            </button>
+
             <!-- Topbar Logout -->
             <button type="button" class="topbar-btn" onclick="handleAdminLogout()" style="color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);">
               <span>Logout</span>
@@ -1277,7 +1282,10 @@
                 <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: white;">Live Leads &amp; Passenger Inquiries</h1>
                 <div style="font-size: 13px; color: var(--admin-muted); margin-top: 3px;">Inquiries captured silently in real-time from LIVE website</div>
               </div>
-              <button type="button" class="btn-action btn-action-primary" onclick="loadLeads(true)">↻ Refresh Leads</button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-action btn-action-success" onclick="exportLeadsCsv()">📥 Export CSV</button>
+                <button type="button" class="btn-action btn-action-primary" onclick="loadLeads(true)">↻ Refresh Leads</button>
+              </div>
             </div>
 
             <!-- Leads Metrics -->
@@ -1350,6 +1358,7 @@
                 <div style="font-size: 13px; color: var(--admin-muted); margin-top: 3px;">Full ride lifecycle: New → Contacted → Confirmed → Assigned → Completed</div>
               </div>
               <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn-action btn-action-success" onclick="exportBookingsCsv()">📥 Export CSV</button>
                 <button type="button" class="btn-action btn-action-primary" onclick="loadBookings()">↻ Refresh</button>
               </div>
             </div>
@@ -1479,7 +1488,10 @@
                 <h1 style="margin: 0; font-size: 22px; font-weight: 900; color: white;">Payments &amp; UPI UTR Reconciliation</h1>
                 <div style="font-size: 13px; color: var(--admin-muted); margin-top: 3px;">Reconcile online advance tokens and bank deposits</div>
               </div>
-              <button type="button" class="btn-action btn-action-primary" onclick="loadPayments()">↻ Refresh Ledger</button>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-action btn-action-success" onclick="exportPaymentsCsv()">📥 Export CSV</button>
+                <button type="button" class="btn-action btn-action-primary" onclick="loadPayments()">↻ Refresh Ledger</button>
+              </div>
             </div>
 
             <div class="table-container">
@@ -1501,6 +1513,145 @@
                     <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--admin-muted);">Loading payment transactions...</td></tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <!-- PAYMENT GATEWAY & DIRECT UPI SETTINGS PANEL -->
+            <div class="table-container" style="padding: 24px; margin-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: white;">Payment Gateway &amp; UPI Collection Settings</h3>
+                  <div style="font-size: 13px; color: var(--admin-muted); margin-top: 3px;">Configure live UPI QR codes, settlement bank account, Razorpay &amp; Cashfree gateway credentials</div>
+                </div>
+                <button type="button" class="btn-action btn-action-primary" onclick="savePaymentSettings()">💾 Save All Payment Settings</button>
+              </div>
+
+              <div id="pay-settings-alert" style="display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 13px; font-weight: 700;"></div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                
+                <!-- Card 1: Direct UPI QR Code -->
+                <div style="background: #0c1322; border: 1px solid var(--admin-border); border-radius: 10px; padding: 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <strong style="color: white; font-size: 14.5px;">Direct PhonePe / BHIM UPI &amp; QR Code</strong>
+                    <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">0% Gateway Fee</span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="form-group">
+                      <label class="form-label">Merchant UPI ID (VPA) *</label>
+                      <input type="text" id="set-upi-id" value="8002141816@ybl" class="form-input" style="color: #38bdf8; font-family: 'JetBrains Mono'; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Payee Account Name *</label>
+                      <input type="text" id="set-payee-name" value="HIMANSHU KUMAR DUBEY" class="form-input" style="font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">UPI QR Code Image</label>
+                      <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                        <img id="preview-qr-img" src="images/phonepe-qr.png" alt="Merchant QR" style="width: 72px; height: 72px; border-radius: 8px; border: 1.5px solid #0284c7; background: #fff; padding: 2px; object-fit: contain;">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+                          <input type="text" id="set-qr-image-url" value="images/phonepe-qr.png" oninput="document.getElementById('preview-qr-img').src = this.value || 'images/phonepe-qr.png'" class="form-input" style="font-size: 12px;">
+                          <div style="display: flex; gap: 8px;">
+                            <input type="file" id="set-qr-file-input" accept="image/*" onchange="handleQrFileUpload(this)" style="display: none;">
+                            <button type="button" class="btn-action btn-action-primary" style="font-size: 11px; padding: 4px 8px;" onclick="document.getElementById('set-qr-file-input').click()">Upload QR</button>
+                            <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="resetQrToDefault()">↺ Reset</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 2: Bank Settlement Details -->
+                <div style="background: #0c1322; border: 1px solid var(--admin-border); border-radius: 10px; padding: 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <strong style="color: white; font-size: 14.5px;">Settlement Bank Account (NEFT/IMPS)</strong>
+                    <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">Direct Settlement</span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                      <div class="form-group">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" id="set-bank-name" value="State Bank of India" class="form-input">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Account Type</label>
+                        <select id="set-bank-type" class="form-select">
+                          <option value="Current Account" selected>Current Account</option>
+                          <option value="Savings Account">Savings Account</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Account Number</label>
+                      <input type="text" id="set-bank-acc" placeholder="Bank Account Number" class="form-input" style="font-family: 'JetBrains Mono';">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                      <div class="form-group">
+                        <label class="form-label">IFSC Code</label>
+                        <input type="text" id="set-bank-ifsc" placeholder="e.g. SBIN0000152" class="form-input" style="text-transform: uppercase;">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Branch Name</label>
+                        <input type="text" id="set-bank-branch" value="Patna Main Branch" class="form-input">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 3: Razorpay Enterprise Gateway -->
+                <div style="background: #0c1322; border: 1px solid var(--admin-border); border-radius: 10px; padding: 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <strong style="color: white; font-size: 14.5px;">Razorpay Enterprise PG</strong>
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #cbd5e1; cursor: pointer;">
+                      <input type="checkbox" id="set-enable-razorpay" checked> Enable PG
+                    </label>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="form-group">
+                      <label class="form-label">Razorpay Key ID</label>
+                      <input type="text" id="set-rzp-key" placeholder="rzp_live_..." class="form-input" style="font-family: 'JetBrains Mono';">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Razorpay Key Secret</label>
+                      <input type="password" id="set-rzp-secret" placeholder="Key Secret (kept securely)" class="form-input">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Webhook Secret</label>
+                      <input type="password" id="set-rzp-webhook" placeholder="Webhook Signature Secret" class="form-input">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card 4: Checkout Advance Token Policy -->
+                <div style="background: #0c1322; border: 1px solid var(--admin-border); border-radius: 10px; padding: 18px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <strong style="color: white; font-size: 14.5px;">Checkout Advance Token Policy</strong>
+                    <span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">Zero Cancellation Lock</span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div class="form-group">
+                      <label class="form-label">Default Advance Token Amount (₹) *</label>
+                      <input type="number" id="set-pay-advance-amt" value="299" class="form-input" style="font-weight: 700; color: #34d399;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                      <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #cbd5e1; cursor: pointer;">
+                        <input type="checkbox" id="set-enable-direct-upi" checked> Enable Direct PhonePe / BHIM QR Collection
+                      </label>
+                      <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #cbd5e1; cursor: pointer;">
+                        <input type="checkbox" id="set-enable-cash-driver" checked> Enable Cash to Chauffeur on Arrival
+                      </label>
+                      <label style="display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #cbd5e1; cursor: pointer;">
+                        <input type="checkbox" id="set-auto-confirm" checked> Auto-Confirm Booking when Online Advance is Paid
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </section>
@@ -1747,6 +1898,49 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+
+            <!-- CRITICAL FLEET OPERATIONS & DATABASE MAINTENANCE -->
+            <div class="table-container" style="padding: 24px; margin-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: white;">Fleet Operations &amp; Database Maintenance</h3>
+                  <div style="font-size: 12.5px; color: var(--admin-muted); margin-top: 3px;">High-privilege database tools: Purge test booking data &amp; toggle emergency service pause</div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="btn-action btn-action-danger" onclick="toggleEmergencyPauseAdmin()" id="btn-toggle-emergency-pause">🚨 Emergency Pause Dispatch</button>
+                  <button type="button" class="btn-action btn-action-danger" onclick="cleanTestDataAdmin()">🧹 Purge All Test Data</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PASSENGER SUPPORT & COMPLAINTS DESK -->
+            <div class="table-container" style="padding: 24px; margin-top: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: white;">Passenger Support &amp; Complaint Tickets</h3>
+                  <div style="font-size: 12.5px; color: var(--admin-muted); margin-top: 3px;">Track, manage, and resolve customer complaints, ride issues &amp; refund claims</div>
+                </div>
+                <button type="button" class="btn-action btn-action-primary" onclick="loadSupportTickets()">↻ Refresh Tickets</button>
+              </div>
+              <div class="table-responsive">
+                <table class="enterprise-table">
+                  <thead>
+                    <tr>
+                      <th>Ticket ID</th>
+                      <th>Passenger Mobile</th>
+                      <th>Ride Ref</th>
+                      <th>Category</th>
+                      <th>Subject / Complaint</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-support-tickets-tbody">
+                    <tr><td colspan="7" style="text-align: center; padding: 24px; color: var(--admin-muted);">Loading support tickets...</td></tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </section>
@@ -2051,6 +2245,44 @@
         <button type="submit" class="btn-action btn-action-success" style="width: 100%; padding: 12px; justify-content: center; margin-top: 10px;">
           Confirm &amp; Create Booking →
         </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: AI Dispatch & Revenue Copilot -->
+  <div id="modal-copilot" class="admin-modal-backdrop">
+    <div class="admin-modal-box" style="max-width: 640px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">🤖</span>
+          <div>
+            <h3 class="modal-title">AI Dispatch &amp; Revenue Copilot</h3>
+            <div style="font-size: 12px; color: var(--admin-muted);">Ask real-time questions about daily earnings, fleet status, active rides &amp; pending payments</div>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeCopilotModal()">✕</button>
+      </div>
+
+      <!-- Quick prompts -->
+      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+        <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="askCopilotPrompt('What is today\'s verified revenue?')">💰 Today's Revenue</button>
+        <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="askCopilotPrompt('How many active trips are currently in progress?')">🚗 Active Trips</button>
+        <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="askCopilotPrompt('List unpaid or pending payments')">⚠️ Unpaid Payments</button>
+        <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="askCopilotPrompt('Which vehicles have insurance or fitness expiring?')">🛡️ Fleet Expiry</button>
+        <button type="button" class="btn-action btn-action-secondary" style="font-size: 11px; padding: 4px 10px;" onclick="askCopilotPrompt('What are our most popular high-demand routes?')">📈 Popular Corridors</button>
+      </div>
+
+      <!-- Copilot Answer Screen -->
+      <div id="copilot-answer-box" style="display: none; background: #0c1322; border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 8px; padding: 14px; margin-bottom: 14px; font-size: 13.5px; line-height: 1.5; color: #f8fafc;">
+        <div style="display: flex; align-items: center; gap: 6px; color: #c084fc; font-weight: 800; font-size: 11.5px; margin-bottom: 6px; text-transform: uppercase;">
+          <span>⚡ Operations Copilot Intel:</span>
+        </div>
+        <div id="copilot-answer-text"></div>
+      </div>
+
+      <form onsubmit="handleCopilotSubmit(event)" style="display: flex; gap: 8px;">
+        <input type="text" id="admin-copilot-input" placeholder="Type query e.g. How much revenue today? or List active trips" class="form-input" style="flex: 1;" required>
+        <button type="submit" class="btn-action btn-action-purple" style="padding: 10px 18px;">Ask Copilot →</button>
       </form>
     </div>
   </div>
@@ -2375,9 +2607,14 @@
       if (tabName === 'dashboard') loadDashboard();
       if (tabName === 'leads') loadLeads();
       if (tabName === 'bookings') loadBookings();
+      if (tabName === 'drivers') loadDrivers();
+      if (tabName === 'vehicles') loadVehicles();
+      if (tabName === 'payments') { loadPayments(); loadPaymentSettings(); }
       if (tabName === 'customers') loadCustomers();
+      if (tabName === 'coupons') loadCoupons();
       if (tabName === 'reports') loadReports();
-      if (tabName === 'settings') loadSettings();
+      if (tabName === 'audit') loadAuditLogs();
+      if (tabName === 'settings') { loadSettings(); loadSupportTickets(); }
     }
 
     /* Sidebar Toggles */
@@ -2746,6 +2983,7 @@
                 <a href="tel:+91${phone}" class="btn-call-wa btn-call" onclick="markLeadStatus('${l.id}', 'CONTACTED')">📞 Call</a>
                 <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn-call-wa btn-wa" onclick="markLeadStatus('${l.id}', 'CONTACTED')">💬 WhatsApp</a>
                 <button type="button" class="btn-action btn-action-success" onclick="openConvertLeadModal('${l.id}')">Convert to Ride →</button>
+                <button type="button" class="btn-action btn-action-danger" onclick="deleteLeadAdmin('${l.id}')" title="Permanently delete inquiry">🗑 Delete</button>
               </div>
             </td>
           </tr>
@@ -2761,6 +2999,31 @@
         });
         loadLeads();
       } catch (e) {}
+    }
+
+    async function deleteLeadAdmin(leadId) {
+      const pass = prompt(`PERMANENT INQUIRY DELETION\n\nTo completely delete inquiry lead (${leadId}) from MongoDB Atlas Cloud, please enter the admin deletion password:`, "deleteit");
+      if (pass === null) return;
+      if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
+        alert("Access Denied: Incorrect deletion password. The inquiry was NOT deleted.");
+        return;
+      }
+      try {
+        const res = await ApiClient.request("/api/admin/leads", {
+          method: "DELETE",
+          body: JSON.stringify({ leadId, deletePassword: pass.trim() })
+        });
+        if (res && res.success) {
+          alert("Inquiry lead permanently deleted from database.");
+          _allLeads = _allLeads.filter(l => l.id !== leadId && l.cleanPhone !== leadId);
+          renderLeadsTable();
+        } else {
+          alert(res?.message || "Failed to delete inquiry.");
+          loadLeads();
+        }
+      } catch (err) {
+        alert("Error deleting lead: " + err.message);
+      }
     }
 
     function openConvertLeadModal(id) {
@@ -2927,9 +3190,15 @@
                 ${['CONFIRMED', 'DRIVER ASSIGNED'].includes(status) ? `
                   <button type="button" class="btn-action btn-action-primary" onclick="openAssignModal('${bId}')">${drv ? 'Reassign' : 'Assign Driver'}</button>
                 ` : ''}
+                ${!b.paymentStatus || !b.paymentStatus.includes('100% Full') ? `
+                  <button type="button" class="btn-action btn-action-success" onclick="approvePaymentAdmin('${bId}')" title="Verify UTR and approve advance payment">✓ Verify Pay</button>
+                  <button type="button" class="btn-action btn-action-danger" onclick="denyPaymentAdmin('${bId}')" title="Deny unreceived payment">✕ Deny Pay</button>
+                ` : ''}
+                <button type="button" class="btn-action btn-action-secondary" onclick="checkFraudRiskAdmin('${bId}', '${b.passengerPhone || ''}')" title="Run instant fraud and cancellation radar">🛡️ Fraud</button>
                 ${status !== 'CANCELLED' && status !== 'COMPLETED' ? `
                   <button type="button" class="btn-action btn-action-danger" onclick="cancelRideAdmin('${bId}')">Cancel</button>
                 ` : ''}
+                <button type="button" class="btn-action btn-action-danger" onclick="deleteBookingAdmin('${bId}')" title="Permanently delete booking">🗑 Delete</button>
               </div>
             </td>
           </tr>
@@ -2950,16 +3219,107 @@
     }
 
     async function cancelRideAdmin(bookingId) {
-      const reason = prompt("Enter cancellation reason for Booking " + bookingId + ":");
+      const reason = prompt("Enter cancellation reason for Booking " + bookingId + ":", "Customer requested cancellation via call");
       if (!reason) return;
       const res = await ApiClient.request("/api/admin/cancel-booking", {
         method: "POST",
-        body: JSON.stringify({ bookingId, reason })
+        body: JSON.stringify({ bookingId, reason: reason.trim() })
       });
       if (res && res.success) {
         loadBookings();
       } else {
         alert(res?.message || "Failed to cancel booking");
+      }
+    }
+
+    async function deleteBookingAdmin(bookingId) {
+      const pass = prompt(`PERMANENT RIDE DELETION\n\nTo completely delete booking (${bookingId}) from MongoDB Atlas Cloud, please enter the admin deletion password:`, "deleteit");
+      if (pass === null) return;
+      if (pass.trim() !== 'deleteit' && pass.trim() !== 'harharmahadev@3') {
+        alert("Access Denied: Incorrect deletion password. The ride was NOT deleted.");
+        return;
+      }
+      try {
+        const res = await ApiClient.request("/api/admin/bookings", {
+          method: "DELETE",
+          body: JSON.stringify({ bookingId, deletePassword: pass.trim() })
+        });
+        if (res && res.success) {
+          alert(`Booking ${bookingId} permanently deleted from database.`);
+          _allBookings = _allBookings.filter(b => b.bookingId !== bookingId && b.id !== bookingId);
+          renderMetrics();
+          applyFilters();
+        } else {
+          alert(res?.message || "Failed to delete booking.");
+          loadBookings();
+        }
+      } catch (err) {
+        alert("Error deleting booking: " + err.message);
+      }
+    }
+
+    async function approvePaymentAdmin(bookingId) {
+      const b = _allBookings.find(x => x.bookingId === bookingId || x.id === bookingId);
+      const adv = (b && b.advancePaid) ? Number(b.advancePaid) : 299;
+      const utrHint = (b && (b.upiUtr || b.paymentTxnRef)) ? (b.upiUtr || b.paymentTxnRef) : `UPI-${Date.now().toString().slice(-6)}`;
+
+      const promptRes = prompt(`✓ APPROVE PAYMENT & CONFIRM RIDE\n\nBooking ID: ${bookingId}\nPassenger: ${b?.passengerName || 'Customer'} (+91 ${b?.passengerPhone || ''})\nAdvance Due: ₹${adv}\n\nEnter Verified UPI / Bank UTR Reference Number:`, utrHint);
+      if (promptRes === null) return;
+      const txn = promptRes.trim() || utrHint;
+
+      try {
+        const res = await ApiClient.request("/api/admin/verify-payment", {
+          method: "POST",
+          body: JSON.stringify({ bookingId, txnRef: txn, amount: adv })
+        });
+        if (res && res.success) {
+          alert(`Payment Verified & Ride Confirmed for ${bookingId}!\nAdvance Amount: ₹${adv}\nUTR Reference: ${txn}`);
+          loadBookings();
+          loadPayments();
+        } else {
+          alert(res?.message || "Failed to verify payment");
+        }
+      } catch (err) {
+        alert("Payment verification error: " + err.message);
+      }
+    }
+
+    async function denyPaymentAdmin(bookingId) {
+      const b = _allBookings.find(x => x.bookingId === bookingId || x.id === bookingId);
+      const reason = prompt(`✕ DENY PAYMENT & REJECT BOOKING\n\nBooking ID: ${bookingId}\nPassenger: ${b?.passengerName || 'Customer'}\n\nEnter reason for payment denial:`, "Payment not received in merchant UPI/Bank account");
+      if (reason === null) return;
+
+      try {
+        const res = await ApiClient.request("/api/admin/deny-payment", {
+          method: "POST",
+          body: JSON.stringify({ bookingId, reason: reason.trim() || "Payment not received" })
+        });
+        if (res && res.success) {
+          alert(`Payment marked as DENIED for ${bookingId}. Booking status set to REJECTED.`);
+          loadBookings();
+          loadPayments();
+        } else {
+          alert(res?.message || "Failed to deny payment");
+        }
+      } catch (err) {
+        alert("Payment denial error: " + err.message);
+      }
+    }
+
+    async function checkFraudRiskAdmin(bookingId, phone = "") {
+      try {
+        const res = await ApiClient.request("/api/admin/fraud-check", {
+          method: "POST",
+          body: JSON.stringify({ bookingId, phone })
+        });
+        if (res && res.success) {
+          const flagsText = (res.flags && res.flags.length) ? res.flags.join("\n• ") : "No suspicious flags detected.";
+          alert(`🛡️ FRAUD RISK ANALYSIS\n\nTarget Phone: ${res.targetPhone}\nRisk Level: ${res.riskLevel}\nRisk Score: ${res.riskScore}/100\n\nFlags:\n• ${flagsText}\n\nRecommended Action:\n${res.recommendedAction}`);
+        } else {
+          alert(res?.message || "Failed to execute fraud check");
+        }
+      } catch (e) {
+        alert("Fraud check error: " + e.message);
       }
     }
 
@@ -2999,27 +3359,68 @@
       document.getElementById("modal-booking-timeline").style.display = "none";
     }
 
-    /* Driver Assign Modal */
-    function openAssignModal(bookingId) {
+    /* Driver Assign Modal with Smart Driver Matching */
+    async function openAssignModal(bookingId) {
       _activeAssignBookingId = bookingId;
       const b = _allBookings.find(x => x.bookingId === bookingId || x.id === bookingId);
-      document.getElementById("assign-modal-route").textContent = b ? `Route: ${b.originCity} ➔ ${b.destCity} (${b.pickupDate || 'Today'})` : '';
+      document.getElementById("assign-modal-route").textContent = b ? `Route: ${b.originCity} ➔ ${b.destCity} (${b.pickupDate || 'Today'}) • Vehicle Tier: ${b.fleetClass || b.cabCategory || 'Sedan'}` : '';
       
       const listEl = document.getElementById("drivers-selection-list");
-      if (_allDrivers.length === 0) {
-        listEl.innerHTML = '<div style="color:var(--admin-muted); font-size:12px;">No chauffeurs registered. Please onboard a driver first.</div>';
-      } else {
-        listEl.innerHTML = _allDrivers.map(d => `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#0c1322; border:1px solid var(--admin-border); padding:10px 14px; border-radius:8px;">
-            <div>
-              <strong style="color:white; font-size:13.5px;">${d.name}</strong>
-              <div style="font-size:11.5px; color:var(--admin-muted);">${d.vehicleModel || 'Cab'} • ${d.vehicleNumber || 'Plate'} (+91 ${d.phone})</div>
-            </div>
-            <button type="button" class="btn-action btn-action-primary" onclick="assignDriverSubmit('${d.id}')">Select Chauffeur</button>
-          </div>
-        `).join("");
-      }
+      listEl.innerHTML = '<div style="color:var(--admin-muted); font-size:12.5px; text-align:center; padding:16px;">Scanning fleet & matching optimal chauffeurs...</div>';
       document.getElementById("modal-assign-driver").style.display = "flex";
+
+      let matchedDrivers = [];
+      try {
+        const matchRes = await ApiClient.request("/api/admin/driver-matching", {
+          method: "POST",
+          body: JSON.stringify({ bookingId, originCity: b?.originCity || 'Patna' })
+        });
+        if (matchRes && matchRes.success && Array.isArray(matchRes.recommendations)) {
+          matchedDrivers = matchRes.recommendations;
+        }
+      } catch (e) {}
+
+      if (matchedDrivers.length === 0 && _allDrivers.length === 0) {
+        listEl.innerHTML = '<div style="color:var(--admin-muted); font-size:12px;">No chauffeurs registered. Please onboard a driver first.</div>';
+        return;
+      }
+
+      const displayList = matchedDrivers.length > 0 ? matchedDrivers : _allDrivers.map(d => ({
+        driverId: d.id,
+        name: d.name,
+        phone: d.phone,
+        vehicleModel: d.vehicleModel,
+        vehicleNumber: d.vehicleNumber,
+        fleetTier: d.fleetTier,
+        rating: d.rating || 4.9,
+        badge: 'Available',
+        suitabilityScore: 85,
+        etaMinutes: 10,
+        reasons: ['Chauffeur registered in fleet']
+      }));
+
+      listEl.innerHTML = displayList.map(d => `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#0c1322; border:1px solid ${d.suitabilityScore >= 90 ? 'rgba(56, 189, 248, 0.4)' : 'var(--admin-border)'}; padding:12px 14px; border-radius:8px; gap:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <strong style="color:white; font-size:14px;">${d.name}</strong>
+              <span style="background:${d.suitabilityScore >= 90 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(56, 189, 248, 0.15)'}; color:${d.suitabilityScore >= 90 ? '#34d399' : '#38bdf8'}; font-size:11px; font-weight:800; padding:2px 6px; border-radius:4px;">
+                ${d.badge || (d.suitabilityScore + '% Match')}
+              </span>
+              <span style="font-size:11px; color:#fbbf24;">★ ${d.rating || '4.9'}</span>
+            </div>
+            <div style="font-size:11.5px; color:var(--admin-muted); margin-top:2px;">
+              ${d.vehicleModel || 'Cab'} • <code style="color:#e2e8f0;">${d.vehicleNumber || 'Plate'}</code> (+91 ${d.phone}) • ETA: <strong>${d.etaMinutes || 12} mins</strong>
+            </div>
+            ${d.reasons && d.reasons.length ? `
+              <div style="font-size:10.5px; color:#94a3b8; margin-top:3px;">
+                💡 ${d.reasons.slice(0, 2).join(' • ')}
+              </div>
+            ` : ''}
+          </div>
+          <button type="button" class="btn-action btn-action-primary" onclick="assignDriverSubmit('${d.driverId || d.id}')">Assign Chauffeur</button>
+        </div>
+      `).join("");
     }
 
     function closeAssignModal() {
@@ -3243,20 +3644,139 @@
         return;
       }
 
-      tbody.innerHTML = _allPayments.map(p => `
-        <tr>
-          <td><code style="color:#38bdf8;">${p.id || p.orderId || 'TXN'}</code></td>
-          <td><strong>${p.bookingId || 'Direct'}</strong></td>
-          <td>+91 ${p.passengerPhone || p.phone || ''}</td>
-          <td><strong>₹${(p.amount || 299).toLocaleString('en-IN')}</strong></td>
-          <td>${p.provider || 'Razorpay / UPI'}</td>
-          <td><span class="status-badge b-confirmed">${p.status || 'PAID'}</span></td>
-          <td style="font-size:11px; color:var(--admin-muted);">${p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recent'}</td>
-          <td>
-            <button type="button" class="btn-action btn-action-secondary" onclick="alert('Payment verified via Gateway Token ID: ' + '${p.id || p.orderId}')">Audit</button>
-          </td>
-        </tr>
-      `).join("");
+      tbody.innerHTML = _allPayments.map(p => {
+        const bId = p.bookingId || p.id;
+        const isPaid = (p.status || '').toUpperCase().includes('PAID');
+        return `
+          <tr>
+            <td><code style="color:#38bdf8; font-family:'JetBrains Mono';">${p.id || p.orderId || 'TXN'}</code></td>
+            <td><strong style="color:white; cursor:pointer;" onclick="switchMainTab('bookings')">${p.bookingId || 'Direct'}</strong></td>
+            <td>+91 ${p.passengerPhone || p.phone || ''}</td>
+            <td><strong>₹${(p.amount || 299).toLocaleString('en-IN')}</strong></td>
+            <td>${p.provider || 'Razorpay / UPI'}</td>
+            <td><span class="status-badge ${isPaid ? 'b-confirmed' : 'b-requested'}">${p.status || 'PAID'}</span></td>
+            <td style="font-size:11px; color:var(--admin-muted);">${p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recent'}</td>
+            <td>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="btn-action btn-action-success" onclick="approvePaymentAdmin('${bId}')" title="Approve UTR & Confirm Ride">✓ Approve UTR</button>
+                <button type="button" class="btn-action btn-action-danger" onclick="denyPaymentAdmin('${bId}')" title="Deny Payment">✕ Deny</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    /* Payment Gateway & Direct UPI Settings */
+    async function loadPaymentSettings() {
+      try {
+        const res = await ApiClient.request("/api/admin/payment-settings");
+        if (res && res.success && res.settings) {
+          const s = res.settings;
+          const upiIdEl = document.getElementById("set-upi-id");
+          const payeeEl = document.getElementById("set-payee-name");
+          const qrUrlEl = document.getElementById("set-qr-image-url");
+          const qrImgEl = document.getElementById("preview-qr-img");
+          const bankNameEl = document.getElementById("set-bank-name");
+          const bankTypeEl = document.getElementById("set-bank-type");
+          const bankAccEl = document.getElementById("set-bank-acc");
+          const bankIfscEl = document.getElementById("set-bank-ifsc");
+          const bankBranchEl = document.getElementById("set-bank-branch");
+          const rzpKeyEl = document.getElementById("set-rzp-key");
+          const rzpSecEl = document.getElementById("set-rzp-secret");
+          const rzpWhEl = document.getElementById("set-rzp-webhook");
+          const enRzpEl = document.getElementById("set-enable-razorpay");
+          const advAmtEl = document.getElementById("set-pay-advance-amt");
+          const enUpiEl = document.getElementById("set-enable-direct-upi");
+          const enCashEl = document.getElementById("set-enable-cash-driver");
+          const autoConfEl = document.getElementById("set-auto-confirm");
+
+          if (upiIdEl && s.upiId) upiIdEl.value = s.upiId;
+          if (payeeEl && s.payeeName) payeeEl.value = s.payeeName;
+          if (qrUrlEl && s.qrImageUrl) {
+            qrUrlEl.value = s.qrImageUrl;
+            if (qrImgEl) qrImgEl.src = s.qrImageUrl;
+          }
+          if (bankNameEl && s.bankName) bankNameEl.value = s.bankName;
+          if (bankTypeEl && s.accountType) bankTypeEl.value = s.accountType;
+          if (bankAccEl && s.accountNumber) bankAccEl.value = s.accountNumber;
+          if (bankIfscEl && s.ifscCode) bankIfscEl.value = s.ifscCode;
+          if (bankBranchEl && s.branchName) bankBranchEl.value = s.branchName;
+          if (rzpKeyEl && s.razorpayKeyId) rzpKeyEl.value = s.razorpayKeyId;
+          if (rzpSecEl && s.razorpayKeySecret) rzpSecEl.value = s.razorpayKeySecret;
+          if (rzpWhEl && s.razorpayWebhookSecret) rzpWhEl.value = s.razorpayWebhookSecret;
+          if (enRzpEl) enRzpEl.checked = s.enableRazorpay !== false;
+          if (advAmtEl && s.defaultAdvanceAmount) advAmtEl.value = s.defaultAdvanceAmount;
+          if (enUpiEl) enUpiEl.checked = s.enableDirectUpi !== false;
+          if (enCashEl) enCashEl.checked = s.enableCashToDriver !== false;
+          if (autoConfEl) autoConfEl.checked = s.autoConfirmOnAdvance !== false;
+        }
+      } catch (e) {}
+    }
+
+    async function savePaymentSettings() {
+      const alertEl = document.getElementById("pay-settings-alert");
+      const payload = {
+        upiId: document.getElementById("set-upi-id")?.value.trim() || "8002141816@ybl",
+        payeeName: document.getElementById("set-payee-name")?.value.trim() || "HIMANSHU KUMAR DUBEY",
+        qrImageUrl: document.getElementById("set-qr-image-url")?.value.trim() || "images/phonepe-qr.png",
+        bankName: document.getElementById("set-bank-name")?.value.trim() || "State Bank of India",
+        accountType: document.getElementById("set-bank-type")?.value || "Current Account",
+        accountNumber: document.getElementById("set-bank-acc")?.value.trim() || "",
+        ifscCode: document.getElementById("set-bank-ifsc")?.value.trim().toUpperCase() || "",
+        branchName: document.getElementById("set-bank-branch")?.value.trim() || "Patna Main Branch",
+        razorpayKeyId: document.getElementById("set-rzp-key")?.value.trim() || "",
+        razorpayKeySecret: document.getElementById("set-rzp-secret")?.value.trim() || "",
+        razorpayWebhookSecret: document.getElementById("set-rzp-webhook")?.value.trim() || "",
+        enableRazorpay: document.getElementById("set-enable-razorpay")?.checked !== false,
+        defaultAdvanceAmount: Number(document.getElementById("set-pay-advance-amt")?.value) || 299,
+        enableDirectUpi: document.getElementById("set-enable-direct-upi")?.checked !== false,
+        enableCashToDriver: document.getElementById("set-enable-cash-driver")?.checked !== false,
+        autoConfirmOnAdvance: document.getElementById("set-auto-confirm")?.checked !== false
+      };
+
+      try {
+        const res = await ApiClient.request("/api/admin/payment-settings", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        if (res && res.success) {
+          if (alertEl) {
+            alertEl.style.display = "block";
+            alertEl.style.background = "rgba(16, 185, 129, 0.15)";
+            alertEl.style.color = "#34d399";
+            alertEl.textContent = "✅ Payment gateway parameters & Direct UPI QR settings saved to database!";
+            setTimeout(() => { alertEl.style.display = "none"; }, 5000);
+          }
+          alert("Payment gateway parameters and UPI collection settings saved successfully!");
+        } else {
+          alert(res?.message || "Failed to save payment settings");
+        }
+      } catch (e) {
+        alert("Payment settings error: " + e.message);
+      }
+    }
+
+    function handleQrFileUpload(input) {
+      if (!input || !input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const imgEl = document.getElementById("preview-qr-img");
+        const urlInput = document.getElementById("set-qr-image-url");
+        if (imgEl) imgEl.src = dataUrl;
+        if (urlInput) urlInput.value = dataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetQrToDefault() {
+      const defaultUrl = "images/phonepe-qr.png";
+      const urlInput = document.getElementById("set-qr-image-url");
+      const imgEl = document.getElementById("preview-qr-img");
+      if (urlInput) urlInput.value = defaultUrl;
+      if (imgEl) imgEl.src = defaultUrl;
     }
 
     /* =========================================================================
@@ -3557,6 +4077,247 @@
       } else {
         alert(res?.message || "Failed to register user");
       }
+    }
+
+    /* =========================================================================
+       CLEAN TEST DATA & DATABASE MAINTENANCE
+       ========================================================================= */
+    async function cleanTestDataAdmin() {
+      const confirmStr = prompt("⚠️ PERMANENT TEST DATA PURGE\n\nThis will permanently wipe all test bookings, leads, customer inquiries, and mock driver records from MongoDB Atlas Cloud.\n\nType 'CLEAN' in capital letters to confirm:", "");
+      if (confirmStr !== "CLEAN") {
+        alert("Purge cancelled. No database records were removed.");
+        return;
+      }
+      try {
+        const res = await ApiClient.request("/api/admin/clean-test-data", {
+          method: "POST"
+        });
+        if (res && res.success) {
+          alert("✅ " + res.message);
+          forceSyncAllData();
+        } else {
+          alert(res?.message || "Failed to clear test data");
+        }
+      } catch (e) {
+        alert("Clean test data error: " + e.message);
+      }
+    }
+
+    async function toggleEmergencyPauseAdmin() {
+      const current = document.getElementById("set-emergency-pause")?.checked || false;
+      const newPaused = !current;
+      const reason = newPaused ? prompt("Enter advisory reason for Emergency Dispatch Pause:", "Adverse weather & highway conditions") : "";
+      if (newPaused && reason === null) return;
+
+      try {
+        const res = await ApiClient.request("/api/admin/emergency-pause", {
+          method: "POST",
+          body: JSON.stringify({ paused: newPaused, reason: reason || "" })
+        });
+        if (res && res.success) {
+          alert(res.message);
+          if (document.getElementById("set-emergency-pause")) {
+            document.getElementById("set-emergency-pause").checked = res.paused;
+          }
+          const btn = document.getElementById("btn-toggle-emergency-pause");
+          if (btn) {
+            btn.textContent = res.paused ? "✅ Resume Normal Dispatch" : "🚨 Emergency Pause Dispatch";
+          }
+        } else {
+          alert(res?.message || "Failed to update emergency pause");
+        }
+      } catch (e) {
+        alert("Emergency pause error: " + e.message);
+      }
+    }
+
+    /* =========================================================================
+       PASSENGER SUPPORT & COMPLAINTS DESK
+       ========================================================================= */
+    let _allSupportTickets = [];
+    async function loadSupportTickets() {
+      const tbody = document.getElementById("admin-support-tickets-tbody");
+      if (!tbody) return;
+      try {
+        const res = await ApiClient.request("/api/support/tickets");
+        if (res && res.success && Array.isArray(res.tickets)) {
+          _allSupportTickets = res.tickets;
+          if (_allSupportTickets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--admin-muted);">No open customer support tickets.</td></tr>';
+            return;
+          }
+          tbody.innerHTML = _allSupportTickets.map(t => {
+            const isResolved = t.status === 'RESOLVED';
+            return `
+              <tr>
+                <td><code style="color:#38bdf8; font-family:'JetBrains Mono';">${t.ticketId || t.id}</code></td>
+                <td><strong>+91 ${t.cleanPhone || t.passengerPhone || ''}</strong></td>
+                <td>${t.bookingId ? `<strong>${t.bookingId}</strong>` : '<span style="color:var(--admin-muted);">General</span>'}</td>
+                <td><span style="font-size:11px; background:#1e293b; padding:2px 6px; border-radius:4px; color:#cbd5e1;">${t.category || 'SUPPORT'}</span></td>
+                <td>
+                  <div style="font-weight:700; color:white;">${t.subject || 'Support Ticket'}</div>
+                  <div style="font-size:11.5px; color:var(--admin-muted); max-width:320px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.message || ''}</div>
+                </td>
+                <td>
+                  <span class="status-badge ${isResolved ? 'b-confirmed' : 'b-requested'}">${t.status || 'OPEN'}</span>
+                </td>
+                <td>
+                  ${!isResolved ? `
+                    <button type="button" class="btn-action btn-action-success" onclick="resolveSupportTicket('${t.ticketId || t.id}')">Resolve Ticket</button>
+                  ` : `
+                    <span style="font-size:11px; color:#34d399;">✓ Resolved</span>
+                  `}
+                </td>
+              </tr>
+            `;
+          }).join("");
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#f87171;">Failed to load support tickets.</td></tr>';
+      }
+    }
+
+    async function resolveSupportTicket(ticketId) {
+      const notes = prompt("Enter resolution notes / action taken for Ticket " + ticketId + ":", "Customer contacted by central dispatch officer and resolved");
+      if (notes === null) return;
+      try {
+        const res = await ApiClient.request("/api/admin/support/resolve", {
+          method: "POST",
+          body: JSON.stringify({ ticketId, resolutionNotes: notes.trim() })
+        });
+        if (res && res.success) {
+          alert("Support ticket " + ticketId + " resolved successfully!");
+          loadSupportTickets();
+        } else {
+          alert(res?.message || "Failed to resolve support ticket");
+        }
+      } catch (e) {
+        alert("Resolve ticket error: " + e.message);
+      }
+    }
+
+    /* =========================================================================
+       AI DISPATCH COPILOT CONTROLLER
+       ========================================================================= */
+    function openCopilotModal() {
+      document.getElementById("modal-copilot").style.display = "flex";
+      setTimeout(() => { document.getElementById("admin-copilot-input")?.focus(); }, 100);
+    }
+
+    function closeCopilotModal() {
+      document.getElementById("modal-copilot").style.display = "none";
+    }
+
+    function askCopilotPrompt(query) {
+      const input = document.getElementById("admin-copilot-input");
+      if (input) {
+        input.value = query;
+        handleCopilotSubmit();
+      }
+    }
+
+    async function handleCopilotSubmit(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById("admin-copilot-input");
+      const query = input?.value.trim();
+      if (!query) return;
+
+      const answerBox = document.getElementById("copilot-answer-box");
+      const answerText = document.getElementById("copilot-answer-text");
+      if (answerBox && answerText) {
+        answerBox.style.display = "block";
+        answerText.innerHTML = '<span style="color:#94a3b8;">Analyzing real-time fleet telematics and database records...</span>';
+      }
+
+      try {
+        const res = await ApiClient.request("/api/admin/copilot", {
+          method: "POST",
+          body: JSON.stringify({ query })
+        });
+        if (res && res.answer) {
+          if (answerText) answerText.innerHTML = `<p style="margin:0; font-size:13.5px; line-height:1.5;">${res.answer}</p>`;
+        } else {
+          if (answerText) answerText.textContent = res?.message || "Copilot did not return a response for this query.";
+        }
+      } catch (err) {
+        if (answerText) answerText.textContent = "Error communicating with Copilot: " + err.message;
+      }
+    }
+
+    /* =========================================================================
+       CSV DATA EXPORTS (Bookings, Leads, Payments)
+       ========================================================================= */
+    function exportBookingsCsv() {
+      if (!_allBookings || _allBookings.length === 0) {
+        alert("No bookings available to export.");
+        return;
+      }
+      const headers = ["Booking ID", "Pickup Date", "Pickup Time", "Route", "Cab Tier", "Passenger Name", "Mobile", "Total Fare", "Advance Paid", "Payment Status", "Booking Status", "Assigned Chauffeur"];
+      const rows = _allBookings.map(b => [
+        b.bookingId || b.id || '',
+        b.pickupDate || '',
+        b.pickupTime || '',
+        `"${(b.originCity || '')} to ${(b.destCity || '')}"`,
+        b.fleetClass || b.cabCategory || 'Sedan',
+        `"${b.passengerName || 'Passenger'}"`,
+        b.passengerPhone || '',
+        b.totalFare || 0,
+        b.advancePaid || 0,
+        b.paymentStatus || '',
+        b.bookingStatus || '',
+        b.driverDetails?.name || b.assignedDriverId || 'Unassigned'
+      ]);
+      downloadCsvFile("OneWayTaxiBihar_Bookings_" + new Date().toISOString().slice(0, 10) + ".csv", [headers, ...rows]);
+    }
+
+    function exportLeadsCsv() {
+      if (!_allLeads || _allLeads.length === 0) {
+        alert("No leads available to export.");
+        return;
+      }
+      const headers = ["Lead ID", "Mobile", "Origin City", "Destination City", "Distance KM", "Est Sedan Fare", "Pickup Date", "Status", "Source", "Captured At"];
+      const rows = _allLeads.map(l => [
+        l.id || '',
+        l.cleanPhone || l.phone || '',
+        l.originCity || '',
+        l.destCity || '',
+        l.distanceKm || '',
+        l.estFareSedan || '',
+        l.pickupDate || '',
+        l.status || 'NEW',
+        l.source || 'Website',
+        l.createdAt || ''
+      ]);
+      downloadCsvFile("OneWayTaxiBihar_Inquiry_Leads_" + new Date().toISOString().slice(0, 10) + ".csv", [headers, ...rows]);
+    }
+
+    function exportPaymentsCsv() {
+      if (!_allPayments || _allPayments.length === 0) {
+        alert("No payments available to export.");
+        return;
+      }
+      const headers = ["Transaction ID", "Booking ID", "Customer Phone", "Amount", "Provider", "Payment Status", "Date"];
+      const rows = _allPayments.map(p => [
+        p.id || p.orderId || '',
+        p.bookingId || 'Direct',
+        p.passengerPhone || p.phone || '',
+        p.amount || 299,
+        p.provider || 'Razorpay / UPI',
+        p.status || 'PAID',
+        p.createdAt || ''
+      ]);
+      downloadCsvFile("OneWayTaxiBihar_Payments_" + new Date().toISOString().slice(0, 10) + ".csv", [headers, ...rows]);
+    }
+
+    function downloadCsvFile(filename, dataRows) {
+      const csvContent = "data:text/csv;charset=utf-8," + dataRows.map(e => e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
 
     function handleGlobalSearch(q) {

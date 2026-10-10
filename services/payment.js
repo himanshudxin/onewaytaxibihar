@@ -168,9 +168,10 @@ function verifyRazorpayPayment({ orderId, paymentId, signature }, customConfig =
 
 // 3. Verify Razorpay Webhook Signature
 function verifyRazorpayWebhook(payloadString, webhookSignature, customConfig = null) {
+  if (!webhookSignature) return false;
   const cfg = customConfig ? getEffectiveSettings(customConfig) : dynamicConfig;
-  const secret = cfg.razorpayWebhookSecret;
-  if (!secret) return true;
+  const secret = cfg.razorpayWebhookSecret || process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!secret) return false;
   try {
     const expected = crypto
       .createHmac('sha256', secret)

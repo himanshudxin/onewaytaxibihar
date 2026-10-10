@@ -2,14 +2,13 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/api/health", "destination": "/api/health" },
-    { "source": "/api/bookings", "destination": "/api/bookings" },
     { "source": "/api/admin/leads(.*)", "destination": "/api/leads" },
     { "source": "/api/leads(.*)", "destination": "/api/leads" },
     { "source": "/api/auth/(.*)", "destination": "/api/auth" },
     { "source": "/api/admin/(.*)", "destination": "/api/admin" },
-    { "source": "/api/auth", "destination": "/api/auth" },
-    { "source": "/api/admin", "destination": "/api/admin" },
+    { "source": "/api/monitoring/(.*)", "destination": "/api/monitoring" },
+    { "source": "/api/support/(.*)", "destination": "/api/support" },
+    { "source": "/api/payments/(.*)", "destination": "/api/bookings" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/driver", "destination": "/driver.html" }
   ],

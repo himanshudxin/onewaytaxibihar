@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const dirs = ['js', 'api', 'scripts'];
-const rootFiles = ['server.js'];
+const dirs = ['js', 'api', 'services', 'scripts'];
+const rootFiles = ['local-server.js'];
 let hasErr = false;
 let fileCount = 0;
 

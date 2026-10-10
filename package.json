@@ -2,13 +2,12 @@
   "name": "onewaytaxibihar",
   "version": "1.0.0",
   "description": "OneWayTaxiBihar - Dedicated Intercity & Outstation One-Way Taxi Booking Platform across Bihar",
-  "main": "server.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "node local-server.js",
+    "dev": "node local-server.js",
     "test": "node scripts/check-syntax.js && node scripts/check-html-scripts.js",
     "deploy": "node -e \"const d = new Date().toISOString().slice(0,16).replace('T',' '); require('child_process').execSync('git add -A && git commit -m \\\"deploy: ' + d + '\\\" && git push origin main', { stdio: 'inherit' });\""
   },

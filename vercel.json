@@ -2,29 +2,20 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/api/admin/leads(.*)", "destination": "/api/leads" },
-    { "source": "/api/leads(.*)", "destination": "/api/leads" },
-    { "source": "/api/auth/(.*)", "destination": "/api/auth" },
-    { "source": "/api/admin/(.*)", "destination": "/api/admin" },
-    { "source": "/api/monitoring/(.*)", "destination": "/api/monitoring" },
-    { "source": "/api/support/(.*)", "destination": "/api/support" },
-    { "source": "/api/payments/(.*)", "destination": "/api/bookings" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/driver", "destination": "/driver.html" }
+    { "source": "/api/admin/:path*", "destination": "/api/admin.js" },
+    { "source": "/api/auth/:path*", "destination": "/api/auth.js" },
+    { "source": "/api/leads/:path*", "destination": "/api/leads.js" },
+    { "source": "/api/monitoring/:path*", "destination": "/api/monitoring.js" },
+    { "source": "/api/support/:path*", "destination": "/api/support.js" },
+    { "source": "/api/payments/:path*", "destination": "/api/bookings.js" }
   ],
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:path*",
       "headers": [
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS, PATCH" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Requested-With" }
-      ]
-    },
-    {
-      "source": "/admin.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, max-age=0" }
       ]
     },
     {

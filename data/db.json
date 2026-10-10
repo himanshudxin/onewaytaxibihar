@@ -313,32 +313,9 @@
       "enableCashToDriver": true,
       "enableTokenAdvance": true,
       "autoConfirmOnAdvance": true
-    },
-    "emergencyBookingPause": false,
-    "emergencyPauseReason": "",
-    "emergencyPausedAt": null,
-    "emergencyPausedBy": null
-  },
-  "support_tickets": [
-    {
-      "id": "TCK-470549",
-      "ticketId": "TCK-470549",
-      "bookingId": "OTB-2026-6508",
-      "passengerPhone": "+91 9835000000",
-      "cleanPhone": "9835000000",
-      "passengerName": "Kavita Kumari",
-      "category": "DELAY",
-      "priority": "NORMAL",
-      "subject": "Support Request regarding OTB-2026-6508",
-      "message": "Driver was 10 minutes late at Bailey Road crossing.",
-      "status": "OPEN",
-      "resolutionNotes": null,
-      "resolvedAt": null,
-      "resolvedBy": null,
-      "createdAt": "2026-10-08T06:37:50.549Z",
-      "updatedAt": "2026-10-08T06:37:50.549Z"
     }
-  ],
+  },
+  "support_tickets": [],
   "error_logs": [],
   "refunds": [
     {
@@ -371,5 +348,8 @@
       "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791441068073_6338).",
       "createdAt": "2026-10-08T06:31:08.073Z"
     }
+  ],
+  "revoked_tokens": [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiYWRtX2FkbWluIiwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJvd25lciIsIm5hbWUiOiJDZW50cmFsIERpc3BhdGNoZXIgKEFETUlOKSIsInBob25lIjoiKzkxIDYyMDY0OTQyMTQiLCJpYXQiOjE3OTE2NTY3ODgsImV4cCI6MTc5MTY4NTU4OH0.4oEnM73i1g9jZddVKEH0Dl_YgpeZIj7nGwGhzYjYxCI"
   ]
 }

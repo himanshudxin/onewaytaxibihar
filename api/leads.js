@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+const securityService = require('../services/security.js');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 let cachedDb = null;
 let cachedClient = null;
 
@@ -337,19 +338,31 @@ module.exports = async (req, res) => {
   }
 
   // =========================================================================
-  // 4. DELETE: Permanently Delete Lead (Requires password 'deleteit')
+  // 4. DELETE: Permanently Delete Lead (Requires Verified Admin Authentication)
   // =========================================================================
   if (req.method === 'DELETE') {
     try {
-      const leadId = (body.leadId || body.id || url.searchParams.get('id') || url.searchParams.get('leadId') || '').trim();
-      const pass = (body.password || url.searchParams.get('password') || '').trim();
+      let token = (req.headers['authorization'] || '').replace(/^Bearer\s+/i, '').trim();
+      if (!token && req.headers['cookie']) {
+        const cookies = req.headers['cookie'].split(';');
+        for (const c of cookies) {
+          const [k, v] = c.trim().split('=');
+          if (k === 'otb_adm_token' && v) {
+            token = decodeURIComponent(v);
+            break;
+          }
+        }
+      }
+      const verifiedAdmin = securityService.verifyJwt(token);
 
-      if (pass !== 'deleteit' && pass !== 'harharmahadev@3') {
+      if (!verifiedAdmin || !securityService.hasPermission(verifiedAdmin.role, 'leads')) {
         return sendJson(403, {
           success: false,
-          message: 'Access Denied: Incorrect deletion password. Required password is: deleteit'
+          message: 'Access Denied: Authorized Admin credentials required to delete leads.'
         });
       }
+
+      const leadId = (body.leadId || body.id || url.searchParams.get('id') || url.searchParams.get('leadId') || '').trim();
 
       if (!leadId) {
         return sendJson(400, { success: false, message: 'Lead ID is required for deletion.' });

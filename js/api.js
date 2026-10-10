@@ -38,7 +38,7 @@ class ApiClient {
 
   static async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    const token = localStorage.getItem("otb_auth_token");
+    const token = localStorage.getItem("otb_adm_token") || localStorage.getItem("otb_auth_token");
 
     const defaultHeaders = {
       "Content-Type": "application/json",
@@ -48,6 +48,7 @@ class ApiClient {
     const fetchJson = async (targetUrl) => {
       try {
         const response = await fetch(targetUrl, {
+          credentials: 'include',
           ...options,
           headers: {
             ...defaultHeaders,
@@ -1094,6 +1095,65 @@ class ApiClient {
 
   static async getSystemStatus() {
     return await this.request("/api/admin/system-status");
+  }
+
+  // Enterprise Admin Methods
+  static async adminLogin(username, password) {
+    return await this.request("/api/admin/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    });
+  }
+
+  static async adminLogout() {
+    return await this.request("/api/admin/logout", {
+      method: "POST"
+    });
+  }
+
+  static async getAdminMe() {
+    return await this.request("/api/admin/me");
+  }
+
+  static async getAdminCustomers() {
+    return await this.request("/api/admin/customers");
+  }
+
+  static async getAdminReports() {
+    return await this.request("/api/admin/reports");
+  }
+
+  static async getAdminSettings() {
+    return await this.request("/api/admin/settings");
+  }
+
+  static async saveAdminSettings(settings) {
+    return await this.request("/api/admin/settings", {
+      method: "POST",
+      body: JSON.stringify(settings)
+    });
+  }
+
+  static async getAdminUsers() {
+    return await this.request("/api/admin/users");
+  }
+
+  static async saveAdminUser(userData) {
+    return await this.request("/api/admin/users", {
+      method: "POST",
+      body: JSON.stringify(userData)
+    });
+  }
+
+  static async getBookingTimeline(bookingId) {
+    return await this.request(`/api/admin/bookings/timeline?bookingId=${encodeURIComponent(bookingId)}`);
+  }
+
+  static async updateBookingStatus(bookingId, newStatus, note = "") {
+    return await this.request("/api/admin/bookings/status", {
+      method: "POST",
+      body: JSON.stringify({ bookingId, newStatus, note })
+    });
   }
 }
 

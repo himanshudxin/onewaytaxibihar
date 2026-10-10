@@ -22,7 +22,11 @@ async function cleanAllTestData() {
   console.log('✅ Local data/db.json sanitized and cleaned!');
 
   // 2. Clean MongoDB Atlas Cloud Collections
-  const mongoUri = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri) {
+    console.warn('⚠️ MONGODB_URI not found in environment, skipping Atlas purge.');
+    return;
+  }
   const client = new MongoClient(mongoUri);
   await client.connect();
   const mDb = client.db('onewaytaxibihar');

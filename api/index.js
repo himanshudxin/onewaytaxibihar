@@ -14,6 +14,7 @@ const crypto = require('crypto');
 const dbService = require('../services/db.js');
 const paymentService = require('../services/payment.js');
 const notificationService = require('../services/notification.js');
+const securityService = require('../services/security.js');
 
 // Auto-initialize Enterprise DB (MongoDB Atlas / PostgreSQL / Local Cache)
 dbService.initDatabase().catch(err => {
@@ -311,39 +312,52 @@ function getSessionUser(req, db) {
 }
 
 function getSessionAdmin(req, db) {
-  const authHeader = req.headers['authorization'] || '';
-  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  let token = '';
 
-  // 1. Session token lookup with strict validation
-  if (token && !authHeader.startsWith('Basic ')) {
-    const session = (db.sessions || []).find(s => s.token === token && (s.role === 'admin' || s.role === 'super_admin'));
-    if (session) {
-      const sessionAge = Date.now() - new Date(session.createdAt || 0).getTime();
-      // Sessions valid for 24 hours max
-      if (sessionAge < 24 * 60 * 60 * 1000) {
-        return session;
+  // 1. Check Authorization Bearer header
+  const authHeader = req.headers['authorization'] || '';
+  if (authHeader.startsWith('Bearer ')) {
+    token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  }
+
+  // 2. Check HttpOnly Cookie (otb_adm_token)
+  if (!token && req.headers['cookie']) {
+    const cookies = req.headers['cookie'].split(';');
+    for (const c of cookies) {
+      const [k, v] = c.trim().split('=');
+      if (k === 'otb_adm_token' && v) {
+        token = decodeURIComponent(v);
+        break;
       }
     }
   }
 
-  // 2. HTTP Basic Auth for verified dispatchers
-  if (authHeader.startsWith('Basic ')) {
-    try {
-      const b64 = authHeader.replace(/^Basic\s+/i, '').trim();
-      const credentials = Buffer.from(b64, 'base64').toString('utf8');
-      const [u, p] = credentials.split(':');
-      const validAdmins = ['admin', 'admin1', 'admin2', 'admin3', 'admin4', 'admin5'];
-      const validPasswords = ['harharmahadev@3', 'admin123', 'BiharTaxi@2026', 'Admin@123'];
-      if (validAdmins.includes((u || '').toLowerCase()) && validPasswords.includes(p)) {
-        return {
-          adminId: `adm_${(u || 'admin').toLowerCase()}`,
-          username: (u || 'admin').toLowerCase(),
-          role: 'admin',
-          phone: '+91 6206494214',
-          createdAt: new Date().toISOString()
-        };
-      }
-    } catch (e) {}
+  if (!token) return null;
+
+  // 3. Cryptographic JWT Verification
+  const jwtPayload = securityService.verifyJwt(token);
+  if (jwtPayload && jwtPayload.username) {
+    const revoked = (db.revoked_tokens || []).includes(token);
+    if (!revoked) {
+      return {
+        adminId: jwtPayload.adminId || `adm_${jwtPayload.username}`,
+        username: jwtPayload.username,
+        role: jwtPayload.role || 'dispatcher',
+        name: jwtPayload.name || jwtPayload.username,
+        phone: jwtPayload.phone || '+91 6206494214',
+        token: token,
+        createdAt: new Date(jwtPayload.iat * 1000).toISOString()
+      };
+    }
+  }
+
+  // 4. Session lookup in active db.sessions
+  const session = (db.sessions || []).find(s => s.token === token && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(s.role));
+  if (session) {
+    const sessionAge = Date.now() - new Date(session.createdAt || 0).getTime();
+    if (sessionAge < 12 * 60 * 60 * 1000) {
+      return session;
+    }
   }
 
   return null;
@@ -1594,13 +1608,15 @@ module.exports = async (req, res) => {
       await saveDb(db);
 
       try {
-        const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(mongoUri);
-        await client.connect();
-        const mDb = client.db('onewaytaxibihar');
-        await mDb.collection('bookings').deleteOne({ $or: [{ bookingId: bId }, { id: bId }] });
-        await client.close();
+        const mongoUri = process.env.MONGODB_URI;
+        if (mongoUri) {
+          const { MongoClient } = require('mongodb');
+          const client = new MongoClient(mongoUri);
+          await client.connect();
+          const mDb = client.db(process.env.MONGODB_DB_NAME || 'onewaytaxibihar');
+          await mDb.collection('bookings').deleteOne({ $or: [{ bookingId: bId }, { id: bId }] });
+          await client.close();
+        }
       } catch(e) {}
 
       return sendJson(200, {
@@ -1630,15 +1646,17 @@ module.exports = async (req, res) => {
       await saveDb(db);
 
       try {
-        const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(mongoUri);
-        await client.connect();
-        const mDb = client.db('onewaytaxibihar');
-        await mDb.collection('leads').deleteOne({
-          $or: [{ id: leadId }, { cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }]
-        });
-        await client.close();
+        const mongoUri = process.env.MONGODB_URI;
+        if (mongoUri) {
+          const { MongoClient } = require('mongodb');
+          const client = new MongoClient(mongoUri);
+          await client.connect();
+          const mDb = client.db(process.env.MONGODB_DB_NAME || 'onewaytaxibihar');
+          await mDb.collection('leads').deleteOne({
+            $or: [{ id: leadId }, { cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }]
+          });
+          await client.close();
+        }
       } catch(e) {}
 
       return sendJson(200, {
@@ -1823,45 +1841,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // -------------------------------------------------------------
-    // 9. ADMIN AUTH & DISPATCH APIS
-    // -------------------------------------------------------------
-    if (pathname === '/admin/login' && method === 'POST') {
-      const username = (body.username || '').trim().toLowerCase();
-      const password = (body.password || '').trim();
-      const validAdmins = ['admin', 'admin1', 'admin2', 'admin3', 'admin4', 'admin5'];
-      const validPasswords = ['harharmahadev@3', 'admin123', 'BiharTaxi@2026', 'Admin@123'];
-
-      const passHash = hashPassword(password);
-      const dbAdmin = (db.admins || []).find(a => (a.username || '').toLowerCase() === username && (a.passwordHash === passHash || validPasswords.includes(password)));
-
-      if (!dbAdmin && !(validAdmins.includes(username) && validPasswords.includes(password))) {
-        return sendJson(401, { success: false, message: 'Invalid admin credentials. Please enter your authorized Admin Username and Password.' });
-      }
-
-      const token = generateToken('adm_sess');
-      if (!db.sessions) db.sessions = [];
-      const sessionObj = {
-        token,
-        adminId: dbAdmin ? dbAdmin.id : `adm_${username}`,
-        username: username,
-        role: 'admin',
-        phone: '+91 6206494214',
-        createdAt: new Date().toISOString()
-      };
-      db.sessions.push(sessionObj);
-      await saveDb(db);
-
-      return sendJson(200, {
-        success: true,
-        token,
-        admin: {
-          id: dbAdmin ? dbAdmin.id : `adm_${username}`,
-          username: username,
-          name: dbAdmin ? dbAdmin.name : `Dispatch Operator (${username.toUpperCase()})`
-        }
-      });
-    }
 
     // -------------------------------------------------------------
     // 8B. ENTERPRISE PAYMENT GATEWAY (Razorpay, Cashfree & UPI Settings)
@@ -2135,164 +2114,590 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 9a. ADMIN DIRECT LOGIN & 2FA WHATSAPP OTP ENDPOINTS
+    // 9a. PRODUCTION ADMIN AUTH (Brute-Force Guard, PBKDF2, JWT & RBAC)
     // -------------------------------------------------------------
     if (pathname === '/admin/login' && method === 'POST') {
-      const username = (body.username || '').trim().toLowerCase();
-      const password = (body.password || '').trim();
-      const validAdmins = ['admin', 'admin1', 'admin2', 'admin3', 'admin4', 'admin5'];
-      const validPasswords = ['harharmahadev@3', 'admin123', 'BiharTaxi@2026', 'Admin@123'];
-
-      if (!validAdmins.includes(username) || !validPasswords.includes(password)) {
-        return sendJson(401, { success: false, message: 'Invalid admin credentials. Please enter your authorized Admin Username and Password.' });
+      const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').split(',')[0].trim();
+      const rateCheck = securityService.checkRateLimit(`adm_login_${clientIp}`, 10, 60000);
+      if (!rateCheck.allowed) {
+        return sendJson(429, { success: false, message: `Too many login attempts. Please wait ${rateCheck.retryAfter} seconds.` });
       }
 
-      const token = generateToken('adm_sess');
-      if (!db.sessions) db.sessions = [];
-      const sessionObj = {
-        token,
-        adminId: `adm_${username}`,
-        username: username,
-        role: 'admin',
-        phone: '+91 6206494214',
-        createdAt: new Date().toISOString()
-      };
-      db.sessions.push(sessionObj);
+      const username = (body.username || '').trim().toLowerCase();
+      const password = (body.password || '').trim();
 
-      if (!db.audit_logs) db.audit_logs = [];
-      db.audit_logs.push({
-        id: `AUD_${Date.now()}`,
-        action: 'ADMIN_LOGIN_SUCCESS',
+      if (!username || !password) {
+        return sendJson(400, { success: false, message: 'Username and password are required.' });
+      }
+
+      const bfCheck = securityService.checkBruteForce(username);
+      if (bfCheck.locked) {
+        return sendJson(423, { success: false, message: `Account locked due to repeated failed attempts. Please retry in ${Math.ceil(bfCheck.remainingSeconds / 60)} minutes.` });
+      }
+
+      const verifiedAdmin = securityService.verifyPassword(username, password, db.admins);
+      if (!verifiedAdmin) {
+        securityService.recordLoginAttempt(username, false);
+        await securityService.recordAuditLog(db, {
+          actor: username || 'Unknown',
+          action: 'ADMIN_LOGIN_FAILED',
+          entityType: 'AUTH',
+          entityId: username,
+          note: `Failed credentials login from IP ${clientIp}`,
+          ip: clientIp
+        });
+        await saveDb(db);
+        return sendJson(401, { success: false, message: 'Invalid admin credentials. Please enter your authorized username and password.' });
+      }
+
+      // Success: clear lockout
+      securityService.recordLoginAttempt(username, true);
+
+      const role = verifiedAdmin.role || 'dispatcher';
+      const adminId = verifiedAdmin.id || `adm_${username}`;
+      const name = verifiedAdmin.name || `Operator (${username.toUpperCase()})`;
+      const phone = verifiedAdmin.phone || '+91 6206494214';
+
+      const token = securityService.createJwt({
+        adminId,
+        username,
+        role,
+        name,
+        phone
+      });
+
+      if (!db.sessions) db.sessions = [];
+      db.sessions.push({
+        token,
+        adminId,
+        username,
+        role,
+        phone,
+        createdAt: new Date().toISOString()
+      });
+
+      await securityService.recordAuditLog(db, {
         actor: username,
-        details: `Admin operator ${username} signed in to Central Dispatch Console`,
-        timestamp: new Date().toISOString()
+        role,
+        action: 'ADMIN_LOGIN_SUCCESS',
+        entityType: 'AUTH',
+        entityId: adminId,
+        note: `Operator logged in from IP ${clientIp}`,
+        ip: clientIp
       });
 
       await saveDb(db);
+
+      // Set HttpOnly, Secure, SameSite=Lax Cookie
+      const isSecure = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+      res.setHeader('Set-Cookie', `otb_adm_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
 
       return sendJson(200, {
         success: true,
         token,
         admin: {
-          id: `adm_${username}`,
-          username: username,
-          name: `Dispatch Operator (${username.toUpperCase()})`,
-          phone: '+91 6206494214',
-          helpline: '+91 80021 41816'
+          id: adminId,
+          username,
+          name,
+          role,
+          phone,
+          permissions: securityService.getRolePermissions(role)
         },
         message: 'Admin authenticated successfully'
       });
     }
 
-    if ((pathname === '/admin/send-whatsapp-otp' || action === 'send-whatsapp-otp') && method === 'POST') {
-      const AUTHORIZED_ADMIN_PHONE = '6206494214';
-      const rawPhone = (body.phone || AUTHORIZED_ADMIN_PHONE).toString();
-      let cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
-
-      if (cleanPhone !== AUTHORIZED_ADMIN_PHONE) {
-        return sendJson(403, { success: false, message: `Access Denied: Admin authorization is strictly restricted to Owner WhatsApp (+91 ${AUTHORIZED_ADMIN_PHONE}).` });
-      }
-
-      const username = (body.username || 'admin').trim().toLowerCase();
-      const password = (body.password || '').trim();
-      const validPasswords = ['harharmahadev@3', 'admin123', 'BiharTaxi@2026', 'admin', 'Admin@123', 'admin@2026', '123456'];
-
-      if (password && !validPasswords.includes(password)) {
-        return sendJson(401, { success: false, message: 'Invalid admin credentials. Please enter valid password.' });
-      }
-
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      activeAdminOtps.set(AUTHORIZED_ADMIN_PHONE, {
-        code,
-        username,
-        expiresAt: Date.now() + 10 * 60 * 1000,
-        attempts: 0
-      });
-
-      const waText = `OneWayTaxiBihar Admin Security Alert: Central Dispatch 2FA verification code is ${code}. Valid for 10 minutes. If you did not authorize this login request, ignore this message. Share this code ONLY with authorized staff.`;
-      const waUrl = `https://wa.me/91${AUTHORIZED_ADMIN_PHONE}?text=${encodeURIComponent(waText)}`;
-
-      // Real Telecom SMS Dispatch to Owner Mobile (+91 6206494214) via Fast2SMS
-      let smsStatus = null;
-      try {
-        smsStatus = await notificationService.sendSms({
-          phone: AUTHORIZED_ADMIN_PHONE,
-          otp: code,
-          message: `OneWayTaxiBihar Admin 2FA Code is: ${code}. Valid for 10 mins. Central Dispatch authorization.`
+    if (pathname === '/admin/logout' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').split(',')[0].trim();
+      if (admin && admin.token) {
+        if (!db.revoked_tokens) db.revoked_tokens = [];
+        db.revoked_tokens.push(admin.token);
+        if (db.sessions) {
+          db.sessions = db.sessions.filter(s => s.token !== admin.token);
+        }
+        await securityService.recordAuditLog(db, {
+          actor: admin.username,
+          role: admin.role,
+          action: 'ADMIN_LOGOUT',
+          entityType: 'AUTH',
+          entityId: admin.adminId || admin.username,
+          note: 'Operator logged out',
+          ip: clientIp
         });
-      } catch (smsErr) {
-        console.warn('Admin OTP SMS dispatch error:', smsErr.message);
+        await saveDb(db);
       }
+      res.setHeader('Set-Cookie', 'otb_adm_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax');
+      return sendJson(200, { success: true, message: 'Logged out successfully' });
+    }
+
+    if (pathname === '/admin/me' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      return sendJson(200, {
+        success: true,
+        admin: {
+          id: admin.adminId || admin.id,
+          username: admin.username,
+          name: admin.name || admin.username,
+          role: admin.role || 'dispatcher',
+          phone: admin.phone || '+91 6206494214',
+          permissions: securityService.getRolePermissions(admin.role || 'dispatcher')
+        }
+      });
+    }
+
+    if ((pathname === '/admin/send-whatsapp-otp' || action === 'send-whatsapp-otp') && method === 'POST') {
+      const AUTHORIZED_ADMIN_PHONE = securityService.AUTHORIZED_ADMIN_PHONE || '6206494214';
+      const rawPhone = (body.phone || AUTHORIZED_ADMIN_PHONE).toString();
+      const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
+
+      const otpReq = securityService.requestAdminOtp(cleanPhone, body.username || 'admin');
+      if (!otpReq.success) {
+        return sendJson(429, otpReq);
+      }
+
+      // Fast2SMS integration for 2FA SMS
+      try {
+        await notificationService.sendSms({
+          phone: cleanPhone,
+          message: `OneWayTaxiBihar Admin Security Code: ${otpReq.code || ''}. Valid for 5 mins.`
+        });
+      } catch (e) {}
 
       return sendJson(200, {
         success: true,
-        phone: `+91 ${AUTHORIZED_ADMIN_PHONE}`,
-        cleanPhone: AUTHORIZED_ADMIN_PHONE,
-        whatsappUrl: waUrl,
-        smsStatus,
-        message: `Admin 2FA verification code dispatched to Owner WhatsApp & SMS (+91 ${AUTHORIZED_ADMIN_PHONE}).`
+        phone: `+91 ${cleanPhone}`,
+        cleanPhone,
+        whatsappUrl: `https://wa.me/91${cleanPhone}?text=${encodeURIComponent('OneWayTaxiBihar: Central Dispatch 2FA code is dispatched to Owner handset.')}`,
+        message: `Admin 2FA verification code dispatched to Owner (+91 ${cleanPhone}).`
       });
     }
 
     if ((pathname === '/admin/verify-whatsapp-otp' || action === 'verify-whatsapp-otp') && method === 'POST') {
-      const AUTHORIZED_ADMIN_PHONE = '6206494214';
+      const AUTHORIZED_ADMIN_PHONE = securityService.AUTHORIZED_ADMIN_PHONE || '6206494214';
       const rawPhone = (body.phone || AUTHORIZED_ADMIN_PHONE).toString();
-      let cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
-
-      if (cleanPhone !== AUTHORIZED_ADMIN_PHONE) {
-        return sendJson(403, { success: false, message: `Access Denied: Only Owner WhatsApp (+91 ${AUTHORIZED_ADMIN_PHONE}) is authorized.` });
-      }
-
+      const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
       const inputCode = (body.otp || '').toString().trim();
 
-      if (!activeAdminOtps.has(AUTHORIZED_ADMIN_PHONE)) {
-        return sendJson(400, { success: false, message: `No active OTP request found for +91 ${AUTHORIZED_ADMIN_PHONE}. Please request a new code.` });
+      const verifyRes = securityService.verifyAdminOtp(cleanPhone, inputCode);
+      if (!verifyRes.success) {
+        return sendJson(400, verifyRes);
       }
 
-      const record = activeAdminOtps.get(AUTHORIZED_ADMIN_PHONE);
-      if (Date.now() > record.expiresAt) {
-        activeAdminOtps.delete(AUTHORIZED_ADMIN_PHONE);
-        return sendJson(400, { success: false, message: 'Verification code expired. Please request a new code.' });
-      }
+      const token = securityService.createJwt({
+        adminId: 'adm_owner',
+        username: 'owner',
+        role: 'owner',
+        name: 'Chief Operations Officer',
+        phone: `+91 ${cleanPhone}`
+      });
 
-      if (record.code !== inputCode) {
-        record.attempts = (record.attempts || 0) + 1;
-        return sendJson(400, { success: false, message: `Incorrect OTP verification code. Please check owner WhatsApp (+91 ${AUTHORIZED_ADMIN_PHONE}).` });
-      }
-
-      activeAdminOtps.delete(AUTHORIZED_ADMIN_PHONE);
-      const token = generateToken('adm_sess');
       if (!db.sessions) db.sessions = [];
       db.sessions.push({
         token,
-        adminId: 'adm_01',
-        role: 'admin',
-        authMethod: 'WHATSAPP_OTP',
-        phone: `+91 ${AUTHORIZED_ADMIN_PHONE}`,
+        adminId: 'adm_owner',
+        role: 'owner',
+        phone: `+91 ${cleanPhone}`,
+        authMethod: 'WHATSAPP_2FA',
         createdAt: new Date().toISOString()
       });
 
-      if (!db.audit_logs) db.audit_logs = [];
-      db.audit_logs.push({
-        id: `AUD_${Date.now()}`,
-        action: 'ADMIN_LOGIN_AUTHORIZED',
-        actor: `Owner (+91 ${AUTHORIZED_ADMIN_PHONE})`,
-        details: `Admin logged in with Owner WhatsApp verification (+91 ${AUTHORIZED_ADMIN_PHONE})`,
-        timestamp: new Date().toISOString()
+      await securityService.recordAuditLog(db, {
+        actor: `Owner (+91 ${cleanPhone})`,
+        role: 'owner',
+        action: 'ADMIN_2FA_LOGIN_SUCCESS',
+        entityType: 'AUTH',
+        entityId: 'adm_owner',
+        note: 'Authenticated via Owner 2FA OTP'
       });
       await saveDb(db);
+
+      const isSecure = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+      res.setHeader('Set-Cookie', `otb_adm_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
 
       return sendJson(200, {
         success: true,
         token,
         admin: {
-          id: 'adm_01',
-          username: 'admin',
-          name: 'Patna Central Dispatch',
-          phone: `+91 ${AUTHORIZED_ADMIN_PHONE}`,
-          verifiedVia: 'Owner WhatsApp 2FA'
+          id: 'adm_owner',
+          username: 'owner',
+          name: 'Chief Operations Officer',
+          role: 'owner',
+          phone: `+91 ${cleanPhone}`,
+          permissions: securityService.getRolePermissions('owner')
         },
-        message: 'Admin verified and authenticated successfully.'
+        message: 'Owner authenticated successfully via 2FA.'
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 9a-2. CUSTOMERS, VEHICLES, REPORTS, USERS & SETTINGS
+    // -------------------------------------------------------------
+    if (pathname === '/admin/customers' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'customers')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to view customer CRM.' });
+      }
+
+      const customerMap = new Map();
+      (db.users || []).forEach(u => {
+        const phone = (u.phone || '').replace(/\D/g, '').slice(-10);
+        if (phone) {
+          customerMap.set(phone, {
+            id: u.id,
+            name: u.name || 'Passenger',
+            phone: u.phone,
+            email: u.email || '',
+            walletBalance: u.walletBalance || 0,
+            totalTrips: 0,
+            totalSpent: 0,
+            lastRideDate: u.createdAt || null
+          });
+        }
+      });
+
+      (db.bookings || []).forEach(b => {
+        const rawP = b.passengerPhone || b.phone || '';
+        const phone = rawP.replace(/\D/g, '').slice(-10);
+        if (phone) {
+          let cust = customerMap.get(phone);
+          if (!cust) {
+            cust = {
+              id: `cust_${phone}`,
+              name: b.passengerName || 'Passenger',
+              phone: rawP,
+              email: b.passengerEmail || '',
+              walletBalance: 0,
+              totalTrips: 0,
+              totalSpent: 0,
+              lastRideDate: null
+            };
+            customerMap.set(phone, cust);
+          }
+          cust.totalTrips += 1;
+          const fare = Number(b.totalFare) || Number(b.originalFare) || 0;
+          if (b.bookingStatus === 'COMPLETED' || String(b.paymentStatus || '').includes('PAID')) {
+            cust.totalSpent += fare;
+          }
+          const bookingDate = b.pickupDate || b.createdAt;
+          if (!cust.lastRideDate || (bookingDate && new Date(bookingDate) > new Date(cust.lastRideDate))) {
+            cust.lastRideDate = bookingDate;
+          }
+        }
+      });
+
+      const customers = Array.from(customerMap.values()).sort((a,b) => b.totalTrips - a.totalTrips);
+      return sendJson(200, { success: true, count: customers.length, customers });
+    }
+
+    if (pathname === '/admin/vehicles' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'vehicles')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to view vehicles.' });
+      }
+
+      // Initialize default fleet vehicles if empty
+      if (!db.vehicles || db.vehicles.length === 0) {
+        db.vehicles = [
+          {
+            id: 'veh_01',
+            vehicleNumber: 'BR 01 PB 2816',
+            model: 'Maruti Suzuki Dzire',
+            tier: 'sedan',
+            fuelType: 'CNG + Petrol',
+            assignedDriver: 'Ramesh Kumar',
+            driverPhone: '+91 6206494214',
+            fitnessExpiry: '2027-02-15',
+            insuranceExpiry: '2026-11-30',
+            permitExpiry: '2027-08-10',
+            status: 'ACTIVE',
+            updatedAt: new Date().toISOString()
+          },
+          {
+            id: 'veh_02',
+            vehicleNumber: 'BR 01 EA 4589',
+            model: 'Toyota Innova Crysta',
+            tier: 'innova',
+            fuelType: 'Diesel',
+            assignedDriver: 'Sunil Paswan',
+            driverPhone: '+91 9334812345',
+            fitnessExpiry: '2026-10-25',
+            insuranceExpiry: '2026-10-30',
+            permitExpiry: '2027-01-20',
+            status: 'EXPIRING_SOON',
+            updatedAt: new Date().toISOString()
+          },
+          {
+            id: 'veh_03',
+            vehicleNumber: 'BR 02 C 8841',
+            model: 'Maruti Suzuki Ertiga',
+            tier: 'suv',
+            fuelType: 'CNG',
+            assignedDriver: 'Manoj Yadav',
+            driverPhone: '+91 9123456780',
+            fitnessExpiry: '2027-06-18',
+            insuranceExpiry: '2027-05-12',
+            permitExpiry: '2027-09-01',
+            status: 'ACTIVE',
+            updatedAt: new Date().toISOString()
+          }
+        ];
+        await saveDb(db);
+      }
+
+      return sendJson(200, { success: true, count: db.vehicles.length, vehicles: db.vehicles });
+    }
+
+    if (pathname === '/admin/vehicles/save' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'vehicles')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to modify vehicles.' });
+      }
+
+      const { id, vehicleNumber, model, tier, fuelType, assignedDriver, driverPhone, fitnessExpiry, insuranceExpiry, permitExpiry, status } = body;
+      if (!vehicleNumber || !model) {
+        return sendJson(400, { success: false, message: 'Vehicle number and model are required.' });
+      }
+
+      if (!db.vehicles) db.vehicles = [];
+      const cleanNum = vehicleNumber.toUpperCase().trim();
+      let veh = db.vehicles.find(v => v.id === id || v.vehicleNumber === cleanNum);
+
+      const oldVal = veh ? { ...veh } : null;
+      if (veh) {
+        veh.vehicleNumber = cleanNum;
+        veh.model = model.trim();
+        veh.tier = tier || 'sedan';
+        veh.fuelType = fuelType || 'Petrol';
+        veh.assignedDriver = assignedDriver || '';
+        veh.driverPhone = driverPhone || '';
+        veh.fitnessExpiry = fitnessExpiry || '';
+        veh.insuranceExpiry = insuranceExpiry || '';
+        veh.permitExpiry = permitExpiry || '';
+        veh.status = status || 'ACTIVE';
+        veh.updatedAt = new Date().toISOString();
+      } else {
+        veh = {
+          id: id || `veh_${Date.now()}`,
+          vehicleNumber: cleanNum,
+          model: model.trim(),
+          tier: tier || 'sedan',
+          fuelType: fuelType || 'Petrol',
+          assignedDriver: assignedDriver || '',
+          driverPhone: driverPhone || '',
+          fitnessExpiry: fitnessExpiry || '',
+          insuranceExpiry: insuranceExpiry || '',
+          permitExpiry: permitExpiry || '',
+          status: status || 'ACTIVE',
+          updatedAt: new Date().toISOString()
+        };
+        db.vehicles.push(veh);
+      }
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: oldVal ? 'VEHICLE_UPDATED' : 'VEHICLE_ADDED',
+        entityType: 'VEHICLE',
+        entityId: veh.id,
+        oldValue: oldVal,
+        newValue: veh,
+        note: `Saved vehicle ${cleanNum} (${veh.model})`
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, vehicle: veh, message: 'Vehicle saved successfully.' });
+    }
+
+    if (pathname === '/admin/reports' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'reports')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to view financial reports.' });
+      }
+
+      const bookings = db.bookings || [];
+      const completed = bookings.filter(b => b.bookingStatus === 'COMPLETED');
+      const confirmed = bookings.filter(b => ['CONFIRMED', 'DRIVER ASSIGNED', 'STARTED', 'COMPLETED'].includes(b.bookingStatus));
+      const cancelled = bookings.filter(b => ['CANCELLED', 'REJECTED'].includes(b.bookingStatus));
+
+      const totalRevenue = confirmed.reduce((sum, b) => sum + (Number(b.totalFare) || Number(b.originalFare) || 0), 0);
+      const advanceCollected = confirmed.reduce((sum, b) => sum + (Number(b.advancePaid) || 0), 0);
+
+      const routeStats = {};
+      bookings.forEach(b => {
+        const key = `${b.originCity || 'Patna'} ➔ ${b.destCity || 'Bihar'}`;
+        routeStats[key] = (routeStats[key] || 0) + 1;
+      });
+
+      const topRoutes = Object.entries(routeStats)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 8)
+        .map(([route, count]) => ({ route, count }));
+
+      return sendJson(200, {
+        success: true,
+        stats: {
+          totalBookings: bookings.length,
+          completedTrips: completed.length,
+          activeDispatches: confirmed.length - completed.length,
+          cancelledTrips: cancelled.length,
+          totalRevenue,
+          advanceCollected,
+          averageTicketSize: confirmed.length > 0 ? Math.round(totalRevenue / confirmed.length) : 0,
+          totalDrivers: (db.drivers || []).length,
+          totalVehicles: (db.vehicles || []).length
+        },
+        topRoutes
+      });
+    }
+
+    if (pathname === '/admin/settings' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      return sendJson(200, {
+        success: true,
+        settings: {
+          helpline: db.settings?.helpline || '6206494214',
+          supportPhone: db.settings?.supportPhone || '8002141816',
+          emergencyHotline: db.settings?.emergencyHotline || '+91 6206494214',
+          sedanRatePerKm: db.settings?.sedanRatePerKm || 11,
+          suvRatePerKm: db.settings?.suvRatePerKm || 15,
+          innovaRatePerKm: db.settings?.innovaRatePerKm || 19,
+          advanceAmount: db.settings?.payment?.defaultAdvanceAmount || 299,
+          enableRazorpay: db.settings?.payment?.enableRazorpay !== false,
+          enableDirectUpi: db.settings?.payment?.enableDirectUpi !== false,
+          enableCashToDriver: db.settings?.payment?.enableCashToDriver !== false,
+          emergencyPause: !!db.settings?.emergencyPause
+        }
+      });
+    }
+
+    if (pathname === '/admin/settings' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!['owner', 'manager'].includes(admin.role)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner or Operations Manager can update system settings.' });
+      }
+
+      if (!db.settings) db.settings = {};
+      const oldSettings = { ...db.settings };
+
+      if (body.helpline) db.settings.helpline = String(body.helpline).trim();
+      if (body.supportPhone) db.settings.supportPhone = String(body.supportPhone).trim();
+      if (body.emergencyHotline) db.settings.emergencyHotline = String(body.emergencyHotline).trim();
+      if (body.sedanRatePerKm) db.settings.sedanRatePerKm = Number(body.sedanRatePerKm);
+      if (body.suvRatePerKm) db.settings.suvRatePerKm = Number(body.suvRatePerKm);
+      if (body.innovaRatePerKm) db.settings.innovaRatePerKm = Number(body.innovaRatePerKm);
+      if (body.emergencyPause !== undefined) db.settings.emergencyPause = !!body.emergencyPause;
+
+      if (!db.settings.payment) db.settings.payment = {};
+      if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
+      if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = !!body.enableRazorpay;
+      if (body.enableDirectUpi !== undefined) db.settings.payment.enableDirectUpi = !!body.enableDirectUpi;
+      if (body.enableCashToDriver !== undefined) db.settings.payment.enableCashToDriver = !!body.enableCashToDriver;
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'SETTINGS_UPDATED',
+        entityType: 'SETTINGS',
+        entityId: 'global',
+        oldValue: oldSettings,
+        newValue: db.settings,
+        note: 'Operational settings modified'
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: 'Settings successfully saved and propagated.' });
+    }
+
+    if (pathname === '/admin/users' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (admin.role !== 'owner') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can view operator accounts.' });
+      }
+
+      const users = (db.admins || []).map(a => ({
+        id: a.id,
+        username: a.username,
+        name: a.name,
+        role: a.role,
+        phone: a.phone,
+        createdAt: a.createdAt || null
+      }));
+
+      return sendJson(200, { success: true, users });
+    }
+
+    if (pathname === '/admin/users' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (admin.role !== 'owner') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can create or modify operator accounts.' });
+      }
+
+      const { username, password, name, role, phone } = body;
+      if (!username || !password) {
+        return sendJson(400, { success: false, message: 'Username and password are required.' });
+      }
+
+      const cleanUname = username.trim().toLowerCase();
+      const validRoles = ['owner', 'manager', 'dispatcher', 'accounts', 'support'];
+      const assignedRole = validRoles.includes(role) ? role : 'dispatcher';
+
+      const passHash = securityService.hashPassword(password.trim());
+
+      if (!db.admins) db.admins = [];
+      const existingIdx = db.admins.findIndex(a => a.username.toLowerCase() === cleanUname);
+
+      const userObj = {
+        id: existingIdx >= 0 ? db.admins[existingIdx].id : `adm_${cleanUname}`,
+        username: cleanUname,
+        passwordHash: passHash,
+        name: name ? name.trim() : `Operator (${cleanUname})`,
+        role: assignedRole,
+        phone: phone ? phone.trim() : '+91 6206494214',
+        createdAt: new Date().toISOString()
+      };
+
+      if (existingIdx >= 0) {
+        db.admins[existingIdx] = userObj;
+      } else {
+        db.admins.push(userObj);
+      }
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: existingIdx >= 0 ? 'OPERATOR_UPDATED' : 'OPERATOR_CREATED',
+        entityType: 'OPERATOR',
+        entityId: userObj.id,
+        note: `Operator ${cleanUname} assigned role: ${assignedRole}`
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Operator @${cleanUname} saved successfully.` });
+    }
+
+    if (pathname === '/admin/bookings/timeline' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const bookingId = url.searchParams.get('bookingId') || '';
+      const booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
+
+      return sendJson(200, {
+        success: true,
+        bookingId: booking.bookingId,
+        timeline: booking.statusHistory || []
       });
     }
 
@@ -2681,7 +3086,7 @@ module.exports = async (req, res) => {
       return sendJson(200, { success: true, driver: newDrv });
     }
 
-    if (pathname === '/admin/status' && method === 'POST') {
+    if ((pathname === '/admin/status' || pathname === '/admin/bookings/status') && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
@@ -3562,13 +3967,14 @@ module.exports = async (req, res) => {
       await saveDb(db);
 
       // Clean MongoDB Atlas directly if connected
-      const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-      try {
-        const { MongoClient } = require('mongodb');
-        const client = new MongoClient(mongoUri);
-        await client.connect();
-        const dbName = process.env.MONGODB_DB_NAME || 'onewaytaxibihar';
-        const mDb = client.db(dbName);
+      const mongoUri = process.env.MONGODB_URI;
+      if (mongoUri) {
+        try {
+          const { MongoClient } = require('mongodb');
+          const client = new MongoClient(mongoUri);
+          await client.connect();
+          const dbName = process.env.MONGODB_DB_NAME || 'onewaytaxibihar';
+          const mDb = client.db(dbName);
         await Promise.allSettled([
           mDb.collection('bookings').deleteMany({}),
           mDb.collection('leads').deleteMany({}),
@@ -3580,7 +3986,8 @@ module.exports = async (req, res) => {
           mDb.collection('users').deleteMany({ role: { $ne: 'admin' }, phone: { $ne: '+91 6206494214' } })
         ]);
         await client.close();
-      } catch(e) {}
+        } catch(e) {}
+      }
 
       return sendJson(200, {
         success: true,

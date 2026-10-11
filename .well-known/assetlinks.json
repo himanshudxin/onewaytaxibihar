@@ -5,7 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.onewaytaxibihar.app",
       "sha256_cert_fingerprints": [
-        "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00"
+        "DB:B3:1A:09:EA:19:CA:B0:53:49:EA:26:77:4E:C2:80:09:31:D7:1B:68:E2:CC:48:3F:00:98:BD:E5:A6:81:1C"
       ]
     }
   },
@@ -15,7 +15,7 @@
       "namespace": "android_app",
       "package_name": "com.onewaytaxibihar.driver",
       "sha256_cert_fingerprints": [
-        "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00"
+        "DB:B3:1A:09:EA:19:CA:B0:53:49:EA:26:77:4E:C2:80:09:31:D7:1B:68:E2:CC:48:3F:00:98:BD:E5:A6:81:1C"
       ]
     }
   }

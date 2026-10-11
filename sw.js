@@ -4,20 +4,30 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v1.3';
+const CACHE_NAME = 'onewaytaxibihar-v1.4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/driver',
   '/driver.html',
+  '/patna-to-gaya-cab.html',
+  '/patna-to-muzaffarpur-cab.html',
+  '/patna-to-darbhanga-cab.html',
+  '/patna-to-bhagalpur-cab.html',
+  '/404.html',
+  '/500.html',
   '/css/style.css',
   '/css/components.css?v=3.0',
   '/js/data.js?v=20261008_0030',
   '/js/calculator.js?v=20261008_0030',
+  '/js/map.js?v=20261008_0030',
   '/js/api.js?v=20261008_0030',
+  '/js/datetime-picker.js?v=20261008_0030',
+  '/js/firebase-otp.js?v=20261008_fast2sms',
   '/js/booking.js?v=20261008_0030',
   '/js/app.js?v=20261008_0030',
   '/favicon.svg',
+  '/img/logo-reframed.png',
   '/images/icon-192.png',
   '/images/icon-512.png',
   '/images/phonepe-qr.png',

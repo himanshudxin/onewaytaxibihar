@@ -88,6 +88,10 @@ class BookingManager {
             if (dropInput) dropInput.value = `${matchedTo.name} (${matchedTo.hindiName || ''}), ${matchedTo.state}`;
           }
         }
+        const cabParam = (urlParams.get("cab") || "").trim().toLowerCase();
+        if (cabParam) {
+          this.selectedCabId = cabParam;
+        }
       } catch (err) {}
     }
 
@@ -131,6 +135,19 @@ class BookingManager {
         mapSection.classList.add("fare-section-open");
       }
       this.calculateAndRenderFares();
+    }
+
+    // If deep-link params were supplied, smooth-scroll to cab options
+    if (typeof window !== "undefined" && window.location.search) {
+      try {
+        const checkParams = new URLSearchParams(window.location.search);
+        if (checkParams.get("from") || checkParams.get("to") || checkParams.get("cab") || window.location.hash === "#booking-hero") {
+          setTimeout(() => {
+            const targetEl = document.getElementById("cab-selection-section") || document.getElementById("booking-hero");
+            targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 350);
+        }
+      } catch (e) {}
     }
 
     this.restoreState();

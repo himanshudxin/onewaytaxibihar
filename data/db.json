@@ -296,18 +296,10 @@
       "userId": "usr_6206494214"
     },
     {
-      "token": "adm_sess_81046c91a47077aca9410c2e07bac1ded633d56b3eaa9c18",
-      "adminId": "adm_admin",
-      "username": "admin",
-      "role": "admin",
-      "phone": "+91 6206494214",
-      "createdAt": "2026-10-11T04:53:45.900Z"
-    },
-    {
-      "token": "drv_sess_8b9652bd0c24ed350674580ec9bff22169c186eedbdaf9e8",
+      "token": "drv_sess_5422e6a499f1b177e98ee946cab29d1a6e8e943aa2d94a4f",
       "driverId": "drv_101",
       "role": "driver",
-      "createdAt": "2026-10-11T04:53:50.965Z"
+      "createdAt": "2026-10-11T07:59:21.857Z"
     }
   ],
   "settings": {

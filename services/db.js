@@ -464,8 +464,26 @@ async function createBooking(booking) {
 }
 
 async function findBooking(bookingId) {
+  if (!bookingId) return null;
   const db = await getDbAsync();
-  return (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId) || null;
+  let found = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId) || null;
+  if (!found && activeEngine === 'mongodb' && mongoDbInstance) {
+    try {
+      const doc = await mongoDbInstance.collection('bookings').findOne({
+        $or: [{ bookingId: bookingId }, { id: bookingId }]
+      });
+      if (doc) {
+        const { _id, ...clean } = doc;
+        if (!db.bookings) db.bookings = [];
+        const exists = db.bookings.some(b => b.bookingId === clean.bookingId);
+        if (!exists) db.bookings.unshift(clean);
+        found = clean;
+      }
+    } catch (e) {
+      console.warn('[findBooking Cloud Lookup Note]:', e.message);
+    }
+  }
+  return found;
 }
 
 async function updateBooking(bookingId, patch) {

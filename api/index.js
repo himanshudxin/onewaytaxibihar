@@ -2733,7 +2733,10 @@ module.exports = async (req, res) => {
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
       const bookingId = url.searchParams.get('bookingId') || '';
-      const booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      let booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking && bookingId) {
+        booking = await dbService.findBooking(bookingId);
+      }
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
       return sendJson(200, {
@@ -3132,18 +3135,21 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      const { bookingId, newStatus, note } = body;
-      const booking = (db.bookings || []).find(b => b.bookingId === bookingId);
+      const { bookingId, newStatus, status, note, notes } = body;
+      let booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking && bookingId) {
+        booking = await dbService.findBooking(bookingId);
+      }
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
-      const statusUpper = (newStatus || '').toUpperCase();
+      const statusUpper = (newStatus || status || '').toUpperCase();
       booking.bookingStatus = statusUpper;
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: statusUpper,
         timestamp: new Date().toISOString(),
         actor: 'Admin Dispatcher',
-        note: note || 'Status updated by admin desk'
+        note: note || notes || 'Status updated by admin desk'
       });
 
       if ((statusUpper === 'CANCELLED' || statusUpper === 'REJECTED') && booking.walletUsed > 0) {

@@ -25,12 +25,22 @@ let dynamicConfig = {
   cashfreeSecretKey: process.env.CASHFREE_SECRET_KEY || '',
   cashfreeEnv: process.env.CASHFREE_ENV || 'sandbox',
   defaultAdvanceAmount: parseInt(process.env.DEFAULT_ADVANCE_AMOUNT || '299', 10),
-  enableRazorpay: true,
+  enableRazorpay: Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET),
   enableDirectUpi: true,
   enableCashToDriver: true,
   enableTokenAdvance: true,
   autoConfirmOnAdvance: true
 };
+
+function hasValidRazorpayKeys(cfg) {
+  if (!cfg) return false;
+  const keyId = String(cfg.razorpayKeyId || '').trim();
+  const keySecret = String(cfg.razorpayKeySecret || '').trim();
+  if (!keyId || !keySecret) return false;
+  if (keyId.includes('placeholder') || keySecret.includes('placeholder')) return false;
+  if (keyId.includes('rzp_test_placeholder') || keyId.includes('xxxxxxxx')) return false;
+  return keyId.startsWith('rzp_live_') || keyId.startsWith('rzp_test_');
+}
 
 function getEffectiveSettings(dbSettings = null) {
   if (dbSettings && typeof dbSettings === 'object') {
@@ -65,9 +75,10 @@ async function createRazorpayOrder({ amountInRupees, bookingId, passengerName, p
 
   const keyId = cfg.razorpayKeyId;
   const keySecret = cfg.razorpayKeySecret;
+  const isRzpReady = hasValidRazorpayKeys(cfg);
 
-  // If live or test keys are present
-  if (keyId && keySecret) {
+  // If live or test keys are present and valid
+  if (isRzpReady && keyId && keySecret) {
     try {
       const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
       const response = await fetch('https://api.razorpay.com/v1/orders', {
@@ -97,6 +108,7 @@ async function createRazorpayOrder({ amountInRupees, bookingId, passengerName, p
 
       return {
         success: true,
+        razorpayConfigured: true,
         provider: 'razorpay',
         keyId: keyId,
         orderId: orderData.id,
@@ -106,23 +118,24 @@ async function createRazorpayOrder({ amountInRupees, bookingId, passengerName, p
         isSandbox: false
       };
     } catch (err) {
-      console.error('[Payment Service] Razorpay API error:', err.message);
-      // Fall through to resilient sandbox order if live request fails
+      console.warn('[Payment Service] Razorpay API warning:', err.message);
+      // Fall through to resilient direct UPI fallback
     }
   }
 
-  // Graceful Sandbox / Demo Mode for testing when keys are pending
-  const sandboxOrderId = `order_demo_${Date.now()}`;
+  // Graceful offline fallback when Razorpay keys are pending (will be configured later)
+  const offlineOrderId = `order_upi_${Date.now()}`;
   return {
     success: true,
-    provider: 'razorpay_sandbox',
-    keyId: keyId || 'rzp_test_placeholder_key',
-    orderId: sandboxOrderId,
+    provider: 'direct_upi',
+    razorpayConfigured: false,
+    keyId: null,
+    orderId: offlineOrderId,
     amount: amountInPaise,
     currency: 'INR',
     advanceAmount: advanceAmt,
-    isSandbox: true,
-    notice: 'Demo mode active. Configure Razorpay Key & Secret in Admin Settings or .env for live settlements.'
+    isSandbox: false,
+    notice: 'Razorpay keys pending. Direct PhonePe / BHIM UPI QR and Cash on Ride active.'
   };
 }
 
@@ -237,6 +250,7 @@ async function createCashfreeOrder({ amountInRupees, bookingId, customerId, cust
 // 5. Get Public Payment Configuration for Passenger Checkout
 function getPaymentConfig(dbSettings = null) {
   const cfg = dbSettings ? getEffectiveSettings(dbSettings) : dynamicConfig;
+  const isRzpReady = hasValidRazorpayKeys(cfg);
   return {
     upiId: cfg.upiId || '8002141816@ybl',
     payeeName: cfg.payeeName || 'HIMANSHU KUMAR DUBEY',
@@ -247,15 +261,16 @@ function getPaymentConfig(dbSettings = null) {
     ifscCode: cfg.ifscCode || '',
     branchName: cfg.branchName || 'Patna Main Branch',
     accountType: cfg.accountType || 'Current Account',
-    razorpayConfigured: !!(cfg.razorpayKeyId && cfg.razorpayKeySecret),
+    razorpayConfigured: isRzpReady,
     cashfreeConfigured: !!(cfg.cashfreeAppId && cfg.cashfreeSecretKey),
-    razorpayKeyId: cfg.razorpayKeyId || null,
+    razorpayKeyId: isRzpReady ? cfg.razorpayKeyId : null,
     defaultAdvanceAmount: cfg.defaultAdvanceAmount || 299,
-    enableRazorpay: cfg.enableRazorpay !== false,
+    enableRazorpay: Boolean(cfg.enableRazorpay && isRzpReady),
     enableDirectUpi: cfg.enableDirectUpi !== false,
     enableCashToDriver: cfg.enableCashToDriver !== false,
     enableTokenAdvance: cfg.enableTokenAdvance !== false,
     autoConfirmOnAdvance: cfg.autoConfirmOnAdvance !== false,
+    primaryPaymentMode: isRzpReady ? 'razorpay' : 'direct_upi_qr',
     supportedCurrencies: ['INR']
   };
 }
@@ -268,6 +283,7 @@ function getAdminPaymentConfig(dbSettings = null) {
     if (sec.length <= 6) return '******';
     return `${sec.slice(0, 3)}••••••••${sec.slice(-3)}`;
   };
+  const isRzpReady = hasValidRazorpayKeys(cfg);
 
   return {
     upiId: cfg.upiId || '8002141816@ybl',
@@ -284,12 +300,13 @@ function getAdminPaymentConfig(dbSettings = null) {
     razorpayKeySecretSet: !!cfg.razorpayKeySecret,
     razorpayWebhookSecret: maskSecret(cfg.razorpayWebhookSecret),
     razorpayWebhookSecretSet: !!cfg.razorpayWebhookSecret,
+    razorpayConfigured: isRzpReady,
     cashfreeAppId: cfg.cashfreeAppId || '',
     cashfreeSecretKey: maskSecret(cfg.cashfreeSecretKey),
     cashfreeSecretKeySet: !!cfg.cashfreeSecretKey,
     cashfreeEnv: cfg.cashfreeEnv || 'sandbox',
     defaultAdvanceAmount: cfg.defaultAdvanceAmount || 299,
-    enableRazorpay: cfg.enableRazorpay !== false,
+    enableRazorpay: Boolean(cfg.enableRazorpay && isRzpReady),
     enableDirectUpi: cfg.enableDirectUpi !== false,
     enableCashToDriver: cfg.enableCashToDriver !== false,
     enableTokenAdvance: cfg.enableTokenAdvance !== false,

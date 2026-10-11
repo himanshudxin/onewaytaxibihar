@@ -2339,30 +2339,52 @@ class BookingManager {
           <!-- Payment Options List -->
           <div class="checkout-methods-list" style="display: flex; flex-direction: column; gap: 8px;">
             
-            <!-- Method 1: Token Advance ₹299 (Recommended) -->
-            <label class="checkout-method-item active" id="pay-card-razorpay" style="border: 1.5px solid #0070f3; background: rgba(0, 112, 243, 0.04); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+            <!-- Method 1: Direct PhonePe / BHIM UPI QR (Default & Recommended) -->
+            <label class="checkout-method-item active" id="pay-card-upi" style="border: 1.5px solid #5f259f; background: rgba(95, 37, 159, 0.04); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
               <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
-                <input type="radio" name="pay-method" value="Razorpay Online Advance (₹299)" checked onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0070f3; width: 18px; height: 18px; cursor: pointer;">
+                <input type="radio" name="pay-method" value="Direct UPI / QR Advance (₹299)" checked onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-                    <strong style="color: #0070f3; font-size: 14px; font-weight: 800;">
-                      Pay ₹299 Token Advance (Instant Cab Lock)
+                    <strong style="color: #5f259f; font-size: 14px; font-weight: 800;">
+                      Pay ₹299 Token Advance via PhonePe / UPI QR
                     </strong>
                     <div style="display: flex; gap: 5px;">
-                      <span style="font-size: 9.5px; background: #0070f3; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">RECOMMENDED</span>
-                      <span style="font-size: 9.5px; background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid #10b981; padding: 1px 6px; border-radius: 4px; font-weight: 800;">100% REFUNDABLE</span>
+                      <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">RECOMMENDED</span>
+                      <span style="font-size: 9.5px; background: rgba(16, 185, 129, 0.15); color: #059669; border: 1px solid #10b981; padding: 1px 6px; border-radius: 4px; font-weight: 800;">INSTANT CAB LOCK</span>
                     </div>
                   </div>
                   <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px; line-height: 1.45;">
-                    Lock your confirmed cab &amp; chauffeur instantly. Pay ₹299 online now via <strong>UPI (GPay / PhonePe / Paytm), Cards, or NetBanking</strong>. Remaining fare payable directly to driver at destination.
+                    Lock your confirmed cab &amp; chauffeur instantly! Scan verified merchant QR code or tap to pay ₹299 token advance via <strong>PhonePe, Google Pay, Paytm or BHIM</strong>. Remaining fare payable directly to driver at destination.
                   </div>
                   <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 10.5px; color: #475569;">
-                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">GPay</span>
                     <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">PhonePe</span>
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">GPay</span>
                     <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Paytm</span>
-                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Cards / UPI</span>
+                    <span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-weight: 700;">BHIM UPI</span>
                     <span style="color: #059669; font-weight: 700; margin-left: auto;">✓ 0% Gateway Fees</span>
                   </div>
+                </div>
+              </div>
+
+              <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: block; margin-top: 12px; background: #faf5ff; border: 1.5px solid #d946ef; border-radius: 12px; padding: 14px; text-align: center;">
+                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 8px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
+                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="Merchant Payment QR Code" class="checkout-qr-img" style="width: 144px; height: 144px; border-radius: 10px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(95,37,159,0.1);">
+                <div id="chk-payee-name" style="margin-top: 8px; font-size: 13.5px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
+                
+                <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; margin-top: 6px;">
+                  <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
+                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy</button>
+                </div>
+
+                <div style="margin-top: 10px;">
+                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 800; box-shadow: 0 3px 10px rgba(95,37,159,0.25);">
+                    Pay ₹299 with PhonePe / GPay App ➔
+                  </a>
+                </div>
+
+                <div style="margin-top: 12px; text-align: left; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                  <label style="font-size: 11px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; text-transform: uppercase;">ENTER UPI TRANSACTION ID / UTR NUMBER (AFTER SCANNING):</label>
+                  <input type="text" id="chk-upi-utr" placeholder="Enter 12-digit UPI UTR number (e.g. 4235XXXXXXXX)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-family: monospace;">
                 </div>
               </div>
             </label>
@@ -2385,42 +2407,22 @@ class BookingManager {
               </div>
             </label>
 
-            <!-- Method 3: Direct PhonePe / UPI QR -->
-            <label class="checkout-method-item" id="pay-card-upi" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
+            <!-- Method 3: Credit/Debit Cards & NetBanking (Razorpay Online Gateway) -->
+            <label class="checkout-method-item" id="pay-card-razorpay" style="border: 1px solid var(--owc-border); background: var(--owc-card-bg); border-radius: 12px; padding: 13px 15px; cursor: pointer; display: block; transition: all 0.2s ease;">
               <div class="checkout-method-header" style="display: flex; align-items: flex-start; gap: 11px;">
-                <input type="radio" name="pay-method" value="Direct UPI / QR Advance (₹299)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #5f259f; width: 18px; height: 18px; cursor: pointer;">
+                <input type="radio" name="pay-method" value="Razorpay Online Advance (₹299)" onchange="window.bookingManager.handlePaymentMethodChange(this.value)" style="margin-top: 3px; accent-color: #0070f3; width: 18px; height: 18px; cursor: pointer;">
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <strong style="color: var(--owc-text); font-size: 14px; font-weight: 800;">
-                      Direct PhonePe / BHIM UPI QR Code (₹299)
+                      Credit / Debit Cards &amp; NetBanking (Razorpay)
                     </strong>
-                    <span style="font-size: 9.5px; background: #5f259f; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">INSTANT SCAN</span>
+                    <span id="rzp-status-pill" style="font-size: 9.5px; background: #64748b; color: #fff; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.3px;">${this.dynamicPaymentConfig?.razorpayConfigured ? 'GATEWAY ACTIVE' : 'CARDS & NETBANKING'}</span>
                   </div>
-                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px;">
-                    Scan verified merchant QR code or tap to launch PhonePe / GPay / Paytm directly.
+                  <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 4px; line-height: 1.45;">
+                    ${this.dynamicPaymentConfig?.razorpayConfigured 
+                      ? 'Pay ₹299 online using Visa, Mastercard, RuPay, or Corporate NetBanking.'
+                      : 'Card & NetBanking gateway integration. Use Direct PhonePe / UPI QR above for instant confirmed dispatch.'}
                   </div>
-                </div>
-              </div>
-
-              <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: none; margin-top: 12px; background: #faf5ff; border: 1.5px solid #d946ef; border-radius: 12px; padding: 14px; text-align: center;">
-                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 8px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
-                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="Merchant Payment QR Code" class="checkout-qr-img" style="width: 144px; height: 144px; border-radius: 10px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(95,37,159,0.1);">
-                <div id="chk-payee-name" style="margin-top: 8px; font-size: 13.5px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
-                
-                <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; margin-top: 6px;">
-                  <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
-                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy</button>
-                </div>
-
-                <div style="margin-top: 10px;">
-                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 800; box-shadow: 0 3px 10px rgba(95,37,159,0.25);">
-                    Pay ₹299 with PhonePe / GPay App ➔
-                  </a>
-                </div>
-
-                <div style="margin-top: 12px; text-align: left; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                  <label style="font-size: 11px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; text-transform: uppercase;">ENTER UPI TRANSACTION ID / UTR NUMBER (AFTER SCANNING):</label>
-                  <input type="text" id="chk-upi-utr" placeholder="Enter 12-digit UPI UTR number (e.g. 4235XXXXXXXX)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-family: monospace;">
                 </div>
               </div>
             </label>
@@ -2478,7 +2480,7 @@ class BookingManager {
             </div>
 
             <button type="button" class="check-fare-primary-btn" id="chk-confirm-cta-btn" style="flex: 1; max-width: 240px; margin: 0; min-height: 48px; font-size: 13.5px; font-weight: 800;" onclick="window.bookingManager.confirmBooking(${price})">
-              Pay ₹299 &amp; Confirm Cab →
+              Confirm Booking (₹299 Advance) →
             </button>
           </div>
 
@@ -2668,8 +2670,8 @@ class BookingManager {
 
     const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
     const isFull = !isCash && (method.includes("Full") || method.includes("100%"));
-    const isRzp = !isCash && (method.includes("Razorpay") || method.includes("Advance (₹299)") || method.includes("Online Advance"));
-    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
+    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || method.includes("Direct") || (method.includes("UPI") && !isCash));
+    const isRzp = !isCash && !isUpi && (method.includes("Razorpay") || method.includes("Card") || method.includes("NetBanking"));
 
     if (cardRzp) {
       cardRzp.classList.toggle("active", isRzp);
@@ -2708,7 +2710,7 @@ class BookingManager {
         sumMethodVal.textContent = "Direct PhonePe / BHIM UPI QR Code (₹299)";
         sumMethodVal.style.color = "#5f259f";
       } else {
-        sumMethodVal.textContent = "Razorpay Online Advance (₹299)";
+        sumMethodVal.textContent = "Credit / Debit Cards & NetBanking (Razorpay)";
         sumMethodVal.style.color = "#0070f3";
       }
     }
@@ -2733,25 +2735,26 @@ class BookingManager {
     const netTripFare = Math.max(0, basePrice - walletDeduction - couponDeduction);
 
     const payRadios = document.getElementsByName("pay-method");
-    let method = "Razorpay Online Advance (₹299)";
+    let method = "Direct UPI / QR Advance (₹299)";
     for (const r of payRadios) {
       if (r.checked) method = r.value;
     }
 
     const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
     const isFull = !isCash && (method.includes("Full") || method.includes("100%"));
-    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
+    const isUpi = !isCash && (method.includes("QR") || method.includes("PhonePe") || method.includes("Direct") || (method.includes("UPI") && !isCash));
+    const isRzp = !isCash && !isUpi && (method.includes("Razorpay") || method.includes("Card") || method.includes("Advance (₹299)"));
 
     let payableNow = 0;
     let balanceDue = netTripFare;
     let titleLabel = "TOKEN ADVANCE NOW";
     let subLabel = "";
-    let ctaText = "Pay ₹299 & Confirm Cab →";
+    let ctaText = "Confirm Booking (₹299 Advance) →";
 
     if (isCash) {
       payableNow = 0;
       balanceDue = netTripFare;
-      titleLabel = "ADVANCE PAYABLE";
+      titleLabel = "ADVANCE PAYABLE: ₹0";
       subLabel = `Total ₹${netTripFare.toLocaleString('en-IN')} payable to driver upon arrival`;
       ctaText = `Confirm Booking (₹0 Advance) →`;
     } else if (isFull) {
@@ -2765,13 +2768,15 @@ class BookingManager {
       balanceDue = Math.max(0, netTripFare - payableNow);
       titleLabel = "SCAN & PAY ADVANCE";
       subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
-      ctaText = `Submit QR Advance (₹${payableNow}) →`;
+      ctaText = `Confirm Booking (₹${payableNow} Advance) →`;
     } else {
       payableNow = Math.min(299, netTripFare);
       balanceDue = Math.max(0, netTripFare - payableNow);
       titleLabel = "TOKEN ADVANCE NOW";
       subLabel = `Balance due to driver: ₹${balanceDue.toLocaleString('en-IN')}`;
-      ctaText = `Pay ₹${payableNow} & Confirm Cab →`;
+      ctaText = this.dynamicPaymentConfig?.razorpayConfigured
+        ? `Pay ₹${payableNow} with Razorpay →`
+        : `Confirm Booking (₹${payableNow} Advance) →`;
     }
 
     if (deductLabel) {
@@ -2822,6 +2827,12 @@ class BookingManager {
 
         const upiLabel = document.getElementById("chk-upi-id-label");
         if (upiLabel && res.upiId) upiLabel.textContent = res.upiId;
+
+        const rzpPill = document.getElementById("rzp-status-pill");
+        if (rzpPill) {
+          rzpPill.textContent = res.razorpayConfigured ? 'GATEWAY ACTIVE' : 'CARDS & NETBANKING';
+          rzpPill.style.background = res.razorpayConfigured ? '#059669' : '#64748b';
+        }
 
         const upiLink = document.getElementById("chk-upi-intent-link");
         if (upiLink) {
@@ -3211,7 +3222,7 @@ class BookingManager {
     }
 
     const payRadios = document.getElementsByName("pay-method");
-    let method = "Razorpay Online Advance (₹299)";
+    let method = "Direct UPI / QR Advance (₹299)";
     for (const r of payRadios) {
       if (r.checked) method = r.value;
     }
@@ -3224,8 +3235,8 @@ class BookingManager {
     const netTripFare = Math.max(0, price - (isUsingWallet ? 100 : 0) - (this.appliedCouponDiscount || 0));
     const isCash = method.includes("Cash") || method.includes("Zero Advance") || method.includes("Driver");
     const isFullPayment = !isCash && (method.includes("Full") || method.includes("100%"));
-    const isRzpAdvance = !isCash && (method.includes("Razorpay") || method.includes("Advance (₹299)") || method.includes("Online Advance"));
-    const isUpiQr = !isCash && (method.includes("QR") || method.includes("PhonePe") || (method.includes("UPI") && !isCash));
+    const isUpiQr = !isCash && (method.includes("QR") || method.includes("PhonePe") || method.includes("Direct") || (method.includes("UPI") && !isCash));
+    const isRzpAdvance = !isCash && !isUpiQr && (method.includes("Razorpay") || method.includes("Card") || method.includes("Advance (₹299)"));
 
     let amountToCharge = 0;
     if (isCash) {
@@ -3239,7 +3250,7 @@ class BookingManager {
     }
 
     if (isUpiQr && !utrVal) {
-      utrVal = `UPI_SCAN_${Date.now()}`;
+      utrVal = `UPI_DIRECT_${Date.now()}`;
       if (utrInput) utrInput.value = utrVal;
     }
 
@@ -3248,7 +3259,7 @@ class BookingManager {
       btnConfirm.disabled = true;
       btnConfirm.innerHTML = `
         <span style="display:inline-block; width:15px; height:15px; border:2px solid #fff; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:8px;"></span>
-        Processing Booking &amp; Payment...
+        Processing Booking &amp; Confirmation...
       `;
     }
     this.isSubmittingBooking = true;
@@ -3278,8 +3289,9 @@ class BookingManager {
         upiUtr: utrVal
       };
 
-      // Live Razorpay Checkout flow if online payment is selected
-      if ((isRzpAdvance || isFullPayment) && typeof window.Razorpay !== 'undefined') {
+      // Live Razorpay Checkout flow ONLY if online cards/gateway selected AND configured with live keys
+      const isRzpLive = Boolean(this.dynamicPaymentConfig?.razorpayConfigured);
+      if ((isRzpAdvance || isFullPayment) && isRzpLive && typeof window.Razorpay !== 'undefined') {
         try {
           const tempBId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
           const orderRes = await ApiClient.createPaymentOrder({

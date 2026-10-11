@@ -1309,39 +1309,42 @@ module.exports = async (req, res) => {
 
       const isCash = payMethodStr.includes('Cash') || payMethodStr.includes('Zero Advance') || payMethodStr.includes('to Driver');
       const isFull = !isCash && (payMethodStr.includes('Full') || payMethodStr.includes('100%'));
-      const isRzp = !isCash && (payMethodStr.includes('Razorpay') || payMethodStr.includes('Advance (₹299)') || payMethodStr.includes('Online Advance'));
-      const isUpiQr = !isCash && (payMethodStr.includes('QR') || payMethodStr.includes('PhonePe') || payMethodStr.includes('UPI'));
+      const isUpiQr = !isCash && (payMethodStr.includes('QR') || payMethodStr.includes('PhonePe') || payMethodStr.includes('UPI') || payMethodStr.includes('Direct'));
+      const isRzp = !isCash && !isUpiQr && (payMethodStr.includes('Razorpay') || payMethodStr.includes('Advance (₹299)') || payMethodStr.includes('Online Advance'));
 
       if (isCash) {
         advancePaid = 0;
         balanceDue = finalPayable;
-        initialPaymentStatus = 'PAYABLE TO DRIVER';
-        initialBookingStatus = 'NEW';
+        initialPaymentStatus = 'PAYABLE TO DRIVER (Cash on Ride)';
+        initialBookingStatus = 'CONFIRMED';
+      } else if (isUpiQr) {
+        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+        balanceDue = Math.max(0, finalPayable - advancePaid);
+        initialPaymentStatus = body.upiUtr ? 'PARTIALLY PAID (Direct PhonePe/UPI Advance)' : 'ADVANCE PENDING VERIFICATION';
+        initialBookingStatus = 'CONFIRMED';
       } else if (isFull) {
         advancePaid = finalPayable;
         balanceDue = 0;
         initialPaymentStatus = body.paymentTxnId ? 'PAID (100% Online Verified)' : 'AWAITING PAYMENT';
-        initialBookingStatus = body.paymentTxnId ? 'CONFIRMED' : 'NEW';
+        initialBookingStatus = 'CONFIRMED';
       } else if (isRzp) {
         advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
         balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Online Advance Verified)' : 'AWAITING ADVANCE PAYMENT';
-        initialBookingStatus = body.paymentTxnId ? 'CONFIRMED' : 'NEW';
-      } else if (isUpiQr) {
-        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
-        balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = 'AWAITING ADVANCE PAYMENT';
-        initialBookingStatus = 'NEW';
+        initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Razorpay Online Advance)' : 'AWAITING ADVANCE PAYMENT';
+        initialBookingStatus = 'CONFIRMED';
       } else {
         advancePaid = 0;
         balanceDue = finalPayable;
         initialPaymentStatus = 'PAYABLE TO DRIVER';
+        initialBookingStatus = 'CONFIRMED';
       }
 
       if (body.advancePaid && Number(body.advancePaid) > 0) {
         advancePaid = Number(body.advancePaid);
         balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = 'ADVANCE PAID';
+        if (!initialPaymentStatus.includes('PARTIALLY PAID') && !isCash) {
+          initialPaymentStatus = 'ADVANCE PAID';
+        }
         initialBookingStatus = 'CONFIRMED';
       }
 
@@ -1358,9 +1361,10 @@ module.exports = async (req, res) => {
         couponDiscount,
         method: payMethodStr,
         status: initialPaymentStatus,
+        provider: isCash ? 'CASH' : (isUpiQr ? 'DIRECT_UPI_PHONEPE' : (isRzp ? 'RAZORPAY' : 'DIRECT_UPI')),
         upiUtr: body.upiUtr || '',
         verifiedBy: null,
-        verifiedAt: body.paymentTxnId ? new Date().toISOString() : null,
+        verifiedAt: (isUpiQr && body.upiUtr) ? new Date().toISOString() : (body.paymentTxnId ? new Date().toISOString() : null),
         createdAt: new Date().toISOString()
       };
 

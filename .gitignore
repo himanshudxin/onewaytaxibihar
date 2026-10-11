@@ -10,8 +10,12 @@ tunnel_out.log
 
 # Temporary & Local files
 *.tmp
+*.bak
 PREVIEW_URL.txt
 scratch/
+dist-apk/
+*.apk
+*.aab
 data/tunnel.json
 
 

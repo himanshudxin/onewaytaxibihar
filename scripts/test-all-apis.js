@@ -129,9 +129,9 @@ async function runAllApiTests() {
     tripType: 'oneway',
     cabType: 'sedan'
   });
-  const fareValid = fareCalc.status === 200 && (fareCalc.data?.fare > 0 || fareCalc.data?.totalFare > 0);
+  const fareValid = fareCalc.status === 200 && (fareCalc.data?.totalFare > 0 || fareCalc.data?.fare?.totalFare > 0);
   record('Pricing', 'POST /api/fares/calculate', fareValid,
-    `Status: ${fareCalc.status}, Total Fare: ₹${fareCalc.data?.fare || fareCalc.data?.totalFare || 0}, Distance: ${fareCalc.data?.distanceKm || 0} KM`);
+    `Status: ${fareCalc.status}, Total Fare: ₹${fareCalc.data?.totalFare || fareCalc.data?.fare?.totalFare || 0}, Distance: ${fareCalc.data?.distanceKm || 0} KM`);
 
   const couponCheck = await apiRequest('POST', '/coupons/apply', {
     code: 'FIRST100',

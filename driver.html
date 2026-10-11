@@ -3,8 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Driver Partner Console | OneWayTaxiBihar</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>OneWay Driver Partner App | OneWayTaxiBihar</title>
+  
+  <!-- Dedicated Driver Partner PWA Manifest & App Launcher Icons -->
+  <link rel="manifest" href="/driver-manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/driver-icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/driver-icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/images/driver-icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="/images/driver-icon-512.png">
+
+  <!-- Mobile App & Driver PWA Capabilities -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OneWay Driver">
+  <meta name="application-name" content="OneWayTaxi Driver Partner">
+  <meta name="theme-color" content="#047857">
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <style>
@@ -298,18 +313,35 @@
 
   <!-- Verified Onboarding & Dispatch Hotline Banner -->
   <div class="driver-topbar">
-    <span>Driver Onboarding &amp; Verification Hotline: <strong>+91 6206494214</strong></span>
-    <a href="https://wa.me/916206494214?text=Hi%20OneWayTaxiBihar%20Dispatch,%20I%20am%20a%20driver%20partner%20requesting%20online%20verification." target="_blank" rel="noopener noreferrer" style="color: #a7f3d0; text-decoration: underline; font-weight: 800;">
-      WhatsApp KYC ➔
-    </a>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span>Chauffeur Hotline: <strong>+91 6206494214</strong></span>
+      <button type="button" id="btn-install-driver-app-top" style="display: none; background: #fbbf24; color: #090d16; border: none; font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 12px; cursor: pointer;">📲 Install Driver App</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://wa.me/916206494214?text=Hi%20OneWayTaxiBihar%20Dispatch,%20I%20am%20a%20driver%20partner%20requesting%20online%20verification." target="_blank" rel="noopener noreferrer" style="color: #a7f3d0; text-decoration: underline; font-weight: 800;">
+        WhatsApp KYC ➔
+      </a>
+      <a href="/" style="color: #cbd5e1; text-decoration: none; font-weight: 700; font-size: 11px;">
+        Passenger Site ➔
+      </a>
+    </div>
   </div>
 
   <!-- Driver Auth Screen (Login + Sign Up) -->
   <div id="driver-login-view" style="display: none; padding: 16px;">
     <div class="driver-login-box">
+      <!-- Prominent Install Driver App Banner -->
+      <div id="driver-install-banner-box" style="display: none; background: rgba(245, 158, 11, 0.12); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; text-align: center;">
+        <div style="font-size: 13px; font-weight: 800; color: #fbbf24; margin-bottom: 4px;">📲 Install Driver App on Your Phone</div>
+        <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 8px;">Add the dedicated Chauffeur Partner App to your Android home screen for instant dispatch notifications.</div>
+        <button type="button" id="btn-install-driver-app-main" style="background: #f59e0b; color: #090d16; border: none; font-weight: 900; font-size: 12px; padding: 8px 18px; border-radius: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);">
+          Install Driver Partner App ➔
+        </button>
+      </div>
+
       <div style="text-align: center; margin-bottom: 20px;">
         <div style="width: 52px; height: 52px; margin: 0 auto 12px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(5, 150, 105, 0.35);">
-          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar Driver Partner" width="52" height="52" style="width: 52px; height: 52px; object-fit: contain; display: block; border-radius: 14px;">
+          <img src="driver-icon.svg" alt="OneWayTaxiBihar Driver Partner" width="52" height="52" style="width: 52px; height: 52px; object-fit: contain; display: block; border-radius: 14px;">
         </div>
         <h2 style="font-size: 20px; font-weight: 900; margin: 0; color: #f8fafc;">Chauffeur Fleet Partner</h2>
         <p style="font-size: 12px; color: #94a3b8; margin-top: 4px; letter-spacing: 0.5px;">ONEWAY TAXI BIHAR DRIVER NETWORK</p>
@@ -489,11 +521,16 @@
           </button>
         </div>
       </div>
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px;">
-        <button type="button" id="btn-driver-device-alerts" onclick="toggleDriverNotifications()" class="driver-alert-btn">
-          <span class="hud-indicator hud-pulse-driver"></span>
-          <span id="txt-driver-alerts">Alerts: Active</span>
-        </button>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" id="btn-driver-device-alerts" onclick="toggleDriverNotifications()" class="driver-alert-btn">
+            <span class="hud-indicator hud-pulse-driver"></span>
+            <span id="txt-driver-alerts">Alerts: Active</span>
+          </button>
+          <button type="button" id="btn-install-driver-app-dash" style="display: none; background: #fbbf24; color: #090d16; border: none; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; cursor: pointer;">
+            📲 Install Driver App
+          </button>
+        </div>
         <span id="driver-name-display" style="font-size: 12px; font-weight: 700; color: #f8fafc; padding: 3px 8px; background: rgba(255,255,255,0.06); border-radius: 6px;"></span>
       </div>
     </header>
@@ -1020,6 +1057,60 @@
     // Initialize
     window.addEventListener("DOMContentLoaded", () => {
       initDriver();
+    });
+  </script>
+
+  <!-- Dedicated Driver Partner PWA Service Worker & Install Handler -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('[Driver App PWA] Service worker active with scope:', reg.scope);
+        }).catch((err) => {
+          console.warn('[Driver App PWA] Service worker registration note:', err.message);
+        });
+      });
+    }
+
+    let deferredDriverPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredDriverPrompt = e;
+
+      // Show install buttons
+      const btnTop = document.getElementById('btn-install-driver-app-top');
+      const btnMain = document.getElementById('btn-install-driver-app-main');
+      const btnDash = document.getElementById('btn-install-driver-app-dash');
+      const boxBanner = document.getElementById('driver-install-banner-box');
+
+      if (btnTop) btnTop.style.display = 'inline-block';
+      if (boxBanner) boxBanner.style.display = 'block';
+      if (btnDash) btnDash.style.display = 'inline-block';
+
+      const triggerInstall = async () => {
+        if (!deferredDriverPrompt) return;
+        deferredDriverPrompt.prompt();
+        const { outcome } = await deferredDriverPrompt.userChoice;
+        console.log('[Driver App Install Outcome]:', outcome);
+        deferredDriverPrompt = null;
+        if (btnTop) btnTop.style.display = 'none';
+        if (boxBanner) boxBanner.style.display = 'none';
+        if (btnDash) btnDash.style.display = 'none';
+      };
+
+      if (btnTop) btnTop.onclick = triggerInstall;
+      if (btnMain) btnMain.onclick = triggerInstall;
+      if (btnDash) btnDash.onclick = triggerInstall;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('[Driver App] OneWayTaxi Driver Partner App installed!');
+      const btnTop = document.getElementById('btn-install-driver-app-top');
+      const btnDash = document.getElementById('btn-install-driver-app-dash');
+      const boxBanner = document.getElementById('driver-install-banner-box');
+      if (btnTop) btnTop.style.display = 'none';
+      if (btnDash) btnDash.style.display = 'none';
+      if (boxBanner) boxBanner.style.display = 'none';
     });
   </script>
 </body>

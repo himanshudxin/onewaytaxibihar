@@ -4,10 +4,12 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v1.2';
+const CACHE_NAME = 'onewaytaxibihar-v1.3';
 const CORE_ASSETS = [
   '/',
   '/index.html',
+  '/driver',
+  '/driver.html',
   '/css/style.css',
   '/css/components.css?v=3.0',
   '/js/data.js?v=20261008_0030',
@@ -19,7 +21,11 @@ const CORE_ASSETS = [
   '/images/icon-192.png',
   '/images/icon-512.png',
   '/images/phonepe-qr.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/driver-manifest.json',
+  '/driver-icon.svg',
+  '/images/driver-icon-192.png',
+  '/images/driver-icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {

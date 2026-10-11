@@ -1,0 +1,56 @@
+{
+  "name": "OneWayTaxi Partner - Driver App",
+  "short_name": "OneWay Driver",
+  "description": "Driver Partner dispatch portal for OneWayTaxiBihar. Accept assigned outstation trips, track daily earnings, verify passenger OTP, and navigate Bihar intercity routes.",
+  "start_url": "/driver",
+  "scope": "/driver",
+  "id": "/driver-app",
+  "display": "standalone",
+  "background_color": "#090d16",
+  "theme_color": "#047857",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/driver-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/driver-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/driver-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "travel", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Active Duty Dashboard",
+      "short_name": "Active Trips",
+      "description": "View current assigned ride and passenger details",
+      "url": "/driver#active",
+      "icons": [{ "src": "/images/driver-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Live Dispatch Queue",
+      "short_name": "Trip Queue",
+      "description": "Browse and accept new unassigned Bihar cab requests",
+      "url": "/driver#available",
+      "icons": [{ "src": "/images/driver-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Call Patna Central Dispatch",
+      "short_name": "Call Dispatch",
+      "description": "Direct hotline to 24x7 driver assistance desk",
+      "url": "tel:+918002141816",
+      "icons": [{ "src": "/images/driver-icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

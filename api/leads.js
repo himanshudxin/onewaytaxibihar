@@ -1,9 +1,11 @@
+try { require('dotenv').config(); } catch (e) {}
 const fs = require('fs');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 const securityService = require('../services/security.js');
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 let cachedDb = null;
 let cachedClient = null;
 
@@ -71,9 +73,11 @@ function saveLocalLead(newLead) {
 
 module.exports = async (req, res) => {
   // Ultra-Permissive CORS for seamless Dispatch Console communication
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const reqOrigin = req.headers['origin'] || '*';
+  res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key');
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;

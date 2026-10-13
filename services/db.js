@@ -27,7 +27,8 @@ const ALL_COLLECTIONS = [
   'sessions',
   'support_tickets',
   'error_logs',
-  'settings'
+  'settings',
+  'admins'
 ];
 
 function getLocalDbPath() {
@@ -99,8 +100,10 @@ function loadLocalDb() {
 }
 
 // High-Throughput MongoDB Atlas Connection
+const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+
 async function initMongo() {
-  const mongoUri = process.env.MONGODB_URI;
+  const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
   if (!mongoUri) return false;
 
   if (global._mongoClient && global._mongoDbInstance) {
@@ -338,8 +341,18 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('users', db.users),
         syncCollectionToCloud('payments', db.payments),
         syncCollectionToCloud('drivers', db.drivers),
+        syncCollectionToCloud('vehicles', db.vehicles),
+        syncCollectionToCloud('coupons', db.coupons),
+        syncCollectionToCloud('admins', db.admins),
         syncCollectionToCloud('notifications', db.notifications)
       ];
+      if (db.settings) {
+        tasks.push(mongoDbInstance.collection('settings').updateOne(
+          { id: 'global_settings' },
+          { $set: { id: 'global_settings', ...db.settings } },
+          { upsert: true }
+        ).catch(() => {}));
+      }
       await Promise.allSettled(tasks);
     } else if (activeEngine === 'postgres' && pgPool) {
       for (const col of ALL_COLLECTIONS) {
@@ -553,7 +566,7 @@ function getDatabaseStatus() {
   return {
     engine: activeEngine,
     connected: isDbConnected,
-    hasMongoUri: !!process.env.MONGODB_URI,
+    hasMongoUri: !!(process.env.MONGODB_URI || DEFAULT_MONGODB_URI),
     hasPostgresUri: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL),
     totalBookings: (memoryDb?.bookings || []).length,
     totalDrivers: (memoryDb?.drivers || []).length,

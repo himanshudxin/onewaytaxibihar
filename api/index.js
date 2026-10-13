@@ -392,18 +392,23 @@ function getSessionDriver(req, db) {
 // Main Request Handler
 module.exports = async (req, res) => {
   // CORS Headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const reqOrigin = req.headers['origin'] || '*';
+  res.setHeader('Access-Control-Allow-Origin', reqOrigin);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key');
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     return res.end();
   }
 
-  const rawUrl = req.headers['x-forwarded-uri'] || req.url;
+  const rawUrl = req.headers['x-matched-path'] || req.headers['x-forwarded-uri'] || req.headers['x-original-url'] || req.url;
   const url = new URL(rawUrl, `http://${req.headers.host || 'localhost'}`);
   let pathname = url.pathname.replace(/^\/api/i, '');
+  if ((!pathname || pathname === '/') && (url.searchParams.get('path') || req.query?.path)) {
+    pathname = '/' + (url.searchParams.get('path') || req.query?.path);
+  }
   if (!pathname.startsWith('/')) pathname = '/' + pathname;
   if (pathname.length > 1 && pathname.endsWith('/')) pathname = pathname.slice(0, -1);
   const method = req.method.toUpperCase();
@@ -1316,33 +1321,39 @@ module.exports = async (req, res) => {
         advancePaid = 0;
         balanceDue = finalPayable;
         initialPaymentStatus = 'PAYABLE TO DRIVER (Cash on Ride)';
-        initialBookingStatus = 'CONFIRMED';
+        initialBookingStatus = 'NEW';
       } else if (isUpiQr) {
         advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
         balanceDue = Math.max(0, finalPayable - advancePaid);
         initialPaymentStatus = body.upiUtr ? 'PARTIALLY PAID (Direct PhonePe/UPI Advance)' : 'ADVANCE PENDING VERIFICATION';
-        initialBookingStatus = 'CONFIRMED';
+        initialBookingStatus = 'NEW';
       } else if (isFull) {
         advancePaid = finalPayable;
         balanceDue = 0;
         initialPaymentStatus = body.paymentTxnId ? 'PAID (100% Online Verified)' : 'AWAITING PAYMENT';
         initialBookingStatus = 'CONFIRMED';
       } else if (isRzp) {
-        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
-        balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = body.paymentTxnId ? 'PARTIALLY PAID (Razorpay Online Advance)' : 'AWAITING ADVANCE PAYMENT';
-        initialBookingStatus = 'CONFIRMED';
+        if (body.paymentTxnId) {
+          advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+          balanceDue = Math.max(0, finalPayable - advancePaid);
+          initialPaymentStatus = 'PARTIALLY PAID (Razorpay Online Advance)';
+        } else {
+          advancePaid = 0;
+          balanceDue = finalPayable;
+          initialPaymentStatus = 'AWAITING ADVANCE PAYMENT';
+        }
+        initialBookingStatus = 'NEW';
       } else {
         advancePaid = 0;
         balanceDue = finalPayable;
         initialPaymentStatus = 'PAYABLE TO DRIVER';
-        initialBookingStatus = 'CONFIRMED';
+        initialBookingStatus = 'NEW';
       }
 
-      if (body.advancePaid && Number(body.advancePaid) > 0) {
+      if (body.advancePaid && Number(body.advancePaid) > 0 && !isCash && (isUpiQr || body.paymentTxnId)) {
         advancePaid = Number(body.advancePaid);
         balanceDue = Math.max(0, finalPayable - advancePaid);
-        if (!initialPaymentStatus.includes('PARTIALLY PAID') && !isCash) {
+        if (!initialPaymentStatus.includes('PARTIALLY PAID')) {
           initialPaymentStatus = 'ADVANCE PAID';
         }
         initialBookingStatus = 'CONFIRMED';
@@ -2129,10 +2140,14 @@ module.exports = async (req, res) => {
     // 8C. REAL-TIME SYSTEM & NOTIFICATION STATUS
     // -------------------------------------------------------------
     if (pathname === '/admin/system-status' && method === 'GET') {
+      const dbStatus = dbService.getDatabaseStatus();
+      const isAtlasConnected = Boolean(dbStatus.connected && (dbStatus.engine === 'mongodb' || dbStatus.hasMongoUri));
       return sendJson(200, {
         success: true,
+        dbConnected: isAtlasConnected,
+        engine: dbStatus.engine === 'mongodb' ? 'MongoDB Atlas Cloud' : (process.env.MONGODB_URI ? 'MongoDB Atlas Cloud' : (dbStatus.engine || 'Local Sync Active')),
         timestamp: new Date().toISOString(),
-        database: dbService.getDatabaseStatus(),
+        database: dbStatus,
         payment: paymentService.getPaymentConfig(),
         notifications: notificationService.getNotificationConfig()
       });
@@ -2231,7 +2246,7 @@ module.exports = async (req, res) => {
       await saveDb(db);
 
       // Set HttpOnly, Secure, SameSite=Lax Cookie
-      const isSecure = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+      const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
       res.setHeader('Set-Cookie', `otb_adm_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
 
       return sendJson(200, {
@@ -2355,7 +2370,7 @@ module.exports = async (req, res) => {
       });
       await saveDb(db);
 
-      const isSecure = process.env.NODE_ENV === 'production' || !!process.env.VERCEL;
+      const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
       res.setHeader('Set-Cookie', `otb_adm_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
 
       return sendJson(200, {

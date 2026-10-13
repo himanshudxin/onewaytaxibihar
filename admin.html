@@ -1396,6 +1396,10 @@
           </div>
         </div>
 
+        <div style="font-size:11.5px; color:#94a3b8; text-align:center; margin-bottom:12px; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
+          🔐 Dispatch Access: Username <strong>admin</strong> | Password: <code>OWT#Bihar@2026!SecOps</code> or <code>admin123</code>
+        </div>
+
         <button type="submit" class="auth-submit-btn" id="btn-admin-direct-submit">
           <span>Authenticate &amp; Access Desk</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
@@ -1477,6 +1481,12 @@
           <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span>
           <span class="nav-label">Live Dispatch</span>
           <span class="nav-badge success" id="badge-live-dispatch">0</span>
+        </button>
+
+        <button type="button" class="nav-item-btn" id="side-tab-leads" onclick="switchMainTab('leads')">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+          <span class="nav-label">Live Enquiries</span>
+          <span class="nav-badge info" id="badge-leads-count" style="background:#0284c7; color:white;">0</span>
         </button>
 
         <button type="button" class="nav-item-btn" id="side-tab-bookings" onclick="switchMainTab('bookings')">
@@ -1634,12 +1644,17 @@
             </div>
           </div>
 
-          <!-- 8 Top KPI Tiles -->
+          <!-- Top Operational KPI Tiles -->
           <div class="kpi-grid">
             <div class="kpi-tile warning">
               <div class="kpi-title">New Requests</div>
               <div class="kpi-value" id="kpi-new-requests">0</div>
               <div class="kpi-subtitle">Requires prompt action</div>
+            </div>
+            <div class="kpi-tile" style="border-left:4px solid #0284c7; cursor:pointer;" onclick="switchMainTab('leads')">
+              <div class="kpi-title">Live Enquiries</div>
+              <div class="kpi-value" id="kpi-live-leads" style="color:#0284c7;">0</div>
+              <div class="kpi-subtitle">Uncontacted fare leads</div>
             </div>
             <div class="kpi-tile success">
               <div class="kpi-title">Confirmed Rides</div>
@@ -1809,6 +1824,87 @@
               </div>
             </div>
 
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             VIEW: LIVE ENQUIRIES & PASSENGER LEADS
+             ==================================================================== -->
+        <section class="content-view" id="view-leads">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h2>Live Inquiries &amp; Silent Leads</h2>
+              <p>Real-time passenger fare searches and unconfirmed trip inquiries across Bihar corridors</p>
+            </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportLeadsCsv()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="loadLeads()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Leads
+              </button>
+            </div>
+          </div>
+
+          <!-- Leads KPI Row -->
+          <div class="kpi-grid" style="margin-bottom:16px;">
+            <div class="kpi-tile warning">
+              <div class="kpi-title">Uncontacted New</div>
+              <div class="kpi-value" id="stat-leads-new">0</div>
+              <div class="kpi-subtitle">Requires immediate callback</div>
+            </div>
+            <div class="kpi-tile" style="border-left:4px solid #2563eb;">
+              <div class="kpi-title">Discussion in Progress</div>
+              <div class="kpi-value" id="stat-leads-contacted">0</div>
+              <div class="kpi-subtitle">Passenger contacted</div>
+            </div>
+            <div class="kpi-tile success">
+              <div class="kpi-title">Converted to Rides</div>
+              <div class="kpi-value" id="stat-leads-converted">0</div>
+              <div class="kpi-subtitle">Successfully booked</div>
+            </div>
+            <div class="kpi-tile">
+              <div class="kpi-title">Total Inquiries</div>
+              <div class="kpi-value" id="stat-leads-total">0</div>
+              <div class="kpi-subtitle">Recorded in database</div>
+            </div>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="filter-toolbar">
+            <div class="tab-pills-row">
+              <button type="button" class="tab-pill active" onclick="setLeadsFilter('all', this)">All Inquiries</button>
+              <button type="button" class="tab-pill" onclick="setLeadsFilter('NEW', this)">🚨 Uncontacted New</button>
+              <button type="button" class="tab-pill" onclick="setLeadsFilter('CONTACTED', this)">📞 Contacted</button>
+              <button type="button" class="tab-pill" onclick="setLeadsFilter('CONVERTED', this)">🎉 Converted</button>
+            </div>
+            <div class="filter-group">
+              <input type="text" class="filter-input" id="leads-search-filter" placeholder="Search phone, origin, destination..." onkeyup="applyLeadsFilter()">
+            </div>
+          </div>
+
+          <!-- Leads Table -->
+          <div class="ops-card">
+            <div class="table-container">
+              <table class="ops-table">
+                <thead>
+                  <tr>
+                    <th>Inquiry ID</th>
+                    <th>Passenger</th>
+                    <th>Corridor Route</th>
+                    <th>Pickup Date &amp; Time</th>
+                    <th>Cab &amp; Est. Fare</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Direct Dispatch Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leads-table-body">
+                  <tr><td colspan="7" style="text-align:center; padding:32px; color:#94a3b8;">Loading live inquiries...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
@@ -2301,12 +2397,45 @@
             <div class="ops-card">
               <div class="ops-card-header">
                 <div class="ops-card-title">UPI &amp; Payment Gateway Configuration</div>
-                <span class="pill" style="background:#f1f5f9; color:#475569;">Sensitive Fields Masked</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <span class="pill" id="badge-upi-status" style="background:#ecfdf5; color:#059669; font-weight:700; border:1px solid #a7f3d0;">✓ Direct UPI: ACTIVE (0 Docs)</span>
+                  <span class="pill" id="badge-rzp-status" style="background:#f1f5f9; color:#475569; font-weight:700; border:1px solid #cbd5e1;">Razorpay: SETUP PENDING</span>
+                </div>
               </div>
               <div class="ops-card-body">
+
+                <!-- Zero Document vs Minimal Document Guidance Alert -->
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-left:4px solid #2563eb; border-radius:8px; padding:14px; margin-bottom:20px;">
+                  <div style="font-weight:800; color:#0f172a; font-size:13px; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    PAYMENT GATEWAY OPTIONS &amp; DOCUMENTATION GUIDE
+                  </div>
+                  <div style="font-size:12px; color:#475569; line-height:1.55;">
+                    <div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                      <strong style="color:#059669;">🟢 1. Direct UPI &amp; PhonePe Dynamic QR (ACTIVE NOW • 0 DOCUMENTS):</strong>
+                      <div style="margin-top:2px;">
+                        Requires <strong>ZERO documents, NO GST, and NO business registration</strong>. Works directly with any personal savings bank account via UPI ID (<code>8002141816@ybl</code>). Passenger token advance (₹299) or full trip fare lands instantly in your personal account with <strong>0% transaction fee</strong>.
+                      </div>
+                    </div>
+                    <div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                      <strong style="color:#2563eb;">🔵 2. Razorpay Gateway (MINIMAL DOCUMENTS / INDIVIDUAL KYC):</strong>
+                      <div style="margin-top:2px;">
+                        • <strong>Test Mode (0 Documents):</strong> Sign up at <a href="https://dashboard.razorpay.com/signup" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:underline;">dashboard.razorpay.com</a>, go to <em>Settings ➔ API Keys</em>, generate Test Key &amp; Secret (<code>rzp_test_...</code>), and paste below to activate card &amp; netbanking checkout immediately.<br>
+                        • <strong>Live Mode (No GST Needed):</strong> During registration, select business type as <strong>"Individual / Freelancer / Unregistered"</strong>. GST is <em>not required</em> if annual turnover is under ₹20 Lakhs. Only personal PAN, Aadhaar, and Bank Statement/Cheque required.
+                      </div>
+                    </div>
+                    <div>
+                      <strong style="color:#7c3aed;">🟣 3. Instamojo &amp; Cashfree (EASIEST ALTERNATIVE TO RAZORPAY):</strong>
+                      <div style="margin-top:2px;">
+                        If Razorpay requires additional verification, <strong>Instamojo</strong> provides the lowest-document onboarding in India for individual operators with automated PAN + Aadhaar verification (no business incorporation or GST required).
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <form id="form-gateway-settings" onsubmit="handleSavePaymentSettings(event)">
                   
-                  <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px;">1. Direct UPI &amp; PhonePe QR Configuration</div>
+                  <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px;">1. Direct UPI &amp; PhonePe QR Configuration (0 Documents)</div>
                   <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
                     <div class="form-group">
                       <label class="form-label">UPI VPA ID</label>
@@ -2326,12 +2455,12 @@
                   </div>
 
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-top:1px solid #e2e8f0; padding-top:16px;">
-                    2. Razorpay Gateway Integration
+                    2. Razorpay Gateway Integration (Cards, NetBanking, Wallets)
                   </div>
                   <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
                     <div class="form-group">
-                      <label class="form-label">Razorpay Key ID</label>
-                      <input type="text" class="form-control" id="pay-rzp-key-id" placeholder="rzp_live_...">
+                      <label class="form-label">Razorpay Key ID (Test or Live)</label>
+                      <input type="text" class="form-control" id="pay-rzp-key-id" placeholder="rzp_test_... or rzp_live_...">
                     </div>
                     <div class="form-group">
                       <label class="form-label">Razorpay Key Secret</label>
@@ -2709,6 +2838,72 @@
         </form>
       </div>
     </div>
+  <!-- CONVERT LEAD TO BOOKING MODAL -->
+  <div class="modal-backdrop" id="modal-convert-lead">
+    <div class="ops-modal">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Convert Inquiry to Confirmed Ride</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeConvertLeadModal()">✕</button>
+      </div>
+      <form id="form-convert-lead" onsubmit="handleConvertLeadSubmit(event)">
+        <div class="ops-modal-body">
+          <input type="hidden" id="conv-lead-id">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Passenger Mobile</label>
+              <input type="tel" class="form-control" id="conv-phone" required maxlength="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Passenger Name</label>
+              <input type="text" class="form-control" id="conv-name" value="Valued Customer">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Origin City</label>
+              <input type="text" class="form-control" id="conv-origin" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Destination City</label>
+              <input type="text" class="form-control" id="conv-dest" required>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Pickup Date</label>
+              <input type="date" class="form-control" id="conv-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pickup Time</label>
+              <input type="time" class="form-control" id="conv-time" value="10:00" required>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Vehicle Tier</label>
+              <select class="form-control" id="conv-cab-tier">
+                <option value="sedan">Prime Sedan (Dzire / Etios)</option>
+                <option value="hatchback">Go Hatchback (WagonR / Tiago)</option>
+                <option value="suv">Family SUV (Ertiga 6+1)</option>
+                <option value="innova_crysta">Innova Crysta</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agreed Total Fare (₹)</label>
+              <input type="number" class="form-control" id="conv-fare" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pickup Address / Land Mark</label>
+            <input type="text" class="form-control" id="conv-pickup-addr" placeholder="e.g. Near Patna Junction Exit 1">
+          </div>
+        </div>
+        <div class="ops-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeConvertLeadModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-convert-submit">Create &amp; Confirm Booking</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- CONFIRMATION MODAL (For Destructive Actions) -->
@@ -2760,6 +2955,7 @@
 
     let _currentMainTab = "dashboard";
     let _currentBookingsStatusFilter = "all";
+    let _currentLeadsFilter = "all";
     let _currentDriverStatusFilter = "all";
     let _pollTimer = null;
     let _dispatchMap = null;
@@ -2768,8 +2964,48 @@
     let _audioAlertsEnabled = localStorage.getItem("otb_audio_alert") !== "disabled";
     let _audioCtx = null;
     let _knownBookingIds = new Set();
+    let _knownLeadIds = new Set();
     let _isFirstLoad = true;
     let _pendingActionCallback = null;
+
+    // =========================================================================
+    // UNIFIED API ENGINE (Cross-Port, Domain, and Auth Bearer Layer)
+    // =========================================================================
+    function getApiUrl(endpoint) {
+      if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+        if (typeof ApiClient !== "undefined" && ApiClient.baseUrl) {
+          return `${ApiClient.baseUrl}${endpoint}`;
+        }
+        if (typeof window !== "undefined") {
+          if (window.location.protocol === "file:") {
+            return `http://localhost:8080${endpoint}`;
+          }
+          if (window.location.port && window.location.port !== "8080") {
+            const isLocal = window.location.hostname === "localhost" ||
+                            window.location.hostname === "127.0.0.1" ||
+                            window.location.hostname.startsWith("192.168.");
+            if (isLocal) {
+              return `http://${window.location.hostname}:8080${endpoint}`;
+            }
+          }
+        }
+      }
+      return endpoint;
+    }
+
+    async function adminFetch(endpoint, options = {}) {
+      const url = getApiUrl(endpoint);
+      const headers = {
+        "Content-Type": "application/json",
+        ...(_adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}),
+        ...(options.headers || {})
+      };
+      return fetch(url, {
+        credentials: 'include',
+        ...options,
+        headers
+      });
+    }
 
     // Toast Notifications
     function showToast(message, type = "info") {
@@ -2857,10 +3093,7 @@
 
     async function verifySession() {
       try {
-        const res = await fetch("/api/admin/me", {
-          credentials: 'include',
-          headers: _adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}
-        });
+        const res = await adminFetch("/api/admin/me");
 
         if (res.ok) {
           const data = await res.json();
@@ -2979,10 +3212,8 @@
 
       try {
         if (btn) btn.disabled = true;
-        const res = await fetch("/api/admin/login", {
+        const res = await adminFetch("/api/admin/login", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ username: user, password: pass })
         });
         const data = await res.json();
@@ -3027,9 +3258,8 @@
 
       try {
         if (btn) btn.disabled = true;
-        const res = await fetch("/api/admin/send-whatsapp-otp", {
+        const res = await adminFetch("/api/admin/send-whatsapp-otp", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phone })
         });
         const data = await res.json();
@@ -3075,16 +3305,15 @@
       }
 
       try {
-        const res = await fetch("/api/admin/verify-whatsapp-otp", {
+        const res = await adminFetch("/api/admin/verify-whatsapp-otp", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ phone, otp: code })
         });
         const data = await res.json();
         if (res.ok && data.success) {
           _adminToken = data.token || "";
           sessionStorage.setItem("otb_adm_token", _adminToken);
+          localStorage.setItem("otb_adm_token", _adminToken);
           _currentAdmin = data.admin || { role: "dispatcher", username: "phone_admin" };
           showToast("2FA Authentication Verified!", "success");
           showDashboardApp();
@@ -3099,7 +3328,7 @@
     async function handleAdminLogout() {
       openConfirmModal("Log Out", "Are you sure you want to log out of the dispatch console?", async () => {
         try {
-          await fetch("/api/admin/logout", { method: "POST", credentials: 'include' });
+          await adminFetch("/api/admin/logout", { method: "POST" });
         } catch (e) {}
         sessionStorage.removeItem("otb_adm_token");
         localStorage.removeItem("otb_adm_token");
@@ -3118,7 +3347,7 @@
       sessionStorage.setItem("otb_admin_tab", tabName);
 
       const allViews = [
-        'dashboard', 'dispatch', 'bookings', 'customers', 'drivers',
+        'dashboard', 'dispatch', 'leads', 'bookings', 'customers', 'drivers',
         'vehicles', 'payments', 'wallet', 'coupons', 'reports',
         'notifications', 'audit', 'settings'
       ];
@@ -3133,6 +3362,8 @@
       // Special initializers for tabs
       if (tabName === 'dispatch') {
         setTimeout(() => initDispatchMap(), 150);
+      } else if (tabName === 'leads') {
+        renderLeadsTable();
       }
 
       // Close mobile sidebar if open
@@ -3170,6 +3401,7 @@
       await Promise.allSettled([
         loadSystemStatus(),
         loadBookings(),
+        loadLeads(),
         loadDrivers(),
         loadVehicles(),
         loadPayments(),
@@ -3185,15 +3417,15 @@
 
     async function pollRealtimeData() {
       try {
-        const res = await fetch("/api/admin/bookings", {
-          credentials: 'include',
-          headers: _adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}
-        });
-        if (res.ok) {
-          const data = await res.json();
+        const [bRes, lRes] = await Promise.allSettled([
+          adminFetch("/api/admin/bookings"),
+          adminFetch("/api/leads")
+        ]);
+
+        if (bRes.status === "fulfilled" && bRes.value.ok) {
+          const data = await bRes.value.json();
           const fresh = data.bookings || [];
-          
-          // Check for brand new bookings to trigger chime sound!
+
           if (!_isFirstLoad) {
             fresh.forEach(b => {
               if (!_knownBookingIds.has(b.bookingId)) {
@@ -3204,14 +3436,39 @@
             });
           } else {
             fresh.forEach(b => _knownBookingIds.add(b.bookingId));
-            _isFirstLoad = false;
           }
 
           _allBookings = fresh;
           renderBookingsTable();
-          renderDashboard();
           if (_currentMainTab === 'dispatch') renderDispatchWorkspace();
         }
+
+        if (lRes.status === "fulfilled" && lRes.value.ok) {
+          const data = await lRes.value.json();
+          const freshLeads = data.leads || [];
+
+          if (!_isFirstLoad) {
+            freshLeads.forEach(l => {
+              const lId = l.id || l.cleanPhone;
+              if (lId && !_knownLeadIds.has(lId)) {
+                _knownLeadIds.add(lId);
+                playExecutiveChime();
+                showToast(`💬 New Passenger Inquiry: ${l.originCity} ➔ ${l.destCity} (+91 ${l.cleanPhone || l.phone})`, "info");
+              }
+            });
+          } else {
+            freshLeads.forEach(l => {
+              const lId = l.id || l.cleanPhone;
+              if (lId) _knownLeadIds.add(lId);
+            });
+          }
+
+          _allLeads = freshLeads;
+          renderLeadsTable();
+        }
+
+        _isFirstLoad = false;
+        renderDashboard();
       } catch (e) {
         console.warn("Poll notice:", e.message);
       }
@@ -3219,13 +3476,14 @@
 
     async function loadSystemStatus() {
       try {
-        const res = await fetch("/api/admin/system-status", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/system-status");
         if (res.ok) {
           const data = await res.json();
+          const isAtlas = Boolean(data.dbConnected || data.database?.connected || data.database?.hasMongoUri);
           const text = document.getElementById("topbar-db-status-text");
-          if (text) text.textContent = data.dbConnected ? "Atlas ONLINE" : "Local Sync Active";
+          if (text) text.textContent = isAtlas ? "Atlas ONLINE" : "Local Sync Active";
           const diagEng = document.getElementById("diag-db-engine");
-          if (diagEng) diagEng.textContent = `${data.engine || 'MongoDB Atlas Cloud'} (Ping: OK)`;
+          if (diagEng) diagEng.textContent = `${data.engine || data.database?.engine || 'MongoDB Atlas Cloud'} (Ping: OK)`;
         }
       } catch (e) {}
     }
@@ -3240,6 +3498,7 @@
       const completed = _allBookings.filter(b => b.bookingStatus === 'COMPLETED').length;
       const pendingPay = _allPayments.filter(p => p.status === 'PENDING' || p.verificationStatus === 'PENDING').length;
       const availDrivers = _allDrivers.filter(d => d.status === 'available' || d.isAvailable).length;
+      const newLeads = _allLeads.filter(l => !l.status || l.status === 'NEW').length;
 
       // Calculate today's revenue
       const todayStr = new Date().toISOString().slice(0, 10);
@@ -3259,6 +3518,7 @@
 
       // Update KPI Tiles
       setText("kpi-new-requests", newRequests);
+      setText("kpi-live-leads", newLeads);
       setText("kpi-confirmed-rides", confirmed);
       setText("kpi-active-trips", onTrip);
       setText("kpi-completed-trips", completed);
@@ -3269,6 +3529,7 @@
 
       // Sidebar badges
       setText("badge-bookings-count", _allBookings.length);
+      setText("badge-leads-count", _allLeads.length);
       setText("badge-live-dispatch", onTrip + newRequests);
       setText("badge-drivers-count", _allDrivers.length);
       if (pendingPay > 0) {
@@ -3442,18 +3703,273 @@
     }
 
     // =========================================================================
+    // VIEW: LIVE INQUIRIES & PASSENGER LEADS CONTROLLER
+    // =========================================================================
+    async function loadLeads() {
+      try {
+        const res = await adminFetch("/api/leads");
+        if (res.ok) {
+          const data = await res.json();
+          _allLeads = data.leads || [];
+          renderLeadsTable();
+          renderDashboard();
+          if (_currentBookingsStatusFilter === 'LEADS') {
+            renderBookingsTable();
+          }
+        }
+      } catch (e) {
+        console.warn("loadLeads note:", e.message);
+      }
+    }
+
+    function setLeadsFilter(status, btn) {
+      _currentLeadsFilter = status;
+      document.querySelectorAll("#view-leads .tab-pill").forEach(p => p.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderLeadsTable();
+    }
+
+    function applyLeadsFilter() {
+      renderLeadsTable();
+    }
+
+    function renderLeadsTable() {
+      const tbody = document.getElementById("leads-table-body");
+      if (!tbody) return;
+
+      const q = (document.getElementById("leads-search-filter")?.value || "").toLowerCase().trim();
+
+      let filtered = _allLeads;
+
+      if (_currentLeadsFilter !== 'all') {
+        filtered = filtered.filter(l => (l.status || 'NEW').toUpperCase() === _currentLeadsFilter.toUpperCase());
+      }
+
+      if (q) {
+        filtered = filtered.filter(l => 
+          (l.id || '').toLowerCase().includes(q) ||
+          (l.passengerName || '').toLowerCase().includes(q) ||
+          (l.cleanPhone || l.phone || '').includes(q) ||
+          (l.originCity || '').toLowerCase().includes(q) ||
+          (l.destCity || '').toLowerCase().includes(q)
+        );
+      }
+
+      // Update counters
+      const newCount = _allLeads.filter(l => !l.status || l.status === 'NEW').length;
+      const contactedCount = _allLeads.filter(l => l.status === 'CONTACTED').length;
+      const convertedCount = _allLeads.filter(l => l.status === 'CONVERTED').length;
+
+      setText("stat-leads-new", newCount);
+      setText("stat-leads-contacted", contactedCount);
+      setText("stat-leads-converted", convertedCount);
+      setText("stat-leads-total", _allLeads.length);
+      setText("badge-leads-count", _allLeads.length);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:#94a3b8;">No matching inquiries found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(l => {
+        const phone = cleanPhone(l.cleanPhone || l.phone);
+        const estFare = Number(l.cabPrice || l.estFareSedan || 2198);
+        const status = (l.status || 'NEW').toUpperCase();
+        const pillClass = status === 'NEW' ? 'new' : (status === 'CONTACTED' ? 'assigned' : (status === 'CONVERTED' ? 'confirmed' : 'cancelled'));
+        const waMsg = encodeURIComponent(`Namaste! OneWayTaxiBihar here regarding your cab enquiry from ${l.originCity} to ${l.destCity}. Would you like to confirm your ride?`);
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:var(--primary); font-family:var(--font-mono); font-size:12.5px;">${escapeHtml(l.id || 'LEAD')}</strong>
+              <div style="font-size:11px; color:#64748b;">${new Date(l.createdAt || Date.now()).toLocaleDateString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</div>
+            </td>
+            <td>
+              <div style="font-weight:700;">${escapeHtml(l.passengerName || 'Fare Visitor')}</div>
+              <div style="display:flex; gap:6px; margin-top:3px;">
+                <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;">📞 ${phone}</a>
+                <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px; color:#059669; font-weight:700;">💬 WA</a>
+              </div>
+            </td>
+            <td>
+              <div style="font-weight:600;">${escapeHtml(l.originCity)} ➔ ${escapeHtml(l.destCity)}</div>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(l.tripType || 'One-Way')} • ${l.distanceKm ? l.distanceKm + ' KM' : ''}</div>
+            </td>
+            <td>
+              <div>${escapeHtml(l.pickupDate || 'Today')}</div>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(l.pickupTime || 'Immediate')}</div>
+            </td>
+            <td>
+              <div style="font-size:12px; font-weight:600;">${escapeHtml(l.cabName || l.selectedCab || 'Prime Sedan')}</div>
+              <div style="font-size:11px; color:#059669; font-weight:700; font-family:var(--font-mono);">₹${estFare.toLocaleString('en-IN')}</div>
+            </td>
+            <td><span class="pill ${pillClass}">${status}</span></td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex; gap:6px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert to Ride</button>
+                ${status === 'NEW' ? `<button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>` : ''}
+                <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function markLeadStatus(leadId, newStatus) {
+      try {
+        const res = await adminFetch("/api/leads/status", {
+          method: "POST",
+          body: JSON.stringify({ leadId, status: newStatus })
+        });
+        if (res.ok) {
+          showToast(`Lead marked as ${newStatus}`, "success");
+          await loadLeads();
+        }
+      } catch (e) {
+        showToast("Error updating lead status: " + e.message, "error");
+      }
+    }
+
+    async function deleteLeadAdmin(leadId) {
+      openConfirmModal(
+        "Delete Lead Inquiry",
+        `Are you sure you want to permanently delete lead inquiry (${leadId})?`,
+        async () => {
+          try {
+            const res = await adminFetch(`/api/leads?id=${encodeURIComponent(leadId)}&action=delete`, {
+              method: "DELETE"
+            });
+            if (res.ok) {
+              showToast("Inquiry lead permanently removed", "success");
+              _allLeads = _allLeads.filter(l => l.id !== leadId && l.cleanPhone !== leadId);
+              renderLeadsTable();
+              renderDashboard();
+            } else {
+              showToast("Failed to delete lead", "warning");
+            }
+          } catch (e) {
+            showToast("Delete error: " + e.message, "error");
+          }
+        }
+      );
+    }
+
+    function openConvertLeadModal(id) {
+      const l = _allLeads.find(x => x.id === id || x.cleanPhone === id);
+      if (!l) {
+        showToast("Inquiry details not found", "warning");
+        return;
+      }
+      setVal("conv-lead-id", l.id || id);
+      setVal("conv-phone", cleanPhone(l.cleanPhone || l.phone));
+      setVal("conv-name", l.passengerName || "Valued Passenger");
+      setVal("conv-origin", l.originCity || "Patna");
+      setVal("conv-dest", l.destCity || "Gaya");
+      setVal("conv-date", l.pickupDate || new Date().toISOString().slice(0, 10));
+      setVal("conv-time", l.pickupTime && l.pickupTime.includes(":") ? l.pickupTime : "10:00");
+      setVal("conv-fare", Number(l.cabPrice || l.estFareSedan || 2198));
+      setVal("conv-cab-tier", (l.selectedCab || "sedan").toLowerCase());
+      setVal("conv-pickup-addr", "");
+      document.getElementById("modal-convert-lead")?.classList.add("active");
+    }
+
+    function closeConvertLeadModal() {
+      document.getElementById("modal-convert-lead")?.classList.remove("active");
+    }
+
+    async function handleConvertLeadSubmit(e) {
+      if (e) e.preventDefault();
+      const leadId = document.getElementById("conv-lead-id")?.value;
+      const phone = cleanPhone(document.getElementById("conv-phone")?.value);
+      const name = document.getElementById("conv-name")?.value || "Customer";
+      const origin = document.getElementById("conv-origin")?.value;
+      const dest = document.getElementById("conv-dest")?.value;
+      const date = document.getElementById("conv-date")?.value;
+      const time = document.getElementById("conv-time")?.value;
+      const cabTier = document.getElementById("conv-cab-tier")?.value || "sedan";
+      const fare = Number(document.getElementById("conv-fare")?.value) || 2198;
+      const pickupAddress = document.getElementById("conv-pickup-addr")?.value || `${origin} Area`;
+
+      if (!phone || phone.length !== 10) {
+        showToast("Please enter a valid 10-digit mobile number", "warning");
+        return;
+      }
+
+      const btn = document.getElementById("btn-convert-submit");
+      try {
+        if (btn) btn.disabled = true;
+        const payload = {
+          passengerPhone: phone,
+          passengerName: name,
+          originCity: origin,
+          destCity: dest,
+          pickupDate: date,
+          pickupTime: time,
+          cabTier: cabTier,
+          finalPayable: fare,
+          pickupAddress: pickupAddress,
+          dropAddress: `${dest} Main Area`,
+          paymentMethod: 'Cash to Driver'
+        };
+
+        const res = await adminFetch("/api/bookings", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showToast(`🎉 Converted to booking: ${data.booking?.bookingId}!`, "success");
+          if (leadId) {
+            await markLeadStatus(leadId, "CONVERTED");
+          }
+          closeConvertLeadModal();
+          await forceSyncAllData();
+          switchMainTab("bookings");
+        } else {
+          showToast(data.message || "Failed to create booking", "error");
+        }
+      } catch (err) {
+        showToast("Error creating booking: " + err.message, "error");
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function exportLeadsCsv() {
+      if (_allLeads.length === 0) {
+        showToast("No leads to export", "warning");
+        return;
+      }
+      const headers = ["Inquiry ID", "Phone", "Passenger Name", "Origin", "Destination", "Date", "Time", "Cab", "Est Fare", "Status", "Created At"];
+      const rows = _allLeads.map(l => [
+        l.id || '',
+        l.cleanPhone || l.phone || '',
+        `"${(l.passengerName || '').replace(/"/g, '""')}"`,
+        `"${(l.originCity || '').replace(/"/g, '""')}"`,
+        `"${(l.destCity || '').replace(/"/g, '""')}"`,
+        l.pickupDate || '',
+        l.pickupTime || '',
+        l.cabName || l.selectedCab || 'Sedan',
+        l.cabPrice || l.estFareSedan || 2198,
+        l.status || 'NEW',
+        l.createdAt || ''
+      ]);
+      downloadCsv("OneWayTaxi_Leads_" + new Date().toISOString().slice(0, 10) + ".csv", headers, rows);
+    }
+
+    // =========================================================================
     // VIEW 3: BOOKINGS MANAGEMENT & SLIDE-OVER DRAWER
     // =========================================================================
     async function loadBookings() {
       try {
-        const res = await fetch("/api/admin/bookings", {
-          credentials: 'include',
-          headers: _adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}
-        });
+        const res = await adminFetch("/api/admin/bookings");
         if (res.ok) {
           const data = await res.json();
           _allBookings = data.bookings || [];
           renderBookingsTable();
+          renderDashboard();
         }
       } catch (e) {
         console.warn("loadBookings note:", e.message);
@@ -3478,14 +3994,73 @@
       const q = (document.getElementById("bookings-search-filter")?.value || "").toLowerCase().trim();
       const cabFilter = (document.getElementById("bookings-cab-filter")?.value || "").toLowerCase().trim();
 
+      // Special Tab: Silent Leads inside Bookings view
+      if (_currentBookingsStatusFilter === 'LEADS') {
+        let leadsList = _allLeads;
+        if (q) {
+          leadsList = leadsList.filter(l => 
+            (l.id || '').toLowerCase().includes(q) ||
+            (l.passengerName || '').toLowerCase().includes(q) ||
+            (l.cleanPhone || l.phone || '').includes(q) ||
+            (l.originCity || '').toLowerCase().includes(q) ||
+            (l.destCity || '').toLowerCase().includes(q)
+          );
+        }
+        if (leadsList.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No silent fare inquiries captured yet.</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = leadsList.map(l => {
+          const phone = cleanPhone(l.cleanPhone || l.phone);
+          const estFare = Number(l.cabPrice || l.estFareSedan || 2198);
+          const status = (l.status || 'NEW').toUpperCase();
+          const pillClass = status === 'NEW' ? 'new' : (status === 'CONTACTED' ? 'assigned' : 'confirmed');
+          const waMsg = encodeURIComponent(`Namaste! OneWayTaxiBihar here regarding your cab enquiry for ${l.originCity} to ${l.destCity}. Would you like to confirm your ride?`);
+
+          return `
+            <tr>
+              <td><strong style="color:var(--primary); font-family:var(--font-mono);">${escapeHtml(l.id || 'LEAD')}</strong></td>
+              <td>
+                <div style="font-weight:700;">${escapeHtml(l.passengerName || 'Fare Visitor')}</div>
+                <div style="display:flex; gap:6px; margin-top:2px;">
+                  <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px;">📞 ${phone}</a>
+                  <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px; color:#059669;">💬 WA</a>
+                </div>
+              </td>
+              <td>
+                <div style="font-weight:600;">${escapeHtml(l.originCity)} ➔ ${escapeHtml(l.destCity)}</div>
+                <div style="font-size:11px; color:#64748b;">${escapeHtml(l.tripType || 'One-Way')} • ${l.distanceKm ? l.distanceKm + ' KM' : ''}</div>
+              </td>
+              <td>
+                <div>${escapeHtml(l.pickupDate || 'Today')}</div>
+                <div style="font-size:11px; color:#64748b;">${escapeHtml(l.pickupTime || 'Immediate')}</div>
+              </td>
+              <td><span style="font-size:12px; font-weight:600;">${escapeHtml(l.cabName || l.selectedCab || 'Prime Sedan')}</span></td>
+              <td>
+                <div style="font-weight:700; font-family:var(--font-mono);">₹${estFare.toLocaleString('en-IN')}</div>
+                <div style="font-size:10.5px; color:#64748b;">Estimated Fare</div>
+              </td>
+              <td><span class="pill ${pillClass}">${status}</span></td>
+              <td style="text-align:right;">
+                <div style="display:inline-flex; gap:4px;">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+        return;
+      }
+
       let filtered = _allBookings;
 
       // Status filter
       if (_currentBookingsStatusFilter !== 'all') {
-        if (_currentBookingsStatusFilter === 'LEADS') {
-          filtered = filtered.filter(b => b.isLead || b.bookingStatus === 'LEAD');
-        } else if (_currentBookingsStatusFilter === 'ON_TRIP') {
+        if (_currentBookingsStatusFilter === 'ON_TRIP') {
           filtered = filtered.filter(b => ['STARTED', 'ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus));
+        } else if (_currentBookingsStatusFilter === 'NEW') {
+          filtered = filtered.filter(b => b.bookingStatus === 'NEW' || b.bookingStatus === 'REQUESTED');
         } else {
           filtered = filtered.filter(b => b.bookingStatus === _currentBookingsStatusFilter);
         }
@@ -3677,10 +4252,8 @@
       }
 
       try {
-        const res = await fetch("/api/admin/assign-driver", {
+        const res = await adminFetch("/api/admin/assign-driver", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({
             bookingId: _activeAssignBookingId,
             driverId: driverId,
@@ -3705,10 +4278,8 @@
     // Status Transitions
     async function updateBookingStatusAdmin(bookingId, newStatus) {
       try {
-        const res = await fetch("/api/admin/bookings/status", {
+        const res = await adminFetch("/api/admin/bookings/status", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ bookingId, status: newStatus, note: `Status set to ${newStatus} by admin desk` })
         });
         const data = await res.json();
@@ -3728,10 +4299,8 @@
     async function cancelRideAdmin(bookingId) {
       openConfirmModal("Cancel Ride", `Are you sure you want to cancel booking ${bookingId}?`, async () => {
         try {
-          const res = await fetch("/api/admin/cancel-booking", {
+          const res = await adminFetch("/api/admin/cancel-booking", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify({ bookingId, reason: "Cancelled by Central Dispatcher" })
           });
           const data = await res.json();
@@ -3750,10 +4319,8 @@
     async function deleteBookingAdmin(bookingId) {
       openConfirmModal("Delete Booking", `Permanently delete ${bookingId} from database? This cannot be undone.`, async () => {
         try {
-          const res = await fetch("/api/admin/bookings", {
+          const res = await adminFetch("/api/admin/bookings", {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify({ bookingId })
           });
           const data = await res.json();
@@ -3774,7 +4341,7 @@
     // =========================================================================
     async function loadCustomers() {
       try {
-        const res = await fetch("/api/admin/customers", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/customers");
         if (res.ok) {
           const data = await res.json();
           _allCustomers = data.customers || [];
@@ -3824,7 +4391,7 @@
     // =========================================================================
     async function loadDrivers() {
       try {
-        const res = await fetch("/api/admin/drivers", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/drivers");
         if (res.ok) {
           const data = await res.json();
           _allDrivers = data.drivers || [];
@@ -3934,10 +4501,8 @@
       const license = document.getElementById("new-drv-license")?.value || "";
 
       try {
-        const res = await fetch("/api/admin/drivers/add", {
+        const res = await adminFetch("/api/admin/drivers/add", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ name, phone, carNo, carModel, city, license })
         });
         const data = await res.json();
@@ -3959,7 +4524,7 @@
     // =========================================================================
     async function loadVehicles() {
       try {
-        const res = await fetch("/api/admin/vehicles", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/vehicles");
         if (res.ok) {
           const data = await res.json();
           _allVehicles = data.vehicles || [];
@@ -4023,10 +4588,8 @@
       const fitExp = document.getElementById("new-veh-fit-exp")?.value || "";
 
       try {
-        const res = await fetch("/api/admin/vehicles/save", {
+        const res = await adminFetch("/api/admin/vehicles/save", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ plateNumber: plate, model, tier, fuelType: fuel, insuranceExpiry: insExp, fitnessExpiry: fitExp })
         });
         const data = await res.json();
@@ -4048,7 +4611,7 @@
     // =========================================================================
     async function loadPayments() {
       try {
-        const res = await fetch("/api/admin/payments", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/payments");
         if (res.ok) {
           const data = await res.json();
           _allPayments = data.payments || [];
@@ -4116,10 +4679,8 @@
 
     async function approvePaymentAdmin(orderId) {
       try {
-        const res = await fetch("/api/admin/verify-payment", {
+        const res = await adminFetch("/api/admin/verify-payment", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ orderId, status: "VERIFIED" })
         });
         const data = await res.json();
@@ -4136,10 +4697,8 @@
     async function denyPaymentAdmin(orderId) {
       openConfirmModal("Deny Payment", "Reject this transaction as invalid or unverified?", async () => {
         try {
-          const res = await fetch("/api/admin/deny-payment", {
+          const res = await adminFetch("/api/admin/deny-payment", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify({ orderId, reason: "Payment UTR could not be matched" })
           });
           const data = await res.json();
@@ -4183,10 +4742,8 @@
 
       openConfirmModal("Confirm Wallet Adjustment", `Are you sure you want to ${type.toUpperCase()} ₹${amount} for ${phone}?`, async () => {
         try {
-          const res = await fetch("/api/admin/wallet-credit", {
+          const res = await adminFetch("/api/admin/wallet-credit", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify({ phone, amount, type, reason })
           });
           const data = await res.json();
@@ -4208,7 +4765,7 @@
       const tbody = document.getElementById("wallet-ledger-table-body");
       if (!tbody) return;
       try {
-        const res = await fetch("/api/wallet/ledger", { credentials: 'include' });
+        const res = await adminFetch("/api/wallet/ledger");
         if (res.ok) {
           const data = await res.json();
           _allWalletEntries = data.ledger || [];
@@ -4239,7 +4796,7 @@
     // =========================================================================
     async function loadCoupons() {
       try {
-        const res = await fetch("/api/admin/coupons", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/coupons");
         if (res.ok) {
           const data = await res.json();
           _allCoupons = data.coupons || [];
@@ -4291,10 +4848,8 @@
       const maxDiscount = Number(document.getElementById("new-cpn-max-discount")?.value) || 250;
 
       try {
-        const res = await fetch("/api/admin/coupons/create", {
+        const res = await adminFetch("/api/admin/coupons/create", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ code, title, type, value, minFare, maxDiscount })
         });
         const data = await res.json();
@@ -4315,7 +4870,7 @@
     // =========================================================================
     async function loadReports() {
       try {
-        const res = await fetch("/api/admin/reports", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/reports");
         if (res.ok) {
           const data = await res.json();
           renderReportsView(data);
@@ -4353,7 +4908,7 @@
     // =========================================================================
     async function loadNotifications() {
       try {
-        const res = await fetch("/api/admin/notifications", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/notifications");
         if (res.ok) {
           const data = await res.json();
           _allNotifications = data.notifications || [];
@@ -4401,7 +4956,7 @@
     // =========================================================================
     async function loadAuditLogs() {
       try {
-        const res = await fetch("/api/admin/audit-logs", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/audit-logs");
         if (res.ok) {
           const data = await res.json();
           _allAuditLogs = data.logs || [];
@@ -4435,7 +4990,7 @@
     // =========================================================================
     async function loadSettings() {
       try {
-        const res = await fetch("/api/admin/settings", { credentials: 'include' });
+        const res = await adminFetch("/api/admin/settings");
         if (res.ok) {
           const data = await res.json();
           const s = data.settings || {};
@@ -4451,20 +5006,37 @@
         }
 
         // Load Gateway settings
-        const payRes = await fetch("/api/admin/payment-settings", { credentials: 'include' });
+        const payRes = await adminFetch("/api/admin/payment-settings");
         if (payRes.ok) {
           const payData = await payRes.json();
           const p = payData.settings || {};
           setVal("pay-upi-id", p.upiId || "8002141816@ybl");
           setVal("pay-payee-name", p.payeeName || "HIMANSHU KUMAR DUBEY");
           setVal("pay-rzp-key-id", p.razorpayKeyId || "");
+          if (p.razorpayKeySecret) setVal("pay-rzp-secret", p.razorpayKeySecret);
           setVal("pay-bank-name", p.bankName || "State Bank of India");
           setVal("pay-account-holder", p.accountHolderName || "HIMANSHU KUMAR DUBEY");
+          setVal("pay-account-number", p.accountNumber || "");
           setVal("pay-ifsc", p.ifscCode || "");
+
+          const rzpBadge = document.getElementById("badge-rzp-status");
+          if (rzpBadge) {
+            if (p.razorpayConfigured) {
+              rzpBadge.textContent = "✓ Razorpay: ACTIVE (Online Cards Live)";
+              rzpBadge.style.background = "#ecfdf5";
+              rzpBadge.style.color = "#059669";
+              rzpBadge.style.borderColor = "#a7f3d0";
+            } else {
+              rzpBadge.textContent = "Razorpay: SETUP PENDING (Keys Required)";
+              rzpBadge.style.background = "#fffbeb";
+              rzpBadge.style.color = "#d97706";
+              rzpBadge.style.borderColor = "#fde68a";
+            }
+          }
         }
 
         // Load Users
-        const usrRes = await fetch("/api/admin/users", { credentials: 'include' });
+        const usrRes = await adminFetch("/api/admin/users");
         if (usrRes.ok) {
           const usrData = await usrRes.json();
           renderRbacUsersTable(usrData.users || []);
@@ -4505,10 +5077,8 @@
       const baseKm = Number(document.getElementById("set-base-km")?.value) || 80;
 
       try {
-        const res = await fetch("/api/admin/settings", {
+        const res = await adminFetch("/api/admin/settings", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ helplinePhone, whatsappPhone, baseFare, baseKm })
         });
         const data = await res.json();
@@ -4532,10 +5102,8 @@
       const ifscCode = document.getElementById("pay-ifsc")?.value;
 
       try {
-        const res = await fetch("/api/admin/payment-settings", {
+        const res = await adminFetch("/api/admin/payment-settings", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({
             upiId, payeeName, razorpayKeyId, razorpayKeySecret,
             bankName, accountHolderName, accountNumber, ifscCode
@@ -4557,10 +5125,8 @@
       reader.onload = async (evt) => {
         const b64 = evt.target.result;
         try {
-          const res = await fetch("/api/admin/payment-settings", {
+          const res = await adminFetch("/api/admin/payment-settings", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
             body: JSON.stringify({ qrImageBase64: b64 })
           });
           if (res.ok) showToast("Custom PhonePe QR Code uploaded and active!", "success");
@@ -4573,10 +5139,8 @@
 
     async function resetQrToDefault() {
       try {
-        await fetch("/api/admin/payment-settings", {
+        await adminFetch("/api/admin/payment-settings", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ qrImageBase64: "images/phonepe-qr.png" })
         });
         showToast("QR Code reset to standard PhonePe image", "info");
@@ -4598,10 +5162,8 @@
       const phone = document.getElementById("new-usr-phone")?.value.replace(/\D/g, "");
 
       try {
-        const res = await fetch("/api/admin/users", {
+        const res = await adminFetch("/api/admin/users", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include',
           body: JSON.stringify({ username, name, role, phone })
         });
         const data = await res.json();
@@ -4620,9 +5182,8 @@
     async function cleanTestDataAdmin() {
       openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings from MongoDB Atlas?", async () => {
         try {
-          const res = await fetch("/api/admin/clean-test-data", {
-            method: "POST",
-            credentials: 'include'
+          const res = await adminFetch("/api/admin/clean-test-data", {
+            method: "POST"
           });
           const data = await res.json();
           if (res.ok && data.success) {
@@ -4637,7 +5198,7 @@
 
     async function clearErrorLogsAdmin() {
       try {
-        await fetch("/api/admin/errors/clear", { method: "POST", credentials: 'include' });
+        await adminFetch("/api/admin/errors/clear", { method: "POST" });
         const box = document.getElementById("diag-error-logs-box");
         if (box) box.textContent = "Error logs cleared by admin.";
         showToast("Diagnostics error logs cleared", "info");
@@ -4647,9 +5208,8 @@
     async function toggleEmergencyPauseAdmin() {
       openConfirmModal("Emergency Pause Toggle", "Halt or resume public cab booking submissions across Bihar?", async () => {
         try {
-          const res = await fetch("/api/admin/emergency-pause", {
-            method: "POST",
-            credentials: 'include'
+          const res = await adminFetch("/api/admin/emergency-pause", {
+            method: "POST"
           });
           const data = await res.json();
           if (res.ok) {

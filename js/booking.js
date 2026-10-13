@@ -2384,19 +2384,36 @@ class BookingManager {
               </div>
 
               <div class="checkout-qr-wrapper" id="checkout-qr-box" style="display: block; margin-top: 12px; background: #faf5ff; border: 1.5px solid #d946ef; border-radius: 12px; padding: 14px; text-align: center;">
-                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 8px;">PHONEPE • BHIM UPI • GPAY • PAYTM</div>
-                <img id="chk-qr-img" src="${this.dynamicPaymentConfig?.qrImageUrl || 'images/phonepe-qr.png'}" alt="Merchant Payment QR Code" class="checkout-qr-img" style="width: 144px; height: 144px; border-radius: 10px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(95,37,159,0.1);">
+                <div style="font-size: 11px; font-weight: 800; color: #5f259f; letter-spacing: 0.6px; margin-bottom: 8px;">INSTANT 0% FEE • PHONEPE • GPAY • PAYTM • BHIM</div>
+                
+                <!-- Dynamic Amount Embedded QR Code with offline fallback -->
+                <img id="chk-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=${encodeURIComponent(`upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=OneWayTaxiBihar%20Advance`)}" onerror="this.onerror=null; this.src='images/phonepe-qr.png';" alt="Dynamic UPI Payment QR Code" class="checkout-qr-img" style="width: 150px; height: 150px; border-radius: 10px; border: 1.5px solid #d946ef; margin: 0 auto; display: block; object-fit: contain; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(95,37,159,0.1);">
+                
                 <div id="chk-payee-name" style="margin-top: 8px; font-size: 13.5px; font-weight: 800; color: #0f172a;">${this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</div>
                 
+                <!-- Verified UPI ID Pill with 1-click Copy -->
                 <div class="checkout-upi-pill" style="display: inline-flex; align-items: center; gap: 8px; background: white; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 20px; margin-top: 6px;">
                   <span id="chk-upi-id-label" style="font-weight: 700; color: #334155; font-size: 12.5px; font-family: monospace;">${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}</span>
-                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy</button>
+                  <button type="button" class="checkout-btn-copy" onclick="window.copyUpiId(document.getElementById('chk-upi-id-label')?.textContent?.trim() || '8002141816@ybl', this)" style="border: none; background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">Copy UPI ID</button>
                 </div>
 
-                <div style="margin-top: 10px;">
-                  <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=Cab%20Booking%20Advance" id="chk-upi-intent-link" class="checkout-upi-intent-btn" style="display: inline-block; background: #5f259f; color: white; text-decoration: none; padding: 9px 18px; border-radius: 8px; font-size: 12.5px; font-weight: 800; box-shadow: 0 3px 10px rgba(95,37,159,0.25);">
-                    Pay ₹299 with PhonePe / GPay App ➔
-                  </a>
+                <!-- 1-Tap Mobile Launch Buttons for PhonePe, GPay, Paytm, BHIM -->
+                <div style="margin-top: 12px;">
+                  <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px;">Tap to pay directly in your installed app:</div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; max-width: 380px; margin: 0 auto;">
+                    <a href="phonepe://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=OneWayTaxiBihar%20Advance" id="chk-upi-phonepe-link" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #5f259f; color: white; text-decoration: none; padding: 8px 6px; border-radius: 8px; font-size: 11.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(95,37,159,0.25);">
+                      🟣 PhonePe
+                    </a>
+                    <a href="gpay://upi/pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=OneWayTaxiBihar%20Advance" id="chk-upi-gpay-link" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #1a73e8; color: white; text-decoration: none; padding: 8px 6px; border-radius: 8px; font-size: 11.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(26,115,232,0.25);">
+                      🟢 GPay
+                    </a>
+                    <a href="paytmmp://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=OneWayTaxiBihar%20Advance" id="chk-upi-paytm-link" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #00b9f5; color: white; text-decoration: none; padding: 8px 6px; border-radius: 8px; font-size: 11.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(0,185,245,0.25);">
+                      🔵 Paytm
+                    </a>
+                    <a href="upi://pay?pa=${this.dynamicPaymentConfig?.upiId || '8002141816@ybl'}&pn=${encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey')}&am=299&cu=INR&tn=OneWayTaxiBihar%20Advance" id="chk-upi-intent-link" style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #059669; color: white; text-decoration: none; padding: 8px 6px; border-radius: 8px; font-size: 11.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(5,150,105,0.25);">
+                      🟠 Any UPI
+                    </a>
+                  </div>
                 </div>
 
                 <div style="margin-top: 12px; text-align: left; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
@@ -2823,11 +2840,31 @@ class BookingManager {
     }
 
     const upiId = this.dynamicPaymentConfig?.upiId || '8002141816@ybl';
-    const payeeName = encodeURIComponent(this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey');
+    const rawPayee = this.dynamicPaymentConfig?.payeeName || 'Himanshu Kumar Dubey';
+    const payeeName = encodeURIComponent(rawPayee);
+    const amt = payableNow || 299;
+    const upiUri = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+
+    const qrEl = document.getElementById("chk-qr-img");
+    if (qrEl) {
+      qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=${encodeURIComponent(upiUri)}`;
+    }
+
+    const phonepeLink = document.getElementById("chk-upi-phonepe-link");
+    if (phonepeLink) {
+      phonepeLink.href = `phonepe://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+    }
+    const gpayLink = document.getElementById("chk-upi-gpay-link");
+    if (gpayLink) {
+      gpayLink.href = `gpay://upi/pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+    }
+    const paytmLink = document.getElementById("chk-upi-paytm-link");
+    if (paytmLink) {
+      paytmLink.href = `paytmmp://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+    }
     const upiLink = document.getElementById("chk-upi-intent-link");
     if (upiLink) {
-      upiLink.href = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${payableNow || 299}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
-      upiLink.textContent = `Pay ₹${payableNow || 299} with PhonePe / GPay App ➔`;
+      upiLink.href = upiUri;
     }
   }
 
@@ -2836,8 +2873,16 @@ class BookingManager {
       const res = await ApiClient.getPaymentConfig();
       if (res && res.success) {
         this.dynamicPaymentConfig = res;
+        const upiId = res.upiId || '8002141816@ybl';
+        const rawPayee = res.payeeName || 'Himanshu Kumar Dubey';
+        const payeeName = encodeURIComponent(rawPayee);
+        const amt = document.getElementById("chk-total-payable")?.textContent?.replace(/\D/g, '') || '299';
+        const upiUri = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+
         const qrEl = document.getElementById("chk-qr-img");
-        if (qrEl && res.qrImageUrl) qrEl.src = res.qrImageUrl;
+        if (qrEl) {
+          qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=${encodeURIComponent(upiUri)}`;
+        }
 
         const payeeEl = document.getElementById("chk-payee-name");
         if (payeeEl && res.payeeName) payeeEl.textContent = res.payeeName;
@@ -2851,12 +2896,21 @@ class BookingManager {
           rzpPill.style.background = res.razorpayConfigured ? '#059669' : '#64748b';
         }
 
+        const phonepeLink = document.getElementById("chk-upi-phonepe-link");
+        if (phonepeLink) {
+          phonepeLink.href = `phonepe://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+        }
+        const gpayLink = document.getElementById("chk-upi-gpay-link");
+        if (gpayLink) {
+          gpayLink.href = `gpay://upi/pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+        }
+        const paytmLink = document.getElementById("chk-upi-paytm-link");
+        if (paytmLink) {
+          paytmLink.href = `paytmmp://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+        }
         const upiLink = document.getElementById("chk-upi-intent-link");
         if (upiLink) {
-          const upiId = res.upiId || '8002141816@ybl';
-          const payeeName = encodeURIComponent(res.payeeName || 'Himanshu Kumar Dubey');
-          const amt = document.getElementById("chk-total-payable")?.textContent?.replace(/\D/g, '') || '299';
-          upiLink.href = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${amt}&cu=INR&tn=OneWayTaxiBihar%20Advance`;
+          upiLink.href = upiUri;
         }
       }
     } catch (e) {
@@ -3308,9 +3362,25 @@ class BookingManager {
 
       // Live Razorpay Checkout flow ONLY if online cards/gateway selected AND configured with live keys
       const isRzpLive = Boolean(this.dynamicPaymentConfig?.razorpayConfigured);
-      if ((isRzpAdvance || isFullPayment) && isRzpLive && typeof window.Razorpay !== 'undefined') {
-        try {
-          const tempBId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      if ((isRzpAdvance || isFullPayment)) {
+        if (!isRzpLive) {
+          window.showToast?.("Razorpay gateway keys are in setup mode. Please select Direct PhonePe/GPay QR (0% Fee) or Cash to Driver.", "warning");
+          const upiRadio = document.querySelector('input[name="pay-method"][value*="Direct UPI"]');
+          if (upiRadio) {
+            upiRadio.checked = true;
+            this.handlePaymentMethodChange(upiRadio.value);
+          }
+          if (btnConfirm) {
+            btnConfirm.disabled = false;
+            this.updateCheckoutPayable(price);
+          }
+          this.isSubmittingBooking = false;
+          return;
+        }
+
+        if (typeof window.Razorpay !== 'undefined') {
+          try {
+            const tempBId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
           const orderRes = await ApiClient.createPaymentOrder({
             amount: amountToCharge,
             bookingId: tempBId,
@@ -3382,6 +3452,7 @@ class BookingManager {
           console.warn('[Razorpay Flow Note]:', rzpErr.message);
         }
       }
+    }
 
       const res = await ApiClient.createBooking(payload);
 

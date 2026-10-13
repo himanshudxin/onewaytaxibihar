@@ -1312,13 +1312,109 @@
       background: #f8fafc;
     }
 
-    /* Responsive Breakpoints */
+    /* ==========================================================================
+       MOBILE RESPONSIVENESS & ADAPTIVE DESIGN SYSTEM (320px - 1440px+)
+       ========================================================================== */
+
+    /* Mobile Backdrop for Sidebar */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sidebar-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Sidebar Close Button (Mobile Only) */
+    .sidebar-close-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #94a3b8;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 6px;
+      margin-left: auto;
+      border-radius: var(--radius-sm);
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      min-height: 38px;
+      transition: var(--transition);
+    }
+    .sidebar-close-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Common Responsive Layout Helpers */
+    .dashboard-split-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .dispatch-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Drawer Panel Fluid Scaling */
+    .ops-drawer {
+      width: 100%;
+      max-width: min(520px, 100vw);
+    }
+
+    /* View Actions Responsive Group */
+    .view-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Empty State Cell */
+    .empty-state-cell {
+      text-align: center;
+      padding: 36px 20px !important;
+      color: #64748b;
+      font-size: 13px;
+    }
+    .empty-state-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: block;
+      opacity: 0.7;
+    }
+
+    /* Breakpoint: Large Tablets & Small Laptops (<= 1024px) */
     @media (max-width: 1024px) {
       .app-sidebar {
         transform: translateX(-100%);
+        box-shadow: 4px 0 28px rgba(0, 0, 0, 0.35);
+        z-index: 10000;
       }
       .app-sidebar.mobile-open {
         transform: translateX(0);
+      }
+      .sidebar-close-btn {
+        display: flex;
       }
       .app-main {
         margin-left: 0 !important;
@@ -1326,24 +1422,246 @@
       .topbar-search {
         display: none;
       }
+      .dashboard-split-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    @media (max-width: 640px) {
+    /* Breakpoint: Tablets & Foldables (<= 900px) */
+    @media (max-width: 900px) {
+      .dispatch-split-grid {
+        grid-template-columns: 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Breakpoint: Mobile Phones (<= 768px) */
+    @media (max-width: 768px) {
       .app-workspace {
-        padding: 16px 12px;
+        padding: 16px 14px;
+      }
+      .app-topbar {
+        padding: 0 14px;
+        height: 56px;
+      }
+      .topbar-clock {
+        display: none;
       }
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
       }
-      .ops-card-header {
+      .kpi-tile {
         padding: 12px 14px;
       }
+      .kpi-value {
+        font-size: 20px;
+      }
+      .ops-card-header {
+        padding: 12px 16px;
+      }
       .ops-card-body {
-        padding: 14px;
+        padding: 14px 16px;
+      }
+      .view-header {
+        margin-bottom: 14px;
+      }
+      .view-title-group h2 {
+        font-size: 18px;
+      }
+      .ops-modal {
+        max-width: calc(100vw - 20px);
+        margin: 10px;
+        max-height: 92vh;
+      }
+      .ops-modal-header {
+        padding: 14px 18px;
+      }
+      .ops-modal-body {
+        padding: 18px 16px;
+      }
+      .ops-modal-footer {
+        padding: 12px 16px;
+      }
+      .ops-drawer-header {
+        padding: 14px 16px;
+      }
+      .ops-drawer-body {
+        padding: 16px;
+      }
+      #dispatch-map-container {
+        height: 280px;
+      }
+    }
+
+    /* Breakpoint: Compact Mobile Screens (<= 600px) */
+    @media (max-width: 600px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+      }
+      .filter-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 12px;
+      }
+      .filter-group {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-input {
+        width: 100% !important;
+      }
+      .tab-pills-row {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+      }
+      .view-actions {
+        width: 100%;
+      }
+      .view-actions .btn {
+        flex: 1 1 auto;
+        justify-content: center;
+      }
+      .ops-modal-footer {
+        flex-direction: column-reverse;
+      }
+      .ops-modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    /* Breakpoint: Small Mobile Phones (<= 480px) */
+    @media (max-width: 480px) {
+      .app-workspace {
+        padding: 12px 10px;
+      }
+      .app-topbar {
+        padding: 0 10px;
+      }
+      .topbar-right {
+        gap: 6px;
+      }
+      #topbar-db-status-text {
+        display: none;
+      }
+      #topbar-db-badge {
+        padding: 4px 6px;
+      }
+      #audio-label {
+        display: none;
+      }
+      #emergency-pause-text {
+        display: none;
+      }
+      .topbar-btn {
+        padding: 6px 8px;
+        min-width: 38px;
+        min-height: 38px;
+        justify-content: center;
+      }
+      #topbar-avatar {
+        display: none;
+      }
+      #ops-toast-container {
+        left: 10px;
+        right: 10px;
+        bottom: 12px;
+        align-items: stretch;
+      }
+      .ops-toast {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+      }
+      .auth-box {
+        padding: 24px 16px;
+      }
+      .otp-digits-row {
+        gap: 6px;
+      }
+      .otp-digit-input {
+        flex: 1;
+        max-width: 42px;
+        min-width: 32px;
+        height: 44px;
+        font-size: 18px;
+      }
+      #dispatch-map-container {
+        height: 240px;
       }
       .ops-table thead th, .ops-table tbody td {
         padding: 8px 10px;
-        font-size: 11.5px;
+        font-size: 12px;
+      }
+      #drivers-grid-container {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* Breakpoint: Ultra-Narrow Mobile (<= 360px - e.g. iPhone SE 1st gen, Fold Cover) */
+    @media (max-width: 360px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .topbar-left {
+        gap: 8px;
+      }
+      .topbar-right {
+        gap: 4px;
+      }
+      .topbar-toggle-btn {
+        width: 38px;
+        height: 38px;
+      }
+      .otp-digit-input {
+        max-width: 36px;
+        min-width: 28px;
+        height: 40px;
+        font-size: 16px;
+      }
+      .otp-digits-row {
+        gap: 4px;
+      }
+      .auth-tab-btn {
+        font-size: 11px;
+        padding: 6px 8px;
+      }
+    }
+
+    /* Touch & Mobile Accessibility Targets (>= 44px touch targets & no iOS auto-zoom) */
+    @media (pointer: coarse), (max-width: 768px) {
+      .btn {
+        min-height: 42px;
+      }
+      .btn-sm {
+        min-height: 38px;
+      }
+      .topbar-toggle-btn {
+        min-width: 42px;
+        min-height: 42px;
+      }
+      .nav-item-btn {
+        min-height: 44px;
+        padding: 10px 12px;
+      }
+      .tab-pill {
+        min-height: 38px;
+        padding: 7px 14px;
+        display: inline-flex;
+        align-items: center;
+      }
+      /* Prevent iOS auto-zoom on form inputs */
+      input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+        font-size: 16px !important;
       }
     }
   </style>
@@ -1453,6 +1771,8 @@
        ========================================================================== */
   -->
   <div class="app-shell" id="admin-main-app" style="display: none;">
+    <!-- Backdrop for Mobile Sidebar Drawer -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
 
     <!-- SIDEBAR (13 Core Modules) -->
     <aside class="app-sidebar" id="app-sidebar">
@@ -1467,6 +1787,7 @@
             <span>Dispatch Ops</span>
           </div>
         </div>
+        <button type="button" class="sidebar-close-btn" id="btn-sidebar-close" onclick="closeMobileSidebar()" aria-label="Close navigation" title="Close Menu">✕</button>
       </div>
 
       <nav class="sidebar-nav">
@@ -1708,7 +2029,7 @@
           </div>
 
           <!-- Operational Split Grid: Live Queue & Recent Bookings -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div class="dashboard-split-grid">
             
             <!-- Left: Recent Live Bookings -->
             <div class="ops-card" style="margin-bottom: 0;">
@@ -1794,7 +2115,7 @@
           <div id="dispatch-map-container"></div>
 
           <!-- Dispatch Work Area: Left Queue, Right Driver Pool -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="dispatch-split-grid">
             
             <!-- Unassigned & Urgent Bookings Queue -->
             <div class="ops-card">
@@ -2045,7 +2366,7 @@
           </div>
 
           <!-- Drivers Grid / Cards -->
-          <div id="drivers-grid-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+          <div id="drivers-grid-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px;">
             <div style="grid-column: 1/-1; text-align:center; padding:32px; color:#94a3b8;">Loading driver partners...</div>
           </div>
         </section>
@@ -2365,7 +2686,7 @@
               </div>
               <div class="ops-card-body">
                 <form id="form-general-settings" onsubmit="handleSaveGeneralSettings(event)">
-                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                  <div class="form-grid-2">
                     <div class="form-group">
                       <label class="form-label">24x7 Customer Helpline Phone</label>
                       <input type="text" class="form-control" id="set-helpline-phone" value="+91 80021 41816">
@@ -2435,7 +2756,7 @@
                 <form id="form-gateway-settings" onsubmit="handleSavePaymentSettings(event)">
                   
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px;">1. Direct UPI &amp; PhonePe QR Configuration (0 Documents)</div>
-                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+                  <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
                       <label class="form-label">UPI VPA ID</label>
                       <input type="text" class="form-control" id="pay-upi-id" placeholder="8002141816@ybl">
@@ -2456,7 +2777,7 @@
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-top:1px solid #e2e8f0; padding-top:16px;">
                     2. Razorpay Gateway Integration (Cards, NetBanking, Wallets)
                   </div>
-                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+                  <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
                       <label class="form-label">Razorpay Key ID (Test or Live)</label>
                       <input type="text" class="form-control" id="pay-rzp-key-id" placeholder="rzp_test_... or rzp_live_...">
@@ -2473,7 +2794,7 @@
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-top:1px solid #e2e8f0; padding-top:16px;">
                     3. Bank Settlement Information
                   </div>
-                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+                  <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
                       <label class="form-label">Bank Name</label>
                       <input type="text" class="form-control" id="pay-bank-name" placeholder="State Bank of India">
@@ -2623,7 +2944,7 @@
       </div>
       <div class="ops-modal-body">
         <form id="form-add-driver" onsubmit="handleAddDriverSubmit(event)">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">Driver Full Name</label>
               <input type="text" class="form-control" id="new-drv-name" required placeholder="e.g. Rajesh Kumar">
@@ -2667,7 +2988,7 @@
       </div>
       <div class="ops-modal-body">
         <form id="form-add-vehicle" onsubmit="handleAddVehicleSubmit(event)">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">Registration Plate Number</label>
               <input type="text" class="form-control" id="new-veh-plate" required placeholder="BR 01 PA 4921">
@@ -2724,7 +3045,7 @@
             <label class="form-label">Customer Mobile Number</label>
             <input type="tel" class="form-control" id="wallet-adj-phone" required placeholder="9835012345">
           </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">Adjustment Type</label>
               <select class="form-control" id="wallet-adj-type">
@@ -2759,7 +3080,7 @@
       </div>
       <div class="ops-modal-body">
         <form id="form-add-coupon" onsubmit="handleAddCouponSubmit(event)">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">Coupon Code (Uppercase)</label>
               <input type="text" class="form-control" id="new-cpn-code" required placeholder="BIHAR100" style="text-transform:uppercase;">
@@ -2806,7 +3127,7 @@
       </div>
       <div class="ops-modal-body">
         <form id="form-add-user" onsubmit="handleAddUserSubmit(event)">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">Operator Username</label>
               <input type="text" class="form-control" id="new-usr-uname" required placeholder="e.g. patna_dispatch_1">
@@ -2837,6 +3158,8 @@
         </form>
       </div>
     </div>
+  </div>
+
   <!-- CONVERT LEAD TO BOOKING MODAL -->
   <div class="modal-backdrop" id="modal-convert-lead">
     <div class="ops-modal">
@@ -2847,7 +3170,7 @@
       <form id="form-convert-lead" onsubmit="handleConvertLeadSubmit(event)">
         <div class="ops-modal-body">
           <input type="hidden" id="conv-lead-id">
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Passenger Mobile</label>
               <input type="tel" class="form-control" id="conv-phone" required maxlength="10">
@@ -2857,7 +3180,7 @@
               <input type="text" class="form-control" id="conv-name" value="Valued Customer">
             </div>
           </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Origin City</label>
               <input type="text" class="form-control" id="conv-origin" required>
@@ -2867,7 +3190,7 @@
               <input type="text" class="form-control" id="conv-dest" required>
             </div>
           </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Pickup Date</label>
               <input type="date" class="form-control" id="conv-date" required>
@@ -2877,7 +3200,7 @@
               <input type="time" class="form-control" id="conv-time" value="10:00" required>
             </div>
           </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Vehicle Tier</label>
               <select class="form-control" id="conv-cab-tier">
@@ -3383,8 +3706,13 @@
 
     function toggleSidebarCollapse() {
       const sidebar = document.getElementById("app-sidebar");
+      const backdrop = document.getElementById("sidebar-backdrop");
       if (window.innerWidth <= 1024) {
-        sidebar.classList.toggle("mobile-open");
+        const isOpen = sidebar.classList.toggle("mobile-open");
+        if (backdrop) {
+          if (isOpen) backdrop.classList.add("active");
+          else backdrop.classList.remove("active");
+        }
       } else {
         sidebar.classList.toggle("collapsed");
       }
@@ -3393,6 +3721,8 @@
     function closeMobileSidebar() {
       const sidebar = document.getElementById("app-sidebar");
       if (sidebar) sidebar.classList.remove("mobile-open");
+      const backdrop = document.getElementById("sidebar-backdrop");
+      if (backdrop) backdrop.classList.remove("active");
     }
 
     function switchSettingsSubTab(subName, btn) {
@@ -4299,6 +4629,7 @@
       const select = document.getElementById("assign-driver-select");
       const notes = document.getElementById("assign-driver-notes")?.value || "";
       const driverId = select?.value;
+      const btn = document.querySelector("#modal-assign-driver .btn-primary");
 
       if (!_activeAssignBookingId || !driverId) {
         showToast("Please choose a driver to assign", "warning");
@@ -4306,6 +4637,7 @@
       }
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Assigning..."; }
         const res = await adminFetch("/api/admin/assign-driver", {
           method: "POST",
           body: JSON.stringify({
@@ -4326,6 +4658,8 @@
         }
       } catch (e) {
         showToast("Error: " + e.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Confirm Assignment"; }
       }
     }
 
@@ -4547,6 +4881,7 @@
 
     async function handleAddDriverSubmit(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const name = document.getElementById("new-drv-name")?.value || "";
       const phone = document.getElementById("new-drv-phone")?.value || "";
       const carNo = document.getElementById("new-drv-car-no")?.value || "";
@@ -4555,6 +4890,7 @@
       const license = document.getElementById("new-drv-license")?.value || "";
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Onboarding..."; }
         const res = await adminFetch("/api/admin/drivers/add", {
           method: "POST",
           body: JSON.stringify({ name, phone, carNo, carModel, city, license })
@@ -4570,6 +4906,8 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Onboard Chauffeur"; }
       }
     }
 
@@ -4634,6 +4972,7 @@
 
     async function handleAddVehicleSubmit(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const plate = document.getElementById("new-veh-plate")?.value || "";
       const model = document.getElementById("new-veh-model")?.value || "";
       const tier = document.getElementById("new-veh-tier")?.value || "sedan";
@@ -4642,6 +4981,7 @@
       const fitExp = document.getElementById("new-veh-fit-exp")?.value || "";
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/vehicles/save", {
           method: "POST",
           body: JSON.stringify({ plateNumber: plate, model, tier, fuelType: fuel, insuranceExpiry: insExp, fitnessExpiry: fitExp })
@@ -4657,6 +4997,8 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save to Fleet"; }
       }
     }
 
@@ -4894,6 +5236,7 @@
 
     async function handleAddCouponSubmit(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const code = document.getElementById("new-cpn-code")?.value.toUpperCase().trim() || "";
       const title = document.getElementById("new-cpn-title")?.value || "";
       const type = document.getElementById("new-cpn-type")?.value || "FLAT";
@@ -4902,6 +5245,7 @@
       const maxDiscount = Number(document.getElementById("new-cpn-max-discount")?.value) || 250;
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Activating..."; }
         const res = await adminFetch("/api/admin/coupons/create", {
           method: "POST",
           body: JSON.stringify({ code, title, type, value, minFare, maxDiscount })
@@ -4916,6 +5260,8 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Activate Coupon"; }
       }
     }
 
@@ -5125,12 +5471,14 @@
 
     async function handleSaveGeneralSettings(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const helplinePhone = document.getElementById("set-helpline-phone")?.value;
       const whatsappPhone = document.getElementById("set-whatsapp-phone")?.value;
       const baseFare = Number(document.getElementById("set-base-fare")?.value) || 2198;
       const baseKm = Number(document.getElementById("set-base-km")?.value) || 80;
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/settings", {
           method: "POST",
           body: JSON.stringify({ helplinePhone, whatsappPhone, baseFare, baseKm })
@@ -5141,11 +5489,14 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform Settings"; }
       }
     }
 
     async function handleSavePaymentSettings(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const upiId = document.getElementById("pay-upi-id")?.value;
       const payeeName = document.getElementById("pay-payee-name")?.value;
       const razorpayKeyId = document.getElementById("pay-rzp-key-id")?.value;
@@ -5156,6 +5507,7 @@
       const ifscCode = document.getElementById("pay-ifsc")?.value;
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/payment-settings", {
           method: "POST",
           body: JSON.stringify({
@@ -5169,6 +5521,8 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Gateways & Bank Settings"; }
       }
     }
 
@@ -5210,12 +5564,14 @@
 
     async function handleAddUserSubmit(e) {
       if (e) e.preventDefault();
+      const btn = e.target?.querySelector('button[type="submit"]');
       const username = document.getElementById("new-usr-uname")?.value.trim().toLowerCase();
       const name = document.getElementById("new-usr-name")?.value.trim();
       const role = document.getElementById("new-usr-role")?.value;
       const phone = document.getElementById("new-usr-phone")?.value.replace(/\D/g, "");
 
       try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Creating..."; }
         const res = await adminFetch("/api/admin/users", {
           method: "POST",
           body: JSON.stringify({ username, name, role, phone })
@@ -5230,6 +5586,8 @@
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Create Operator"; }
       }
     }
 
@@ -5413,6 +5771,7 @@
     // Global keyboard listener (Escape closes modals/drawers)
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        closeMobileSidebar();
         closeBookingDrawer();
         closeAssignModal();
         closeAddDriverModal();
@@ -5420,6 +5779,7 @@
         closeWalletAdjustModal();
         closeAddCouponModal();
         closeAddUserModal();
+        closeConvertLeadModal();
         closeConfirmModal();
       }
     });

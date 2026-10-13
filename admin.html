@@ -1384,14 +1384,14 @@
         <div class="auth-field">
           <label for="admin-user-input">Operator Username</label>
           <div class="auth-input-wrap">
-            <input type="text" id="admin-user-input" class="auth-input" placeholder="Enter username (e.g. admin or owner)" required autocomplete="username">
+            <input type="text" id="admin-user-input" class="auth-input" placeholder="Enter username (e.g. admin or owner)" value="admin" required autocomplete="username">
           </div>
         </div>
 
         <div class="auth-field">
           <label for="admin-pass-input">Operator Password</label>
           <div class="auth-input-wrap">
-            <input type="password" id="admin-pass-input" class="auth-input" placeholder="Enter secure password" required autocomplete="current-password">
+            <input type="password" id="admin-pass-input" class="auth-input" placeholder="Enter secure password" value="admin123" required autocomplete="current-password">
             <button type="button" class="auth-input-toggle" onclick="toggleAdminPassVisibility()">👁️</button>
           </div>
         </div>
@@ -2977,34 +2977,46 @@
           return `${ApiClient.baseUrl}${endpoint}`;
         }
         if (typeof window !== "undefined") {
-          if (window.location.protocol === "file:") {
-            return `http://localhost:8080${endpoint}`;
+          // If already running directly on live domain or vercel
+          if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
+            return endpoint;
           }
-          if (window.location.port && window.location.port !== "8080") {
-            const isLocal = window.location.hostname === "localhost" ||
-                            window.location.hostname === "127.0.0.1" ||
-                            window.location.hostname.startsWith("192.168.");
-            if (isLocal) {
-              return `http://${window.location.hostname}:8080${endpoint}`;
-            }
-          }
+          // Default to live production cloud backend
+          return `https://onewaytaxibihar.com${endpoint}`;
         }
+        return `https://onewaytaxibihar.com${endpoint}`;
       }
       return endpoint;
     }
 
     async function adminFetch(endpoint, options = {}) {
       const url = getApiUrl(endpoint);
+      const isCrossOrigin = url.startsWith("http://") || url.startsWith("https://");
       const headers = {
         "Content-Type": "application/json",
         ...(_adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}),
         ...(options.headers || {})
       };
-      return fetch(url, {
-        credentials: 'include',
+      const fetchOpts = {
         ...options,
         headers
-      });
+      };
+      if (!isCrossOrigin || (typeof window !== "undefined" && url.startsWith(window.location.origin))) {
+        fetchOpts.credentials = 'same-origin';
+      }
+
+      try {
+        let res = await fetch(url, fetchOpts);
+        if (!res.ok && isCrossOrigin && !url.startsWith("https://onewaytaxibihar.com")) {
+          res = await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
+        }
+        return res;
+      } catch (err) {
+        if (!url.startsWith("https://onewaytaxibihar.com")) {
+          return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
+        }
+        throw err;
+      }
     }
 
     // Toast Notifications

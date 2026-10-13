@@ -39,9 +39,11 @@ const server = http.createServer(async (req, res) => {
   // CORS & Security Headers
   const reqOrigin = req.headers.origin || '*';
   res.setHeader('Access-Control-Allow-Origin', reqOrigin);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (reqOrigin !== '*') {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');

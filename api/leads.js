@@ -75,9 +75,11 @@ module.exports = async (req, res) => {
   // Ultra-Permissive CORS for seamless Dispatch Console communication
   const reqOrigin = req.headers['origin'] || '*';
   res.setHeader('Access-Control-Allow-Origin', reqOrigin);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  if (reqOrigin !== '*') {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin');
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;

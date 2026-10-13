@@ -13,27 +13,15 @@ class ApiClient {
 
   static baseUrl = (() => {
     if (typeof window !== "undefined") {
-      // 1. If opened via file:// protocol
-      if (window.location.protocol === "file:") {
-        return "http://localhost:8080";
-      }
-      // 2. If running on standard port 8080 or live web domain (Vercel, custom domain onewaytaxibihar.com)
-      if (window.location.port === "8080" || (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar")))) {
+      // 1. If running directly on the production domain or vercel
+      if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
         return "";
       }
-      // 3. If running on a local dev server (port 5500, 3000, 5173, etc.), route API calls to port 8080
-      const isLocalHost = window.location.hostname === "localhost" ||
-                          window.location.hostname === "127.0.0.1" ||
-                          window.location.hostname.startsWith("192.168.") ||
-                          window.location.hostname.startsWith("10.") ||
-                          window.location.hostname.startsWith("172.");
-      if (isLocalHost) {
-        if (window.location.port && window.location.port !== "8080") {
-          return `http://${window.location.hostname}:8080`;
-        }
-      }
+      // 2. Default to LIVE production cloud backend (onewaytaxibihar.com) so the frontend
+      // always connects to live MongoDB Atlas without requiring a local node server
+      return "https://onewaytaxibihar.com";
     }
-    return "";
+    return "https://onewaytaxibihar.com";
   })();
 
   static async request(endpoint, options = {}) {
@@ -47,14 +35,18 @@ class ApiClient {
 
     const fetchJson = async (targetUrl) => {
       try {
-        const response = await fetch(targetUrl, {
-          credentials: 'include',
+        const isCrossOrigin = targetUrl.startsWith("http://") || targetUrl.startsWith("https://");
+        const fetchOpts = {
           ...options,
           headers: {
             ...defaultHeaders,
             ...(options.headers || {})
           }
-        });
+        };
+        if (!isCrossOrigin || (typeof window !== "undefined" && targetUrl.startsWith(window.location.origin))) {
+          fetchOpts.credentials = 'same-origin';
+        }
+        const response = await fetch(targetUrl, fetchOpts);
         const contentType = response.headers.get("content-type") || "";
         if (!contentType.includes("application/json") && !contentType.includes("json")) {
           return null; // Not valid JSON (e.g. HTML login wall or 404 page)

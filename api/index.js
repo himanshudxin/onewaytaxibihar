@@ -216,48 +216,140 @@ function getRouteDistance(origin, dest) {
 }
 
 // Server-Side Fare Calculation Engine (Authoritative source of truth)
-const FLEET_RATES = {
-  hatchback: { perKm: 21.0, minFare: 1698, minKm: 50, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
-  sedan: { perKm: 25.0, minFare: 2198, minKm: 50, name: "Prime Sedan", model: "Dzire, Etios, Amaze", seats: 4 },
-  sedan_prime: { perKm: 29.0, minFare: 2698, minKm: 50, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
-  suv: { perKm: 33.0, minFare: 3398, minKm: 50, name: "Family SUV (6+1)", model: "Maruti Ertiga, Carens", seats: 6 },
-  innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
+const DEFAULT_FLEET_RATES = {
+  hatchback: { perKm: 21.0, minFare: 1698, minKm: 50, rentalPrice: 1800, rentalDriverAllowance: 1000, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
+  sedan: { perKm: 25.0, minFare: 2198, minKm: 50, rentalPrice: 2200, rentalDriverAllowance: 1000, name: "Prime Sedan", model: "Dzire, Etios, Amaze", seats: 4 },
+  sedan_prime: { perKm: 29.0, minFare: 2698, minKm: 50, rentalPrice: 2600, rentalDriverAllowance: 1000, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
+  suv: { perKm: 33.0, minFare: 3398, minKm: 50, rentalPrice: 4000, rentalDriverAllowance: 1000, name: "Family SUV / XUV (6+1)", model: "Maruti Ertiga, Carens, Scorpio", seats: 6 },
+  innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, rentalPrice: 5000, rentalDriverAllowance: 1000, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
 };
 
-function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway', origin = '', dest = '') {
-  const cleanTier = (cabTier || 'sedan').toLowerCase();
-  const tier = FLEET_RATES[cleanTier] || FLEET_RATES.sedan;
+const DEFAULT_SEGMENT_FARES = {
+  oneway: {
+    driverAllowance: 250,
+    driverAllowanceThresholdKm: 250,
+    nightCharge: 250,
+    gstPct: 5
+  },
+  roundtrip: {
+    returnDiscountPct: 12,
+    driverAllowancePerDay: 350,
+    minKmPerDay: 250
+  },
+  airport: {
+    convenienceCharge: 150,
+    minFare: 999
+  },
+  rental: {
+    rentalHours: 8,
+    rentalKm: 80,
+    driverAllowance: 1000,
+    extraKmRate: 22,
+    extraHourRate: 150
+  }
+};
+
+function getEffectiveFleetRates(db) {
+  const saved = db?.settings?.fleet_rates || db?.settings?.fleetRates || {};
+  const merged = {};
+  for (const [tierKey, defVal] of Object.entries(DEFAULT_FLEET_RATES)) {
+    const s = saved[tierKey] || {};
+    merged[tierKey] = {
+      perKm: Number(s.perKm) > 0 ? Number(s.perKm) : defVal.perKm,
+      minFare: Number(s.minFare) > 0 ? Number(s.minFare) : defVal.minFare,
+      minKm: Number(s.minKm) > 0 ? Number(s.minKm) : defVal.minKm,
+      rentalPrice: Number(s.rentalPrice) > 0 ? Number(s.rentalPrice) : defVal.rentalPrice,
+      rentalDriverAllowance: Number(s.rentalDriverAllowance) > 0 ? Number(s.rentalDriverAllowance) : defVal.rentalDriverAllowance,
+      name: s.name || defVal.name,
+      model: s.model || defVal.model,
+      seats: s.seats || defVal.seats
+    };
+  }
+  return merged;
+}
+
+function getEffectiveSegmentFares(db) {
+  const saved = db?.settings?.segment_fares || db?.settings?.segmentFares || {};
+  return {
+    oneway: {
+      driverAllowance: Number(saved.oneway?.driverAllowance) >= 0 ? Number(saved.oneway.driverAllowance) : DEFAULT_SEGMENT_FARES.oneway.driverAllowance,
+      driverAllowanceThresholdKm: Number(saved.oneway?.driverAllowanceThresholdKm) > 0 ? Number(saved.oneway.driverAllowanceThresholdKm) : DEFAULT_SEGMENT_FARES.oneway.driverAllowanceThresholdKm,
+      nightCharge: Number(saved.oneway?.nightCharge) >= 0 ? Number(saved.oneway.nightCharge) : DEFAULT_SEGMENT_FARES.oneway.nightCharge,
+      gstPct: Number(saved.oneway?.gstPct) >= 0 ? Number(saved.oneway.gstPct) : DEFAULT_SEGMENT_FARES.oneway.gstPct
+    },
+    roundtrip: {
+      returnDiscountPct: Number(saved.roundtrip?.returnDiscountPct) >= 0 ? Number(saved.roundtrip.returnDiscountPct) : DEFAULT_SEGMENT_FARES.roundtrip.returnDiscountPct,
+      driverAllowancePerDay: Number(saved.roundtrip?.driverAllowancePerDay) >= 0 ? Number(saved.roundtrip.driverAllowancePerDay) : DEFAULT_SEGMENT_FARES.roundtrip.driverAllowancePerDay,
+      minKmPerDay: Number(saved.roundtrip?.minKmPerDay) > 0 ? Number(saved.roundtrip.minKmPerDay) : DEFAULT_SEGMENT_FARES.roundtrip.minKmPerDay
+    },
+    airport: {
+      convenienceCharge: Number(saved.airport?.convenienceCharge) >= 0 ? Number(saved.airport.convenienceCharge) : DEFAULT_SEGMENT_FARES.airport.convenienceCharge,
+      minFare: Number(saved.airport?.minFare) > 0 ? Number(saved.airport.minFare) : DEFAULT_SEGMENT_FARES.airport.minFare
+    },
+    rental: {
+      rentalHours: Number(saved.rental?.rentalHours) > 0 ? Number(saved.rental.rentalHours) : DEFAULT_SEGMENT_FARES.rental.rentalHours,
+      rentalKm: Number(saved.rental?.rentalKm) > 0 ? Number(saved.rental.rentalKm) : DEFAULT_SEGMENT_FARES.rental.rentalKm,
+      driverAllowance: Number(saved.rental?.driverAllowance) >= 0 ? Number(saved.rental.driverAllowance) : DEFAULT_SEGMENT_FARES.rental.driverAllowance,
+      extraKmRate: Number(saved.rental?.extraKmRate) > 0 ? Number(saved.rental.extraKmRate) : DEFAULT_SEGMENT_FARES.rental.extraKmRate,
+      extraHourRate: Number(saved.rental?.extraHourRate) > 0 ? Number(saved.rental.extraHourRate) : DEFAULT_SEGMENT_FARES.rental.extraHourRate
+    }
+  };
+}
+
+const FLEET_RATES = DEFAULT_FLEET_RATES;
+
+function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway', origin = '', dest = '', options = {}) {
+  const db = options.db || null;
+  const rates = getEffectiveFleetRates(db);
+  const segments = getEffectiveSegmentFares(db);
+
+  const cleanTier = (cabTier || 'sedan').toLowerCase().replace(/\s+/g, '_');
+  const tier = rates[cleanTier] || rates.sedan;
   const dist = Math.max(25, Number(distanceKm) || 50);
+
+  const isRental = (tripType === 'rental' || tripType === 'local');
+  const withDriver = Boolean(options.withDriver || options.rentalMode === 'with_driver');
 
   let distanceCharge = 0;
   let driverAllowance = 0;
   let roundTripDiscount = 0;
 
-  if (tripType === 'roundtrip') {
+  if (isRental) {
+    // Rental Mode: base rental price (self-drive / rented only) + optional chauffeur allowance
+    const baseRental = Number(tier.rentalPrice) || (cleanTier === 'suv' ? 4000 : 2200);
+    const driverFee = withDriver ? (Number(tier.rentalDriverAllowance) || Number(segments.rental.driverAllowance) || 1000) : 0;
+    driverAllowance = driverFee;
+    distanceCharge = baseRental + driverAllowance;
+  } else if (tripType === 'roundtrip') {
     const rawTotal = Math.round(dist * 2 * tier.perKm);
-    roundTripDiscount = Math.round(rawTotal * 0.12); // 12% return leg discount
-    driverAllowance = 350;
+    const discountPct = Number(segments.roundtrip.returnDiscountPct) || 12;
+    roundTripDiscount = Math.round(rawTotal * (discountPct / 100)); // e.g. 12% return leg discount
+    driverAllowance = Number(segments.roundtrip.driverAllowancePerDay) || 350;
     distanceCharge = (rawTotal - roundTripDiscount) + driverAllowance;
   } else {
+    // oneway / airport
     distanceCharge = Math.round(dist * tier.perKm);
-    if (dist > 250) {
-      driverAllowance = 250;
+    const thresholdKm = Number(segments.oneway.driverAllowanceThresholdKm) || 250;
+    if (dist > thresholdKm) {
+      driverAllowance = Number(segments.oneway.driverAllowance) || 250;
       distanceCharge += driverAllowance;
     }
   }
 
-  const baseFare = tier.minFare;
-  const totalFare = Math.max(baseFare, distanceCharge);
-  const tollEst = Math.round((dist / 70) * 55);
+  const baseFare = isRental ? (Number(tier.rentalPrice) || 2200) : tier.minFare;
+  const totalFare = isRental ? distanceCharge : Math.max(baseFare, distanceCharge);
+  const tollEst = isRental ? 0 : Math.round((dist / 70) * 55);
   const taxableAmount = Math.round(totalFare / 1.05);
   const gstAmount = totalFare - taxableAmount;
 
-  const hours = Math.floor(dist / 45);
-  const mins = Math.round((dist % 45) * 1.3);
-  const duration = `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : '15m'}`;
+  const hours = isRental ? Number(segments.rental.rentalHours || 8) : Math.floor(dist / 45);
+  const mins = isRental ? 0 : Math.round((dist % 45) * 1.3);
+  const duration = isRental 
+    ? `${hours} Hours / ${segments.rental.rentalKm || 80} KM`
+    : `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : '15m'}`;
 
   return {
-    distanceKm: dist,
+    distanceKm: isRental ? (segments.rental.rentalKm || 80) : dist,
     duration,
     tierId: cleanTier,
     tierName: tier.name,
@@ -265,13 +357,24 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
     seats: tier.seats,
     baseFare,
     perKmRate: tier.perKm,
+    rentalPrice: tier.rentalPrice,
+    rentalDriverAllowance: tier.rentalDriverAllowance,
+    rentalMode: isRental ? (withDriver ? 'with_driver' : 'without_driver') : null,
+    withDriver: isRental ? withDriver : true,
     distanceCharge,
     driverAllowance,
     roundTripDiscount,
     tollFastag: tollEst,
     gst: gstAmount,
     totalFare: Math.round(totalFare),
-    inclusions: [
+    inclusions: isRental ? [
+      "100% Sanitized & AC Vehicle",
+      withDriver ? "Professional Bihar Chauffeur Included" : "Self-Drive Freedom (Rented without Driver)",
+      `${segments.rental.rentalHours || 8} Hours / ${segments.rental.rentalKm || 80} KM Included`,
+      "Doorstep Vehicle Delivery & Pickup",
+      "Comprehensive Commercial Insurance Included",
+      "Transparent Pricing with No Hidden Charges"
+    ] : [
       "100% AC Chilled Ride",
       "Doorstep Pickup & Drop",
       "Driver Allowance Included",
@@ -279,7 +382,11 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
       "5% GST Tax Included",
       "Zero Return Fare Charged"
     ],
-    exclusions: [
+    exclusions: isRental ? [
+      withDriver ? "Fuel beyond included KM package" : "Fuel to be refilled by renter / self-drive",
+      "Traffic violation challans during rental period",
+      `Extra KM @ ₹${segments.rental.extraKmRate || 22}/km, Extra Hour @ ₹${segments.rental.extraHourRate || 150}/hr`
+    ] : [
       "Multiple city diversions not specified in booking",
       "Overnight detention if passenger delays vehicle to following calendar day"
     ]
@@ -1046,25 +1153,43 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 4. SERVER-SIDE FARE CALCULATION
+    // 4. SERVER-SIDE FARE CONFIGURATION & CALCULATION ENGINE
     // -------------------------------------------------------------
+    if ((pathname === '/fares/config' || pathname === '/fares/rates') && method === 'GET') {
+      const fleetRates = getEffectiveFleetRates(db);
+      const segmentFares = getEffectiveSegmentFares(db);
+      return sendJson(200, {
+        success: true,
+        fleetRates,
+        segmentFares
+      });
+    }
+
     if ((pathname === '/fares/calculate' || pathname === '/fare/calculate') && method === 'POST') {
       const origin = body.origin || body.originCity || body.pickup || body.pickupCity;
       const dest = body.dest || body.destCity || body.drop || body.dropCity;
       const cabTier = body.cabTier || body.cabType || 'sedan';
-      const tripType = body.tripType || 'oneway';
+      const tripType = String(body.tripType || 'oneway').toLowerCase();
+      const rentalMode = body.rentalMode || (body.withDriver ? 'with_driver' : 'without_driver');
+      const withDriver = Boolean(body.withDriver || rentalMode === 'with_driver');
       const distanceKm = getRouteDistance(origin, dest);
-      const fareData = calculateServerFare(distanceKm, cabTier, tripType);
+      const options = { db, withDriver, rentalMode };
+
+      const fareData = calculateServerFare(distanceKm, cabTier, tripType, origin, dest, options);
       return sendJson(200, {
         success: true,
         distanceKm,
+        tripType,
+        rentalMode: (tripType === 'rental' || tripType === 'local') ? rentalMode : null,
+        withDriver: (tripType === 'rental' || tripType === 'local') ? withDriver : true,
         totalFare: fareData.totalFare,
         fare: fareData,
         fares: {
-          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType),
-          sedan: calculateServerFare(distanceKm, 'sedan', tripType),
-          suv: calculateServerFare(distanceKm, 'suv', tripType),
-          innova: calculateServerFare(distanceKm, 'innova', tripType)
+          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType, origin, dest, options),
+          sedan: calculateServerFare(distanceKm, 'sedan', tripType, origin, dest, options),
+          sedan_prime: calculateServerFare(distanceKm, 'sedan_prime', tripType, origin, dest, options),
+          suv: calculateServerFare(distanceKm, 'suv', tripType, origin, dest, options),
+          innova_crysta: calculateServerFare(distanceKm, 'innova_crysta', tripType, origin, dest, options)
         }
       });
     }
@@ -1444,7 +1569,11 @@ module.exports = async (req, res) => {
 
       // Server-side distance and fare recalculation (Anti-tamper: server is sole authority)
       const distanceKm = getRouteDistance(originCity, destCity);
-      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', 'oneway');
+      const tripType = String(body.tripType || 'oneway').toLowerCase();
+      const isRental = (tripType === 'rental' || tripType === 'local');
+      const rentalMode = String(body.rentalMode || (body.withDriver ? 'with_driver' : 'without_driver'));
+      const withDriver = Boolean(body.withDriver || rentalMode === 'with_driver');
+      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', tripType, originCity, destCity, { db, withDriver, rentalMode });
       const baseTotal = serverFare.totalFare;
 
       // Find or create customer
@@ -1590,6 +1719,9 @@ module.exports = async (req, res) => {
       const newBooking = {
         bookingId,
         tripOtp,
+        tripType: isRental ? 'rental' : tripType,
+        rentalMode: isRental ? rentalMode : null,
+        withDriver: isRental ? withDriver : true,
         customerId: user.id,
         paymentTxnId: txnId,
         idempotencyKey: idempotencyKey || null,
@@ -1597,7 +1729,7 @@ module.exports = async (req, res) => {
         passengerPhone: `+91 ${cleanPhone}`,
         passengerEmail: passengerEmail || '',
         originCity: originCity || 'Patna',
-        destCity: destCity || 'Gaya',
+        destCity: isRental ? `${originCity || 'Patna'} (Rental Tour)` : (destCity || 'Gaya'),
         pickupAddress: pickupAddress || `${originCity || 'Patna'} City`,
         dropAddress: dropAddress || `${destCity || 'Gaya'} City`,
         pickupDate: safePickupDate,
@@ -3042,6 +3174,8 @@ module.exports = async (req, res) => {
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
       const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
       const emPhone = db.settings?.emergencyHotline || hPhone;
+      const fleetRates = getEffectiveFleetRates(db);
+      const segmentFares = getEffectiveSegmentFares(db);
 
       return sendJson(200, {
         success: true,
@@ -3054,9 +3188,11 @@ module.exports = async (req, res) => {
           emergencyHotline: emPhone,
           baseFare: db.settings?.baseFare || 2198,
           baseKm: db.settings?.baseKm || 80,
-          sedanRatePerKm: db.settings?.sedanRatePerKm || 11,
-          suvRatePerKm: db.settings?.suvRatePerKm || 15,
-          innovaRatePerKm: db.settings?.innovaRatePerKm || 19,
+          sedanRatePerKm: fleetRates.sedan.perKm,
+          suvRatePerKm: fleetRates.suv.perKm,
+          innovaRatePerKm: fleetRates.innova_crysta.perKm,
+          fleetRates,
+          segmentFares,
           advanceAmount: db.settings?.payment?.defaultAdvanceAmount || 299,
           enableRazorpay: db.settings?.payment?.enableRazorpay !== false,
           enableDirectUpi: db.settings?.payment?.enableDirectUpi !== false,
@@ -3109,6 +3245,30 @@ module.exports = async (req, res) => {
         db.settings.emergencyBookingPause = Boolean(body.emergencyPause);
       }
 
+      // Fleet Rates Matrix Update (Per KM, Min Fare, Rental Prices, Chauffeur Allowance)
+      if (body.fleetRates || body.fleet_rates) {
+        const fr = body.fleetRates || body.fleet_rates;
+        if (!db.settings.fleet_rates) db.settings.fleet_rates = {};
+        for (const [tierKey, tVal] of Object.entries(fr)) {
+          if (!db.settings.fleet_rates[tierKey]) db.settings.fleet_rates[tierKey] = {};
+          if (tVal.perKm !== undefined) db.settings.fleet_rates[tierKey].perKm = Number(tVal.perKm);
+          if (tVal.minFare !== undefined) db.settings.fleet_rates[tierKey].minFare = Number(tVal.minFare);
+          if (tVal.minKm !== undefined) db.settings.fleet_rates[tierKey].minKm = Number(tVal.minKm);
+          if (tVal.rentalPrice !== undefined) db.settings.fleet_rates[tierKey].rentalPrice = Number(tVal.rentalPrice);
+          if (tVal.rentalDriverAllowance !== undefined) db.settings.fleet_rates[tierKey].rentalDriverAllowance = Number(tVal.rentalDriverAllowance);
+        }
+      }
+
+      // Segment Fares Matrix Update (OneWay, RoundTrip, Rental, Airport)
+      if (body.segmentFares || body.segment_fares) {
+        const sf = body.segmentFares || body.segment_fares;
+        if (!db.settings.segment_fares) db.settings.segment_fares = {};
+        for (const [segKey, sVal] of Object.entries(sf)) {
+          if (!db.settings.segment_fares[segKey]) db.settings.segment_fares[segKey] = {};
+          Object.assign(db.settings.segment_fares[segKey], sVal);
+        }
+      }
+
       if (!db.settings.payment) db.settings.payment = {};
       if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
       if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = Boolean(body.enableRazorpay);
@@ -3123,13 +3283,13 @@ module.exports = async (req, res) => {
         entityId: 'global',
         oldValue: oldSettings,
         newValue: db.settings,
-        note: `Operational settings modified (Helpline: ${db.settings.helplinePhone}, WhatsApp: ${db.settings.whatsappPhone})`
+        note: `Operational & Fleet Fare settings modified by ${admin.username}`
       });
 
       await saveDb(db);
       return sendJson(200, {
         success: true,
-        message: 'Settings successfully saved and propagated.',
+        message: 'Settings and fleet pricing successfully saved and propagated.',
         settings: {
           helplinePhone: db.settings.helplinePhone,
           helpline: db.settings.helpline,
@@ -3138,8 +3298,41 @@ module.exports = async (req, res) => {
           supportPhone: db.settings.supportPhone,
           emergencyHotline: db.settings.emergencyHotline,
           baseFare: db.settings.baseFare,
-          baseKm: db.settings.baseKm
+          baseKm: db.settings.baseKm,
+          fleetRates: getEffectiveFleetRates(db),
+          segmentFares: getEffectiveSegmentFares(db)
         }
+      });
+    }
+
+    // Reset Fleet Rates & Segment Fares to Standard Defaults
+    if (pathname === '/admin/fares/reset' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!['owner', 'manager', 'admin'].includes(admin.role)) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to reset system fares.' });
+      }
+
+      if (!db.settings) db.settings = {};
+      db.settings.fleet_rates = JSON.parse(JSON.stringify(DEFAULT_FLEET_RATES));
+      db.settings.segment_fares = JSON.parse(JSON.stringify(DEFAULT_SEGMENT_FARES));
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARES_RESET',
+        entityType: 'SETTINGS',
+        entityId: 'fares',
+        newValue: { fleetRates: db.settings.fleet_rates, segmentFares: db.settings.segment_fares },
+        note: 'Fleet pricing and segment rates reset to factory defaults'
+      });
+
+      return sendJson(200, {
+        success: true,
+        message: 'Fleet rates and segment fares reset to standard Bihar defaults.',
+        fleetRates: getEffectiveFleetRates(db),
+        segmentFares: getEffectiveSegmentFares(db)
       });
     }
 
@@ -4544,7 +4737,8 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     if (pathname === '/fares/ai-intelligence' && method === 'POST') {
       const { origin = 'Patna', dest = 'Gaya', cabTier = 'sedan', tripType = 'oneway' } = body;
-      const fareData = calculateServerFare(origin, dest, cabTier, tripType);
+      const distKm = getRouteDistance(origin, dest);
+      const fareData = calculateServerFare(distKm, cabTier, tripType, origin, dest, { db });
 
       const hour = new Date().getHours();
       const isRush = (hour >= 7 && hour <= 10) || (hour >= 17 && hour <= 20);
@@ -4749,7 +4943,8 @@ module.exports = async (req, res) => {
       const pax = paxMatch ? parseInt(paxMatch[1]) : (userText.toLowerCase().includes('family') ? 5 : 1);
       const tripType = (userText.toLowerCase().includes('round') || userText.toLowerCase().includes('return')) ? 'roundtrip' : 'oneway';
       const cabTier = pax > 4 ? 'suv' : 'sedan';
-      const fareData = calculateServerFare(detectedOrigin.name, detectedDest.name, cabTier, tripType);
+      const distKm = getRouteDistance(detectedOrigin.name, detectedDest.name);
+      const fareData = calculateServerFare(distKm, cabTier, tripType, detectedOrigin.name, detectedDest.name, { db });
 
       return sendJson(200, {
         success: true,

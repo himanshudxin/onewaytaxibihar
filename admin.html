@@ -2739,6 +2739,7 @@
           <div class="filter-toolbar">
             <div class="tab-pills-row">
               <button type="button" class="tab-pill active" onclick="switchSettingsSubTab('general', this)">General Settings</button>
+              <button type="button" class="tab-pill" onclick="switchSettingsSubTab('fares', this)">🚕 Fleet &amp; Segment Fares</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('gateways', this)">Payments &amp; Gateways</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('rbac', this)">RBAC Operators</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('diagnostics', this)">Diagnostics &amp; Data</button>
@@ -2814,6 +2815,274 @@
                 </form>
               </div>
             </div>
+          </div>
+
+          <!-- Sub-Tab A2: Fleet & Segment Fares (Bihar Road Fleet Pricing Engine) -->
+          <div class="settings-sub-panel" id="settings-sub-fares" style="display:none;">
+            <form id="form-fleet-fares" onsubmit="handleSaveFleetFares(event)">
+              
+              <!-- Fleet Tiers & Rental Pricing Card -->
+              <div class="ops-card">
+                <div class="ops-card-header">
+                  <div>
+                    <div class="ops-card-title">🚕 Bihar Road Fleet Pricing &amp; Rental Rates</div>
+                    <div style="font-size:12px; color:#64748b; margin-top:3px;">
+                      Configure highway per-KM rates, minimum base fares, and Car Rental prices (Self-Drive vs With Driver)
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:8px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetFleetFaresAdmin()">↺ Reset Defaults</button>
+                    <button type="submit" class="btn btn-primary btn-sm">💾 Save All Fares</button>
+                  </div>
+                </div>
+                <div class="ops-card-body">
+                  <div class="table-container" style="overflow-x:auto;">
+                    <table class="ops-table" style="min-width:780px;">
+                      <thead>
+                        <tr>
+                          <th>Fleet Tier &amp; Models</th>
+                          <th>Per KM Rate (₹)</th>
+                          <th>Min Base Fare (₹)</th>
+                          <th>Min Base KM</th>
+                          <th>Rented Only (Self-Drive ₹/Day)</th>
+                          <th>With Driver Surcharge (+₹/Day)</th>
+                          <th style="text-align:right;">Total With Driver (₹)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Sedan -->
+                        <tr style="background:#f8fafc;">
+                          <td>
+                            <strong style="color:var(--navy-900); display:block;">Prime Sedan</strong>
+                            <span style="font-size:11px; color:#64748b;">Dzire, Etios, Amaze (4 Seats)</span>
+                          </td>
+                          <td>
+                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-sedan-per-km" value="25" style="width:85px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan-min-fare" value="2198" style="width:95px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan-min-km" value="50" style="width:75px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan-rental-price" value="2200" style="width:105px; font-weight:700; color:#0f172a;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
+                          </td>
+                          <td style="text-align:right;">
+                            <strong id="preview-sedan-total" style="color:#059669; font-size:14px;">₹3,200</strong>
+                          </td>
+                        </tr>
+
+                        <!-- SUV / XUV -->
+                        <tr>
+                          <td>
+                            <strong style="color:var(--navy-900); display:block;">Family SUV / XUV</strong>
+                            <span style="font-size:11px; color:#64748b;">Ertiga, Carens, Scorpio (6+1 Seats)</span>
+                          </td>
+                          <td>
+                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-suv-per-km" value="33" style="width:85px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-suv-min-fare" value="3398" style="width:95px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-suv-min-km" value="50" style="width:75px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-suv-rental-price" value="4000" style="width:105px; font-weight:700; color:#0f172a;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-suv-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
+                          </td>
+                          <td style="text-align:right;">
+                            <strong id="preview-suv-total" style="color:#059669; font-size:14px;">₹5,000</strong>
+                          </td>
+                        </tr>
+
+                        <!-- Hatchback -->
+                        <tr style="background:#f8fafc;">
+                          <td>
+                            <strong style="color:var(--navy-900); display:block;">Go Hatchback</strong>
+                            <span style="font-size:11px; color:#64748b;">WagonR, Tiago, Celerio (4 Seats)</span>
+                          </td>
+                          <td>
+                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-hatchback-per-km" value="21" style="width:85px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-min-fare" value="1698" style="width:95px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-min-km" value="50" style="width:75px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-rental-price" value="1800" style="width:105px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
+                          </td>
+                          <td style="text-align:right;">
+                            <strong id="preview-hatchback-total" style="color:#059669; font-size:14px;">₹2,800</strong>
+                          </td>
+                        </tr>
+
+                        <!-- Executive Sedan -->
+                        <tr>
+                          <td>
+                            <strong style="color:var(--navy-900); display:block;">Executive Sedan</strong>
+                            <span style="font-size:11px; color:#64748b;">Honda City, Ciaz (4 Seats)</span>
+                          </td>
+                          <td>
+                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-sedan_prime-per-km" value="29" style="width:85px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-min-fare" value="2698" style="width:95px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-min-km" value="50" style="width:75px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-rental-price" value="2600" style="width:105px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
+                          </td>
+                          <td style="text-align:right;">
+                            <strong id="preview-sedan_prime-total" style="color:#059669; font-size:14px;">₹3,600</strong>
+                          </td>
+                        </tr>
+
+                        <!-- Innova Crysta -->
+                        <tr style="background:#f8fafc;">
+                          <td>
+                            <strong style="color:var(--navy-900); display:block;">Toyota Innova Crysta</strong>
+                            <span style="font-size:11px; color:#64748b;">VIP Luxury Recliners (7 Seats)</span>
+                          </td>
+                          <td>
+                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-innova_crysta-per-km" value="44" style="width:85px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-min-fare" value="4598" style="width:95px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-min-km" value="50" style="width:75px;">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-rental-price" value="5000" style="width:105px;" oninput="updateFarePreviews()">
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
+                          </td>
+                          <td style="text-align:right;">
+                            <strong id="preview-innova_crysta-total" style="color:#059669; font-size:14px;">₹6,000</strong>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Segment Fares & Surcharges Rules Card -->
+              <div class="ops-card" style="margin-top:20px;">
+                <div class="ops-card-header">
+                  <div class="ops-card-title">⚙️ Segment Rules (One-Way, Round-Trip, Rental &amp; Airport)</div>
+                </div>
+                <div class="ops-card-body">
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px;">
+                    
+                    <!-- 1. One-Way Rules -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
+                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                        <span>➡️</span> One-Way Segment
+                      </h4>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Long Distance Driver Allowance (₹)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-oneway-allowance" value="250">
+                      </div>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Applied Above Distance (KM)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-oneway-threshold" value="250">
+                      </div>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Night Driving Charge (₹)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-oneway-night" value="250">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:11.5px;">GST Tax Rate (%)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-oneway-gst" value="5">
+                      </div>
+                    </div>
+
+                    <!-- 2. Round-Trip Rules -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
+                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                        <span>🔄</span> Round-Trip (Two-Way) Segment
+                      </h4>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Return Leg Discount (%)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-discount" value="12">
+                      </div>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Chauffeur Allowance / Day (₹)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-allowance" value="350">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:11.5px;">Minimum Billable KM / Day</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-min-km" value="250">
+                      </div>
+                    </div>
+
+                    <!-- 3. Car Rental Rules -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
+                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                        <span>🚗</span> Car Rental Segment
+                      </h4>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Package Included Hours</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-rental-hours" value="8">
+                      </div>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Package Included KM</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-rental-km" value="80">
+                      </div>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Default Chauffeur Fee (+₹/Day)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-rental-driver-fee" value="1000">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:11.5px;">Extra KM Rate (₹/KM)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-rental-extra-km" value="22">
+                      </div>
+                    </div>
+
+                    <!-- 4. Airport Transfer Rules -->
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
+                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                        <span>✈️</span> Airport Transfer Segment
+                      </h4>
+                      <div class="form-group" style="margin-bottom:10px;">
+                        <label class="form-label" style="font-size:11.5px;">Airport Terminal Fee / Toll (₹)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-airport-fee" value="150">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" style="font-size:11.5px;">Minimum Airport Base Fare (₹)</label>
+                        <input type="number" class="form-control form-control-sm" id="seg-airport-min" value="999">
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px;">
+                    <button type="button" class="btn btn-secondary" onclick="resetFleetFaresAdmin()">↺ Reset to Factory Defaults</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-fleet-fares">💾 Save Fleet &amp; Segment Fares</button>
+                  </div>
+                </div>
+              </div>
+
+            </form>
           </div>
 
           <!-- Sub-Tab B: Payments & Gateways (Masked Credentials) -->
@@ -3951,7 +4220,7 @@
     }
 
     function switchSettingsSubTab(subName, btn) {
-      const subs = ['general', 'gateways', 'rbac', 'diagnostics'];
+      const subs = ['general', 'fares', 'gateways', 'rbac', 'diagnostics'];
       subs.forEach(s => {
         const el = document.getElementById(`settings-sub-${s}`);
         if (el) el.style.display = s === subName ? "block" : "none";
@@ -5913,6 +6182,48 @@
             document.getElementById("btn-emergency-pause-top")?.classList.add("paused");
             setText("emergency-pause-text", "PAUSED ACTIVE");
           }
+
+          // Populate Fleet Rates
+          if (s.fleetRates) {
+            const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
+            tiers.forEach(t => {
+              const r = s.fleetRates[t];
+              if (r) {
+                if (r.perKm !== undefined) setVal(`fare-${t}-per-km`, r.perKm);
+                if (r.minFare !== undefined) setVal(`fare-${t}-min-fare`, r.minFare);
+                if (r.minKm !== undefined) setVal(`fare-${t}-min-km`, r.minKm);
+                if (r.rentalPrice !== undefined) setVal(`fare-${t}-rental-price`, r.rentalPrice);
+                if (r.rentalDriverAllowance !== undefined) setVal(`fare-${t}-rental-driver`, r.rentalDriverAllowance);
+              }
+            });
+            if (typeof updateFarePreviews === 'function') updateFarePreviews();
+          }
+
+          // Populate Segment Rules
+          if (s.segmentFares) {
+            const sf = s.segmentFares;
+            if (sf.oneway) {
+              if (sf.oneway.driverAllowance !== undefined) setVal("seg-oneway-allowance", sf.oneway.driverAllowance);
+              if (sf.oneway.driverAllowanceThresholdKm !== undefined) setVal("seg-oneway-threshold", sf.oneway.driverAllowanceThresholdKm);
+              if (sf.oneway.nightCharge !== undefined) setVal("seg-oneway-night", sf.oneway.nightCharge);
+              if (sf.oneway.gstPct !== undefined) setVal("seg-oneway-gst", sf.oneway.gstPct);
+            }
+            if (sf.roundtrip) {
+              if (sf.roundtrip.returnDiscountPct !== undefined) setVal("seg-roundtrip-discount", sf.roundtrip.returnDiscountPct);
+              if (sf.roundtrip.driverAllowancePerDay !== undefined) setVal("seg-roundtrip-allowance", sf.roundtrip.driverAllowancePerDay);
+              if (sf.roundtrip.minKmPerDay !== undefined) setVal("seg-roundtrip-min-km", sf.roundtrip.minKmPerDay);
+            }
+            if (sf.rental) {
+              if (sf.rental.rentalHours !== undefined) setVal("seg-rental-hours", sf.rental.rentalHours);
+              if (sf.rental.rentalKm !== undefined) setVal("seg-rental-km", sf.rental.rentalKm);
+              if (sf.rental.driverAllowance !== undefined) setVal("seg-rental-driver-fee", sf.rental.driverAllowance);
+              if (sf.rental.extraKmRate !== undefined) setVal("seg-rental-extra-km", sf.rental.extraKmRate);
+            }
+            if (sf.airport) {
+              if (sf.airport.convenienceCharge !== undefined) setVal("seg-airport-fee", sf.airport.convenienceCharge);
+              if (sf.airport.minFare !== undefined) setVal("seg-airport-min", sf.airport.minFare);
+            }
+          }
         }
 
         // Load Gateway settings
@@ -6012,6 +6323,97 @@
         showToast("Error: " + err.message, "error");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform Settings"; }
+      }
+    }
+
+    function updateFarePreviews() {
+      const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
+      tiers.forEach(t => {
+        const rentalPrice = Number(document.getElementById(`fare-${t}-rental-price`)?.value) || 0;
+        const driverAllowance = Number(document.getElementById(`fare-${t}-rental-driver`)?.value) || 0;
+        const total = rentalPrice + driverAllowance;
+        const el = document.getElementById(`preview-${t}-total`);
+        if (el) el.textContent = `₹${total.toLocaleString('en-IN')}`;
+      });
+    }
+
+    async function handleSaveFleetFares(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById("btn-save-fleet-fares");
+      if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving Fares..."; }
+
+      const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
+      const fleetRates = {};
+      tiers.forEach(t => {
+        fleetRates[t] = {
+          perKm: Number(document.getElementById(`fare-${t}-per-km`)?.value) || 0,
+          minFare: Number(document.getElementById(`fare-${t}-min-fare`)?.value) || 0,
+          minKm: Number(document.getElementById(`fare-${t}-min-km`)?.value) || 0,
+          rentalPrice: Number(document.getElementById(`fare-${t}-rental-price`)?.value) || 0,
+          rentalDriverAllowance: Number(document.getElementById(`fare-${t}-rental-driver`)?.value) || 0
+        };
+      });
+
+      const segmentFares = {
+        oneway: {
+          driverAllowance: Number(document.getElementById("seg-oneway-allowance")?.value) || 0,
+          driverAllowanceThresholdKm: Number(document.getElementById("seg-oneway-threshold")?.value) || 0,
+          nightCharge: Number(document.getElementById("seg-oneway-night")?.value) || 0,
+          gstPct: Number(document.getElementById("seg-oneway-gst")?.value) || 0
+        },
+        roundtrip: {
+          returnDiscountPct: Number(document.getElementById("seg-roundtrip-discount")?.value) || 0,
+          driverAllowancePerDay: Number(document.getElementById("seg-roundtrip-allowance")?.value) || 0,
+          minKmPerDay: Number(document.getElementById("seg-roundtrip-min-km")?.value) || 0
+        },
+        rental: {
+          rentalHours: Number(document.getElementById("seg-rental-hours")?.value) || 8,
+          rentalKm: Number(document.getElementById("seg-rental-km")?.value) || 80,
+          driverAllowance: Number(document.getElementById("seg-rental-driver-fee")?.value) || 1000,
+          extraKmRate: Number(document.getElementById("seg-rental-extra-km")?.value) || 22
+        },
+        airport: {
+          convenienceCharge: Number(document.getElementById("seg-airport-fee")?.value) || 150,
+          minFare: Number(document.getElementById("seg-airport-min")?.value) || 999
+        }
+      };
+
+      try {
+        const res = await adminFetch("/api/admin/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fleetRates, segmentFares })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast("Bihar fleet & segment fare matrices successfully updated!", "success");
+          await loadSettings();
+        } else {
+          showToast(data.message || "Failed to update fares", "error");
+        }
+      } catch (err) {
+        showToast("Error updating fares: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "💾 Save Fleet & Segment Fares"; }
+      }
+    }
+
+    async function resetFleetFaresAdmin() {
+      if (!confirm("Are you sure you want to reset all fleet rates and segment pricing to factory defaults?")) return;
+      try {
+        const res = await adminFetch("/api/admin/fares/reset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast("Fleet and segment fares successfully reset to defaults!", "success");
+          await loadSettings();
+        } else {
+          showToast(data.message || "Failed to reset fares", "error");
+        }
+      } catch (err) {
+        showToast("Error resetting fares: " + err.message, "error");
       }
     }
 

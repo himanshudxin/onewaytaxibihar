@@ -6,7 +6,11 @@
 
 class BookingManager {
   constructor() {
-    this.tripType = "oneway"; // "oneway" | "roundtrip" | "local" | "airport"
+    this.tripType = "oneway"; // "oneway" | "roundtrip" | "rental" | "airport"
+    this.rentalMode = "without_driver"; // "without_driver" | "with_driver"
+    this.withDriver = false;
+    this.activeFleetRates = null;
+    this.activeSegmentFares = null;
     this.originCity = null; // Blank initially - set by user
     this.destCity = null;   // Blank initially - set by user
     
@@ -52,6 +56,7 @@ class BookingManager {
     this.setDefaultDates();
     this.setupAutocomplete();
     this.setupEventListeners();
+    this.fetchFareConfig();
     this.renderPopularRouteChips();
     this.renderFriendsHeroReviews();
     this.renderWhyChooseCards();
@@ -231,6 +236,71 @@ class BookingManager {
       }
     } catch (e) {
       console.warn("Could not restore booking state:", e);
+    }
+  }
+
+  setRentalMode(mode) {
+    this.rentalMode = mode;
+    this.withDriver = (mode === "with_driver");
+
+    const btnWithout = document.getElementById("btn-rental-without-driver");
+    const btnWith = document.getElementById("btn-rental-with-driver");
+    const hint = document.getElementById("rental-rate-hint");
+
+    if (btnWithout && btnWith) {
+      if (mode === "without_driver") {
+        btnWithout.classList.add("active");
+        btnWithout.style.border = "1.5px solid #2563eb";
+        btnWithout.style.background = "#eff6ff";
+        btnWithout.style.color = "#1d4ed8";
+
+        btnWith.classList.remove("active");
+        btnWith.style.border = "1.5px solid #cbd5e1";
+        btnWith.style.background = "#ffffff";
+        btnWith.style.color = "#334155";
+
+        if (hint) {
+          const sedanPrice = this.activeFleetRates?.sedan?.rentalPrice || 2200;
+          const suvPrice = this.activeFleetRates?.suv?.rentalPrice || 4000;
+          hint.textContent = `Sedan ₹${sedanPrice.toLocaleString('en-IN')} • SUV ₹${suvPrice.toLocaleString('en-IN')} / Day (Self-Drive)`;
+        }
+      } else {
+        btnWith.classList.add("active");
+        btnWith.style.border = "1.5px solid #059669";
+        btnWith.style.background = "#ecfdf5";
+        btnWith.style.color = "#047857";
+
+        btnWithout.classList.remove("active");
+        btnWithout.style.border = "1.5px solid #cbd5e1";
+        btnWithout.style.background = "#ffffff";
+        btnWithout.style.color = "#334155";
+
+        if (hint) {
+          const sedanPrice = (this.activeFleetRates?.sedan?.rentalPrice || 2200) + (this.activeFleetRates?.sedan?.rentalDriverAllowance || 1000);
+          const suvPrice = (this.activeFleetRates?.suv?.rentalPrice || 4000) + (this.activeFleetRates?.suv?.rentalDriverAllowance || 1000);
+          hint.textContent = `Sedan ₹${sedanPrice.toLocaleString('en-IN')} • SUV ₹${suvPrice.toLocaleString('en-IN')} / Day (With Driver)`;
+        }
+      }
+    }
+    this.renderFleetCards();
+  }
+
+  async fetchFareConfig() {
+    try {
+      const res = await fetch("/api/fares/config");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.success && data.fleetRates) {
+          this.activeFleetRates = data.fleetRates;
+          this.activeSegmentFares = data.segmentFares;
+          this.renderFleetCards();
+          if (this.tripType === "rental" || this.tripType === "local") {
+            this.setRentalMode(this.rentalMode || "without_driver");
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Could not fetch remote fare config, fallback to defaults:", e);
     }
   }
 
@@ -1114,7 +1184,8 @@ class BookingManager {
     const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
     const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
 
-    if (this.originCity && this.destCity && hasValidPhone) {
+    const isRental = (this.tripType === "rental" || this.tripType === "local");
+    if (((this.originCity && this.destCity) || (this.originCity && isRental)) && hasValidPhone) {
       this.isFareUnlocked = true;
       const section = document.getElementById("cab-selection-section");
       const mapSection = document.getElementById("route-map-section");
@@ -1526,18 +1597,23 @@ class BookingManager {
   updateTripTypeUI() {
     const returnDateRow = document.getElementById("return-date-row");
     const localPkgRow = document.getElementById("local-pkg-row");
+    const rentalOptionsRow = document.getElementById("rental-options-row");
     const airportRow = document.getElementById("airport-details-row");
     const dropWrapper = document.getElementById("input-drop")?.closest(".autocomplete-wrapper");
     const swapBtn = document.getElementById("btn-swap-route");
     const lblDrop = document.getElementById("lbl-drop");
 
+    const isRental = (this.tripType === "rental" || this.tripType === "local");
+
     if (returnDateRow) returnDateRow.style.display = this.tripType === "roundtrip" ? "block" : "none";
-    if (localPkgRow) localPkgRow.style.display = this.tripType === "local" ? "block" : "none";
+    if (rentalOptionsRow) rentalOptionsRow.style.display = isRental ? "block" : "none";
+    if (localPkgRow) localPkgRow.style.display = "none";
     if (airportRow) airportRow.style.display = this.tripType === "airport" ? "block" : "none";
 
-    if (this.tripType === "local") {
+    if (isRental) {
       if (dropWrapper) dropWrapper.style.display = "none";
       if (swapBtn) swapBtn.style.display = "none";
+      this.setRentalMode(this.rentalMode || "without_driver");
     } else {
       if (dropWrapper) dropWrapper.style.display = "block";
       if (swapBtn) swapBtn.style.display = "flex";
@@ -1551,10 +1627,11 @@ class BookingManager {
      DYNAMIC ROUTE & FARE CALCULATION MATRIX
      ========================================================================== */
   calculateAndRenderFares() {
-    if (!this.originCity || !this.destCity) {
-      this.calculatedDistanceKm = 100;
-      this.calculatedDuration = "2h 00m";
-      this.calculatedToll = 100;
+    const isRental = (this.tripType === "rental" || this.tripType === "local");
+    if (!this.originCity || (!this.destCity && !isRental)) {
+      this.calculatedDistanceKm = isRental ? 80 : 100;
+      this.calculatedDuration = isRental ? "8 Hours" : "2h 00m";
+      this.calculatedToll = 0;
 
       const displayRoute = document.getElementById("rf-display-route");
       const distBadge = document.getElementById("rf-dist-badge");
@@ -1562,7 +1639,11 @@ class BookingManager {
       const tollBadge = document.getElementById("rf-toll-badge");
 
       if (displayRoute) {
-        if (this.originCity && !this.destCity) {
+        if (isRental) {
+          const pName = this.originCity ? this.originCity.name : "Select City";
+          const mText = (this.rentalMode === "with_driver" || this.withDriver) ? "With Verified Chauffeur" : "Self-Drive Rental";
+          displayRoute.innerHTML = `<span>Car Rental: <strong>${pName}</strong> (${mText} • 8 Hr / 80 KM)</span>`;
+        } else if (this.originCity && !this.destCity) {
           displayRoute.innerHTML = `<span>Pickup: <strong>${this.originCity.name}</strong> → (Select Drop District)</span>`;
         } else if (!this.originCity && this.destCity) {
           displayRoute.innerHTML = `<span>(Select Pickup District) → Drop: <strong>${this.destCity.name}</strong></span>`;
@@ -1571,9 +1652,9 @@ class BookingManager {
         }
       }
 
-      if (distBadge) distBadge.textContent = "Bihar Fixed Rates";
-      if (timeBadge) timeBadge.textContent = "Instant Booking";
-      if (tollBadge) tollBadge.textContent = "Toll & GST Included";
+      if (distBadge) distBadge.textContent = isRental ? "80 KM / Day Included" : "Bihar Fixed Rates";
+      if (timeBadge) timeBadge.textContent = isRental ? "8 Hours Daily" : "Instant Booking";
+      if (tollBadge) tollBadge.textContent = isRental ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Toll & GST Included";
 
       this.renderFleetCards();
       this.updateCheckFareButtonState();
@@ -1615,9 +1696,9 @@ class BookingManager {
     const tollBadge = document.getElementById("rf-toll-badge");
 
     if (displayRoute) {
-      if (this.tripType === "local") {
-        const pkg = OTB_LOCAL_PACKAGES.find(p => p.id === this.localPackageId);
-        displayRoute.innerHTML = `<span>Local Hourly Package: <strong>${this.originCity.name}</strong> (${pkg?.name || '8 Hr / 80 KM'})</span>`;
+      if (this.tripType === "rental" || this.tripType === "local") {
+        const modeDesc = (this.rentalMode === "with_driver" || this.withDriver) ? "With Verified Chauffeur" : "Self-Drive Rental";
+        displayRoute.innerHTML = `<span>Car Rental: <strong>${this.originCity.name}</strong> (${modeDesc} • 8 Hr / 80 KM)</span>`;
       } else if (this.tripType === "roundtrip") {
         displayRoute.innerHTML = `<span><strong>${this.originCity.name}</strong> (${this.originCity.hindiName}) ⇄ <strong>${this.destCity.name}</strong> (${this.destCity.hindiName}) <span style="color: var(--owc-primary); font-weight: 700; margin-left: 6px;">(Round-Trip)</span></span>`;
       } else if (this.tripType === "airport") {
@@ -1627,9 +1708,9 @@ class BookingManager {
       }
     }
 
-    if (distBadge) distBadge.textContent = this.tripType === "local" ? "80 KM Package" : `${this.calculatedDistanceKm} KM Highway Route`;
-    if (timeBadge) timeBadge.textContent = this.tripType === "local" ? "8 Hours" : `~${this.calculatedDuration}`;
-    if (tollBadge) tollBadge.textContent = "Tolls, Fastag & GST Included";
+    if (distBadge) distBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "80 KM / Day Included" : `${this.calculatedDistanceKm} KM Highway Route`;
+    if (timeBadge) timeBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "8 Hours Daily" : `~${this.calculatedDuration}`;
+    if (tollBadge) tollBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Tolls, Fastag & GST Included";
 
     // Render Fleet Cards
     this.renderFleetCards();
@@ -1676,21 +1757,40 @@ class BookingManager {
     const container = document.getElementById("cab-cards-grid");
     if (!container) return;
 
+    const isRental = (this.tripType === "rental" || this.tripType === "local");
+    const rates = this.activeFleetRates || {};
+
     container.innerHTML = OTB_FLEET.map(fleet => {
       let finalPrice = 0;
       let savings = 0;
+      let priceNote = "Fixed (Toll, GST & Allowance incl.)";
+      let savingsText = "Saved ~₹1,500 vs Return Cab";
 
-      if (this.tripType === "local") {
-        const pkg = OTB_LOCAL_PACKAGES.find(p => p.id === this.localPackageId) || OTB_LOCAL_PACKAGES[1];
-        if (fleet.id === "hatchback") finalPrice = pkg.baseHatch;
-        else if (fleet.id === "sedan") finalPrice = pkg.baseSedan;
-        else if (fleet.id === "sedan_prime") finalPrice = Math.round(pkg.baseSedan * 1.2);
-        else if (fleet.id === "suv") finalPrice = pkg.baseSuv;
-        else finalPrice = Math.round(pkg.baseSuv * 1.4);
+      if (isRental) {
+        const tierRate = rates[fleet.id] || {};
+        const baseRental = Number(tierRate.rentalPrice) || Number(fleet.rentalPrice) || (
+          fleet.id === "sedan" ? 2200 :
+          fleet.id === "suv" ? 4000 :
+          fleet.id === "hatchback" ? 1800 :
+          fleet.id === "sedan_prime" ? 2600 : 5000
+        );
+        const driverFee = Number(tierRate.rentalDriverAllowance) || Number(fleet.rentalDriverAllowance) || 1000;
+        
+        if (this.rentalMode === "with_driver" || this.withDriver) {
+          finalPrice = baseRental + driverFee;
+          priceNote = "Fixed (Chauffeur Allowance & GST incl.)";
+          savingsText = "8 Hours / 80 KM • Verified Driver Included";
+        } else {
+          finalPrice = baseRental;
+          priceNote = "Self-Drive Rental (Fixed Daily Price)";
+          savingsText = "8 Hours / 80 KM • Doorstep Handover";
+        }
         savings = Math.round(finalPrice * 0.25);
       } else {
-        let baseFare = this.calculatedDistanceKm * fleet.ratePerKm;
-        baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+        const perKm = Number(rates[fleet.id]?.perKm) || fleet.ratePerKm || 25;
+        let baseFare = this.calculatedDistanceKm * perKm;
+        const minFare = Number(rates[fleet.id]?.minFare) || (fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : fleet.id === 'sedan_prime' ? 2698 : fleet.id === 'innova_crysta' ? 4598 : 3398);
+        baseFare = Math.max(baseFare, minFare);
         
         if (this.tripType === "roundtrip") {
           baseFare = (baseFare * 1.88); // 12% discount for roundtrip
@@ -1698,6 +1798,7 @@ class BookingManager {
 
         finalPrice = Math.max(1000, Math.round(baseFare));
         savings = Math.round(baseFare * 0.95);
+        savingsText = `Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab`;
       }
 
       const isSelected = this.selectedCabId === fleet.id;
@@ -1737,9 +1838,9 @@ class BookingManager {
           <div class="cab-price-container">
             <div class="cab-price-row">
               <div class="cab-price-main">₹${finalPrice.toLocaleString('en-IN')}</div>
-              <div class="cab-tax-note">Fixed (Toll, GST & Allowance incl.)</div>
+              <div class="cab-tax-note">${priceNote}</div>
             </div>
-            <span class="cab-savings-pill">Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab</span>
+            <span class="cab-savings-pill">${savingsText}</span>
           </div>
 
           <button type="button" class="btn-select-cab" onclick="window.bookingManager.startCheckout('${fleet.id}', ${finalPrice})">
@@ -2042,13 +2143,14 @@ class BookingManager {
     this.tempBookingId = "OTB-2026-" + Math.floor(1000 + Math.random() * 9000);
 
     const km = this.calculatedDistanceKm || 104;
-    const baseKm = (this.tripType === "local") ? 80 : (fleet.baseKm || 15);
+    const isRental = (this.tripType === "rental" || this.tripType === "local");
+    const baseKm = isRental ? 80 : (fleet.baseKm || 15);
     const extraKm = Math.max(0, km - baseKm);
-    const perKm = fleet.ratePerKm || fleet.perKmRate || 25;
+    const perKm = (this.activeFleetRates?.[fleet.id]?.perKm) || fleet.ratePerKm || fleet.perKmRate || 25;
     const baseFareAmount = (fleet.baseFare !== undefined) ? fleet.baseFare : Math.round(baseKm * perKm);
     const distanceCharge = Math.round(extraKm * perKm);
-    const toll = Math.round((km / 70) * 55);
-    const allowance = (this.tripType === "roundtrip" || km > 200) ? 350 : 0;
+    const toll = isRental ? 0 : Math.round((km / 70) * 55);
+    const allowance = isRental ? (this.withDriver ? 1000 : 0) : ((this.tripType === "roundtrip" || km > 200) ? 350 : 0);
     const isAirport = Boolean(this.originCity?.name?.toLowerCase().includes("airport") || this.destCity?.name?.toLowerCase().includes("airport"));
     const parking = isAirport ? 100 : 0;
     const finalPayableInit = Math.max(0, price - 100);
@@ -3401,9 +3503,13 @@ class BookingManager {
     this.isSubmittingBooking = true;
 
     try {
+      const isRental = (this.tripType === "rental" || this.tripType === "local");
       const payload = {
+        tripType: isRental ? "rental" : (this.tripType || "oneway"),
+        rentalMode: isRental ? (this.rentalMode || "without_driver") : null,
+        withDriver: isRental ? (this.rentalMode === "with_driver" || this.withDriver) : true,
         originCity: this.originCity.name,
-        destCity: this.destCity.name,
+        destCity: isRental ? `${this.originCity.name} (Rental Tour)` : (this.destCity?.name || "Local Destination"),
         pickupDate: this.pickupDate || yStr,
         pickupTime: this.pickupTime || "10:00 AM",
         cabTier: this.selectedCabId || "sedan",

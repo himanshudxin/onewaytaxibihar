@@ -8,7 +8,7 @@ require('dotenv').config();
 const http = require('http');
 
 const BASE_URL = 'http://localhost:8080';
-const ADMIN_BASIC_AUTH = 'Basic ' + Buffer.from('admin:harharmahadev@3').toString('base64');
+let ADMIN_AUTH = {};
 
 async function request(method, path, body = null, headers = {}) {
   const url = `${BASE_URL}${path}`;
@@ -50,6 +50,12 @@ async function runAllFailureScenarios() {
   console.log('================================================================');
   console.log('🚀 ONEWAYTAXIBIHAR — PHASE 18 REAL-WORLD FAILURE SCENARIOS QA');
   console.log('================================================================\n');
+
+  // Authenticate as Admin to acquire valid session token
+  const authRes = await request('POST', '/api/admin/login', { username: 'admin', password: 'OWT#Bihar@2026!SecOps' });
+  if (authRes.ok && authRes.data?.token) {
+    ADMIN_AUTH = { 'Authorization': `Bearer ${authRes.data.token}` };
+  }
 
   // -------------------------------------------------------------
   // Scenario 1: Network disconnect during booking (Idempotency key)
@@ -188,7 +194,7 @@ async function runAllFailureScenarios() {
     await request('POST', '/api/admin/assign-driver', {
       bookingId: assignedBookingId,
       driverId: 'drv_101'
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     // 3. Driver drv_101 rejects trip
     const rejRes = await request('POST', '/api/driver/trip/reject', {
@@ -198,7 +204,7 @@ async function runAllFailureScenarios() {
     });
 
     // 4. Verify booking transitioned to PENDING_REASSIGNMENT via admin query
-    const verifyRes = await request('GET', '/api/admin/bookings', null, { 'Authorization': ADMIN_BASIC_AUTH });
+    const verifyRes = await request('GET', '/api/admin/bookings', null, ADMIN_AUTH);
     const bData = (verifyRes.data.bookings || []).find(b => b.bookingId === assignedBookingId);
 
     const passed = rejRes.status === 200 && 
@@ -244,13 +250,13 @@ async function runAllFailureScenarios() {
     const assign1 = await request('POST', '/api/admin/assign-driver', {
       bookingId: bAId,
       driverId: 'drv_102'
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     // Admin 2 attempts to assign SAME drv_102 to Booking B on SAME date
     const assign2 = await request('POST', '/api/admin/assign-driver', {
       bookingId: bBId,
       driverId: 'drv_102'
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     const passed = assign1.status === 200 && 
                    assign2.status === 409 && 
@@ -332,7 +338,7 @@ async function runAllFailureScenarios() {
     await request('POST', '/api/admin/assign-driver', {
       bookingId: bId,
       driverId: 'drv_103'
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     // 2. Customer cancels
     const cancelRes = await request('POST', '/api/bookings/cancel', {
@@ -342,7 +348,7 @@ async function runAllFailureScenarios() {
     });
 
     // 3. Verify driver was released and status updated via admin query
-    const verifyRes = await request('GET', '/api/admin/bookings', null, { 'Authorization': ADMIN_BASIC_AUTH });
+    const verifyRes = await request('GET', '/api/admin/bookings', null, ADMIN_AUTH);
     const bData = (verifyRes.data.bookings || []).find(b => b.bookingId === bId);
 
     const passed = cancelRes.status === 200 && 
@@ -396,7 +402,7 @@ async function runAllFailureScenarios() {
   // Scenario 12: Server/API crashes during active booking (Safe Catch & Flush)
   // -------------------------------------------------------------
   try {
-    const errListRes = await request('GET', '/api/admin/errors', null, { 'Authorization': ADMIN_BASIC_AUTH });
+    const errListRes = await request('GET', '/api/admin/errors', null, ADMIN_AUTH);
     const passed = errListRes.status === 200 && Array.isArray(errListRes.data.errors);
 
     recordTest(12, 'Server/API crash safety (Uncaught Exception & Error Tracking Isolation)', passed,
@@ -412,7 +418,7 @@ async function runAllFailureScenarios() {
     const pauseOn = await request('POST', '/api/admin/emergency-pause', {
       paused: true,
       reason: 'Dense fog alert on NH-31'
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     const blockedBooking = await request('POST', '/api/bookings', {
       passengerPhone: '9835000000',
@@ -422,7 +428,7 @@ async function runAllFailureScenarios() {
 
     const pauseOff = await request('POST', '/api/admin/emergency-pause', {
       paused: false
-    }, { 'Authorization': ADMIN_BASIC_AUTH });
+    }, ADMIN_AUTH);
 
     const passed = pauseOn.status === 200 && 
                    blockedBooking.status === 503 && 

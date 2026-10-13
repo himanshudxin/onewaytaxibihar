@@ -1933,8 +1933,19 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     if (pathname === '/payments/config' && method === 'GET') {
       const paymentSettings = db.settings?.payment || null;
+      const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const cleanH = hPhone.replace(/\D/g, '').slice(-10) || '8002141816';
+      const cleanWaDigits = waPhone.replace(/\D/g, '');
+      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917281851011');
+
       return sendJson(200, {
         success: true,
+        helplinePhone: hPhone,
+        cleanHelpline: cleanH,
+        whatsappPhone: waPhone,
+        cleanWhatsapp: cleanWa,
+        emergencyHotline: db.settings?.emergencyHotline || hPhone,
         ...paymentService.getPaymentConfig(paymentSettings)
       });
     }
@@ -2122,10 +2133,13 @@ module.exports = async (req, res) => {
       if (body.upiId !== undefined) current.upiId = String(body.upiId).trim();
       if (body.payeeName !== undefined) current.payeeName = String(body.payeeName).trim();
       if (body.qrImageUrl !== undefined) current.qrImageUrl = String(body.qrImageUrl).trim();
+      if (body.qrImageBase64 !== undefined) current.qrImageUrl = String(body.qrImageBase64).trim();
       if (body.bankName !== undefined) current.bankName = String(body.bankName).trim();
-      if (body.accountNumber !== undefined) current.accountNumber = String(body.accountNumber).trim();
+      if (body.accountNumber !== undefined && !isMasked(body.accountNumber)) {
+        current.accountNumber = String(body.accountNumber).trim();
+      }
       if (body.accountHolderName !== undefined) current.accountHolderName = String(body.accountHolderName).trim();
-      if (body.ifscCode !== undefined) current.ifscCode = String(body.ifscCode).trim();
+      if (body.ifscCode !== undefined) current.ifscCode = String(body.ifscCode).trim().toUpperCase();
       if (body.branchName !== undefined) current.branchName = String(body.branchName).trim();
       if (body.accountType !== undefined) current.accountType = String(body.accountType).trim();
       if (body.razorpayKeyId !== undefined) current.razorpayKeyId = String(body.razorpayKeyId).trim();
@@ -2678,12 +2692,21 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
+      const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const emPhone = db.settings?.emergencyHotline || hPhone;
+
       return sendJson(200, {
         success: true,
         settings: {
-          helpline: db.settings?.helpline || '6206494214',
-          supportPhone: db.settings?.supportPhone || '8002141816',
-          emergencyHotline: db.settings?.emergencyHotline || '+91 6206494214',
+          helplinePhone: hPhone,
+          helpline: db.settings?.helpline || hPhone.replace(/\D/g, '').slice(-10),
+          whatsappPhone: waPhone,
+          whatsapp: waPhone,
+          supportPhone: db.settings?.supportPhone || waPhone.replace(/\D/g, '').slice(-10),
+          emergencyHotline: emPhone,
+          baseFare: db.settings?.baseFare || 2198,
+          baseKm: db.settings?.baseKm || 80,
           sedanRatePerKm: db.settings?.sedanRatePerKm || 11,
           suvRatePerKm: db.settings?.suvRatePerKm || 15,
           innovaRatePerKm: db.settings?.innovaRatePerKm || 19,
@@ -2691,34 +2714,59 @@ module.exports = async (req, res) => {
           enableRazorpay: db.settings?.payment?.enableRazorpay !== false,
           enableDirectUpi: db.settings?.payment?.enableDirectUpi !== false,
           enableCashToDriver: db.settings?.payment?.enableCashToDriver !== false,
-          emergencyPause: !!db.settings?.emergencyPause
+          emergencyPause: Boolean(db.settings?.emergencyBookingPause || db.settings?.emergencyPause)
         }
       });
     }
 
-    if (pathname === '/admin/settings' && method === 'POST') {
+    if (pathname === '/admin/settings' && (method === 'POST' || method === 'PUT')) {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      if (!['owner', 'manager'].includes(admin.role)) {
-        return sendJson(403, { success: false, message: 'Access Denied: Only Owner or Operations Manager can update system settings.' });
+      if (!['owner', 'manager', 'admin'].includes(admin.role) && !securityService.hasPermission(admin.role, 'settings')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to update system settings.' });
       }
 
       if (!db.settings) db.settings = {};
       const oldSettings = { ...db.settings };
 
-      if (body.helpline) db.settings.helpline = String(body.helpline).trim();
-      if (body.supportPhone) db.settings.supportPhone = String(body.supportPhone).trim();
-      if (body.emergencyHotline) db.settings.emergencyHotline = String(body.emergencyHotline).trim();
-      if (body.sedanRatePerKm) db.settings.sedanRatePerKm = Number(body.sedanRatePerKm);
-      if (body.suvRatePerKm) db.settings.suvRatePerKm = Number(body.suvRatePerKm);
-      if (body.innovaRatePerKm) db.settings.innovaRatePerKm = Number(body.innovaRatePerKm);
-      if (body.emergencyPause !== undefined) db.settings.emergencyPause = !!body.emergencyPause;
+      // Helpline Phone (support helplinePhone, helpline, phone)
+      const rawHelp = body.helplinePhone || body.helpline || body.phone;
+      if (rawHelp) {
+        const cleanH = String(rawHelp).trim();
+        db.settings.helplinePhone = cleanH;
+        db.settings.helpline = cleanH.replace(/\D/g, '').slice(-10) || cleanH;
+      }
+
+      // WhatsApp Dispatch Phone (support whatsappPhone, whatsapp, supportPhone)
+      const rawWa = body.whatsappPhone || body.whatsapp || body.supportPhone;
+      if (rawWa) {
+        const cleanW = String(rawWa).trim();
+        db.settings.whatsappPhone = cleanW;
+        db.settings.whatsapp = cleanW;
+        db.settings.supportPhone = cleanW.replace(/\D/g, '').slice(-10) || cleanW;
+      }
+
+      // Emergency Hotline
+      const rawEm = body.emergencyHotline || body.emergencyPhone;
+      if (rawEm) {
+        db.settings.emergencyHotline = String(rawEm).trim();
+      }
+
+      if (body.baseFare !== undefined) db.settings.baseFare = Number(body.baseFare);
+      if (body.baseKm !== undefined) db.settings.baseKm = Number(body.baseKm);
+      if (body.sedanRatePerKm !== undefined) db.settings.sedanRatePerKm = Number(body.sedanRatePerKm);
+      if (body.suvRatePerKm !== undefined) db.settings.suvRatePerKm = Number(body.suvRatePerKm);
+      if (body.innovaRatePerKm !== undefined) db.settings.innovaRatePerKm = Number(body.innovaRatePerKm);
+      if (body.emergencyPause !== undefined) {
+        db.settings.emergencyPause = Boolean(body.emergencyPause);
+        db.settings.emergencyBookingPause = Boolean(body.emergencyPause);
+      }
 
       if (!db.settings.payment) db.settings.payment = {};
       if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
-      if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = !!body.enableRazorpay;
-      if (body.enableDirectUpi !== undefined) db.settings.payment.enableDirectUpi = !!body.enableDirectUpi;
-      if (body.enableCashToDriver !== undefined) db.settings.payment.enableCashToDriver = !!body.enableCashToDriver;
+      if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = Boolean(body.enableRazorpay);
+      if (body.enableDirectUpi !== undefined) db.settings.payment.enableDirectUpi = Boolean(body.enableDirectUpi);
+      if (body.enableCashToDriver !== undefined) db.settings.payment.enableCashToDriver = Boolean(body.enableCashToDriver);
 
       await securityService.recordAuditLog(db, {
         actor: admin.username,
@@ -2728,11 +2776,48 @@ module.exports = async (req, res) => {
         entityId: 'global',
         oldValue: oldSettings,
         newValue: db.settings,
-        note: 'Operational settings modified'
+        note: `Operational settings modified (Helpline: ${db.settings.helplinePhone}, WhatsApp: ${db.settings.whatsappPhone})`
       });
 
       await saveDb(db);
-      return sendJson(200, { success: true, message: 'Settings successfully saved and propagated.' });
+      return sendJson(200, {
+        success: true,
+        message: 'Settings successfully saved and propagated.',
+        settings: {
+          helplinePhone: db.settings.helplinePhone,
+          helpline: db.settings.helpline,
+          whatsappPhone: db.settings.whatsappPhone,
+          whatsapp: db.settings.whatsapp,
+          supportPhone: db.settings.supportPhone,
+          emergencyHotline: db.settings.emergencyHotline,
+          baseFare: db.settings.baseFare,
+          baseKm: db.settings.baseKm
+        }
+      });
+    }
+
+    // Public Platform Settings Endpoint (No auth required for passenger website)
+    if ((pathname === '/settings' || pathname === '/api/settings') && method === 'GET') {
+      const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const cleanH = hPhone.replace(/\D/g, '').slice(-10) || '8002141816';
+      const cleanWaDigits = waPhone.replace(/\D/g, '');
+      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917281851011');
+
+      return sendJson(200, {
+        success: true,
+        settings: {
+          helplinePhone: hPhone,
+          cleanHelpline: cleanH,
+          whatsappPhone: waPhone,
+          cleanWhatsapp: cleanWa,
+          emergencyHotline: db.settings?.emergencyHotline || hPhone,
+          baseFare: db.settings?.baseFare || 2198,
+          baseKm: db.settings?.baseKm || 80,
+          emergencyPause: Boolean(db.settings?.emergencyBookingPause || db.settings?.emergencyPause),
+          payment: paymentService.getPaymentConfig(db.settings?.payment)
+        }
+      });
     }
 
     if (pathname === '/admin/users' && method === 'GET') {

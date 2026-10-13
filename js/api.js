@@ -1066,7 +1066,11 @@ class ApiClient {
     });
   }
 
-  // Enterprise Payment Gateway API Integrations
+  // Enterprise Payment Gateway & Platform Settings API Integrations
+  static async getPlatformSettings() {
+    return await this.request("/api/settings");
+  }
+
   static async getPaymentConfig() {
     return await this.request("/api/payments/config");
   }

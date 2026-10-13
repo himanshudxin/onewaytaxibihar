@@ -5457,8 +5457,8 @@
         if (res.ok) {
           const data = await res.json();
           const s = data.settings || {};
-          setVal("set-helpline-phone", s.helplinePhone || "+91 80021 41816");
-          setVal("set-whatsapp-phone", s.whatsappPhone || "+91 72818 51011");
+          setVal("set-helpline-phone", s.helplinePhone || s.helpline || "+91 80021 41816");
+          setVal("set-whatsapp-phone", s.whatsappPhone || s.whatsapp || s.supportPhone || "+91 72818 51011");
           setVal("set-base-fare", s.baseFare || 2198);
           setVal("set-base-km", s.baseKm || 80);
 
@@ -5478,7 +5478,7 @@
           setVal("pay-rzp-key-id", p.razorpayKeyId || "");
           if (p.razorpayKeySecret) setVal("pay-rzp-secret", p.razorpayKeySecret);
           setVal("pay-bank-name", p.bankName || "State Bank of India");
-          setVal("pay-account-holder", p.accountHolderName || "HIMANSHU KUMAR DUBEY");
+          setVal("pay-account-holder", p.accountHolderName || p.payeeName || "HIMANSHU KUMAR DUBEY");
           setVal("pay-account-number", p.accountNumber || "");
           setVal("pay-ifsc", p.ifscCode || "");
 
@@ -5535,8 +5535,8 @@
     async function handleSaveGeneralSettings(e) {
       if (e) e.preventDefault();
       const btn = e.target?.querySelector('button[type="submit"]');
-      const helplinePhone = document.getElementById("set-helpline-phone")?.value;
-      const whatsappPhone = document.getElementById("set-whatsapp-phone")?.value;
+      const helplinePhone = (document.getElementById("set-helpline-phone")?.value || "").trim();
+      const whatsappPhone = (document.getElementById("set-whatsapp-phone")?.value || "").trim();
       const baseFare = Number(document.getElementById("set-base-fare")?.value) || 2198;
       const baseKm = Number(document.getElementById("set-base-km")?.value) || 80;
 
@@ -5544,11 +5544,22 @@
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/settings", {
           method: "POST",
-          body: JSON.stringify({ helplinePhone, whatsappPhone, baseFare, baseKm })
+          body: JSON.stringify({
+            helplinePhone,
+            helpline: helplinePhone,
+            whatsappPhone,
+            whatsapp: whatsappPhone,
+            supportPhone: whatsappPhone,
+            baseFare,
+            baseKm
+          })
         });
         const data = await res.json();
         if (res.ok && data.success) {
           showToast("Platform general settings saved!", "success");
+          await loadSettings();
+        } else {
+          showToast(data.message || "Failed to save settings", "error");
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");
@@ -5560,14 +5571,14 @@
     async function handleSavePaymentSettings(e) {
       if (e) e.preventDefault();
       const btn = e.target?.querySelector('button[type="submit"]');
-      const upiId = document.getElementById("pay-upi-id")?.value;
-      const payeeName = document.getElementById("pay-payee-name")?.value;
-      const razorpayKeyId = document.getElementById("pay-rzp-key-id")?.value;
-      const razorpayKeySecret = document.getElementById("pay-rzp-secret")?.value;
-      const bankName = document.getElementById("pay-bank-name")?.value;
-      const accountHolderName = document.getElementById("pay-account-holder")?.value;
-      const accountNumber = document.getElementById("pay-account-number")?.value;
-      const ifscCode = document.getElementById("pay-ifsc")?.value;
+      const upiId = (document.getElementById("pay-upi-id")?.value || "").trim();
+      const payeeName = (document.getElementById("pay-payee-name")?.value || "").trim();
+      const razorpayKeyId = (document.getElementById("pay-rzp-key-id")?.value || "").trim();
+      const razorpayKeySecret = (document.getElementById("pay-rzp-secret")?.value || "").trim();
+      const bankName = (document.getElementById("pay-bank-name")?.value || "").trim();
+      const accountHolderName = (document.getElementById("pay-account-holder")?.value || "").trim();
+      const accountNumber = (document.getElementById("pay-account-number")?.value || "").trim();
+      const ifscCode = (document.getElementById("pay-ifsc")?.value || "").trim();
 
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
@@ -5581,6 +5592,9 @@
         const data = await res.json();
         if (res.ok && data.success) {
           showToast("Payment gateways & bank settlement info updated securely!", "success");
+          await loadSettings();
+        } else {
+          showToast(data.message || "Failed to update payment settings", "error");
         }
       } catch (err) {
         showToast("Error: " + err.message, "error");

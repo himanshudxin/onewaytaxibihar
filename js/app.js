@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 5. Emergency Incident / Booking Pause Check
   checkAndRenderEmergencyPause();
+
+  // 6. Sync Live Platform Settings (Helpline phone, WhatsApp number, Bank details)
+  applyLivePlatformSettings();
 });
 
 /* ==========================================================================
@@ -1896,6 +1899,118 @@ window.copyUpiId = (upiId, btnEl) => {
     window.showToast(`UPI ID: ${upiId}`, "info");
   }
 };
+
+// Universal Clipboard Copy Helper (for Bank Account Number, IFSC, etc.)
+window.copyToClipboard = (text, btnEl, label = "Copied") => {
+  if (!text) return;
+  const targetBtn = btnEl;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      window.showToast?.(`${label}: ${text}`, "success");
+      if (targetBtn) {
+        const origText = targetBtn.textContent;
+        targetBtn.textContent = "✓ Copied!";
+        targetBtn.style.background = "#059669";
+        targetBtn.style.color = "#ffffff";
+        setTimeout(() => {
+          targetBtn.textContent = origText;
+          targetBtn.style.background = "";
+          targetBtn.style.color = "";
+        }, 2200);
+      }
+    }).catch(() => {
+      window.showToast?.(`${label}: ${text}`, "info");
+    });
+  } else {
+    window.showToast?.(`${label}: ${text}`, "info");
+  }
+};
+
+// Live Dynamic Platform Settings Synchronizer (Helpline Phone, WhatsApp, Emergency Contacts)
+async function applyLivePlatformSettings() {
+  // 1. Instant optimistic application from localStorage cache
+  try {
+    const cached = localStorage.getItem("otb_platform_settings");
+    if (cached) {
+      const s = JSON.parse(cached);
+      if (s) updateDomPhoneNumbers(s);
+    }
+  } catch (e) {}
+
+  // 2. Fetch authoritative live settings from backend API
+  try {
+    const res = await (window.ApiClient ? ApiClient.getPlatformSettings() : fetch('/api/settings').then(r => r.json()).catch(() => null));
+    if (res && res.success && res.settings) {
+      window.currentPlatformSettings = res.settings;
+      try { localStorage.setItem("otb_platform_settings", JSON.stringify(res.settings)); } catch (e) {}
+      updateDomPhoneNumbers(res.settings);
+    }
+  } catch (e) {
+    console.warn("[Settings Live Sync Notice]:", e.message);
+  }
+}
+
+function updateDomPhoneNumbers(s) {
+  if (!s) return;
+  window.currentPlatformSettings = s;
+  const hPhone = s.helplinePhone || s.helpline || "+91 80021 41816";
+  const cleanH = s.cleanHelpline || hPhone.replace(/\D/g, '').slice(-10) || "8002141816";
+  const waPhone = s.whatsappPhone || s.whatsapp || "+91 72818 51011";
+  const cleanWa = s.cleanWhatsapp || waPhone.replace(/\D/g, '') || "917281851011";
+  const formattedWa = cleanWa.length === 10 ? `91${cleanWa}` : cleanWa;
+
+  // Update all tel: links across the document safely without breaking SVG inner icons
+  document.querySelectorAll('a[href^="tel:"]').forEach(a => {
+    a.href = `tel:+91${cleanH}`;
+    if (a.title) {
+      a.title = a.title.replace(/\+?91[\s-]?\d{10}|\d{10}|\+?91[\s-]?\d{5}[\s-]?\d{5}/g, hPhone);
+    }
+    const phoneSpan = a.querySelector('.top-phone-number, .drawer-btn-call span, span');
+    if (phoneSpan && (phoneSpan.textContent.includes("80021") || phoneSpan.textContent.includes("62064") || phoneSpan.textContent.includes("Call"))) {
+      phoneSpan.textContent = phoneSpan.textContent.replace(/\+?91[\s-]?\d{10}|\d{10}|\+?91[\s-]?\d{5}[\s-]?\d{5}/g, hPhone);
+    } else {
+      for (const node of a.childNodes) {
+        if (node.nodeType === 3 && (node.nodeValue.includes("80021") || node.nodeValue.includes("62064"))) {
+          node.nodeValue = node.nodeValue.replace(/\+?91[\s-]?\d{10}|\d{10}|\+?91[\s-]?\d{5}[\s-]?\d{5}/g, hPhone);
+        }
+      }
+    }
+  });
+
+  // Specifically update prominent phone spans
+  const topPhoneSpan = document.querySelector(".top-phone-number");
+  if (topPhoneSpan) topPhoneSpan.textContent = hPhone;
+
+  const footerPhoneSpan = document.querySelector(".fhc-phone span");
+  if (footerPhoneSpan) footerPhoneSpan.textContent = hPhone;
+
+  // Update all WhatsApp wa.me links across the document
+  document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+    try {
+      const url = new URL(a.href, window.location.origin);
+      const textParam = url.searchParams.get("text") || "Hi OneWayTaxiBihar, I need a cab";
+      a.href = `https://wa.me/${formattedWa}?text=${encodeURIComponent(textParam)}`;
+    } catch (e) {
+      a.href = `https://wa.me/${formattedWa}`;
+    }
+  });
+
+  // Header and Navigation Phone Elements
+  const topHelp = document.getElementById("top-help-link");
+  if (topHelp) {
+    topHelp.href = `tel:+91${cleanH}`;
+    topHelp.setAttribute("aria-label", `Call 24x7 Priority Desk: ${hPhone}`);
+    topHelp.title = `Call 24x7 Priority Desk: ${hPhone}`;
+  }
+
+  const navMini = document.getElementById("navbar-call-mini-pill");
+  if (navMini) navMini.href = `tel:+91${cleanH}`;
+
+  const footerPhone = document.querySelector(".fhc-phone");
+  if (footerPhone) footerPhone.href = `tel:+91${cleanH}`;
+}
+
+window.applyLivePlatformSettings = applyLivePlatformSettings;
 
 // Global Back Navigation Handler (Supports Android Physical Back, Browser Back, Swipe Back, and Modal Back Buttons)
 window.handleBackNavigation = () => {

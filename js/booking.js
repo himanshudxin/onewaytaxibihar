@@ -151,6 +151,7 @@ class BookingManager {
     }
 
     this.restoreState();
+    this.syncPaymentConfig();
   }
 
   saveState() {
@@ -1447,7 +1448,8 @@ class BookingManager {
   }
 
   async transferLeadToHelpdesk(phone, silent = false, extra = {}) {
-    const helpdeskNumber = "917281851011"; // 24x7 WhatsApp Dispatch: 7281851011
+    const rawWa = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917281851011";
+    const helpdeskNumber = rawWa.length === 10 ? `91${rawWa}` : rawWa;
     const clean10 = (phone || "").replace(/\D/g, "").slice(-10);
     if (!clean10 || clean10.length < 10) return;
 
@@ -2416,9 +2418,54 @@ class BookingManager {
                   </div>
                 </div>
 
+                <!-- Direct Bank Account Transfer (IMPS / NEFT / RTGS) -->
+                <div id="chk-bank-transfer-box" style="margin-top: 14px; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; text-align: left; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <span style="font-size: 14px;">🏦</span>
+                      <strong style="font-size: 12px; color: #1e293b; letter-spacing: 0.3px;">DIRECT BANK ACCOUNT TRANSFER (IMPS / NEFT)</strong>
+                    </div>
+                    <span style="font-size: 9.5px; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 1px 6px; border-radius: 4px; font-weight: 800;">VERIFIED A/C</span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; font-size: 11.5px; color: #334155;">
+                    <div style="background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                      <span style="font-size: 9.5px; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">Bank Name</span>
+                      <strong id="chk-bank-name" style="color: #0f172a; font-size: 12px;">${this.dynamicPaymentConfig?.bankName || 'State Bank of India'}</strong>
+                    </div>
+                    <div style="background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                      <span style="font-size: 9.5px; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">Account Holder</span>
+                      <strong id="chk-account-holder" style="color: #0f172a; font-size: 12px;">${this.dynamicPaymentConfig?.accountHolderName || this.dynamicPaymentConfig?.payeeName || 'HIMANSHU KUMAR DUBEY'}</strong>
+                    </div>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                      <div>
+                        <span style="font-size: 9.5px; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">Account Number</span>
+                        <strong id="chk-account-number" style="font-family: monospace; font-size: 13.5px; color: #0f172a; letter-spacing: 0.5px;">${this.dynamicPaymentConfig?.accountNumber || 'Pending Configuration'}</strong>
+                      </div>
+                      <button type="button" class="btn-copy-account" onclick="window.copyToClipboard(document.getElementById('chk-account-number')?.textContent?.trim(), this, 'Account No')" style="border: 1px solid #cbd5e1; background: white; color: #0f172a; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                        Copy A/C
+                      </button>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                      <div>
+                        <span style="font-size: 9.5px; color: #64748b; font-weight: 700; display: block; text-transform: uppercase;">IFSC Code</span>
+                        <strong id="chk-ifsc-code" style="font-family: monospace; font-size: 13.5px; color: #059669; letter-spacing: 0.5px;">${this.dynamicPaymentConfig?.ifscCode || 'SBIN0000001'}</strong>
+                      </div>
+                      <button type="button" class="btn-copy-ifsc" onclick="window.copyToClipboard(document.getElementById('chk-ifsc-code')?.textContent?.trim(), this, 'IFSC Code')" style="border: 1px solid #cbd5e1; background: white; color: #059669; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+                        Copy IFSC
+                      </button>
+                    </div>
+                  </div>
+                  <div style="margin-top: 6px; font-size: 10.5px; color: #64748b; display: flex; align-items: center; gap: 4px;">
+                    <span>Branch: <strong id="chk-bank-branch">${this.dynamicPaymentConfig?.branchName || 'Patna Main Branch'}</strong></span>
+                    <span style="margin-left: auto;">IMPS / NEFT / RTGS Instant Credit</span>
+                  </div>
+                </div>
+
                 <div style="margin-top: 12px; text-align: left; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                  <label style="font-size: 11px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; text-transform: uppercase;">ENTER UPI TRANSACTION ID / UTR NUMBER (AFTER SCANNING):</label>
-                  <input type="text" id="chk-upi-utr" placeholder="Enter 12-digit UPI UTR number (e.g. 4235XXXXXXXX)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-family: monospace;">
+                  <label style="font-size: 11px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; text-transform: uppercase;">ENTER UPI / BANK TRANSACTION UTR NUMBER (AFTER PAYMENT):</label>
+                  <input type="text" id="chk-upi-utr" placeholder="Enter 12-digit UPI UTR or Bank Ref number (e.g. 4235XXXXXXXX)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; font-family: monospace;">
                 </div>
               </div>
             </label>
@@ -2912,6 +2959,24 @@ class BookingManager {
         if (upiLink) {
           upiLink.href = upiUri;
         }
+
+        // Live Dynamic Bank Settlement Data
+        const bNameEl = document.getElementById("chk-bank-name");
+        if (bNameEl && res.bankName) bNameEl.textContent = res.bankName;
+
+        const accHolderEl = document.getElementById("chk-account-holder");
+        if (accHolderEl && (res.accountHolderName || res.payeeName)) {
+          accHolderEl.textContent = res.accountHolderName || res.payeeName;
+        }
+
+        const accNumEl = document.getElementById("chk-account-number");
+        if (accNumEl) accNumEl.textContent = res.accountNumber || 'Pending Configuration';
+
+        const ifscEl = document.getElementById("chk-ifsc-code");
+        if (ifscEl) ifscEl.textContent = res.ifscCode || 'SBIN0000001';
+
+        const branchEl = document.getElementById("chk-bank-branch");
+        if (branchEl && res.branchName) branchEl.textContent = res.branchName;
       }
     } catch (e) {
       console.warn("Payment config sync note:", e);
@@ -3488,7 +3553,9 @@ class BookingManager {
           `━━━━━━━━━━━━━━━━━━━━━━\n` +
           `Our central dispatch agent will call you within 5 minutes.`;
 
-        const waDispatchUrl = `https://wa.me/917281851011?text=${encodeURIComponent(waMsg)}`;
+        const rawWaNum = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917281851011";
+        const cleanWaNum = rawWaNum.length === 10 ? `91${rawWaNum}` : rawWaNum;
+        const waDispatchUrl = `https://wa.me/${cleanWaNum}?text=${encodeURIComponent(waMsg)}`;
         b.whatsappDispatchUrl = waDispatchUrl;
         b.whatsappMessage = waMsg;
 

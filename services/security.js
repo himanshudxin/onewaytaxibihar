@@ -343,42 +343,72 @@ function verifyAdminOtp(phone, enteredCode) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. ROLE-BASED ACCESS CONTROL (RBAC)
+// 6. ROLE-BASED ACCESS CONTROL (RBAC) - PHASE 29 SPECIFICATION
 // ---------------------------------------------------------------------------
 const RBAC_ROLES = {
+  super_admin: {
+    name: 'Super Administrator',
+    permissions: ['*']
+  },
   owner: {
     name: 'Business Owner',
     permissions: ['*']
   },
+  operations: {
+    name: 'Operations Manager',
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit', 'dispatch', 'corporate']
+  },
   manager: {
     name: 'Operations Manager',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit', 'dispatch', 'corporate']
   },
   dispatcher: {
     name: 'Central Dispatcher',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'customers']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'customers', 'dispatch', 'tracking']
+  },
+  finance: {
+    name: 'Finance & Accounts',
+    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports', 'settlements', 'corporate']
   },
   accounts: {
     name: 'Accounts & Billing',
-    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports']
+    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports', 'settlements', 'corporate']
   },
   support: {
-    name: 'Customer Support',
-    permissions: ['dashboard', 'leads', 'bookings', 'customers']
+    name: 'Customer Support Desk',
+    permissions: ['dashboard', 'leads', 'bookings', 'customers', 'tickets']
+  },
+  driver_manager: {
+    name: 'Fleet & Driver Manager',
+    permissions: ['dashboard', 'drivers', 'vehicles', 'settlements', 'audit']
   }
 };
 
 function hasPermission(userRole, requiredScope) {
   if (!userRole) return false;
-  const roleConfig = RBAC_ROLES[userRole.toLowerCase()];
+  const normalized = String(userRole).toLowerCase().trim().replace(/[-\s]/g, '_');
+  const roleConfig = RBAC_ROLES[normalized];
   if (!roleConfig) return false;
   if (roleConfig.permissions.includes('*')) return true;
   return roleConfig.permissions.includes(requiredScope);
 }
 
 function getRolePermissions(userRole) {
-  const roleConfig = RBAC_ROLES[String(userRole || 'dispatcher').toLowerCase()];
+  const normalized = String(userRole || 'dispatcher').toLowerCase().trim().replace(/[-\s]/g, '_');
+  const roleConfig = RBAC_ROLES[normalized];
   return roleConfig ? roleConfig.permissions : ['dashboard', 'leads', 'bookings'];
+}
+
+function checkAdminPermission(admin, requiredScope) {
+  if (!admin) return { allowed: false, message: 'Admin authentication required.' };
+  const role = (admin.role || '').toLowerCase();
+  if (hasPermission(role, requiredScope)) {
+    return { allowed: true };
+  }
+  return {
+    allowed: false,
+    message: `Access denied. Role '${admin.role}' lacks permission for '${requiredScope}'.`
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -469,6 +499,7 @@ module.exports = {
   // RBAC & Audit
   hasPermission,
   getRolePermissions,
+  checkAdminPermission,
   recordAuditLog,
 
   // Sanitization

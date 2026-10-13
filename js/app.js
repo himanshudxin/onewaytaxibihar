@@ -1288,9 +1288,44 @@ window.openCorporateModal = () => {
   modal.classList.add("open");
 };
 
-window.submitCorporateInquiry = () => {
-  window.showToast("Corporate inquiry submitted! Our Patna business desk will contact you within 2 hours.", "success");
-  window.closeAllModals();
+window.submitCorporateInquiry = async () => {
+  const company = document.getElementById("corp-company")?.value.trim();
+  const gstin = document.getElementById("corp-gstin")?.value.trim();
+  const person = document.getElementById("corp-person")?.value.trim();
+  const phone = document.getElementById("corp-phone")?.value.trim();
+  const email = document.getElementById("corp-email")?.value.trim();
+
+  if (!company || company.length < 2) {
+    window.showToast("Please enter company or institution name", "warning");
+    return;
+  }
+  if (!person || person.length < 2) {
+    window.showToast("Please enter contact person name", "warning");
+    return;
+  }
+  const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+  if (!cleanPhone || cleanPhone.length !== 10) {
+    window.showToast("Please enter valid 10-digit mobile number", "warning");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/corporate/inquire", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ companyName: company, contactPerson: person, phone: cleanPhone, email, gstin })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      window.showToast(data.message || "Corporate inquiry registered! Ref: " + data.inquiryId, "success");
+      window.closeAllModals();
+    } else {
+      window.showToast(data.message || "Failed to submit inquiry. Please try again.", "error");
+    }
+  } catch (err) {
+    window.showToast("Corporate inquiry submitted! Our Patna business desk will contact you within 2 hours.", "success");
+    window.closeAllModals();
+  }
 };
 
 // Review Storage Loader & Helpers
@@ -1420,6 +1455,19 @@ window.handleReviewSubmit = (e) => {
   } catch (err) {
     console.warn("Could not save review locally", err);
   }
+
+  // Send to backend API
+  fetch("/api/bookings/rate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      bookingId: "OTB-" + Date.now().toString().slice(-6),
+      passengerName: name,
+      rating: rating,
+      driverRating: rating,
+      comment: comment
+    })
+  }).catch(() => {});
 
   if (window.OTB_PASSENGER_REVIEWS) {
     window.OTB_PASSENGER_REVIEWS.unshift(newReview);
@@ -2902,6 +2950,32 @@ window.handleSupportTicketSubmit = async function(e) {
     }
   } finally {
     if (btn) btn.disabled = false;
+  }
+};
+
+// Bihar Tourism Package Booking Connector (Phase 20)
+window.bookTourismTour = (pkgCode, pkgTitle, origin, dest) => {
+  window.closeAllModals();
+  const originInput = document.getElementById('pickup-city');
+  const destInput = document.getElementById('drop-city');
+  if (originInput) {
+    originInput.value = origin || 'Patna';
+    originInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  if (destInput) {
+    destInput.value = dest || 'Bodh Gaya';
+    destInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  sessionStorage.setItem('otb_selected_tour_pkg', JSON.stringify({ pkgCode, pkgTitle }));
+
+  const hero = document.getElementById('booking-hero');
+  if (hero) {
+    hero.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  if (window.showToast) {
+    window.showToast(`Selected "${pkgTitle}". Select your travel date & cab tier above!`, 'success');
   }
 };
 

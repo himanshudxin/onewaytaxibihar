@@ -28,7 +28,10 @@ const ALL_COLLECTIONS = [
   'support_tickets',
   'error_logs',
   'settings',
-  'admins'
+  'admins',
+  'corporate_inquiries',
+  'corporate_accounts',
+  'passenger_reviews'
 ];
 
 function getLocalDbPath() {
@@ -93,6 +96,9 @@ function loadLocalDb() {
       coupons: [],
       support_tickets: [],
       error_logs: [],
+      corporate_inquiries: [],
+      corporate_accounts: [],
+      passenger_reviews: [],
       settings: {}
     };
   }
@@ -342,7 +348,9 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('vehicles', db.vehicles),
         syncCollectionToCloud('coupons', db.coupons),
         syncCollectionToCloud('admins', db.admins),
-        syncCollectionToCloud('notifications', db.notifications)
+        syncCollectionToCloud('notifications', db.notifications),
+        syncCollectionToCloud('corporate_inquiries', db.corporate_inquiries),
+        syncCollectionToCloud('passenger_reviews', db.passenger_reviews)
       ];
       if (db.settings) {
         tasks.push(mongoDbInstance.collection('settings').updateOne(

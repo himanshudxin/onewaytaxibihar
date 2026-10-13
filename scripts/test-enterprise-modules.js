@@ -109,19 +109,21 @@ async function runTests() {
     console.error('  ❌ Smart Dispatch failed:', dispatchRes.body);
   }
 
-  // 4. Driver Login to get driver session
-  console.log('[4] Authenticating Driver Partner...');
+  // 4. Driver Login as the Matched Chauffeur
+  console.log('[4] Authenticating Matched Driver Partner...');
   total++;
+  const matchedPhone = (dispatchRes.body.matchedDriver?.phone || '9431012345').replace(/\D/g, '').slice(-10);
+  const matchedPin = (dispatchRes.body.matchedDriver?.driverId === 'drv_102') ? '5678' : '1234';
   const driverLogin = await request('POST', '/api/driver/login', {
-    phone: '9431012345',
-    pin: '1234'
+    phone: matchedPhone,
+    pin: matchedPin
   });
   const driverToken = driverLogin.body?.token || '';
   const driverHeaders = {
     'Authorization': `Bearer ${driverToken}`
   };
   if (driverLogin.status === 200 && driverToken) {
-    console.log('  ✅ Driver logged in successfully.');
+    console.log(`  ✅ Matched driver (${matchedPhone}) logged in successfully.`);
     passed++;
   } else {
     console.error('  ❌ Driver login failed:', driverLogin.body);
@@ -231,6 +233,74 @@ async function runTests() {
     passed++;
   } else {
     console.error('  ❌ Driver settlement failed:', settleRes.body);
+  }
+
+  // 12. Bihar Tourism Packages (Phase 20)
+  console.log('[12] Testing Bihar Tourism Packages & Tour Booking (Phase 20)...');
+  total++;
+  const tourPkgsRes = await request('GET', '/api/tourism/packages');
+  const tourBookRes = await request('POST', '/api/tourism/book', {
+    packageCode: 'TOUR-BODHGAYA-02',
+    passengerName: 'Anjali Sharma',
+    passengerPhone: '9835012345',
+    vehicleCategory: 'sedan',
+    pickupDate: '2026-10-15',
+    pickupTime: '07:30'
+  });
+  if (tourPkgsRes.status === 200 && tourPkgsRes.body.packages?.length >= 5 && tourBookRes.status === 200 && tourBookRes.body.booking?.tripType === 'TOURISM_PACKAGE') {
+    console.log(`  ✅ Bihar Tourism package booked: ${tourBookRes.body.bookingId}, Package: ${tourBookRes.body.package?.title}, Fare: ₹${tourBookRes.body.booking.totalFare}`);
+    passed++;
+  } else {
+    console.error('  ❌ Tourism test failed:', tourPkgsRes.body, tourBookRes.body);
+  }
+
+  // 13. Corporate B2B Mobility Desk (Phase 21)
+  console.log('[13] Testing Corporate B2B Inquiries Desk (Phase 21)...');
+  total++;
+  const corpInqRes = await request('POST', '/api/corporate/inquire', {
+    companyName: 'Bihar State Power Holding Company Ltd',
+    contactPerson: 'Sanjay Sinha',
+    phone: '9431098765',
+    email: 'corporate@bsphcl.bih.nic.in',
+    gstin: '10AAACB1234F1Z5',
+    estimatedMonthlyRides: 50
+  });
+  const corpAdminRes = await request('GET', '/api/admin/corporate/inquiries', null, { Cookie: adminCookie });
+  if (corpInqRes.status === 200 && corpInqRes.body.inquiryId && corpAdminRes.status === 200 && Array.isArray(corpAdminRes.body.inquiries)) {
+    console.log(`  ✅ Corporate inquiry registered: Ref ${corpInqRes.body.inquiryId}, Admin Inquiries Count: ${corpAdminRes.body.count}`);
+    passed++;
+  } else {
+    console.error('  ❌ Corporate test failed:', corpInqRes.body, corpAdminRes.body);
+  }
+
+  // 14. Passenger Ratings & Reviews Engine (Phase 16)
+  console.log('[14] Testing Passenger Ratings & Reviews (Phase 16)...');
+  total++;
+  const rateRes = await request('POST', '/api/bookings/rate', {
+    bookingId: testBookingId || 'OTB-2026-1658',
+    passengerName: 'Anjali Sharma',
+    rating: 5.0,
+    cleanlinessRating: 5.0,
+    punctualityRating: 5.0,
+    comment: 'Exceptional highway ride! Chauffeur arrived right on time at Patna airport.'
+  });
+  const reviewsRes = await request('GET', '/api/reviews');
+  if (rateRes.status === 200 && rateRes.body.review && reviewsRes.status === 200) {
+    console.log(`  ✅ Verified review recorded: ${rateRes.body.review.rating}★, Comment: "${rateRes.body.review.comment}"`);
+    passed++;
+  } else {
+    console.error('  ❌ Ratings test failed:', rateRes.body, reviewsRes.body);
+  }
+
+  // 15. Fleet Demand Intelligence & Analytics (Phase 22 & 23)
+  console.log('[15] Testing Fleet & Demand Intelligence Analytics (Phase 22 & 23)...');
+  total++;
+  const intelRes = await request('GET', '/api/admin/analytics/intelligence', null, { Cookie: adminCookie });
+  if (intelRes.status === 200 && intelRes.body.kpis && Array.isArray(intelRes.body.demandRecommendations)) {
+    console.log(`  ✅ Fleet intelligence loaded: GBV ₹${intelRes.body.kpis.grossBookingValue}, Chauffeur Payouts ₹${intelRes.body.kpis.driverPayouts}, Net Margin ₹${intelRes.body.kpis.companyPlatformRevenue}, Recommendations: ${intelRes.body.demandRecommendations.length}`);
+    passed++;
+  } else {
+    console.error('  ❌ Fleet intelligence failed:', intelRes.body);
   }
 
   console.log('\n======================================================');

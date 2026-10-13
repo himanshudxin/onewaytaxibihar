@@ -5087,6 +5087,535 @@ module.exports = async (req, res) => {
       });
     }
 
+    // ---------------------------------------------------------------------------
+    // PHASE 16: RATINGS & REVIEWS ENGINE
+    // ---------------------------------------------------------------------------
+    if ((pathname === '/bookings/rate' || pathname === '/driver/rate' || pathname === '/reviews/submit') && method === 'POST') {
+      const bId = (body.bookingId || body.rideId || '').toString().trim().toUpperCase();
+      const rating = parseFloat(body.rating || body.driverRating) || 5.0;
+      const cleanliness = parseFloat(body.cleanlinessRating || body.vehicleRating) || rating;
+      const punctuality = parseFloat(body.punctualityRating) || rating;
+      const comment = (body.comment || body.reviewText || '').toString().trim().slice(0, 500);
+
+      if (!bId) {
+        return sendJson(400, { success: false, message: 'Booking ID is required to submit a review.' });
+      }
+      if (rating < 1 || rating > 5) {
+        return sendJson(400, { success: false, message: 'Rating score must be between 1.0 and 5.0.' });
+      }
+
+      const booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
+      if (!booking) {
+        return sendJson(404, { success: false, message: `Booking '${bId}' not found.` });
+      }
+
+      const reviewRecord = {
+        id: `rev_${Date.now()}`,
+        bookingId: booking.bookingId || bId,
+        passengerName: booking.passengerName || body.passengerName || 'Verified Passenger',
+        passengerPhone: booking.passengerPhone || body.passengerPhone || '',
+        route: `${booking.originCity || 'Patna'} to ${booking.destCity || 'Gaya'}`,
+        cabType: booking.fleetClass || booking.vehicleCategory || 'Sedan',
+        rating: Math.round(rating * 10) / 10,
+        cleanlinessRating: Math.round(cleanliness * 10) / 10,
+        punctualityRating: Math.round(punctuality * 10) / 10,
+        comment: comment || 'Smooth and professional journey.',
+        driverId: booking.driverId || booking.driverDetails?.id || null,
+        driverName: booking.driverDetails?.name || null,
+        createdAt: new Date().toISOString()
+      };
+
+      booking.review = reviewRecord;
+
+      // Update Chauffeur Average Rating if driver assigned
+      if (reviewRecord.driverId) {
+        const drv = (db.drivers || []).find(d => d.id === reviewRecord.driverId || d.phone === booking.driverDetails?.phone);
+        if (drv) {
+          const currentRating = parseFloat(drv.rating) || 4.9;
+          const ratingsCount = parseInt(drv.ratingsCount || drv.totalRatingsCount) || 12;
+          const newAvg = ((currentRating * ratingsCount) + rating) / (ratingsCount + 1);
+          drv.rating = Math.round(newAvg * 10) / 10;
+          drv.ratingsCount = ratingsCount + 1;
+        }
+      }
+
+      if (!db.passenger_reviews) db.passenger_reviews = [];
+      db.passenger_reviews.unshift(reviewRecord);
+      if (db.passenger_reviews.length > 200) db.passenger_reviews = db.passenger_reviews.slice(0, 200);
+
+      await saveDb(db);
+
+      return sendJson(200, {
+        success: true,
+        message: 'Thank you! Your verified passenger rating has been recorded.',
+        review: reviewRecord
+      });
+    }
+
+    if ((pathname === '/reviews' || pathname === '/reviews/verified' || pathname === '/passenger-reviews') && method === 'GET') {
+      const list = (db.passenger_reviews || []).slice(0, 50);
+      return sendJson(200, { success: true, count: list.length, reviews: list });
+    }
+
+    // ---------------------------------------------------------------------------
+    // PHASE 20: BIHAR TOURISM & SPIRITUAL CIRCUITS
+    // ---------------------------------------------------------------------------
+    const BIHAR_TOURISM_PACKAGES = [
+      {
+        packageCode: 'TOUR-PATNA-01',
+        title: 'Patna City Heritage & Gurudwara Circuit',
+        tagline: 'Historical capital of Pataliputra & sacred Takht Sri Harmandir Ji',
+        durationDays: 1,
+        durationHours: '8 Hours / 80 KM',
+        pickupCity: 'Patna',
+        attractions: [
+          'Takht Sri Patna Sahib (Gurudwara)',
+          'Bihar Museum (World Class Gallery)',
+          'Golghar & Gandhi Ghat',
+          'Kumhrar Mauryan Archeological Ruins',
+          'Mahavir Mandir (Patna Junction)',
+          'Patna Marine Drive (Ganga Path Sunset Cruise)'
+        ],
+        pricing: {
+          sedan: 2200,
+          suv: 3400,
+          crysta: 4800
+        },
+        inclusions: ['AC Cab for full day', 'Professional Highway Chauffeur', 'Fuel & Parking', 'Doorstep Pickup & Drop'],
+        exclusions: ['Monument entry tickets', 'Personal meals / snacks']
+      },
+      {
+        packageCode: 'TOUR-BODHGAYA-02',
+        title: 'Bodh Gaya Enlightenment & Buddhist Circuit',
+        tagline: 'Sacred seat of Lord Buddha enlightenment under the Bodhi Tree',
+        durationDays: 1,
+        durationHours: 'Same Day Excursion (14-16 Hours)',
+        pickupCity: 'Patna',
+        attractions: [
+          'UNESCO Mahabodhi Temple',
+          'Sacred Bodhi Tree & Vajrasana Seat',
+          'Great 80-Foot Buddha Statue',
+          'Royal Thai Monastery & Japanese Temple',
+          'Dungeshwari Cave Temple (Mahakala Cave)',
+          'Falgu River Sanctum'
+        ],
+        pricing: {
+          sedan: 3800,
+          suv: 5400,
+          crysta: 7500
+        },
+        inclusions: ['Round-trip AC Cab (Patna ⇄ Bodh Gaya)', 'Toll Plaza Charges Included', 'Chauffeur Allowance', 'All-day waiting'],
+        exclusions: ['Temple camera permits', 'Meals']
+      },
+      {
+        packageCode: 'TOUR-RAJGIR-03',
+        title: 'Rajgir & Nalanda Ancient Mahavihara Circuit',
+        tagline: 'First Buddhist Council, Nalanda University UNESCO ruins & Nature Safari',
+        durationDays: 1,
+        durationHours: 'Full Day (12-14 Hours)',
+        pickupCity: 'Patna',
+        attractions: [
+          'Nalanda Mahavihara UNESCO Ruins & Nalanda Museum',
+          'Rajgir Glass Skywalk & Nature Safari',
+          'Vishwa Shanti Stupa (Peace Pagoda) & Ropeway',
+          'Venuvana Bamboo Grove of Lord Buddha',
+          'Griddhakuta Peak (Vulture’s Peak)',
+          'Brahmakund Natural Sulphur Hot Springs'
+        ],
+        pricing: {
+          sedan: 3600,
+          suv: 5200,
+          crysta: 7200
+        },
+        inclusions: ['Dedicated AC Chauffeur Cab', 'State Highway Toll Taxes', 'Inter-monument transit', 'Return doorstep drop'],
+        exclusions: ['Ropeway & Glass Skywalk entry passes', 'Guide fees']
+      },
+      {
+        packageCode: 'TOUR-VAISHALI-04',
+        title: 'Vaishali Lichchhavi Heritage & Mahavira Circuit',
+        tagline: 'World’s first republic & birthplace of Lord Mahavira',
+        durationDays: 1,
+        durationHours: 'Full Day (8-10 Hours)',
+        pickupCity: 'Patna',
+        attractions: [
+          'Ashokan Lion Pillar & Kolhua Stupa',
+          'Relic Stupa of Lord Buddha',
+          'Kundalpur (Birthplace of 24th Tirthankara Mahavira)',
+          'Vishwa Shanti Stupa Vaishali',
+          'Abhishek Pushkarni Sacred Coronation Tank'
+        ],
+        pricing: {
+          sedan: 2600,
+          suv: 3800,
+          crysta: 5200
+        },
+        inclusions: ['Round-trip AC cab via JP Setu / Digha', 'Toll charges', 'Chauffeur services', 'Complimentary mineral water'],
+        exclusions: ['Monument entry fees']
+      },
+      {
+        packageCode: 'TOUR-GAYA-05',
+        title: 'Gaya Sacred Pind Daan & Bodh Gaya 2-Day Pilgrimage',
+        tagline: 'Complete Pitru Paksha & spiritual pilgrimage with overnight halt',
+        durationDays: 2,
+        durationHours: '2 Days / 1 Night',
+        pickupCity: 'Patna',
+        attractions: [
+          'Vishnupad Temple & Falgu River Ghats',
+          'Akshay Vat (Eternal Banyan Tree for Pind Daan)',
+          'Mangla Gauri Shaktipeeth Temple',
+          'Overnight halt in Bodh Gaya / Gaya',
+          'Mahabodhi Temple Morning Meditation',
+          'International Buddhist Monasteries'
+        ],
+        pricing: {
+          sedan: 6800,
+          suv: 9200,
+          crysta: 12500
+        },
+        inclusions: ['2-Day AC Cab with Unlimited Sightseeing', 'Driver Night Halt Allowance', 'All Highway Tolls & Parking', 'Flexible Darshan Timing'],
+        exclusions: ['Hotel stay & meals', 'Puja Samagri & Panda Dakshina']
+      }
+    ];
+
+    if (pathname === '/tourism/packages' && method === 'GET') {
+      return sendJson(200, {
+        success: true,
+        count: BIHAR_TOURISM_PACKAGES.length,
+        packages: BIHAR_TOURISM_PACKAGES
+      });
+    }
+
+    if (pathname === '/tourism/book' && method === 'POST') {
+      const pkgCode = (body.packageCode || '').trim().toUpperCase();
+      const pkg = BIHAR_TOURISM_PACKAGES.find(p => p.packageCode === pkgCode);
+      if (!pkg) {
+        return sendJson(404, { success: false, message: `Invalid tourism package code: '${pkgCode}'` });
+      }
+
+      const passengerName = (body.passengerName || body.name || '').trim();
+      const passengerPhone = (body.passengerPhone || body.phone || '').replace(/\D/g, '').slice(-10);
+      const vehicleCategory = (body.vehicleCategory || body.cabType || 'sedan').toLowerCase();
+      const pickupDate = body.pickupDate || new Date().toISOString().slice(0, 10);
+      const pickupTime = body.pickupTime || '08:00';
+      const pickupAddress = (body.pickupAddress || 'Patna City Hotel / Residence').trim();
+
+      if (!passengerName || passengerPhone.length !== 10) {
+        return sendJson(400, { success: false, message: 'Valid passenger name and 10-digit mobile number required.' });
+      }
+
+      const totalFare = pkg.pricing[vehicleCategory] || pkg.pricing.sedan;
+      const bookingId = `OTB-TOUR-${Date.now().toString().slice(-4)}`;
+
+      const bookingRecord = {
+        id: bookingId,
+        bookingId,
+        tripType: 'TOURISM_PACKAGE',
+        packageCode: pkg.packageCode,
+        packageTitle: pkg.title,
+        durationDays: pkg.durationDays,
+        originCity: pkg.pickupCity,
+        destCity: pkg.title.split(' ')[0],
+        pickupAddress,
+        dropAddress: `${pkg.title} Sightseeing Drop`,
+        pickupDate,
+        pickupTime,
+        vehicleCategory,
+        fleetClass: vehicleCategory === 'crysta' ? 'Innova Crysta Luxury' : vehicleCategory === 'suv' ? 'Family SUV (Ertiga)' : 'Prime Sedan (Dzire / Etios)',
+        fleetModel: vehicleCategory === 'crysta' ? 'Toyota Innova Crysta' : vehicleCategory === 'suv' ? 'Maruti Ertiga' : 'Swift Dzire',
+        passengerName,
+        passengerPhone: `+91 ${passengerPhone}`,
+        totalFare,
+        finalPayable: totalFare,
+        advancePayable: 0,
+        balanceAtDrop: totalFare,
+        paymentStatus: 'PAYMENT_PENDING',
+        bookingStatus: 'CONFIRMED',
+        status: 'CONFIRMED',
+        tripOtp: String(Math.floor(1000 + Math.random() * 9000)),
+        isForOther: Boolean(body.isForOther),
+        bookerName: body.bookerName || null,
+        bookerPhone: body.bookerPhone || null,
+        specialInstructions: body.specialInstructions || 'Sightseeing Tour Booking',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!db.bookings) db.bookings = [];
+      db.bookings.unshift(bookingRecord);
+
+      if (!db.notifications) db.notifications = [];
+      db.notifications.unshift({
+        id: `notif_tour_${Date.now()}`,
+        type: 'TOURISM_BOOKING',
+        title: `🏛️ BIHAR TOURISM: ${bookingId}`,
+        message: `${pkg.title} booked by ${passengerName} (+91 ${passengerPhone}) for ${pickupDate}. Package Fare: ₹${totalFare}`,
+        bookingId,
+        priority: 'HIGH',
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+
+      // Async SMS confirmation notice
+      try {
+        notificationService.sendSms(
+          passengerPhone,
+          `Namaste ${passengerName}! Your OneWayTaxiBihar Tourism Package "${pkg.title}" (${bookingId}) is CONFIRMED for ${pickupDate} at ${pickupTime}. Chauffeur cab: ${bookingRecord.fleetClass}. Total Package Fare: Rs ${totalFare}. 24x7 Helpline: 6206494214`
+        ).catch(() => {});
+      } catch (e) {}
+
+      return sendJson(200, {
+        success: true,
+        bookingId,
+        booking: bookingRecord,
+        package: pkg,
+        message: `Tourism package "${pkg.title}" booked successfully! Chauffeur assignment is in progress.`
+      });
+    }
+
+    // ---------------------------------------------------------------------------
+    // PHASE 21: CORPORATE & B2B MOBILITY DESK
+    // ---------------------------------------------------------------------------
+    if ((pathname === '/corporate/inquire' || pathname === '/corporate/inquiry' || pathname === '/corporate/leads') && method === 'POST') {
+      const companyName = (body.companyName || body.company || '').trim();
+      const contactPerson = (body.contactPerson || body.name || '').trim();
+      const phone = (body.phone || body.mobile || '').replace(/\D/g, '').slice(-10);
+      const email = (body.email || '').trim().toLowerCase();
+      const gstin = (body.gstin || '').trim().toUpperCase();
+      const estimatedMonthlyRides = parseInt(body.estimatedMonthlyRides || body.rides) || 25;
+      const notes = (body.notes || body.requirements || '').trim();
+
+      if (!companyName || companyName.length < 2) {
+        return sendJson(400, { success: false, message: 'Company or institution name is required.' });
+      }
+      if (!contactPerson || contactPerson.length < 2) {
+        return sendJson(400, { success: false, message: 'Contact person name is required.' });
+      }
+      if (!phone || phone.length !== 10) {
+        return sendJson(400, { success: false, message: 'Valid 10-digit mobile number required.' });
+      }
+
+      const inquiryId = `CORP-INQ-${Date.now().toString().slice(-5)}`;
+      const inquiryRecord = {
+        id: inquiryId,
+        inquiryId,
+        companyName,
+        contactPerson,
+        phone: `+91 ${phone}`,
+        cleanPhone: phone,
+        email: email || null,
+        gstin: gstin || null,
+        estimatedMonthlyRides,
+        notes: notes || 'Standard corporate mobility solution request',
+        status: 'NEW',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!db.corporate_inquiries) db.corporate_inquiries = [];
+      db.corporate_inquiries.unshift(inquiryRecord);
+
+      if (!db.notifications) db.notifications = [];
+      db.notifications.unshift({
+        id: `notif_corp_${Date.now()}`,
+        type: 'CORPORATE_INQUIRY',
+        title: `🏢 CORPORATE DESK: ${companyName}`,
+        message: `Inquiry from ${contactPerson} (+91 ${phone}) for approx ${estimatedMonthlyRides} monthly intercity rides.`,
+        priority: 'HIGH',
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+
+      // Async acknowledgement SMS
+      try {
+        notificationService.sendSms(
+          phone,
+          `Namaste ${contactPerson}! Thank you for contacting OneWayTaxiBihar Corporate Desk for ${companyName} (Ref: ${inquiryId}). Our corporate account manager will contact you within 2 business hours with contracted B2B rate cards.`
+        ).catch(() => {});
+      } catch (e) {}
+
+      return sendJson(200, {
+        success: true,
+        inquiryId,
+        message: 'Corporate inquiry submitted successfully! Our Patna corporate desk will contact you within 2 hours.'
+      });
+    }
+
+    if ((pathname === '/admin/corporate/inquiries' || pathname === '/admin/corporate/leads') && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const inquiries = db.corporate_inquiries || [];
+      return sendJson(200, {
+        success: true,
+        count: inquiries.length,
+        inquiries
+      });
+    }
+
+    if (pathname === '/admin/corporate/status' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const inqId = (body.inquiryId || body.id || '').trim();
+      const inq = (db.corporate_inquiries || []).find(i => i.inquiryId === inqId || i.id === inqId);
+      if (!inq) {
+        return sendJson(404, { success: false, message: 'Corporate inquiry not found.' });
+      }
+
+      inq.status = (body.status || 'CONTACTED').toUpperCase();
+      inq.adminNotes = (body.adminNotes || body.notes || inq.adminNotes || '').trim();
+      inq.updatedAt = new Date().toISOString();
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Inquiry marked as ${inq.status}`, inquiry: inq });
+    }
+
+    if (pathname === '/admin/corporate/accounts' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const accounts = db.corporate_accounts || [
+        {
+          id: 'corp_01',
+          accountCode: 'OWT-CORP-PATNA-01',
+          companyName: 'Bihar State Road Development Corp',
+          contactPerson: 'Er. Rajesh Kumar',
+          phone: '+91 9431012345',
+          billingCycle: 'MONTHLY_NET_30',
+          monthlyCreditLimit: 150000,
+          currentMonthlyUsage: 42500,
+          status: 'ACTIVE'
+        },
+        {
+          id: 'corp_02',
+          accountCode: 'OWT-CORP-GAYA-02',
+          companyName: 'Mahabodhi Heritage Resorts',
+          contactPerson: 'Suman Sen',
+          phone: '+91 9835012345',
+          billingCycle: 'FORTNIGHTLY',
+          monthlyCreditLimit: 80000,
+          currentMonthlyUsage: 21800,
+          status: 'ACTIVE'
+        }
+      ];
+
+      return sendJson(200, { success: true, count: accounts.length, accounts });
+    }
+
+    // ---------------------------------------------------------------------------
+    // PHASE 22 & 23: FLEET & DEMAND INTELLIGENCE ANALYTICS
+    // ---------------------------------------------------------------------------
+    if (pathname === '/admin/analytics/intelligence' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const bookings = db.bookings || [];
+      const drivers = db.drivers || [];
+
+      // 1. Gross Booking Value & Revenue Splits
+      let totalGBV = 0;
+      let completedBookingsCount = 0;
+      let cancelledCount = 0;
+      const corridorCounts = {};
+      const vehicleCategoryCounts = { sedan: 0, hatchback: 0, suv: 0, crysta: 0 };
+      const hourlyDistribution = Array(24).fill(0);
+
+      bookings.forEach(b => {
+        const fare = parseFloat(b.totalFare || b.finalPayable || 0);
+        const normStatus = (b.bookingStatus || b.status || '').toUpperCase();
+
+        if (normStatus === 'COMPLETED' || normStatus === 'TRIP_COMPLETED' || normStatus === 'PAYMENT_SUCCESS' || normStatus === 'CONFIRMED') {
+          totalGBV += fare;
+          if (normStatus === 'COMPLETED' || normStatus === 'TRIP_COMPLETED') completedBookingsCount++;
+        }
+        if (normStatus === 'CANCELLED' || normStatus === 'PAYMENT_FAILED') {
+          cancelledCount++;
+        }
+
+        // Corridor breakdown
+        const corridor = `${b.originCity || 'Patna'} ➔ ${b.destCity || 'Gaya'}`;
+        corridorCounts[corridor] = (corridorCounts[corridor] || 0) + 1;
+
+        // Vehicle breakdown
+        const veh = (b.vehicleCategory || b.fleetClass || 'sedan').toLowerCase();
+        if (veh.includes('crysta')) vehicleCategoryCounts.crysta++;
+        else if (veh.includes('suv') || veh.includes('ertiga')) vehicleCategoryCounts.suv++;
+        else if (veh.includes('hatch') || veh.includes('wagon')) vehicleCategoryCounts.hatchback++;
+        else vehicleCategoryCounts.sedan++;
+
+        // Hourly peak analysis
+        if (b.pickupTime) {
+          const hr = parseInt(b.pickupTime.split(':')[0], 10);
+          if (!isNaN(hr) && hr >= 0 && hr < 24) hourlyDistribution[hr]++;
+        } else if (b.createdAt) {
+          const hr = new Date(b.createdAt).getHours();
+          if (!isNaN(hr) && hr >= 0 && hr < 24) hourlyDistribution[hr]++;
+        }
+      });
+
+      // Top Corridors sorted
+      const topCorridors = Object.entries(corridorCounts)
+        .map(([route, count]) => ({ route, count, sharePercent: Math.round((count / Math.max(1, bookings.length)) * 100) }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+
+      // Financial Metrics (85% Chauffeur Share, 15% OneWayTaxiBihar Platform Margin)
+      const driverPayouts = Math.round(totalGBV * 0.85);
+      const companyPlatformRevenue = Math.round(totalGBV * 0.15);
+      const avgBookingValue = bookings.length > 0 ? Math.round(totalGBV / Math.max(1, bookings.length)) : 1850;
+      const cancellationRate = bookings.length > 0 ? Math.round((cancelledCount / bookings.length) * 100) : 0;
+
+      // Online vs Offline Fleet
+      const onlineDrivers = drivers.filter(d => d.onDuty && d.status === 'APPROVED');
+      const busyDrivers = drivers.filter(d => d.onDuty && d.currentTripId);
+
+      // Explainable Demand Forecasting & Positioning Recommendations
+      const demandRecommendations = [
+        {
+          zone: 'Patna Jay Prakash Narayan Airport (PAT)',
+          priority: 'HIGH',
+          reason: 'Evening incoming flight rush (16:00 - 21:00) with sustained outstation demand to Gaya, Darbhanga and Muzaffarpur.',
+          recommendation: 'Position 4-6 on-duty Sedans & SUVs near Sheikhpura / Airport bypass cluster for sub-10 minute pickup ETA.'
+        },
+        {
+          zone: 'Gaya Railway Junction & Bodh Gaya Sacred Hub',
+          priority: 'MEDIUM',
+          reason: 'Daily pilgrimage pilgrims arriving via Vande Bharat & Mahabodhi Express requesting Bodh Gaya, Rajgir, and Patna returns.',
+          recommendation: 'Maintain minimum 3 standby family SUVs on Bodh Gaya Temple Road and Station Road.'
+        },
+        {
+          zone: 'Muzaffarpur & Darbhanga Airport Corridors',
+          priority: 'MEDIUM',
+          reason: 'High corporate & medical travel corridor towards Patna AIIMS / PMCH.',
+          recommendation: 'Broadcast 10% incentive bonus for return trip pickups to prevent empty return leg mileage.'
+        }
+      ];
+
+      return sendJson(200, {
+        success: true,
+        kpis: {
+          totalBookings: bookings.length,
+          completedBookings: completedBookingsCount,
+          cancelledBookings: cancelledCount,
+          cancellationRatePercent: cancellationRate,
+          grossBookingValue: totalGBV,
+          driverPayouts,
+          companyPlatformRevenue,
+          avgBookingValue,
+          activeFleetCount: drivers.length,
+          onlineDriversCount: onlineDrivers.length,
+          busyDriversCount: busyDrivers.length,
+          fleetUtilizationPercent: onlineDrivers.length > 0 ? Math.round((busyDrivers.length / onlineDrivers.length) * 100) : 0
+        },
+        topCorridors,
+        vehicleUtilization: vehicleCategoryCounts,
+        hourlyDistribution,
+        demandRecommendations
+      });
+    }
+
     // 4. APPLICATION & API MONITORING, UPTIME & HEALTH CHECKS
     if ((pathname === '/monitoring/health' || pathname === '/health/deep' || pathname === '/monitoring' || pathname === '/monitoring/' || action === 'health' || url.searchParams.get('action') === 'health') && method === 'GET') {
       const mem = process.memoryUsage();

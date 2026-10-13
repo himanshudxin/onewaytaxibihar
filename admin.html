@@ -3730,19 +3730,8 @@
     // UNIFIED API ENGINE (Cross-Port, Domain, and Auth Bearer Layer)
     // =========================================================================
     function getApiUrl(endpoint) {
-      if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
-        if (typeof ApiClient !== "undefined" && ApiClient.baseUrl) {
-          return `${ApiClient.baseUrl}${endpoint}`;
-        }
-        if (typeof window !== "undefined") {
-          // If already running directly on live domain or vercel
-          if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
-            return endpoint;
-          }
-          // Default to live production cloud backend
-          return `https://onewaytaxibihar.com${endpoint}`;
-        }
-        return `https://onewaytaxibihar.com${endpoint}`;
+      if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
+        return endpoint;
       }
       return endpoint;
     }
@@ -3765,9 +3754,6 @@
 
       try {
         let res = await fetch(url, fetchOpts);
-        if (!res.ok && isCrossOrigin && !url.startsWith("https://onewaytaxibihar.com")) {
-          res = await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
-        }
 
         // Automatic session invalidation on 401 Unauthorized
         if (res.status === 401 && !endpoint.includes("/login")) {
@@ -3782,9 +3768,6 @@
 
         return res;
       } catch (err) {
-        if (!url.startsWith("https://onewaytaxibihar.com")) {
-          return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
-        }
         throw err;
       }
     }

@@ -13,15 +13,14 @@ class ApiClient {
 
   static baseUrl = (() => {
     if (typeof window !== "undefined") {
-      // 1. If running directly on the production domain or vercel
-      if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
+      // Whenever running from a web server (localhost, custom port, trycloudflare tunnel, vercel, production domain),
+      // use same-origin relative URLs ("") so requests hit the active server that served the page.
+      if (window.location.origin && window.location.origin !== "null" && !window.location.protocol.startsWith("file")) {
         return "";
       }
-      // 2. Default to LIVE production cloud backend (onewaytaxibihar.com) so the frontend
-      // always connects to live MongoDB Atlas without requiring a local node server
       return "https://onewaytaxibihar.com";
     }
-    return "https://onewaytaxibihar.com";
+    return "";
   })();
 
   static async request(endpoint, options = {}) {

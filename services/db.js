@@ -270,14 +270,14 @@ async function pullFromRemoteCloud(targetCollection = null) {
             const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(300).toArray();
             if (Array.isArray(docs)) {
               const sanitized = docs.map(({ _id, ...rest }) => rest);
-              if (colName === 'bookings' || colName === 'leads') {
+              if (colName === 'bookings' || colName === 'leads' || colName === 'sessions') {
                 const map = new Map();
                 for (const item of sanitized) {
-                  const k = item.bookingId || item.id || item.cleanPhone;
+                  const k = item.bookingId || item.token || item.id || item.cleanPhone;
                   if (k) map.set(k, item);
                 }
                 for (const memItem of (memoryDb[colName] || [])) {
-                  const k = memItem.bookingId || memItem.id || memItem.cleanPhone;
+                  const k = memItem.bookingId || memItem.token || memItem.id || memItem.cleanPhone;
                   if (k && !map.has(k)) map.set(k, memItem);
                 }
                 memoryDb[colName] = Array.from(map.values());
@@ -343,6 +343,7 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('bookings', db.bookings),
         syncCollectionToCloud('leads', db.leads),
         syncCollectionToCloud('users', db.users),
+        syncCollectionToCloud('sessions', db.sessions),
         syncCollectionToCloud('payments', db.payments),
         syncCollectionToCloud('drivers', db.drivers),
         syncCollectionToCloud('vehicles', db.vehicles),

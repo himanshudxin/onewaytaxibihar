@@ -34,9 +34,9 @@ function generateSalt(length = 16) {
   return crypto.randomBytes(length).toString('hex');
 }
 
-function hashPassword(password, salt) {
-  if (!password || !salt) return '';
-  return crypto.pbkdf2Sync(String(password), String(salt), 10000, 32, 'sha256').toString('hex');
+function hashPassword(password, salt = DEFAULT_SALT) {
+  if (!password) return '';
+  return crypto.pbkdf2Sync(String(password), String(salt || DEFAULT_SALT), 10000, 32, 'sha256').toString('hex');
 }
 
 function verifyAdminCredentials(username, password, dbAdmins = []) {
@@ -44,7 +44,7 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
   const cleanUser = String(username).trim().toLowerCase();
   const cleanPass = String(password).trim();
 
-  // 1. Check in dbAdmins
+  // 1. Check in registered database operators (dbAdmins)
   if (Array.isArray(dbAdmins)) {
     const found = dbAdmins.find(a => (a.username || '').toLowerCase() === cleanUser);
     if (found) {
@@ -59,21 +59,26 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
     }
   }
 
-  // 2. Check Master Rotated Admin & Authorized Fallback Passwords
-  const allowedPasswords = [
+  // 2. Authorized Master Admin Passwords (Strictly no generic passwords like 'admin' or 'password')
+  const allowedPasswords = new Set([
     'OWT#Bihar@2026!SecOps',
-    'harharmahadev@3',
-    'admin123',
-    'BiharTaxi@2026',
-    'admin',
-    'password'
-  ];
+    'harharmahadev@3'
+  ]);
+  if (process.env.ADMIN_PASSWORD) {
+    allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
+  }
 
-  if ((cleanUser === DEFAULT_USERNAME || cleanUser === 'owner' || cleanUser.startsWith('admin')) && allowedPasswords.includes(cleanPass)) {
+  const matchesDefaultHash = DEFAULT_HASH && verifyRawHash(cleanPass, DEFAULT_HASH, DEFAULT_SALT);
+  const isPassAuthorized = allowedPasswords.has(cleanPass) || matchesDefaultHash;
+
+  // Strict username match
+  const isMasterUser = (cleanUser === DEFAULT_USERNAME || cleanUser === 'owner' || cleanUser === 'superadmin');
+
+  if (isMasterUser && isPassAuthorized) {
     return {
       id: `adm_${cleanUser}`,
       username: cleanUser,
-      role: (cleanUser === 'owner' || cleanUser === 'admin') ? 'owner' : 'dispatcher',
+      role: 'owner',
       name: cleanUser === 'owner' ? 'Business Owner' : `Central Dispatcher (${cleanUser.toUpperCase()})`,
       phone: `+91 ${AUTHORIZED_ADMIN_PHONE}`
     };
@@ -124,6 +129,7 @@ function createJwt(payload, secret = JWT_SECRET, expiresIn = JWT_EXPIRY_SECONDS)
   const header = { alg: 'HS256', typ: 'JWT' };
   const now = Math.floor(Date.now() / 1000);
   const fullPayload = {
+    jti: crypto.randomBytes(16).toString('hex'),
     ...payload,
     iat: now,
     exp: now + expiresIn
@@ -180,43 +186,68 @@ function verifyJwt(token, secret = JWT_SECRET) {
 const loginAttempts = new Map(); // ip_user -> { count, lockedUntil }
 const rateLimitMap = new Map();  // ip_action -> { timestamps: [] }
 
-function checkBruteForce(identifier) {
-  const key = String(identifier || 'unknown').toLowerCase();
-  const entry = loginAttempts.get(key);
-  if (!entry) return { locked: false, remainingSeconds: 0 };
-
-  const now = Date.now();
-  if (entry.lockedUntil && entry.lockedUntil > now) {
-    const remainingSeconds = Math.ceil((entry.lockedUntil - now) / 1000);
-    return { locked: true, remainingSeconds };
+function checkBruteForce(identifier, ip = null) {
+  const keys = [String(identifier || 'unknown').toLowerCase()];
+  if (ip) {
+    keys.push(`ip_${String(ip).trim()}`);
   }
 
-  if (entry.lockedUntil && entry.lockedUntil <= now) {
-    loginAttempts.delete(key);
-    return { locked: false, remainingSeconds: 0 };
+  const now = Date.now();
+  for (const key of keys) {
+    const entry = loginAttempts.get(key);
+    if (entry) {
+      if (entry.lockedUntil && entry.lockedUntil > now) {
+        const remainingSeconds = Math.ceil((entry.lockedUntil - now) / 1000);
+        return { locked: true, remainingSeconds, reason: key.startsWith('ip_') ? 'ip' : 'account' };
+      }
+      if (entry.lockedUntil && entry.lockedUntil <= now) {
+        loginAttempts.delete(key);
+      }
+    }
   }
 
   return { locked: false, remainingSeconds: 0 };
 }
 
-function recordLoginAttempt(identifier, success) {
-  const key = String(identifier || 'unknown').toLowerCase();
+function recordLoginAttempt(identifier, successOrIp, maybeSuccess) {
+  let success = false;
+  let ip = null;
+  if (typeof successOrIp === 'boolean') {
+    success = successOrIp;
+  } else {
+    ip = successOrIp;
+    success = Boolean(maybeSuccess);
+  }
+
+  const userKey = String(identifier || 'unknown').toLowerCase();
+  const ipKey = ip ? `ip_${String(ip).trim()}` : null;
+
   if (success) {
-    loginAttempts.delete(key);
+    loginAttempts.delete(userKey);
+    if (ipKey) loginAttempts.delete(ipKey);
     return;
   }
 
   const now = Date.now();
-  const entry = loginAttempts.get(key) || { count: 0, firstAttempt: now, lockedUntil: 0 };
-  entry.count += 1;
-
-  // Max 5 failed attempts in 15 minutes -> 15 min lock
-  if (entry.count >= 5) {
-    entry.lockedUntil = now + (15 * 60 * 1000); // 15 mins lock
-    console.warn(`[Security Alert] 🚨 Account/IP ${key} locked out due to 5 failed login attempts.`);
+  // 1. Account-level threshold (5 failed attempts = 15 minute lock)
+  const uEntry = loginAttempts.get(userKey) || { count: 0, firstAttempt: now, lockedUntil: 0 };
+  uEntry.count += 1;
+  if (uEntry.count >= 5) {
+    uEntry.lockedUntil = now + (15 * 60 * 1000);
+    console.warn(`[Security Alert] 🚨 Account ${userKey} locked out due to 5 failed login attempts.`);
   }
+  loginAttempts.set(userKey, uEntry);
 
-  loginAttempts.set(key, entry);
+  // 2. IP-level threshold (8 failed attempts across any accounts = 30 minute lock)
+  if (ipKey) {
+    const ipEntry = loginAttempts.get(ipKey) || { count: 0, firstAttempt: now, lockedUntil: 0 };
+    ipEntry.count += 1;
+    if (ipEntry.count >= 8) {
+      ipEntry.lockedUntil = now + (30 * 60 * 1000);
+      console.warn(`[Security Alert] 🚨 IP ${ip} locked out due to repeated failed login attempts.`);
+    }
+    loginAttempts.set(ipKey, ipEntry);
+  }
 }
 
 function checkRateLimit(identifier, maxRequests = 10, windowMs = 60000) {

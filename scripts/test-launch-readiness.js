@@ -206,7 +206,7 @@ setTimeout(async () => {
           const userInput = document.getElementById('admin-user-input');
           const passInput = document.getElementById('admin-pass-input');
           if (userInput) userInput.value = 'admin';
-          if (passInput) passInput.value = 'admin123';
+          if (passInput) passInput.value = 'OWT#Bihar@2026!SecOps';
 
           const loginBtn = document.getElementById('btn-admin-direct-login');
           if (loginBtn) {

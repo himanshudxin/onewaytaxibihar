@@ -543,21 +543,77 @@
   ],
   "audit_logs": [
     {
-      "id": "audit_1791874912430_7562",
+      "id": "audit_1791875666723_5025",
       "actor": "admin",
       "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null,\"helplin",
-      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 72818 51011)",
+      "action": "PASSWORD_CHANGED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator successfully updated their password",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:01:52.430Z",
-      "_id": "6acdd760a992e4ddfcef4cf1"
+      "timestamp": "2026-10-13T07:14:26.723Z",
+      "_id": "6acdda52b28680ae99a83124"
     },
     {
-      "id": "audit_1791872870894_4340",
+      "id": "audit_1791875666601_6187",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:26.601Z",
+      "_id": "6acdda52b28680ae99a83123"
+    },
+    {
+      "id": "audit_1791875665719_9137",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:25.719Z",
+      "_id": "6acdda51b28680ae99a83122"
+    },
+    {
+      "id": "audit_1791875665602_7773",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:25.602Z",
+      "_id": "6acdda51b28680ae99a83121"
+    },
+    {
+      "id": "audit_1791875664839_1489",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:24.840Z",
+      "_id": "6acdda50b28680ae99a83120"
+    },
+    {
+      "id": "audit_1791872885185_7266",
       "actor": "admin",
       "role": "owner",
       "action": "SETTINGS_UPDATED",
@@ -567,20 +623,7 @@
       "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
       "note": "Operational settings modified",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:27:50.894Z"
-    },
-    {
-      "id": "audit_1791869800536_8329",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T05:36:40.536Z"
+      "timestamp": "2026-10-13T06:28:05.186Z"
     },
     {
       "id": "audit_1791869820456_6921",
@@ -713,20 +756,7 @@
       "timestamp": "2026-10-13T06:27:40.527Z"
     },
     {
-      "id": "audit_1791869776687_1562",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T05:36:16.687Z"
-    },
-    {
-      "id": "audit_1791872885185_7266",
+      "id": "audit_1791872870894_4340",
       "actor": "admin",
       "role": "owner",
       "action": "SETTINGS_UPDATED",
@@ -736,7 +766,20 @@
       "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
       "note": "Operational settings modified",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:28:05.186Z"
+      "timestamp": "2026-10-13T06:27:50.894Z"
+    },
+    {
+      "id": "audit_1791869800536_8329",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T05:36:40.536Z"
     },
     {
       "id": "audit_1791872936324_1589",
@@ -856,7 +899,7 @@
       "timestamp": "2026-10-13T07:01:31.229Z"
     },
     {
-      "id": "audit_1791861728497_8470",
+      "id": "audit_1791874912203_7986",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -866,7 +909,33 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T03:22:08.497Z"
+      "timestamp": "2026-10-13T07:01:52.203Z"
+    },
+    {
+      "id": "audit_1791874912430_7562",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null,\"helplin",
+      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 72818 51011)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:01:52.430Z"
+    },
+    {
+      "id": "audit_1791861793247_4658",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T03:23:13.247Z"
     },
     {
       "id": "audit_1791656648676_5439",
@@ -999,6 +1068,19 @@
       "timestamp": "2026-10-13T03:14:45.159Z"
     },
     {
+      "id": "audit_1791861728497_8470",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T03:22:08.497Z"
+    },
+    {
       "id": "audit_1791656648506_2671",
       "actor": "admin",
       "role": "owner",
@@ -1010,19 +1092,6 @@
       "note": "Failed credentials login from IP ::1",
       "ip": "::1",
       "timestamp": "2026-10-10T18:24:08.518Z"
-    },
-    {
-      "id": "audit_1791861793247_4658",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T03:23:13.247Z"
     },
     {
       "id": "audit_1791862227747_2555",
@@ -1142,13 +1211,17 @@
       "timestamp": "2026-10-13T05:36:08.846Z"
     },
     {
-      "id": "AUD_1791874913263",
-      "entity": "PAYMENT_SETTINGS",
-      "entityId": "global_payment_config",
-      "action": "UPDATE_PAYMENT_SETTINGS",
+      "id": "audit_1791869776687_1562",
       "actor": "admin",
-      "details": "Updated payment gateway & UPI configuration (UPI ID: 8002141816@ybl, Token Advance: ₹299)",
-      "createdAt": "2026-10-13T07:01:53.263Z"
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T05:36:16.687Z"
     }
   ],
   "sessions": [
@@ -1262,6 +1335,14 @@
       "phone": "+91 6206494214",
       "role": "customer",
       "userId": "usr_6206494214"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ODFmMTlkNmE1ZTQ3MjJjNjhiNDUxYjYwN2VkYWZmMCIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5MTg3NTY2NiwiZXhwIjoxNzkxOTA0NDY2fQ.x2B4gy9DAmCpwSFEuRPYXsGl5PRV1O1_gWn18uR__SA",
+      "adminId": "adm_admin",
+      "username": "admin",
+      "role": "owner",
+      "phone": "+91 6206494214",
+      "createdAt": "2026-10-13T07:14:26.601Z"
     }
   ],
   "settings": {
@@ -1291,13 +1372,13 @@
     "emergencyPauseReason": "",
     "emergencyPausedAt": null,
     "emergencyPausedBy": null,
-    "helplinePhone": "+91 80021 41816",
-    "helpline": "8002141816",
-    "whatsappPhone": "+91 72818 51011",
-    "whatsapp": "+91 72818 51011",
-    "supportPhone": "7281851011",
     "baseFare": 2198,
-    "baseKm": 80
+    "baseKm": 80,
+    "helpline": "8002141816",
+    "helplinePhone": "+91 80021 41816",
+    "supportPhone": "7281851011",
+    "whatsapp": "+91 72818 51011",
+    "whatsappPhone": "+91 72818 51011"
   },
   "support_tickets": [],
   "error_logs": [],
@@ -1353,5 +1434,16 @@
       "createdAt": "2026-10-08T06:31:08.073Z"
     }
   ],
-  "admins": []
+  "admins": [
+    {
+      "id": "adm_admin",
+      "username": "admin",
+      "passwordHash": "a79e53d3972e30d5625c69f14d785b1aed244279eeb218af06c64de05cac17af",
+      "salt": "d81ce48f3b27c9008b7486cad4c81353",
+      "name": "Central Dispatcher (ADMIN)",
+      "role": "owner",
+      "phone": "+91 6206494214",
+      "createdAt": "2026-10-13T07:14:26.723Z"
+    }
+  ]
 }

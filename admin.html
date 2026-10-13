@@ -1702,20 +1702,21 @@
         <div class="auth-field">
           <label for="admin-user-input">Operator Username</label>
           <div class="auth-input-wrap">
-            <input type="text" id="admin-user-input" class="auth-input" placeholder="Enter username (e.g. admin or owner)" value="admin" required autocomplete="username">
+            <input type="text" id="admin-user-input" class="auth-input" placeholder="Enter operator username" value="" required autocomplete="username">
           </div>
         </div>
 
         <div class="auth-field">
           <label for="admin-pass-input">Operator Password</label>
           <div class="auth-input-wrap">
-            <input type="password" id="admin-pass-input" class="auth-input" placeholder="Enter secure password" value="admin123" required autocomplete="current-password">
+            <input type="password" id="admin-pass-input" class="auth-input" placeholder="Enter secure password" value="" required autocomplete="current-password">
             <button type="button" class="auth-input-toggle" onclick="toggleAdminPassVisibility()">👁️</button>
           </div>
         </div>
 
-        <div style="font-size:11.5px; color:#94a3b8; text-align:center; margin-bottom:12px; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
-          🔐 Dispatch Access: Username <strong>admin</strong> | Password: <code>OWT#Bihar@2026!SecOps</code> or <code>admin123</code>
+        <div style="font-size:11.5px; color:#94a3b8; text-align:center; margin-bottom:12px; background:rgba(255,255,255,0.04); padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; gap:6px;">
+          <span>🛡️</span>
+          <span>OneWayTaxiBihar Dispatch &amp; Telecom Security Gateway Active</span>
         </div>
 
         <button type="submit" class="auth-submit-btn" id="btn-admin-direct-submit">
@@ -2710,6 +2711,43 @@
                 </form>
               </div>
             </div>
+
+            <!-- Security & Password Management Card -->
+            <div class="ops-card" style="margin-top:20px;">
+              <div class="ops-card-header">
+                <div class="ops-card-title">🔐 Update Operator Security Password</div>
+              </div>
+              <div class="ops-card-body">
+                <form id="form-change-password" onsubmit="handleChangeAdminPassword(event)">
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Current Password</label>
+                      <div class="masked-secret-field">
+                        <input type="password" class="form-control" id="pwd-current" placeholder="Enter current password" required autocomplete="current-password">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pwd-current')">👁️</button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">New Password (Min 8 Characters)</label>
+                      <div class="masked-secret-field">
+                        <input type="password" class="form-control" id="pwd-new" placeholder="Enter new strong password" required minlength="8" autocomplete="new-password">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pwd-new')">👁️</button>
+                      </div>
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1;">
+                      <label class="form-label">Confirm New Password</label>
+                      <div class="masked-secret-field">
+                        <input type="password" class="form-control" id="pwd-confirm" placeholder="Confirm new password" required minlength="8" autocomplete="new-password">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pwd-confirm')">👁️</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display:flex; justify-content:flex-end; margin-top:16px;">
+                    <button type="submit" class="btn btn-primary" id="btn-change-pwd">Update Password</button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
 
           <!-- Sub-Tab B: Payments & Gateways (Masked Credentials) -->
@@ -3332,6 +3370,18 @@
         if (!res.ok && isCrossOrigin && !url.startsWith("https://onewaytaxibihar.com")) {
           res = await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
         }
+
+        // Automatic session invalidation on 401 Unauthorized
+        if (res.status === 401 && !endpoint.includes("/login")) {
+          _adminToken = "";
+          sessionStorage.removeItem("otb_adm_token");
+          localStorage.removeItem("otb_adm_token");
+          _currentAdmin = null;
+          if (_pollTimer) clearInterval(_pollTimer);
+          showLoginScreen();
+          showToast("Session expired or unauthorized. Please log in again.", "warning");
+        }
+
         return res;
       } catch (err) {
         if (!url.startsWith("https://onewaytaxibihar.com")) {
@@ -3532,7 +3582,8 @@
       clearAuthAlerts();
 
       const user = (document.getElementById("admin-user-input")?.value || "").trim();
-      const pass = (document.getElementById("admin-pass-input")?.value || "").trim();
+      const passInp = document.getElementById("admin-pass-input");
+      const pass = (passInp?.value || "").trim();
       const errEl = document.getElementById("admin-login-error");
       const btn = document.getElementById("btn-admin-direct-submit");
 
@@ -3545,7 +3596,11 @@
       }
 
       try {
-        if (btn) btn.disabled = true;
+        if (btn) {
+          btn.disabled = true;
+          btn.dataset.origText = btn.innerHTML;
+          btn.innerHTML = `<span>Authenticating...</span>`;
+        }
         const res = await adminFetch("/api/admin/login", {
           method: "POST",
           body: JSON.stringify({ username: user, password: pass })
@@ -3558,12 +3613,24 @@
             sessionStorage.setItem("otb_adm_token", _adminToken);
             localStorage.setItem("otb_adm_token", _adminToken);
           }
+          if (passInp) passInp.value = "";
           _currentAdmin = data.admin || { role: data.role || "owner", username: user };
+          resetInactivityTimer();
           showToast(`Welcome back, ${_currentAdmin.username}!`, "success");
           showDashboardApp();
         } else {
+          // Clear password input immediately on failure for security
+          if (passInp) {
+            passInp.value = "";
+            passInp.focus();
+          }
           if (errEl) {
-            errEl.textContent = data.message || "Invalid credentials. Please re-check.";
+            if (data.locked) {
+              const mins = Math.ceil((data.remainingSeconds || 900) / 60);
+              errEl.textContent = `🚨 Access temporarily locked due to repeated failed attempts. Please retry in ${mins} minute(s).`;
+            } else {
+              errEl.textContent = data.message || "Invalid credentials. Please re-check.";
+            }
             errEl.style.display = "block";
           }
         }
@@ -3573,7 +3640,10 @@
           errEl.style.display = "block";
         }
       } finally {
-        if (btn) btn.disabled = false;
+        if (btn) {
+          btn.disabled = false;
+          if (btn.dataset.origText) btn.innerHTML = btn.dataset.origText;
+        }
       }
     }
 
@@ -3659,8 +3729,8 @@
       }
     }
 
-    async function handleAdminLogout() {
-      openConfirmModal("Log Out", "Are you sure you want to log out of the dispatch console?", async () => {
+    async function handleAdminLogout(confirm = true) {
+      const doLogout = async () => {
         try {
           await adminFetch("/api/admin/logout", { method: "POST" });
         } catch (e) {}
@@ -3668,10 +3738,36 @@
         localStorage.removeItem("otb_adm_token");
         _adminToken = "";
         _currentAdmin = null;
-        showToast("Logged out successfully", "info");
+        if (_pollTimer) clearInterval(_pollTimer);
+        if (_inactivityTimer) clearTimeout(_inactivityTimer);
+        showToast("Logged out securely", "info");
         showLoginScreen();
-      });
+      };
+
+      if (confirm) {
+        openConfirmModal("Log Out", "Are you sure you want to log out of the dispatch console?", doLogout);
+      } else {
+        await doLogout();
+      }
     }
+
+    // 30-Minute Inactivity Auto-Lock for Operations Console
+    let _inactivityTimer = null;
+    const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+    function resetInactivityTimer() {
+      if (_inactivityTimer) clearTimeout(_inactivityTimer);
+      if (_currentAdmin) {
+        _inactivityTimer = setTimeout(() => {
+          showToast("Session locked due to 30 minutes of inactivity for security.", "warning");
+          handleAdminLogout(false);
+        }, INACTIVITY_TIMEOUT_MS);
+      }
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
 
     // =========================================================================
     // NAVIGATION & VIEW SWITCHING
@@ -5565,6 +5661,48 @@
         showToast("Error: " + err.message, "error");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform Settings"; }
+      }
+    }
+
+    async function handleChangeAdminPassword(e) {
+      if (e) e.preventDefault();
+      const curr = (document.getElementById("pwd-current")?.value || "").trim();
+      const newP = (document.getElementById("pwd-new")?.value || "").trim();
+      const conf = (document.getElementById("pwd-confirm")?.value || "").trim();
+      const btn = document.getElementById("btn-change-pwd");
+
+      if (!curr || !newP || !conf) {
+        showToast("Please fill in all password fields.", "error");
+        return;
+      }
+      if (newP.length < 8) {
+        showToast("New password must be at least 8 characters long.", "error");
+        return;
+      }
+      if (newP !== conf) {
+        showToast("New passwords do not match. Please verify.", "error");
+        return;
+      }
+
+      try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Updating..."; }
+        const res = await adminFetch("/api/admin/change-password", {
+          method: "POST",
+          body: JSON.stringify({ currentPassword: curr, newPassword: newP })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message || "Password updated successfully!", "success");
+          if (document.getElementById("pwd-current")) document.getElementById("pwd-current").value = "";
+          if (document.getElementById("pwd-new")) document.getElementById("pwd-new").value = "";
+          if (document.getElementById("pwd-confirm")) document.getElementById("pwd-confirm").value = "";
+        } else {
+          showToast(data.message || "Failed to update password.", "error");
+        }
+      } catch (err) {
+        showToast("Error updating password: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Update Password"; }
       }
     }
 

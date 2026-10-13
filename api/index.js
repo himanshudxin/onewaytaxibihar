@@ -430,6 +430,10 @@ module.exports = async (req, res) => {
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
@@ -2222,8 +2226,9 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     if (pathname === '/admin/login' && method === 'POST') {
       const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').split(',')[0].trim();
-      const rateCheck = securityService.checkRateLimit(`adm_login_${clientIp}`, 10, 60000);
+      const rateCheck = securityService.checkRateLimit(`adm_login_${clientIp}`, 8, 60000);
       if (!rateCheck.allowed) {
+        res.setHeader('Retry-After', String(rateCheck.retryAfter));
         return sendJson(429, { success: false, message: `Too many login attempts. Please wait ${rateCheck.retryAfter} seconds.` });
       }
 
@@ -2234,14 +2239,20 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Username and password are required.' });
       }
 
-      const bfCheck = securityService.checkBruteForce(username);
+      const bfCheck = securityService.checkBruteForce(username, clientIp);
       if (bfCheck.locked) {
-        return sendJson(423, { success: false, message: `Account locked due to repeated failed attempts. Please retry in ${Math.ceil(bfCheck.remainingSeconds / 60)} minutes.` });
+        res.setHeader('Retry-After', String(bfCheck.remainingSeconds));
+        return sendJson(423, {
+          success: false,
+          locked: true,
+          remainingSeconds: bfCheck.remainingSeconds,
+          message: `Access temporarily locked due to repeated failed attempts. Please retry in ${Math.ceil(bfCheck.remainingSeconds / 60)} minutes.`
+        });
       }
 
       const verifiedAdmin = securityService.verifyPassword(username, password, db.admins);
       if (!verifiedAdmin) {
-        securityService.recordLoginAttempt(username, false);
+        securityService.recordLoginAttempt(username, clientIp, false);
         await securityService.recordAuditLog(db, {
           actor: username || 'Unknown',
           action: 'ADMIN_LOGIN_FAILED',
@@ -2255,7 +2266,7 @@ module.exports = async (req, res) => {
       }
 
       // Success: clear lockout
-      securityService.recordLoginAttempt(username, true);
+      securityService.recordLoginAttempt(username, clientIp, true);
 
       const role = verifiedAdmin.role || 'dispatcher';
       const adminId = verifiedAdmin.id || `adm_${username}`;
@@ -2855,7 +2866,8 @@ module.exports = async (req, res) => {
       const validRoles = ['owner', 'manager', 'dispatcher', 'accounts', 'support'];
       const assignedRole = validRoles.includes(role) ? role : 'dispatcher';
 
-      const passHash = securityService.hashPassword(password.trim());
+      const salt = securityService.generateSalt();
+      const passHash = securityService.hashPassword(password.trim(), salt);
 
       if (!db.admins) db.admins = [];
       const existingIdx = db.admins.findIndex(a => a.username.toLowerCase() === cleanUname);
@@ -2864,6 +2876,7 @@ module.exports = async (req, res) => {
         id: existingIdx >= 0 ? db.admins[existingIdx].id : `adm_${cleanUname}`,
         username: cleanUname,
         passwordHash: passHash,
+        salt: salt,
         name: name ? name.trim() : `Operator (${cleanUname})`,
         role: assignedRole,
         phone: phone ? phone.trim() : '+91 6206494214',
@@ -2887,6 +2900,62 @@ module.exports = async (req, res) => {
 
       await saveDb(db);
       return sendJson(200, { success: true, message: `Operator @${cleanUname} saved successfully.` });
+    }
+
+    if (pathname === '/admin/change-password' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').split(',')[0].trim();
+
+      const { currentPassword, newPassword } = body;
+      if (!currentPassword || !newPassword) {
+        return sendJson(400, { success: false, message: 'Both current password and new password are required.' });
+      }
+
+      const cleanNew = String(newPassword).trim();
+      if (cleanNew.length < 8) {
+        return sendJson(400, { success: false, message: 'New password must be at least 8 characters long.' });
+      }
+
+      const verified = securityService.verifyPassword(admin.username, String(currentPassword).trim(), db.admins);
+      if (!verified) {
+        return sendJson(401, { success: false, message: 'Current password does not match.' });
+      }
+
+      const salt = securityService.generateSalt();
+      const passwordHash = securityService.hashPassword(cleanNew, salt);
+
+      if (!db.admins) db.admins = [];
+      const idx = db.admins.findIndex(a => (a.username || '').toLowerCase() === admin.username.toLowerCase());
+      if (idx >= 0) {
+        db.admins[idx].passwordHash = passwordHash;
+        db.admins[idx].salt = salt;
+        db.admins[idx].updatedAt = new Date().toISOString();
+      } else {
+        db.admins.push({
+          id: admin.adminId || `adm_${admin.username}`,
+          username: admin.username,
+          passwordHash,
+          salt,
+          name: admin.name || admin.username,
+          role: admin.role || 'dispatcher',
+          phone: admin.phone || '+91 6206494214',
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'PASSWORD_CHANGED',
+        entityType: 'AUTH',
+        entityId: admin.username,
+        note: 'Operator successfully updated their password',
+        ip: clientIp
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: 'Password updated successfully! Please remember your new password.' });
     }
 
     if (pathname === '/admin/bookings/timeline' && method === 'GET') {

@@ -190,7 +190,10 @@ function verifyRazorpayWebhook(payloadString, webhookSignature, customConfig = n
       .createHmac('sha256', secret)
       .update(payloadString)
       .digest('hex');
-    return expected === webhookSignature;
+    const expBuf = Buffer.from(expected, 'utf8');
+    const sigBuf = Buffer.from(webhookSignature || '', 'utf8');
+    if (expBuf.length !== sigBuf.length) return false;
+    return crypto.timingSafeEqual(expBuf, sigBuf);
   } catch (e) {
     return false;
   }

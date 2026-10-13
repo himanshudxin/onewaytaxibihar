@@ -415,9 +415,7 @@ async function recordAuditLog(db, {
     if (db.audit_logs.length > 500) db.audit_logs = db.audit_logs.slice(0, 500);
 
     // Save asynchronously to MongoDB if connected
-    const { MongoClient } = require('mongodb');
-    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-    if (mongoUri && global._mongoDbInstance) {
+    if (global._mongoDbInstance) {
       await global._mongoDbInstance.collection('audit_logs').insertOne(logEntry).catch(() => {});
     }
   } catch (e) {

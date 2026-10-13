@@ -15,6 +15,8 @@ const dbService = require('../services/db.js');
 const paymentService = require('../services/payment.js');
 const notificationService = require('../services/notification.js');
 const securityService = require('../services/security.js');
+const bookingStateService = require('../services/booking-state.js');
+const dispatchService = require('../services/dispatch.js');
 
 // Auto-initialize Enterprise DB (MongoDB Atlas / PostgreSQL / Local Cache)
 dbService.initDatabase().catch(err => {
@@ -410,7 +412,11 @@ function getSessionAdmin(req, db) {
 
 function getSessionDriver(req, db) {
   const authHeader = req.headers['authorization'] || '';
-  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  let token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  if (!token && req.headers['cookie']) {
+    const match = req.headers['cookie'].match(/drv_session=([^;]+)/) || req.headers['cookie'].match(/driver_token=([^;]+)/);
+    if (match) token = match[1];
+  }
   if (!token) return null;
 
   const session = (db.sessions || []).find(s => s.token === token && s.role === 'driver');
@@ -1242,6 +1248,12 @@ module.exports = async (req, res) => {
       }
       const safePassengerName = String(passengerName || 'Valued Passenger').trim().slice(0, 80) || 'Valued Passenger';
 
+      // Phase 9: Book for someone else support
+      const isForOther = Boolean(body.isForOther || body.bookForSomeoneElse);
+      const bookerName = isForOther ? String(body.bookerName || body.userName || 'Account Booker').trim().slice(0, 80) : '';
+      const bookerPhone = isForOther ? String(body.bookerPhone || body.userPhone || '').replace(/\D/g, '').slice(-10) : '';
+      const specialInstructions = String(body.specialInstructions || body.instructions || '').trim().slice(0, 300);
+
       let safePickupDate = pickupDate;
       if (pickupDate && typeof pickupDate === 'string') {
         if (/^\d{2}[-/]\d{2}[-/]\d{4}$/.test(pickupDate.trim())) {
@@ -1451,6 +1463,10 @@ module.exports = async (req, res) => {
         paymentStatus: initialPaymentStatus,
         bookingStatus: initialBookingStatus,
         status: initialBookingStatus,
+        isForOther,
+        bookerName: bookerName || null,
+        bookerPhone: bookerPhone ? `+91 ${bookerPhone}` : null,
+        specialInstructions: specialInstructions || null,
         phoneVerified: Boolean(body.phoneVerified !== false),
         verifiedMethod: body.verifiedMethod || 'Telecom SMS OTP (Verified)',
         verifiedAt: body.verifiedAt || new Date().toISOString(),
@@ -1798,6 +1814,101 @@ module.exports = async (req, res) => {
       const cgst = Math.round(gst / 2);
       const sgst = gst - cgst;
 
+      if (url.searchParams.get('format') === 'html') {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.end(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Tax Invoice - ${invNumber}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #059669; padding-bottom: 16px; margin-bottom: 24px; }
+    .brand { font-size: 22px; font-weight: 800; color: #059669; }
+    .inv-details { text-align: right; font-size: 13px; color: #64748b; }
+    .section { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+    th { background: #f8fafc; color: #475569; }
+    .total-row { font-weight: 800; font-size: 16px; color: #0f172a; border-top: 2px solid #cbd5e1; }
+    .btn-print { background: #059669; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px; }
+    @media print { .btn-print { display: none; } body { border: none; margin: 0; padding: 0; } }
+  </style>
+</head>
+<body>
+  <button class="btn-print" onclick="window.print()">🖨️ Print / Download PDF</button>
+  <div class="header">
+    <div>
+      <div class="brand">OneWayTaxiBihar</div>
+      <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+        OneWayTaxiBihar Mobility Solutions<br>
+        GSTIN: 10AABCO1234F1Z5 | SAC: 996412<br>
+        Boring Road, Patna, Bihar - 800001<br>
+        Helpline: +91 80021 41816
+      </div>
+    </div>
+    <div class="inv-details">
+      <div style="font-size: 18px; font-weight: 800; color: #0f172a;">TAX INVOICE</div>
+      <div><strong>Invoice #:</strong> ${invNumber}</div>
+      <div><strong>Date:</strong> ${(booking.createdAt || new Date().toISOString()).split('T')[0]}</div>
+      <div><strong>Booking ID:</strong> ${booking.bookingId}</div>
+    </div>
+  </div>
+
+  <div class="section" style="display: flex; justify-content: space-between; font-size: 13px; background: #f8fafc; padding: 12px; border-radius: 8px;">
+    <div>
+      <strong>Passenger:</strong> ${escapeHtml(booking.passengerName || 'Valued Passenger')}<br>
+      <strong>Phone:</strong> +91 ${bPhone}<br>
+      <strong>Pickup:</strong> ${escapeHtml(booking.pickupAddress || booking.originCity)}<br>
+      <strong>Drop:</strong> ${escapeHtml(booking.dropAddress || booking.destCity)}
+    </div>
+    <div style="text-align: right;">
+      <strong>Vehicle:</strong> ${escapeHtml(booking.vehicleModel || (booking.fleetClass || 'Prime Sedan'))}<br>
+      <strong>Trip Date:</strong> ${booking.pickupDate} (${booking.pickupTime})<br>
+      <strong>Distance:</strong> ${booking.distanceKm || 104} KM<br>
+      <strong>Status:</strong> ${booking.bookingStatus}
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>HSN / SAC</th>
+        <th style="text-align: right;">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Intercity Passenger Transport (${escapeHtml(booking.originCity)} ➔ ${escapeHtml(booking.destCity)})</td>
+        <td>996412</td>
+        <td style="text-align: right;">₹${taxable}</td>
+      </tr>
+      <tr>
+        <td>Central GST (CGST @ 2.5%)</td>
+        <td>-</td>
+        <td style="text-align: right;">₹${cgst}</td>
+      </tr>
+      <tr>
+        <td>State GST (SGST @ 2.5%)</td>
+        <td>-</td>
+        <td style="text-align: right;">₹${sgst}</td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="2">Total All-Inclusive Fare</td>
+        <td style="text-align: right; color: #059669;">₹${total}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; display: flex; justify-content: space-between;">
+    <div>Payment Method: <strong>${escapeHtml(booking.paymentMethod || 'Cash to Chauffeur')}</strong> (${booking.paymentStatus || 'SETTLED'})</div>
+    <div>Electronic Invoice • Authorized by OneWayTaxiBihar</div>
+  </div>
+</body>
+</html>`);
+      }
+
       return sendJson(200, {
         success: true,
         invoice: {
@@ -1892,6 +2003,20 @@ module.exports = async (req, res) => {
         }
       }
 
+      let driverLocation = booking.liveTelemetry || null;
+      if (!driverLocation && booking.assignedDriverId) {
+        const foundD = (db.drivers || []).find(d => d.id === booking.assignedDriverId);
+        if (foundD && foundD.currentLat && foundD.currentLng) {
+          driverLocation = {
+            lat: foundD.currentLat,
+            lng: foundD.currentLng,
+            heading: foundD.heading || 0,
+            speed: foundD.speed || 0,
+            updatedAt: foundD.locationUpdatedAt || new Date().toISOString()
+          };
+        }
+      }
+
       return sendJson(200, {
         success: true,
         trip: {
@@ -1909,6 +2034,7 @@ module.exports = async (req, res) => {
           paymentMethod: booking.paymentMethod,
           tripOtp: booking.tripOtp,
           driver: driverInfo,
+          driverLocation,
           statusHistory: booking.statusHistory || [],
           updatedAt: booking.updatedAt || booking.createdAt || new Date().toISOString()
         }
@@ -2069,6 +2195,17 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Invalid webhook signature' });
       }
 
+      // Webhook Idempotency Lock
+      if (!db.processed_webhooks) db.processed_webhooks = [];
+      const eventId = body.id || (body.payload?.payment?.entity?.id ? `${body.event}_${body.payload.payment.entity.id}` : null);
+      if (eventId && db.processed_webhooks.includes(eventId)) {
+        return sendJson(200, { status: 'ok', deduplicated: true, message: 'Webhook event already processed' });
+      }
+      if (eventId) {
+        db.processed_webhooks.push(eventId);
+        if (db.processed_webhooks.length > 500) db.processed_webhooks.shift();
+      }
+
       const event = body.event;
       if (event === 'payment.captured' || event === 'order.paid') {
         const payload = body.payload?.payment?.entity || {};
@@ -2080,6 +2217,31 @@ module.exports = async (req, res) => {
             b.balanceDue = Math.max(0, (b.totalFare || 0) - b.advancePaid);
             b.paymentStatus = 'PARTIALLY PAID (Webhook Verified)';
             b.bookingStatus = 'CONFIRMED';
+            b.status = 'CONFIRMED';
+            if (!b.statusHistory) b.statusHistory = [];
+            b.statusHistory.push({
+              status: 'CONFIRMED',
+              timestamp: new Date().toISOString(),
+              actor: 'Gateway Webhook',
+              note: `Online payment verified via webhook event ${event}`
+            });
+            await saveDb(db);
+          }
+        }
+      } else if (event === 'payment.failed') {
+        const payload = body.payload?.payment?.entity || {};
+        const bId = payload.notes?.bookingId;
+        if (bId) {
+          const b = (db.bookings || []).find(x => x.bookingId === bId);
+          if (b) {
+            b.paymentStatus = 'PAYMENT_FAILED (Gateway)';
+            if (!b.statusHistory) b.statusHistory = [];
+            b.statusHistory.push({
+              status: 'PAYMENT_FAILED',
+              timestamp: new Date().toISOString(),
+              actor: 'Gateway Webhook',
+              note: `Payment attempt failed: ${payload.error_description || 'Card/UPI bank decline'}`
+            });
             await saveDb(db);
           }
         }
@@ -3707,6 +3869,53 @@ module.exports = async (req, res) => {
       });
     }
 
+    // -------------------------------------------------------------
+    // DRIVER REAL-TIME GPS TELEMETRY (Phase 4 Live Tracking)
+    // -------------------------------------------------------------
+    if (pathname === '/driver/location' && method === 'POST') {
+      const driverAuth = getSessionDriver(req, db);
+      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
+
+      const { lat, lng, latitude, longitude, heading, speed } = body;
+      const numLat = Number(lat !== undefined ? lat : latitude);
+      const numLng = Number(lng !== undefined ? lng : longitude);
+
+      if (isNaN(numLat) || isNaN(numLng) || numLat < 20 || numLat > 30 || numLng < 80 || numLng > 90) {
+        return sendJson(400, { success: false, message: 'Valid geographical coordinates (Bihar region) required' });
+      }
+
+      const targetDriver = (db.drivers || []).find(d => d.id === driverAuth.driver.id);
+      if (targetDriver) {
+        targetDriver.currentLat = numLat;
+        targetDriver.currentLng = numLng;
+        targetDriver.heading = Number(heading) || 0;
+        targetDriver.speed = Number(speed) || 0;
+        targetDriver.locationUpdatedAt = new Date().toISOString();
+      }
+
+      const activeTrip = (db.bookings || []).find(b => 
+        b.assignedDriverId === driverAuth.driver.id &&
+        ['DRIVER ASSIGNED', 'ACCEPTED', 'ON THE WAY', 'DRIVER ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus)
+      );
+
+      if (activeTrip) {
+        activeTrip.liveTelemetry = {
+          lat: numLat,
+          lng: numLng,
+          heading: Number(heading) || 0,
+          speed: Number(speed) || 0,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: 'Telemetry updated',
+        activeTripId: activeTrip ? activeTrip.bookingId : null
+      });
+    }
+
     if (pathname === '/driver/accept-trip' && method === 'POST') {
       const driverAuth = getSessionDriver(req, db);
       if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
@@ -3767,14 +3976,20 @@ module.exports = async (req, res) => {
       const booking = (db.bookings || []).find(b => b.bookingId === bookingId && b.assignedDriverId === driverAuth.driver.id);
       if (!booking) return sendJson(404, { success: false, message: 'Trip not found or not assigned to you' });
 
-      // Verify OTP on trip start if OTP exists
-      if (statusUpper === 'TRIP STARTED' && booking.tripOtp && tripOtp) {
-        if (String(tripOtp).trim() !== String(booking.tripOtp).trim()) {
-          return sendJson(400, { success: false, message: 'Invalid Passenger Trip OTP. Please ask customer for correct 4-digit OTP.' });
+      // Verify OTP on trip start (Phase 10: Mandatory Trip PIN before starting ride)
+      if (statusUpper === 'TRIP STARTED') {
+        const requiredOtp = String(booking.tripOtp || '').trim();
+        const providedOtp = String(tripOtp || '').trim();
+        if (requiredOtp && (!providedOtp || providedOtp !== requiredOtp)) {
+          return sendJson(400, {
+            success: false,
+            message: 'Trip Verification Failed: Passenger 4-digit Trip PIN is required before starting ride. Please ask the passenger for their PIN.'
+          });
         }
       }
 
       booking.bookingStatus = statusUpper;
+      booking.status = statusUpper;
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: statusUpper,
@@ -3878,6 +4093,275 @@ module.exports = async (req, res) => {
         bookingId: booking.bookingId,
         bookingStatus: 'PENDING_REASSIGNMENT',
         message: 'Assignment declined. Central dispatch desk alerted for immediate reassignment.'
+      });
+    }
+
+    // -------------------------------------------------------------
+    // DRIVER WALLET & EARNINGS LEDGER (Phase 7)
+    // -------------------------------------------------------------
+    if (pathname === '/driver/wallet' && method === 'GET') {
+      const driverAuth = getSessionDriver(req, db);
+      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
+
+      const dId = driverAuth.driver.id;
+      const driver = (db.drivers || []).find(d => d.id === dId) || driverAuth.driver;
+      const driverBookings = (db.bookings || []).filter(b => b.assignedDriverId === dId && (b.bookingStatus === 'COMPLETED' || b.status === 'COMPLETED'));
+
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      let todayEarnings = 0;
+      let weeklyEarnings = 0;
+      let monthlyEarnings = 0;
+      let totalGross = 0;
+
+      driverBookings.forEach(b => {
+        const fare = Number(b.totalFare) || 2000;
+        const driverShare = Math.round(fare * 0.85); // 85% driver payout (15% platform commission)
+        totalGross += driverShare;
+        const bTime = new Date(b.completedAt || b.createdAt || 0);
+        if ((b.completedAt || b.createdAt || '').startsWith(todayStr)) {
+          todayEarnings += driverShare;
+        }
+        if (bTime >= sevenDaysAgo) {
+          weeklyEarnings += driverShare;
+        }
+        if (bTime >= thirtyDaysAgo) {
+          monthlyEarnings += driverShare;
+        }
+      });
+
+      // Filter settlement transactions
+      const settlements = (db.driver_settlements || []).filter(s => s.driverId === dId);
+      const totalSettled = settlements.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+      const pendingSettlement = Math.max(0, totalGross - totalSettled);
+
+      return sendJson(200, {
+        success: true,
+        wallet: {
+          driverId: dId,
+          todayEarnings,
+          weeklyEarnings,
+          monthlyEarnings,
+          totalEarnings: totalGross,
+          totalSettled,
+          pendingSettlement,
+          completedTripsCount: driverBookings.length,
+          settlements: settlements.slice(-20).reverse(),
+          recentTrips: driverBookings.slice(0, 10).map(b => ({
+            bookingId: b.bookingId,
+            originCity: b.originCity,
+            destCity: b.destCity,
+            date: b.pickupDate,
+            fare: b.totalFare,
+            driverShare: Math.round((Number(b.totalFare) || 2000) * 0.85),
+            completedAt: b.completedAt || b.createdAt
+          }))
+        }
+      });
+    }
+
+    // -------------------------------------------------------------
+    // ADMIN DRIVER SETTLEMENT (Phase 7 Financial Payouts)
+    // -------------------------------------------------------------
+    if (pathname === '/admin/driver-settlement' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { driverId, amount, paymentMethod = 'Bank NEFT', referenceId, note } = body;
+      const numAmt = Number(amount);
+      if (!driverId || isNaN(numAmt) || numAmt <= 0) {
+        return sendJson(400, { success: false, message: 'Valid driverId and positive settlement amount required' });
+      }
+
+      const driver = (db.drivers || []).find(d => d.id === driverId);
+      if (!driver) return sendJson(404, { success: false, message: 'Driver not found' });
+
+      if (!db.driver_settlements) db.driver_settlements = [];
+      const settlementId = `SETTLE_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
+      const settlementRef = referenceId || `REF_TXN_${Date.now()}`;
+
+      const settlementRecord = {
+        id: settlementId,
+        driverId: driver.id,
+        driverName: driver.name,
+        driverPhone: driver.phone,
+        amount: numAmt,
+        paymentMethod,
+        referenceId: settlementRef,
+        status: 'PAID',
+        processedBy: admin.username || 'Finance Admin',
+        note: note || 'Driver weekly settlement payout',
+        createdAt: new Date().toISOString()
+      };
+
+      db.driver_settlements.unshift(settlementRecord);
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_SETTLE_${Date.now()}`,
+        entity: 'DRIVER_FINANCE',
+        entityId: driver.id,
+        action: 'SETTLEMENT_PROCESSED',
+        actor: admin.username || 'Finance Admin',
+        details: `Payout ₹${numAmt} settled to ${driver.name} via ${paymentMethod} (Ref: ${settlementRef})`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        settlement: settlementRecord,
+        message: `Settlement payout of ₹${numAmt} successfully recorded for ${driver.name}.`
+      });
+    }
+
+    // -------------------------------------------------------------
+    // ADMIN DRIVER VERIFICATION & DOCUMENT COMPLIANCE (Phase 6)
+    // -------------------------------------------------------------
+    if (pathname === '/admin/drivers/verify' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { driverId, verificationStatus, note } = body;
+      const validStatuses = ['VERIFIED', 'PENDING', 'REJECTED', 'SUSPENDED', 'DOCUMENT_EXPIRED'];
+      const vStatus = String(verificationStatus || '').toUpperCase();
+
+      if (!validStatuses.includes(vStatus)) {
+        return sendJson(400, { success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
+      }
+
+      const driver = (db.drivers || []).find(d => d.id === driverId);
+      if (!driver) return sendJson(404, { success: false, message: 'Driver not found' });
+
+      driver.verificationStatus = vStatus;
+      driver.isVerified = (vStatus === 'VERIFIED');
+      driver.verifiedBy = admin.username || 'Admin';
+      driver.verifiedAt = new Date().toISOString();
+      if (note) driver.verificationNote = note;
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_DRV_VER_${Date.now()}`,
+        entity: 'DRIVER',
+        entityId: driver.id,
+        action: 'VERIFICATION_UPDATE',
+        actor: admin.username || 'Admin',
+        details: `Driver ${driver.name} status updated to ${vStatus}`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        driver,
+        message: `Driver ${driver.name} verification status set to ${vStatus}.`
+      });
+    }
+
+    // -------------------------------------------------------------
+    // ADMIN SMART AUTO-DISPATCH (Phase 3 Dispatch Engine)
+    // -------------------------------------------------------------
+    if (pathname === '/admin/auto-dispatch' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { bookingId } = body;
+      if (!bookingId) {
+        return sendJson(400, { success: false, message: 'Booking ID required for auto dispatch' });
+      }
+
+      const result = dispatchService.autoDispatchBooking(db, bookingId, {
+        actor: `Admin Dispatcher (${admin.username || 'Central Desk'})`
+      });
+
+      if (!result.success) {
+        return sendJson(result.noDrivers ? 404 : 400, {
+          success: false,
+          noDrivers: !!result.noDrivers,
+          message: result.error || 'Failed to match driver'
+        });
+      }
+
+      await saveDb(db);
+
+      const targetDriver = (db.drivers || []).find(d => d.id === result.matchedDriver.driverId);
+      if (targetDriver) {
+        notificationService.sendDriverAssignmentNotifications(result.booking, targetDriver).catch(err => {
+          console.warn('[Auto Dispatch Notice]:', err.message);
+        });
+      }
+
+      return sendJson(200, {
+        success: true,
+        matchedDriver: result.matchedDriver,
+        rankedCandidates: result.rankedCandidates,
+        booking: result.booking,
+        message: `Chauffeur ${result.matchedDriver.name} successfully matched and assigned via Smart Dispatch!`
+      });
+    }
+
+    // -------------------------------------------------------------
+    // TRIP SOS & EMERGENCY SAFETY INCIDENT (Phase 10 Safety Engine)
+    // -------------------------------------------------------------
+    if (pathname === '/safety/sos' && method === 'POST') {
+      const { bookingId, phone, lat, lng, reason } = body;
+      const bId = (bookingId || '').trim();
+      const booking = bId ? (db.bookings || []).find(b => b.bookingId === bId || b.id === bId) : null;
+
+      const incidentId = `SOS_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
+      const incident = {
+        id: incidentId,
+        bookingId: booking ? booking.bookingId : null,
+        reporterPhone: phone || (booking ? booking.passengerPhone : 'Anonymous'),
+        passengerName: booking ? booking.passengerName : 'Valued Passenger',
+        driverName: booking?.driverDetails?.name || null,
+        driverPhone: booking?.driverDetails?.phone || null,
+        route: booking ? `${booking.originCity} ➔ ${booking.destCity}` : null,
+        location: (lat && lng) ? { lat: Number(lat), lng: Number(lng) } : null,
+        reason: reason || 'EMERGENCY_SOS_TRIGGERED',
+        status: 'ACTIVE_EMERGENCY',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!db.safety_incidents) db.safety_incidents = [];
+      db.safety_incidents.unshift(incident);
+
+      if (!db.notifications) db.notifications = [];
+      db.notifications.unshift({
+        id: `NOTIF_SOS_${Date.now()}`,
+        type: 'EMERGENCY_SOS_ALERT',
+        title: `🚨 EMERGENCY SOS ALERT: Trip ${booking ? booking.bookingId : 'Unknown'}`,
+        message: `Passenger / Driver triggered emergency SOS alert for trip ${booking ? booking.bookingId : ''}! Reporter Phone: ${incident.reporterPhone}. Coordinate: ${lat || 'N/A'}, ${lng || 'N/A'}. Immediate response required.`,
+        priority: 'CRITICAL',
+        incidentId,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+
+      return sendJson(200, {
+        success: true,
+        incidentId,
+        emergencyContacts: [
+          { agency: 'Bihar Police Control Room', phone: '112', type: 'POLICE' },
+          { agency: 'Women Safety Helpline', phone: '1090', type: 'WOMEN_SAFETY' },
+          { agency: 'Medical Ambulance Service', phone: '102', type: 'AMBULANCE' },
+          { agency: 'OneWayTaxiBihar 24x7 Emergency Desk', phone: '+91 80021 41816', type: 'DISPATCH_HQ' }
+        ],
+        message: 'Emergency SOS alert recorded. Patna Central Dispatch HQ has been notified and emergency protocols initiated.'
+      });
+    }
+
+    if (pathname === '/admin/safety/incidents' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      return sendJson(200, {
+        success: true,
+        incidents: db.safety_incidents || []
       });
     }
 

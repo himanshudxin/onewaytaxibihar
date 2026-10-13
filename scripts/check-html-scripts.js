@@ -1,17 +1,7 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
 
-const htmlFiles = [
-  'index.html',
-  'admin.html',
-  'driver.html',
-  'patna-to-gaya-cab.html',
-  'patna-to-muzaffarpur-cab.html',
-  'patna-to-darbhanga-cab.html',
-  'patna-to-bhagalpur-cab.html',
-  '404.html',
-  '500.html'
-];
+const htmlFiles = fs.readdirSync('.').filter(f => f.endsWith('.html') && !f.includes('.bak'));
 let totalScripts = 0;
 let errors = 0;
 

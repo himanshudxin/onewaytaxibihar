@@ -630,6 +630,42 @@
       updateDriverNotificationUiState();
       await loadDriverTrips();
       startDriverPolling();
+      startDriverLocationTelemetry();
+    }
+
+    let _gpsWatcherId = null;
+    function startDriverLocationTelemetry() {
+      if (!_driverToken || !navigator.geolocation) return;
+      if (_gpsWatcherId) return;
+
+      const sendLocation = (position) => {
+        if (!_driverToken) return;
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const heading = position.coords.heading || 0;
+        const speed = position.coords.speed || 0;
+
+        fetch("/api/driver/location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + _driverToken
+          },
+          body: JSON.stringify({ lat, lng, heading, speed })
+        }).catch(() => {});
+      };
+
+      try {
+        navigator.geolocation.getCurrentPosition(sendLocation, () => {}, { enableHighAccuracy: true });
+        _gpsWatcherId = setInterval(() => {
+          if (!_driverToken) {
+            clearInterval(_gpsWatcherId);
+            _gpsWatcherId = null;
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(sendLocation, () => {}, { enableHighAccuracy: true });
+        }, 25000);
+      } catch (e) {}
     }
 
     function switchAuthMode(mode) {
@@ -762,6 +798,10 @@
       if (_driverPollingTimer) {
         clearInterval(_driverPollingTimer);
         _driverPollingTimer = null;
+      }
+      if (_gpsWatcherId) {
+        clearInterval(_gpsWatcherId);
+        _gpsWatcherId = null;
       }
       _driverInitialSyncDone = false;
       _knownDriverTripStates.clear();

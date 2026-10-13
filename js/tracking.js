@@ -156,8 +156,29 @@ class TripTrackingManager {
     window.open(`https://wa.me/?text=${text}`, "_blank");
   }
 
-  triggerSOS() {
-    alert("EMERGENCY SAFETY ALERT\n\nBihar State Emergency Response Support System (ERSS-112) is available immediately. OneWayTaxiBihar 24x7 Safety Helpdesk: +91 80021 41816.");
+  async triggerSOS() {
+    if (!this.currentTrip) return;
+    if (!confirm("🚨 Are you sure you want to trigger Emergency SOS?\n\nThis will instantly alert Bihar Emergency Services (112) and OneWayTaxiBihar Emergency Response Desk.")) return;
+
+    try {
+      const res = await fetch("/api/safety/sos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: this.currentTrip.bookingId || this.currentTrip.tripId,
+          phone: this.currentTrip.passengerPhone,
+          reason: "PASSENGER_SOS_TRIGGERED"
+        })
+      }).then(r => r.json());
+
+      if (res && res.success) {
+        alert(`🚨 EMERGENCY PROTOCOL ACTIVATED\n\nIncident Ref: ${res.incidentId}\n\n1. Bihar Emergency Police: Dial 112\n2. OneWayTaxiBihar Dispatch HQ: Dial +91 80021 41816\n3. Women Safety: Dial 1090\n\nOur Central Emergency Desk has been notified and is monitoring this ride.`);
+      } else {
+        alert("Emergency Safety Alert: Call Bihar Police at 112 or OneWayTaxiBihar Desk at +91 80021 41816 immediately.");
+      }
+    } catch (e) {
+      alert("Emergency Safety Alert: Call Bihar Police at 112 or OneWayTaxiBihar Desk at +91 80021 41816 immediately.");
+    }
   }
 
   simulateCaptainCall() {

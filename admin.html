@@ -4158,7 +4158,7 @@
       _dispatchMarkers.forEach(m => _dispatchMap.removeLayer(m));
       _dispatchMarkers = [];
 
-      // Add pins for major Bihar hubs & active rides
+      // 1. Add pins for major Bihar hubs & active rides
       _allBookings.slice(0, 15).forEach(b => {
         const originKey = (b.originCity || '').toLowerCase().split(" ")[0];
         const coords = BIHAR_COORDS[originKey] || [25.5941, 85.1376];
@@ -4177,10 +4177,54 @@
             Route: ${b.originCity} ➔ ${b.destCity}<br>
             Status: <strong>${b.bookingStatus}</strong><br>
             Fare: ₹${b.totalFare || b.fare || 0}<br>
-            <button onclick="openBookingDrawer('${b.bookingId}')" style="margin-top:6px; padding:3px 8px; font-size:11px; background:#2563eb; color:white; border:none; border-radius:4px; cursor:pointer;">Manage Ride</button>
+            <div style="display:flex; gap:4px; margin-top:6px;">
+              <button onclick="openBookingDrawer('${b.bookingId}')" style="padding:3px 8px; font-size:11px; background:#2563eb; color:white; border:none; border-radius:4px; cursor:pointer;">Manage</button>
+              <button onclick="triggerSmartAutoDispatch('${b.bookingId}')" style="padding:3px 8px; font-size:11px; background:#059669; color:white; border:none; border-radius:4px; cursor:pointer;">⚡ Auto-Dispatch</button>
+            </div>
           </div>
         `);
         _dispatchMarkers.push(marker);
+      });
+
+      // 2. Add Live Driver Telemetry Pins on Map (Phase 4 & 5 Fleet Control Tower)
+      _allDrivers.forEach((d, idx) => {
+        let lat = d.currentLat;
+        let lng = d.currentLng;
+        if (!lat || !lng) {
+          const cityKey = (d.city || 'patna').toLowerCase().replace(/[^a-z]/g, '');
+          const baseCoords = BIHAR_COORDS[cityKey] || [25.5941, 85.1376];
+          // Minor jitter offset based on index so multiple drivers in same city spread out visually
+          lat = baseCoords[0] + (Math.sin(idx + 1) * 0.025);
+          lng = baseCoords[1] + (Math.cos(idx + 1) * 0.025);
+        }
+
+        const isOnline = (d.dutyStatus === 'ONLINE' || (d.status || '').toLowerCase() === 'available' || d.isAvailable === true);
+        const driverMarker = L.circleMarker([lat, lng], {
+          radius: 9,
+          fillColor: isOnline ? '#10b981' : '#64748b',
+          color: '#ffffff',
+          weight: 2.5,
+          opacity: 1,
+          fillOpacity: 0.95
+        }).addTo(_dispatchMap);
+
+        driverMarker.bindPopup(`
+          <div style="font-size:12px; font-family:sans-serif; min-width:190px;">
+            <div style="font-weight:700; color:#0f172a; margin-bottom:2px;">🚖 ${escapeHtml(d.name || d.driverName)}</div>
+            <div style="font-size:11px; color:#475569;">${escapeHtml(d.carModel || d.vehicleModel || 'Taxi')} • <strong>${escapeHtml(d.carNo || d.vehicleNumber || 'Plate')}</strong></div>
+            <div style="margin-top:4px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+              <span style="display:inline-block; padding:1px 6px; border-radius:4px; background:${isOnline ? '#dcfce7; color:#166534' : '#f1f5f9; color:#475569'}; font-weight:700;">
+                ${isOnline ? '🟢 On-Duty' : '⚪ Offline'}
+              </span>
+              <span style="color:#f59e0b; font-weight:700;">${d.rating || 4.9} ★</span>
+            </div>
+            <div style="margin-top:6px; display:flex; gap:4px;">
+              <a href="tel:${d.phone}" style="flex:1; text-align:center; padding:3px 6px; font-size:11px; background:#0284c7; color:white; border-radius:4px; text-decoration:none;">Call</a>
+              <a href="https://wa.me/91${cleanPhone(d.phone)}" target="_blank" style="flex:1; text-align:center; padding:3px 6px; font-size:11px; background:#10b981; color:white; border-radius:4px; text-decoration:none;">WhatsApp</a>
+            </div>
+          </div>
+        `);
+        _dispatchMarkers.push(driverMarker);
       });
 
       // Render Unassigned Queue
@@ -4201,7 +4245,8 @@
                 <div style="font-size:11px; color:#334155; margin-top:2px;">Passenger: ${escapeHtml(b.passengerName)} (${escapeHtml(b.passengerPhone)})</div>
               </div>
               <div style="display:flex; flex-direction:column; gap:6px;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Assign Driver</button>
+                <button type="button" class="btn btn-sm" style="background:#059669; color:white; font-size:11.5px;" onclick="triggerSmartAutoDispatch('${b.bookingId}')">⚡ Smart Dispatch</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Manual Assign</button>
                 <a href="https://wa.me/91${cleanPhone(b.passengerPhone)}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; text-align:center;">WhatsApp</a>
               </div>
             </div>
@@ -4211,7 +4256,7 @@
 
       // Render Available Drivers Pool
       const driversPool = document.getElementById("dispatch-drivers-pool-list");
-      const avail = _allDrivers.filter(d => d.status === 'available' || d.isAvailable);
+      const avail = _allDrivers.filter(d => (d.status || '').toLowerCase() === 'available' || d.dutyStatus === 'ONLINE' || d.isAvailable);
       setText("dispatch-drivers-avail-pill", `${avail.length} Ready`);
 
       if (driversPool) {
@@ -4816,6 +4861,51 @@
       }
     }
 
+    async function triggerSmartAutoDispatch(bookingId) {
+      if (!bookingId) return;
+      try {
+        showToast(`Running Smart Dispatch Engine for ${bookingId}...`, "info");
+        const res = await adminFetch("/api/admin/auto-dispatch", {
+          method: "POST",
+          body: JSON.stringify({ bookingId })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`⚡ Chauffeur ${data.matchedDriver.name} matched (${data.matchedDriver.suitabilityScore}%)!`, "success");
+          closeAssignModal();
+          closeBookingDrawer();
+          await loadBookings();
+          await loadDrivers();
+          renderDispatchWorkspace();
+          renderDashboard();
+        } else {
+          showToast(data.message || "No eligible driver available for auto-dispatch", "warning");
+        }
+      } catch (err) {
+        showToast("Auto-dispatch error: " + err.message, "error");
+      }
+    }
+
+    async function verifyDriverDoc(driverId, vStatus) {
+      try {
+        showToast(`Updating document status to ${vStatus}...`, "info");
+        const res = await adminFetch("/api/admin/drivers/verify", {
+          method: "POST",
+          body: JSON.stringify({ driverId, verificationStatus: vStatus })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Driver verified: ${data.message}`, "success");
+          await loadDrivers();
+          renderDrivers();
+        } else {
+          showToast(data.message || "Failed to update driver status", "error");
+        }
+      } catch (err) {
+        showToast("Verification error: " + err.message, "error");
+      }
+    }
+
     // Status Transitions
     async function updateBookingStatusAdmin(bookingId, newStatus) {
       try {
@@ -4984,6 +5074,9 @@
         const status = d.status || (d.isAvailable ? 'available' : 'offline');
         const pillClass = status === 'available' ? 'success' : (status === 'on_trip' ? 'assigned' : 'offline');
 
+        const vStatus = d.verificationStatus || (d.isVerified ? 'VERIFIED' : 'PENDING');
+        const vBadgeColor = vStatus === 'VERIFIED' ? '#059669' : (vStatus === 'REJECTED' ? '#dc2626' : '#d97706');
+
         return `
           <div class="ops-card" style="margin-bottom:0;">
             <div class="ops-card-body" style="padding:16px;">
@@ -4997,7 +5090,10 @@
                     <div style="font-size:11.5px; color:#64748b;">${phone}</div>
                   </div>
                 </div>
-                <span class="pill ${pillClass}">${status}</span>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                  <span class="pill ${pillClass}">${status}</span>
+                  <span style="font-size:10.5px; font-weight:700; color:${vBadgeColor};">${vStatus}</span>
+                </div>
               </div>
 
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:10px; margin-bottom:12px; font-size:12px;">
@@ -5009,15 +5105,24 @@
                   <span style="color:#64748b;">Operating District:</span>
                   <strong>${escapeHtml(d.city || 'Patna')}</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                   <span style="color:#64748b;">Rating &amp; Trips:</span>
                   <span>⭐ ${d.rating || 4.9} • <strong>${d.totalTrips || 0} rides</strong></span>
                 </div>
+                <div style="display:flex; justify-content:space-between;">
+                  <span style="color:#64748b;">Documents:</span>
+                  <span style="font-weight:700; color:${vBadgeColor};">${vStatus === 'VERIFIED' ? '✓ RTO & DL Verified' : '⏳ Awaiting Review'}</span>
+                </div>
               </div>
 
-              <div style="display:flex; gap:6px;">
+              <div style="display:flex; gap:6px; margin-bottom:6px;">
                 <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">📞 Call</a>
                 <a href="https://wa.me/91${phone}" target="_blank" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">💬 WhatsApp</a>
+              </div>
+              <div>
+                <button type="button" onclick="verifyDriverDoc('${d.id}', '${vStatus === 'VERIFIED' ? 'PENDING' : 'VERIFIED'}')" class="btn btn-sm" style="width:100%; justify-content:center; font-size:11.5px; ${vStatus === 'VERIFIED' ? 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;' : 'background:#059669; color:white;'}">
+                  ${vStatus === 'VERIFIED' ? 'Revoke Partner Verification' : '✓ Verify Driver Documents'}
+                </button>
               </div>
             </div>
           </div>

@@ -3,6 +3,15 @@
 /driver       /driver.html       200
 /404          /404.html          200
 /500          /500.html          200
+/patna-airport-taxi         /patna-airport-taxi.html         200
+/patna-to-bodh-gaya-taxi     /patna-to-bodh-gaya-taxi.html     200
+/patna-to-varanasi-taxi      /patna-to-varanasi-taxi.html      200
+/outstation-cab-bihar       /outstation-cab-bihar.html       200
+/bihar-airport-taxi         /bihar-airport-taxi.html         200
+/patna-to-gaya-cab          /patna-to-gaya-cab.html          200
+/patna-to-muzaffarpur-cab   /patna-to-muzaffarpur-cab.html   200
+/patna-to-darbhanga-cab     /patna-to-darbhanga-cab.html     200
+/patna-to-bhagalpur-cab     /patna-to-bhagalpur-cab.html     200
 
 # Canonical routing
 /index.html   /   301!

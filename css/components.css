@@ -6762,3 +6762,443 @@ body.drawer-open .mobile-sticky-bottom-bar {
   display: none !important;
   pointer-events: none !important;
 }
+
+/* ==========================================================================
+   MARKET-CALIBRATED FARE CHART SECTION & TRANSPARENT POLICY BADGE
+   ========================================================================== */
+.fare-chart-section {
+  background: var(--owc-bg);
+  padding: 64px 0 72px;
+}
+
+.fare-chart-controls-card {
+  background: var(--owc-surface);
+  border: 1px solid var(--owc-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.fare-search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+}
+
+.fare-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.fare-search-input {
+  width: 100%;
+  padding: 11px 14px 11px 42px;
+  border-radius: 10px;
+  border: 1.5px solid var(--owc-border);
+  background: var(--owc-input-bg, #ffffff);
+  color: var(--owc-text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.fare-search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.fare-filter-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fare-filter-chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--owc-border);
+  background: var(--owc-surface);
+  color: var(--owc-text-muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fare-filter-chip:hover {
+  color: #2563eb;
+  border-color: #93c5fd;
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.fare-filter-chip.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+.fare-chart-count-tag {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--owc-text-muted);
+  white-space: nowrap;
+}
+
+.fare-chart-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--owc-surface);
+  border: 1px solid var(--owc-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  margin-bottom: 28px;
+}
+
+.fare-chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.fare-chart-table thead {
+  background: #f8fafc;
+  border-bottom: 2px solid var(--owc-border);
+}
+
+[data-theme="dark"] .fare-chart-table thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fare-chart-table th {
+  padding: 14px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--owc-text-muted);
+  white-space: nowrap;
+}
+
+.th-sub {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: none;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.fare-chart-row {
+  border-bottom: 1px solid var(--owc-border);
+  transition: background 0.15s ease;
+}
+
+.fare-chart-row:hover {
+  background: rgba(37, 99, 235, 0.03);
+}
+
+.fare-chart-row:last-child {
+  border-bottom: none;
+}
+
+.fare-chart-table td {
+  padding: 13px 16px;
+  vertical-align: middle;
+}
+
+.cell-dest .dest-name {
+  font-weight: 800;
+  color: var(--owc-text);
+  font-size: 14.5px;
+}
+
+.cell-dest .dest-sub {
+  font-size: 11.5px;
+  color: var(--owc-text-muted);
+  margin-top: 2px;
+}
+
+.cell-dist {
+  text-align: center;
+}
+
+.dist-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-weight: 750;
+  font-size: 12px;
+  color: #334155;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .dist-badge {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.cell-fare {
+  text-align: right;
+}
+
+.cell-fare .fare-num {
+  display: block;
+  font-size: 15px;
+  font-weight: 850;
+  color: var(--owc-text);
+}
+
+.fare-hatch .fare-num {
+  color: #0284c7;
+}
+
+.fare-sedan .fare-num {
+  color: #2563eb;
+}
+
+.fare-suv .fare-num {
+  color: #7c3aed;
+}
+
+.cell-fare .fare-sub {
+  display: block;
+  font-size: 10.5px;
+  color: var(--owc-text-muted);
+}
+
+.cell-market {
+  text-align: right;
+}
+
+.market-rate {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.savings-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+
+.cell-action {
+  text-align: center;
+}
+
+.btn-table-book {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.btn-table-book:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+/* ==========================================================================
+   TRANSPARENT FARE POLICY BADGE CARD (Clean 3-Pillar Breakdown)
+   ========================================================================== */
+.fare-policy-badge-card {
+  background: var(--owc-surface);
+  border: 1.5px solid var(--owc-border);
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.fare-policy-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--owc-border);
+}
+
+.fare-policy-shield-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fare-policy-title {
+  font-size: 18px;
+  font-weight: 850;
+  color: var(--owc-text);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.fare-policy-subtitle {
+  font-size: 13.5px;
+  color: var(--owc-text-muted);
+  margin: 3px 0 0;
+}
+
+.fare-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.fare-policy-pillar {
+  padding: 18px 20px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+}
+
+.fare-policy-pillar:hover {
+  transform: translateY(-2px);
+}
+
+.pillar-included {
+  background: rgba(5, 150, 105, 0.04);
+  border: 1.5px solid rgba(5, 150, 105, 0.25);
+}
+
+.pillar-excluded {
+  background: rgba(245, 158, 11, 0.04);
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+}
+
+.pillar-advance {
+  background: rgba(37, 99, 235, 0.04);
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+}
+
+.pillar-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pillar-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.pillar-included .pillar-icon {
+  background: #059669;
+  color: white;
+}
+
+.pillar-excluded .pillar-icon {
+  background: #f59e0b;
+  color: white;
+}
+
+.pillar-advance .pillar-icon {
+  background: #2563eb;
+  color: white;
+}
+
+.pillar-badge {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-green {
+  color: #059669;
+}
+
+.badge-amber {
+  color: #d97706;
+}
+
+.badge-blue {
+  color: #2563eb;
+}
+
+.pillar-text {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--owc-text);
+  margin: 0 0 12px;
+}
+
+.pillar-text strong {
+  font-weight: 650;
+}
+
+.pillar-footer {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--owc-text-muted);
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+  padding-top: 8px;
+}
+
+[data-theme="dark"] .pillar-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+  .fare-chart-controls-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .fare-search-input-wrap {
+    min-width: 100%;
+  }
+  .fare-filter-chips-row {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .fare-policy-badge-card {
+    padding: 18px 16px;
+  }
+}

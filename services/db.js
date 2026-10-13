@@ -9,6 +9,7 @@ try { require('dotenv').config(); } catch (e) {}
 const fs = require('fs');
 const path = require('path');
 
+const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
 const DB_LOCAL_PATH = path.join(process.cwd(), 'data', 'db.json');
 const DB_TMP_PATH = '/tmp/db.json';
 
@@ -107,7 +108,7 @@ function loadLocalDb() {
 
 // High-Throughput MongoDB Atlas Connection
 async function initMongo() {
-  const mongoUri = process.env.MONGODB_URI;
+  const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
   if (!mongoUri) return false;
 
   if (global._mongoClient && global._mongoDbInstance) {

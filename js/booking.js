@@ -1743,16 +1743,32 @@ class BookingManager {
       return;
     }
 
-    const knownRoute = OTB_POPULAR_ROUTES.find(r => 
+    const originId = this.originCity?.id || "";
+    const destId = this.destCity?.id || "";
+    const isPatnaRoute = (originId === "patna" || destId === "patna");
+    const otherId = originId === "patna" ? destId : originId;
+
+    const chartRoute = (typeof OTB_PATNA_FARE_CHART !== "undefined" && isPatnaRoute)
+      ? OTB_PATNA_FARE_CHART.find(c => c.destId === otherId || c.id === `patna-${otherId}` || (c.destination && c.destination.toLowerCase().includes(this.destCity?.name?.toLowerCase() || "")))
+      : null;
+
+    const knownRoute = chartRoute || OTB_POPULAR_ROUTES.find(r => 
       (r.fromId === this.originCity.id && r.toId === this.destCity.id) ||
       (r.fromId === this.destCity.id && r.toId === this.originCity.id)
     );
 
-    if (knownRoute) {
+    if (chartRoute) {
+      this.calculatedDistanceKm = chartRoute.distKm;
+      this.calculatedDuration = chartRoute.distKm <= 50 ? "1h 10m" : chartRoute.distKm <= 100 ? "2h 00m" : chartRoute.distKm <= 160 ? "3h 15m" : chartRoute.distKm <= 240 ? "4h 45m" : "6h 00m";
+      this.calculatedToll = Math.round(chartRoute.distKm * 0.9);
+      this.matchedChartRoute = chartRoute;
+    } else if (knownRoute) {
       this.calculatedDistanceKm = knownRoute.distanceKm;
       this.calculatedDuration = knownRoute.duration;
       this.calculatedToll = knownRoute.toll;
+      this.matchedChartRoute = knownRoute;
     } else {
+      this.matchedChartRoute = null;
       // Calculate curved highway distance
       const dLat = (this.destCity.lat - this.originCity.lat) * Math.PI / 180;
       const dLng = (this.destCity.lng - this.originCity.lng) * Math.PI / 180;
@@ -1761,14 +1777,14 @@ class BookingManager {
                 Math.sin(dLng / 2) * Math.sin(dLng / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const rawKm = 6371 * c;
-      this.calculatedDistanceKm = Math.max(40, Math.round(rawKm * 1.30));
+      this.calculatedDistanceKm = Math.max(25, Math.round(rawKm * 1.28));
       
       const speedKmH = 48; // Standard Bihar highway average with Setu/bridges
       const totalMin = Math.round((this.calculatedDistanceKm / speedKmH) * 60);
       const hrs = Math.floor(totalMin / 60);
       const mins = totalMin % 60;
       this.calculatedDuration = `${hrs}h ${mins}m`;
-      this.calculatedToll = Math.round(this.calculatedDistanceKm * 1.1);
+      this.calculatedToll = Math.round(this.calculatedDistanceKm * 0.9);
     }
 
     // Update Route Bar
@@ -1792,7 +1808,7 @@ class BookingManager {
 
     if (distBadge) distBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "80 KM / Day Included" : `${this.calculatedDistanceKm} KM Highway Route`;
     if (timeBadge) timeBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "8 Hours Daily" : `~${this.calculatedDuration}`;
-    if (tollBadge) tollBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Tolls, Fastag & GST Included";
+    if (tollBadge) tollBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Fastag Tolls at Actuals • Zero Buffers";
 
     // Render Fleet Cards
     this.renderFleetCards();
@@ -1845,8 +1861,8 @@ class BookingManager {
     container.innerHTML = OTB_FLEET.map(fleet => {
       let finalPrice = 0;
       let savings = 0;
-      let priceNote = "Fixed (Toll, GST & Allowance incl.)";
-      let savingsText = "Saved ~₹1,500 vs Return Cab";
+      let priceNote = "Base Fare (Fuel & Chauffeur incl. • Fastag Tolls at actuals)";
+      let savingsText = "Saved vs Return Cab";
 
       if (isRental) {
         const tierRate = rates[fleet.id] || {};
@@ -1869,18 +1885,45 @@ class BookingManager {
         }
         savings = Math.round(finalPrice * 0.25);
       } else {
-        const perKm = Number(rates[fleet.id]?.perKm) || fleet.ratePerKm || 25;
-        let baseFare = this.calculatedDistanceKm * perKm;
-        const minFare = Number(rates[fleet.id]?.minFare) || (fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : fleet.id === 'sedan_prime' ? 2698 : fleet.id === 'innova_crysta' ? 4598 : 3398);
-        baseFare = Math.max(baseFare, minFare);
-        
-        if (this.tripType === "roundtrip") {
-          baseFare = (baseFare * 1.88); // 12% discount for roundtrip
+        const chart = this.matchedChartRoute;
+        let baseFare = 0;
+        let traditionalMarket = "";
+
+        if (chart && (this.tripType === "oneway" || !this.tripType)) {
+          if (fleet.id === "hatchback") {
+            baseFare = chart.hatchback || chart.baseFareHatchback;
+          } else if (fleet.id === "sedan") {
+            baseFare = chart.sedan || chart.baseFareSedan;
+          } else if (fleet.id === "sedan_prime") {
+            baseFare = Math.round((chart.sedan || chart.baseFareSedan) * 1.18);
+          } else if (fleet.id === "suv") {
+            baseFare = chart.suv || chart.baseFareSuv;
+          } else if (fleet.id === "innova_crysta") {
+            baseFare = Math.round((chart.suv || chart.baseFareSuv) * 1.32);
+          } else {
+            baseFare = chart.sedan || chart.baseFareSedan;
+          }
+          traditionalMarket = chart.traditional || chart.traditionalRate || "";
+        } else {
+          const perKm = Number(rates[fleet.id]?.perKm) || fleet.ratePerKm || 11.75;
+          baseFare = Math.round(this.calculatedDistanceKm * perKm);
+          const minFare = Number(rates[fleet.id]?.minFare) || (fleet.id === 'hatchback' ? 699 : fleet.id === 'sedan' ? 799 : fleet.id === 'sedan_prime' ? 999 : fleet.id === 'innova_crysta' ? 1699 : 1199);
+          baseFare = Math.max(baseFare, minFare);
+
+          if (this.tripType === "roundtrip") {
+            baseFare = Math.round(baseFare * 1.88);
+          }
         }
 
-        finalPrice = Math.max(1000, Math.round(baseFare));
-        savings = Math.round(baseFare * 0.95);
-        savingsText = `Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab`;
+        finalPrice = Math.max(699, Math.round(baseFare));
+        priceNote = "Base Fare (Fuel & Chauffeur incl. • Fastag Tolls at actuals)";
+        if (traditionalMarket) {
+          savings = Math.max(500, Math.round(finalPrice * 0.9));
+          savingsText = `Save ~₹${savings.toLocaleString('en-IN')} (Market: ${traditionalMarket})`;
+        } else {
+          savings = Math.round(baseFare * 0.95);
+          savingsText = `Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab`;
+        }
       }
 
       const isSelected = this.selectedCabId === fleet.id;
@@ -3912,4 +3955,52 @@ class BookingManager {
 
 if (typeof window !== "undefined") {
   window.BookingManager = BookingManager;
+
+  window.selectFareChartRoute = (fromId, toId) => {
+    if (window.bookingManager) {
+      window.bookingManager.loadRoutePreset(fromId, toId);
+    }
+  };
+
+  window.filterFareChartTable = (filterType, query = '') => {
+    const rows = document.querySelectorAll(".fare-chart-row");
+    const countEl = document.getElementById("fare-chart-count");
+    const searchInput = document.getElementById("fare-chart-search");
+    const q = (query || (searchInput ? searchInput.value : "")).toLowerCase().trim();
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const dest = (row.getAttribute("data-dest") || "").toLowerCase();
+      const dist = parseInt(row.getAttribute("data-dist") || "0", 10);
+      let matchesRange = true;
+
+      if (filterType === "under100") {
+        matchesRange = dist < 100;
+      } else if (filterType === "100to200") {
+        matchesRange = dist >= 100 && dist <= 200;
+      } else if (filterType === "over200") {
+        matchesRange = dist > 200;
+      }
+
+      const matchesSearch = !q || dest.includes(q);
+
+      if (matchesRange && matchesSearch) {
+        row.style.display = "";
+        visibleCount++;
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    if (countEl) {
+      countEl.textContent = `Showing ${visibleCount} of ${rows.length} verified routes`;
+    }
+  };
+
+  window.setFareChartFilterTab = (tabEl, filterType) => {
+    document.querySelectorAll(".fare-filter-chip").forEach(c => c.classList.remove("active"));
+    if (tabEl) tabEl.classList.add("active");
+    window.currentFareFilter = filterType;
+    window.filterFareChartTable(filterType);
+  };
 }

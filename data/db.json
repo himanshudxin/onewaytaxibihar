@@ -15,14 +15,14 @@
       "currentLat": 25.5941,
       "currentLng": 85.1376,
       "heading": 90,
-      "locationUpdatedAt": "2026-10-13T13:55:51.499Z",
+      "locationUpdatedAt": "2026-10-13T17:18:54.326Z",
       "speed": 35,
       "isVerified": true,
       "verificationNote": "RC, Driving License, Commercial Permit verified by Patna RTO desk",
       "verificationStatus": "VERIFIED",
-      "verifiedAt": "2026-10-13T13:55:54.351Z",
+      "verifiedAt": "2026-10-13T17:18:57.331Z",
       "verifiedBy": "admin",
-      "ratingsCount": 14,
+      "ratingsCount": 15,
       "dutyStatus": "ON_DUTY"
     },
     {
@@ -209,6 +209,52 @@
   "audit_logs": [],
   "sessions": [
     {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlM2ZkNzA4NTI2ZjUwZTI3YjQwMmM0N2ExMjEyNzY0NyIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxOTExOTMzLCJleHAiOjE3OTE5NDA3MzN9.O-l99O-O9UmofVNTkLqv1vK_xwhB5ujgO8Juin6Fpag",
+      "createdAt": "2026-10-13T17:18:53.327Z",
+      "driverId": "drv_101",
+      "role": "driver"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ZTJkNzY4NjRmZjg4MDg1NWM0Njk2ZWM2ZDc4ZWY3MyIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5MTkxMTkzMCwiZXhwIjoxNzkxOTQwNzMwfQ.qz8qEUHGJLftQDuRk5YY_kemOnA-1Y-gMIN0DZnOMDc",
+      "adminId": "adm_admin",
+      "createdAt": "2026-10-13T17:18:50.271Z",
+      "phone": "+91 6206494214",
+      "role": "owner",
+      "username": "admin"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YWNiMDIwMWYxM2YxY2FkYjZkYTliOWJkZDc5ZWY4MyIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxOTExOTAwLCJleHAiOjE3OTE5NDA3MDB9.mITjxtgyr0zFY_hHcVEvYcoT_MyFT71TF3pyC8y-qWo",
+      "createdAt": "2026-10-13T17:18:20.404Z",
+      "driverId": "drv_101",
+      "role": "driver"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ODJiZmQ3YWNkOWY5MDY1MjQyYzM2YWQ1ZjI3MmQxNSIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxOTA4NTkyLCJleHAiOjE3OTE5MzczOTJ9.wMdBPTzJrI4F_GtXmjZWVNIooipeTJVGoqLBR8YppNs",
+      "createdAt": "2026-10-13T16:23:12.178Z",
+      "driverId": "drv_101",
+      "role": "driver"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkYmU2ODRhYzQxOTc5NDkwNWI0NDg5ZDRhMGRlNjVmYiIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxOTA4MzM0LCJleHAiOjE3OTE5MzcxMzR9.qIc9NfAxD1CdndCeAPiQFwRdPQAuX6ICqM9bB7SmI9w",
+      "createdAt": "2026-10-13T16:18:54.048Z",
+      "driverId": "drv_101",
+      "role": "driver"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NjE0ZjlkMzliOTY5N2E5YzA5NGFmYmIxNWI3ZDgxNiIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5MTkwODA5NiwiZXhwIjoxNzkxOTM2ODk2fQ.P5r0WXrVFJxjrmsM1uloCwgCZ-1qmea9ZiRMolEtMJU",
+      "adminId": "adm_admin",
+      "createdAt": "2026-10-13T16:14:56.251Z",
+      "phone": "+91 6206494214",
+      "role": "owner",
+      "username": "admin"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMmY4OTViYmFkZTdkMTc0NzUwZjhhMzBjNTBhNjlmYyIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxODk5NzkzLCJleHAiOjE3OTE5Mjg1OTN9.jYLsqTaaHKMR7cdcO42a1qjwMXYRGSbmDtvqWysenTk",
+      "createdAt": "2026-10-13T13:56:33.707Z",
+      "driverId": "drv_101",
+      "role": "driver"
+    },
+    {
       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0MjA0MGU2M2JhZDBkNmNmMGVlYmRkYzM0YWRiMjk3NSIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxODk5NzUxLCJleHAiOjE3OTE5Mjg1NTF9.bX5Iw2wbGR8BSmIzK0Vo6e7vAXCHG8SwMgX0rzTUErg",
       "createdAt": "2026-10-13T13:55:51.338Z",
       "driverId": "drv_101",
@@ -382,10 +428,12 @@
       "userId": "usr_6206494214"
     },
     {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyMmY4OTViYmFkZTdkMTc0NzUwZjhhMzBjNTBhNjlmYyIsImRyaXZlcklkIjoiZHJ2XzEwMSIsInBob25lIjoiKzkxIDk0MzEwIDEyMzQ1IiwibmFtZSI6IlJhbWVzaCBLdW1hciBTaGFybWEiLCJ2ZWhpY2xlTnVtYmVyIjoiQlIgMDEgUEEgNDkyMSIsInZlaGljbGVNb2RlbCI6IlN3aWZ0IER6aXJlIChXaGl0ZSkiLCJyb2xlIjoiZHJpdmVyIiwiaWF0IjoxNzkxODk5NzkzLCJleHAiOjE3OTE5Mjg1OTN9.jYLsqTaaHKMR7cdcO42a1qjwMXYRGSbmDtvqWysenTk",
-      "driverId": "drv_101",
-      "role": "driver",
-      "createdAt": "2026-10-13T13:56:33.707Z"
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3NDNkZGI5NzJjYzI1ZGNlNWI3ODQzODdiYzhlYTFiNSIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5MTkxMjA1OCwiZXhwIjoxNzkxOTQwODU4fQ.wz4OUfUsxis73nr9xTJSmZR6iPU8zYOB7PqbHbm-eVk",
+      "adminId": "adm_admin",
+      "username": "admin",
+      "role": "owner",
+      "phone": "+91 6206494214",
+      "createdAt": "2026-10-13T17:20:58.921Z"
     }
   ],
   "settings": {
@@ -499,9 +547,48 @@
       }
     }
   },
-  "support_tickets": [],
+  "support_tickets": [
+    {
+      "id": "TCK-079998",
+      "ticketId": "TCK-079998",
+      "bookingId": "OTB-2026-8183",
+      "passengerPhone": "+91 9835000000",
+      "cleanPhone": "9835000000",
+      "passengerName": "Kavita Kumari",
+      "category": "DELAY",
+      "priority": "NORMAL",
+      "subject": "Support Request regarding OTB-2026-8183",
+      "message": "Driver was 10 minutes late at Bailey Road crossing.",
+      "status": "OPEN",
+      "resolutionNotes": null,
+      "resolvedAt": null,
+      "resolvedBy": null,
+      "createdAt": "2026-10-13T17:21:19.998Z",
+      "updatedAt": "2026-10-13T17:21:19.998Z"
+    }
+  ],
   "error_logs": [],
   "refunds": [
+    {
+      "id": "REF_1791912077015_9101",
+      "bookingId": "OTB-2026-3147",
+      "amount": 299,
+      "phone": "+91 9835778899",
+      "status": "REFUND_PENDING_MANUAL_REVIEW",
+      "reason": "Customer trip cancellation",
+      "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791912077015_9101).",
+      "createdAt": "2026-10-13T17:21:17.015Z"
+    },
+    {
+      "id": "REF_1791908111318_6059",
+      "bookingId": "OTB-2026-1551",
+      "amount": 299,
+      "phone": "+91 9835778899",
+      "status": "REFUND_PENDING_MANUAL_REVIEW",
+      "reason": "Customer trip cancellation",
+      "note": "Automated gateway refund failed. Queued for manual settlement review by Patna billing desk (Reference: REF_1791908111318_6059).",
+      "createdAt": "2026-10-13T16:15:11.318Z"
+    },
     {
       "id": "REF_1791872298014_9063",
       "bookingId": "OTB-2026-3081",
@@ -566,6 +653,22 @@
     }
   ],
   "safety_incidents": [
+    {
+      "id": "SOS_1791911936325_3022",
+      "bookingId": "OTB-2026-5508",
+      "reporterPhone": "9835012345",
+      "passengerName": "Anjali Sharma",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "route": "Patna ➔ Gaya",
+      "location": {
+        "lat": 25.5941,
+        "lng": 85.1376
+      },
+      "reason": "Emergency route deviation check",
+      "status": "ACTIVE_EMERGENCY",
+      "createdAt": "2026-10-13T17:18:56.325Z"
+    },
     {
       "id": "SOS_1791899753340_3639",
       "bookingId": "OTB-2026-9097",
@@ -729,6 +832,19 @@
   ],
   "driver_settlements": [
     {
+      "id": "SETTLE_1791911938325_1141",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "amount": 1500,
+      "paymentMethod": "Bank IMPS",
+      "referenceId": "IMPS_982348234723",
+      "status": "PAID",
+      "processedBy": "admin",
+      "note": "Weekly trip payout",
+      "createdAt": "2026-10-13T17:18:58.325Z"
+    },
+    {
       "id": "SETTLE_1791899755347_8070",
       "driverId": "drv_101",
       "driverName": "Ramesh Kumar Sharma",
@@ -847,6 +963,21 @@
     }
   ],
   "corporate_inquiries": [
+    {
+      "id": "CORP-INQ-40336",
+      "cleanPhone": "9431098765",
+      "companyName": "Bihar State Power Holding Company Ltd",
+      "contactPerson": "Sanjay Sinha",
+      "createdAt": "2026-10-13T17:19:00.336Z",
+      "email": "corporate@bsphcl.bih.nic.in",
+      "estimatedMonthlyRides": 50,
+      "gstin": "10AAACB1234F1Z5",
+      "inquiryId": "CORP-INQ-40336",
+      "notes": "Standard corporate mobility solution request",
+      "phone": "+91 9431098765",
+      "status": "NEW",
+      "updatedAt": "2026-10-13T17:19:00.336Z"
+    },
     {
       "id": "CORP-INQ-57385",
       "cleanPhone": "9431098765",
@@ -969,6 +1100,21 @@
     }
   ],
   "passenger_reviews": [
+    {
+      "id": "rev_1791911941338",
+      "bookingId": "OTB-2026-5508",
+      "cabType": "Prime Sedan",
+      "cleanlinessRating": 5,
+      "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "createdAt": "2026-10-13T17:19:01.338Z",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "punctualityRating": 5,
+      "rating": 5,
+      "route": "Patna to Gaya"
+    },
     {
       "id": "rev_1791899758385",
       "bookingId": "OTB-2026-9097",

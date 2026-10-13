@@ -147,26 +147,92 @@ const BIHAR_COORDS = {
 };
 
 // Verified Highway Distance Matrix for Major Routes
+// Complete One-Way Market-Calibrated Price List (From Patna)
+// Benchmarked against RodBez's fair one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12/km Sedan, ~₹15.50–₹16/km SUV)
+const PATNA_MARKET_FARE_CHART = [
+  { id: "patna-hajipur", destination: "Hajipur (Vaishali)", destKey: "hajipur", distKm: 25, hatchback: 699, sedan: 799, suv: 1199, traditional: "₹1,500 – ₹1,800" },
+  { id: "patna-arrah", destination: "Arrah (Bhojpur)", destKey: "ara", distKm: 55, hatchback: 899, sedan: 999, suv: 1399, traditional: "₹2,000 – ₹2,200" },
+  { id: "patna-jehanabad", destination: "Jehanabad", destKey: "jehanabad", distKm: 50, hatchback: 899, sedan: 999, suv: 1399, traditional: "₹1,800 – ₹2,200" },
+  { id: "patna-chapra", destination: "Chapra (Saran)", destKey: "chhapra", distKm: 70, hatchback: 1099, sedan: 1199, suv: 1699, traditional: "₹2,200 – ₹2,500" },
+  { id: "patna-muzaffarpur", destination: "Muzaffarpur", destKey: "muzaffarpur", distKm: 75, hatchback: 1099, sedan: 1249, suv: 1749, traditional: "₹2,200 – ₹2,600" },
+  { id: "patna-biharsharif", destination: "Bihar Sharif (Nalanda)", destKey: "biharsharif", distKm: 75, hatchback: 1099, sedan: 1249, suv: 1749, traditional: "₹2,200 – ₹2,500" },
+  { id: "patna-rajgir", destination: "Rajgir", destKey: "rajgir", distKm: 100, hatchback: 1299, sedan: 1449, suv: 1999, traditional: "₹2,600 – ₹3,000" },
+  { id: "patna-samastipur", destination: "Samastipur", destKey: "samastipur", distKm: 95, hatchback: 1249, sedan: 1399, suv: 1949, traditional: "₹2,500 – ₹2,800" },
+  { id: "patna-gaya", destination: "Gaya / Bodh Gaya", destKey: "gaya", distKm: 110, hatchback: 1399, sedan: 1549, suv: 2149, traditional: "₹2,800 – ₹3,200" },
+  { id: "patna-begusarai", destination: "Begusarai", destKey: "begusarai", distKm: 125, hatchback: 1499, sedan: 1699, suv: 2349, traditional: "₹3,000 – ₹3,400" },
+  { id: "patna-nawada", destination: "Nawada", destKey: "nawada", distKm: 115, hatchback: 1449, sedan: 1599, suv: 2249, traditional: "₹2,800 – ₹3,200" },
+  { id: "patna-siwan", destination: "Siwan", destKey: "siwan", distKm: 135, hatchback: 1599, sedan: 1799, suv: 2499, traditional: "₹3,200 – ₹3,600" },
+  { id: "patna-darbhanga", destination: "Darbhanga", destKey: "darbhanga", distKm: 140, hatchback: 1599, sedan: 1799, suv: 2549, traditional: "₹3,200 – ₹3,600" },
+  { id: "patna-aurangabad", destination: "Aurangabad", destKey: "aurangabad", distKm: 140, hatchback: 1599, sedan: 1799, suv: 2549, traditional: "₹3,200 – ₹3,600" },
+  { id: "patna-sasaram", destination: "Sasaram (Rohtas)", destKey: "sasaram", distKm: 155, hatchback: 1799, sedan: 1999, suv: 2799, traditional: "₹3,500 – ₹4,000" },
+  { id: "patna-madhubani", destination: "Madhubani", destKey: "madhubani", distKm: 165, hatchback: 1899, sedan: 2099, suv: 2899, traditional: "₹3,600 – ₹4,200" },
+  { id: "patna-munger", destination: "Munger", destKey: "munger", distKm: 175, hatchback: 1999, sedan: 2249, suv: 3099, traditional: "₹4,000 – ₹4,500" },
+  { id: "patna-sitamarhi", destination: "Sitamarhi", destKey: "sitamarhi", distKm: 140, hatchback: 1649, sedan: 1849, suv: 2599, traditional: "₹3,200 – ₹3,800" },
+  { id: "patna-motihari", destination: "Motihari (East Champaran)", destKey: "motihari", distKm: 155, hatchback: 1799, sedan: 1999, suv: 2799, traditional: "₹3,500 – ₹4,000" },
+  { id: "patna-gopalganj", destination: "Gopalganj", destKey: "gopalganj", distKm: 150, hatchback: 1749, sedan: 1949, suv: 2699, traditional: "₹3,400 – ₹3,800" },
+  { id: "patna-jamui", destination: "Jamui", destKey: "jamui", distKm: 160, hatchback: 1849, sedan: 2049, suv: 2849, traditional: "₹3,600 – ₹4,000" },
+  { id: "patna-buxar", destination: "Buxar", destKey: "buxar", distKm: 130, hatchback: 1549, sedan: 1749, suv: 2449, traditional: "₹3,000 – ₹3,400" },
+  { id: "patna-bhabua", destination: "Bhabua (Kaimur)", destKey: "bhabua", distKm: 190, hatchback: 2199, sedan: 2449, suv: 3399, traditional: "₹4,200 – ₹4,800" },
+  { id: "patna-saharsa", destination: "Saharsa", destKey: "saharsa", distKm: 185, hatchback: 2149, sedan: 2399, suv: 3299, traditional: "₹4,200 – ₹4,600" },
+  { id: "patna-khagaria", destination: "Khagaria", destKey: "khagaria", distKm: 165, hatchback: 1899, sedan: 2149, suv: 2999, traditional: "₹3,800 – ₹4,200" },
+  { id: "patna-bettiah", destination: "Bettiah (West Champaran)", destKey: "bettiah", distKm: 205, hatchback: 2399, sedan: 2649, suv: 3699, traditional: "₹4,800 – ₹5,400" },
+  { id: "patna-supaul", destination: "Supaul", destKey: "supaul", distKm: 215, hatchback: 2499, sedan: 2799, suv: 3849, traditional: "₹4,800 – ₹5,500" },
+  { id: "patna-madhepura", destination: "Madhepura", destKey: "madhepura", distKm: 210, hatchback: 2449, sedan: 2749, suv: 3799, traditional: "₹4,800 – ₹5,400" },
+  { id: "patna-bhagalpur", destination: "Bhagalpur", destKey: "bhagalpur", distKm: 235, hatchback: 2699, sedan: 2999, suv: 4199, traditional: "₹5,200 – ₹6,000" },
+  { id: "patna-banka", destination: "Banka", destKey: "banka", distKm: 225, hatchback: 2599, sedan: 2899, suv: 4049, traditional: "₹5,000 – ₹5,800" },
+  { id: "patna-purnia", destination: "Purnea", destKey: "purnia", distKm: 290, hatchback: 3299, sedan: 3649, suv: 5099, traditional: "₹6,500 – ₹7,200" },
+  { id: "patna-araria", destination: "Araria", destKey: "araria", distKm: 310, hatchback: 3499, sedan: 3899, suv: 5449, traditional: "₹6,800 – ₹7,500" },
+  { id: "patna-katihar", destination: "Katihar", destKey: "katihar", distKm: 305, hatchback: 3449, sedan: 3849, suv: 5399, traditional: "₹6,800 – ₹7,500" },
+  { id: "patna-kishanganj", destination: "Kishanganj", destKey: "kishanganj", distKm: 380, hatchback: 4299, sedan: 4799, suv: 6699, traditional: "₹8,500 – ₹9,500" }
+];
+
+// Verified Highway Distance Matrix for Major Routes
 const BIHAR_DISTANCES = {
-  "patna_gaya": 104,
+  "patna_gaya": 110,
   "patna_muzaffarpur": 75,
-  "patna_darbhanga": 142,
+  "patna_darbhanga": 140,
   "patna_bhagalpur": 235,
-  "patna_purnia": 305,
-  "patna_rajgir": 102,
-  "patna_ara": 54,
+  "patna_purnia": 290,
+  "patna_purnea": 290,
+  "patna_rajgir": 100,
+  "patna_ara": 55,
+  "patna_arrah": 55,
+  "patna_bhojpur": 55,
   "patna_buxar": 130,
-  "patna_sasaram": 150,
+  "patna_sasaram": 155,
+  "patna_rohtas": 155,
   "patna_begusarai": 125,
-  "patna_chhapra": 50,
+  "patna_chhapra": 70,
+  "patna_chapra": 70,
+  "patna_saran": 70,
   "patna_motihari": 155,
-  "patna_bettiah": 200,
+  "patna_eastchamparan": 155,
+  "patna_bettiah": 205,
+  "patna_westchamparan": 205,
   "patna_siwan": 135,
-  "patna_samastipur": 88,
-  "patna_katihar": 320,
-  "patna_saharsa": 210,
-  "patna_munger": 178,
-  "patna_kishanganj": 395,
+  "patna_samastipur": 95,
+  "patna_katihar": 305,
+  "patna_saharsa": 185,
+  "patna_munger": 175,
+  "patna_kishanganj": 380,
+  "patna_hajipur": 25,
+  "patna_vaishali": 25,
+  "patna_jehanabad": 50,
+  "patna_biharsharif": 75,
+  "patna_nalanda": 75,
+  "patna_nawada": 115,
+  "patna_aurangabad": 140,
+  "patna_madhubani": 165,
+  "patna_sitamarhi": 140,
+  "patna_gopalganj": 150,
+  "patna_jamui": 160,
+  "patna_bhabua": 190,
+  "patna_kaimur": 190,
+  "patna_khagaria": 165,
+  "patna_supaul": 215,
+  "patna_madhepura": 210,
+  "patna_banka": 225,
+  "patna_araria": 310,
   "patna_deoghar": 255,
   "patna_varanasi": 250,
   "patna_ranchi": 325,
@@ -216,12 +282,13 @@ function getRouteDistance(origin, dest) {
 }
 
 // Server-Side Fare Calculation Engine (Authoritative source of truth)
+// Calibrated to RodBez one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12.00/km Sedan, ~₹15.50–₹16.00/km SUV)
 const DEFAULT_FLEET_RATES = {
-  hatchback: { perKm: 21.0, minFare: 1698, minKm: 50, rentalPrice: 1800, rentalDriverAllowance: 1000, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
-  sedan: { perKm: 25.0, minFare: 2198, minKm: 50, rentalPrice: 2200, rentalDriverAllowance: 1000, name: "Prime Sedan", model: "Dzire, Etios, Amaze", seats: 4 },
-  sedan_prime: { perKm: 29.0, minFare: 2698, minKm: 50, rentalPrice: 2600, rentalDriverAllowance: 1000, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
-  suv: { perKm: 33.0, minFare: 3398, minKm: 50, rentalPrice: 4000, rentalDriverAllowance: 1000, name: "Family SUV / XUV (6+1)", model: "Maruti Ertiga, Carens, Scorpio", seats: 6 },
-  innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, rentalPrice: 5000, rentalDriverAllowance: 1000, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
+  hatchback: { perKm: 10.5, minFare: 699, minKm: 25, rentalPrice: 1800, rentalDriverAllowance: 1000, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
+  sedan: { perKm: 11.75, minFare: 799, minKm: 25, rentalPrice: 2200, rentalDriverAllowance: 1000, name: "Prime Sedan", model: "Dzire, Etios, Aura", seats: 4 },
+  sedan_prime: { perKm: 14.0, minFare: 999, minKm: 25, rentalPrice: 2600, rentalDriverAllowance: 1000, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
+  suv: { perKm: 15.75, minFare: 1199, minKm: 25, rentalPrice: 4000, rentalDriverAllowance: 1000, name: "Family SUV (6+1)", model: "Ertiga, Triber, Carens", seats: 6 },
+  innova_crysta: { perKm: 20.0, minFare: 1699, minKm: 25, rentalPrice: 5000, rentalDriverAllowance: 1000, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
 };
 
 const DEFAULT_SEGMENT_FARES = {
@@ -313,6 +380,23 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
   let distanceCharge = 0;
   let driverAllowance = 0;
   let roundTripDiscount = 0;
+  let isCalibratedRoute = false;
+
+  const originClean = (origin || '').toLowerCase().replace(/[^a-z]/g, '');
+  const destClean = (dest || '').toLowerCase().replace(/[^a-z]/g, '');
+  const isPatnaOrigin = originClean.includes('patna');
+  const isPatnaDest = destClean.includes('patna');
+
+  let matchedCalibrated = null;
+  if ((isPatnaOrigin || isPatnaDest) && (!isRental && tripType !== 'roundtrip')) {
+    const otherClean = isPatnaOrigin ? destClean : originClean;
+    matchedCalibrated = PATNA_MARKET_FARE_CHART.find(c => {
+      const destKey = c.destKey.toLowerCase().replace(/[^a-z]/g, '');
+      const idKey = c.id.replace('patna-', '').replace(/[^a-z]/g, '');
+      const destFull = c.destination.toLowerCase().replace(/[^a-z]/g, '');
+      return otherClean === destKey || otherClean.includes(destKey) || otherClean === idKey || otherClean.includes(idKey) || destFull.includes(otherClean);
+    });
+  }
 
   if (isRental) {
     // Rental Mode: base rental price (self-drive / rented only) + optional chauffeur allowance
@@ -326,17 +410,22 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
     roundTripDiscount = Math.round(rawTotal * (discountPct / 100)); // e.g. 12% return leg discount
     driverAllowance = Number(segments.roundtrip.driverAllowancePerDay) || 350;
     distanceCharge = (rawTotal - roundTripDiscount) + driverAllowance;
+  } else if (matchedCalibrated) {
+    isCalibratedRoute = true;
+    if (cleanTier === 'hatchback') distanceCharge = matchedCalibrated.hatchback;
+    else if (cleanTier === 'sedan') distanceCharge = matchedCalibrated.sedan;
+    else if (cleanTier === 'sedan_prime') distanceCharge = Math.round(matchedCalibrated.sedan * 1.18);
+    else if (cleanTier === 'suv') distanceCharge = matchedCalibrated.suv;
+    else if (cleanTier === 'innova_crysta') distanceCharge = Math.round(matchedCalibrated.suv * 1.32);
+    else distanceCharge = matchedCalibrated.sedan;
   } else {
-    // oneway / airport
+    // oneway / airport calibrated per-KM benchmark (~₹10.50 Hatchback, ~₹11.75 Sedan, ~₹15.75 SUV)
     distanceCharge = Math.round(dist * tier.perKm);
-    const thresholdKm = Number(segments.oneway.driverAllowanceThresholdKm) || 250;
-    if (dist > thresholdKm) {
-      driverAllowance = Number(segments.oneway.driverAllowance) || 250;
-      distanceCharge += driverAllowance;
-    }
+    const minSlab = Number(tier.minFare) || (cleanTier === 'hatchback' ? 699 : cleanTier === 'sedan' ? 799 : cleanTier === 'suv' ? 1199 : 999);
+    distanceCharge = Math.max(minSlab, distanceCharge);
   }
 
-  const baseFare = isRental ? (Number(tier.rentalPrice) || 2200) : tier.minFare;
+  const baseFare = isRental ? (Number(tier.rentalPrice) || 2200) : (isCalibratedRoute ? distanceCharge : tier.minFare);
   const totalFare = isRental ? distanceCharge : Math.max(baseFare, distanceCharge);
   const tollEst = isRental ? 0 : Math.round((dist / 70) * 55);
   const taxableAmount = Math.round(totalFare / 1.05);
@@ -367,6 +456,13 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
     tollFastag: tollEst,
     gst: gstAmount,
     totalFare: Math.round(totalFare),
+    isCalibratedRoute,
+    traditionalMarketRate: matchedCalibrated ? matchedCalibrated.traditional : null,
+    farePolicy: {
+      included: "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
+      excluded: "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
+      advanceFee: "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
+    },
     inclusions: isRental ? [
       "100% Sanitized & AC Vehicle",
       withDriver ? "Professional Bihar Chauffeur Included" : "Self-Drive Freedom (Rented without Driver)",
@@ -375,11 +471,10 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
       "Comprehensive Commercial Insurance Included",
       "Transparent Pricing with No Hidden Charges"
     ] : [
-      "100% AC Chilled Ride",
-      "Doorstep Pickup & Drop",
-      "Driver Allowance Included",
-      "State Highway Tolls & FASTag Included",
-      "5% GST Tax Included",
+      "Fuel Included",
+      "Vehicle Hire Included",
+      "Professional Chauffeur Allowance Included",
+      "Doorstep Pickup & Drop within Municipal City Limits",
       "Zero Return Fare Charged"
     ],
     exclusions: isRental ? [
@@ -387,8 +482,8 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
       "Traffic violation challans during rental period",
       `Extra KM @ ₹${segments.rental.extraKmRate || 22}/km, Extra Hour @ ₹${segments.rental.extraHourRate || 150}/hr`
     ] : [
-      "Multiple city diversions not specified in booking",
-      "Overnight detention if passenger delays vehicle to following calendar day"
+      "Fastag Toll Plaza taxes and state road permits (paid directly by passenger at actuals, maintaining transparent pricing without inflated buffers)",
+      "Multiple city diversions not specified in booking"
     ]
   };
 }
@@ -1292,6 +1387,27 @@ module.exports = async (req, res) => {
       });
 
       return sendJson(200, { success: true, from: fromParam, count: destList.length, cities: destList });
+    }
+
+    // -------------------------------------------------------------
+    // 4C-2. MARKET-CALIBRATED ONE-WAY FARE CHART API (From Patna)
+    // -------------------------------------------------------------
+    if ((pathname === '/fare-chart' || pathname === '/fares/chart') && method === 'GET') {
+      return sendJson(200, {
+        success: true,
+        benchmark: {
+          formula: "RodBez-benchmarked one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12.00/km Sedan, ~₹15.50–₹16.00/km SUV)",
+          originCity: "Patna",
+          zeroReturnFare: true
+        },
+        farePolicy: {
+          included: "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
+          excluded: "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
+          advanceBookingFee: "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
+        },
+        routesCount: PATNA_MARKET_FARE_CHART.length,
+        routes: PATNA_MARKET_FARE_CHART
+      });
     }
 
     // -------------------------------------------------------------
@@ -4164,11 +4280,13 @@ module.exports = async (req, res) => {
     }
 
     if (pathname === '/driver/login' && method === 'POST') {
-      const { phone, pin } = body;
+      const { phone, pin, password } = body;
       const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
       if (cleanPhone.length !== 10) {
         return sendJson(400, { success: false, message: 'Please enter a valid 10-digit mobile number' });
       }
+
+      const inputPin = String(pin || password || '').trim();
 
       let driver = (db.drivers || []).find(d => d.phone.replace(/\D/g, '').slice(-10) === cleanPhone);
 
@@ -4201,13 +4319,23 @@ module.exports = async (req, res) => {
         }
       }
 
-      if (!driver) {
+      if (driver) {
+        const expectedPin = String(driver.pin || driver.password || cleanPhone.slice(-4) || '1234').trim();
+        if (inputPin && expectedPin && inputPin !== expectedPin) {
+          return sendJson(401, { success: false, message: 'Invalid Driver PIN or Password. Please try again or call dispatch desk (+91 6206494214).' });
+        }
+      } else {
+        // Reject unverified logins with incorrect credentials
+        if (inputPin && inputPin !== '1234' && inputPin !== cleanPhone.slice(-4)) {
+          return sendJson(401, { success: false, message: 'Driver partner not registered or invalid credentials. Please register or contact dispatch desk (+91 6206494214).' });
+        }
+
         driver = {
           id: `drv_${cleanPhone}`,
           name: `Driver Partner (${cleanPhone.slice(-4)})`,
           phone: `+91 ${cleanPhone}`,
           cleanPhone,
-          pin: (pin && pin.trim()) || '1234',
+          pin: inputPin || '1234',
           fleetTier: 'sedan',
           vehicleModel: 'Swift Dzire (Commercial Taxi)',
           vehicleNumber: `BR 01 PA ${cleanPhone.slice(-4)}`,
@@ -4229,11 +4357,6 @@ module.exports = async (req, res) => {
         if (!db.drivers) db.drivers = [];
         db.drivers.push(driver);
         await saveDb(db);
-      }
-
-      const inputPin = (pin || '').trim();
-      if (inputPin !== '') {
-        driver.pin = inputPin;
       }
 
       const token = securityService.createJwt({

@@ -1300,6 +1300,35 @@ module.exports = async (req, res) => {
     if (pathname === '/route-details' && method === 'GET') {
       const fromVal = url.searchParams.get('from') || 'Patna';
       const toVal = url.searchParams.get('to') || 'Gaya';
+      const rawPhone = (url.searchParams.get('phone') || '').replace(/\D/g, '').slice(-10);
+
+      if (!rawPhone || rawPhone.length !== 10 || !/^[6-9]\d{9}$/.test(rawPhone)) {
+        return sendJson(400, {
+          success: false,
+          requirePhone: true,
+          message: 'Valid 10-digit Indian mobile number is required to check route fares.'
+        });
+      }
+
+      // Record inquiry lead in central dispatch
+      if (!db.leads) db.leads = [];
+      const exLead = db.leads.find(l => (l.cleanPhone || (l.phone || '').replace(/\D/g, '').slice(-10)) === rawPhone);
+      if (!exLead) {
+        db.leads.unshift({
+          id: `lead_${rawPhone}_${Date.now().toString().slice(-4)}`,
+          phone: `+91 ${rawPhone}`,
+          cleanPhone: rawPhone,
+          rawPhone: rawPhone,
+          passengerName: 'Passenger Inquiry',
+          originCity: fromVal,
+          destCity: toVal,
+          tripType: 'oneway',
+          source: 'Route Details Fare Check API',
+          status: 'NEW',
+          createdAt: new Date().toISOString()
+        });
+        await saveDb(db);
+      }
 
       const distanceKm = getRouteDistance(fromVal, toVal);
       const hatchFare = calculateServerFare(distanceKm, 'hatchback', 'oneway', fromVal, toVal);

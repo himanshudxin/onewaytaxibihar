@@ -312,8 +312,9 @@ class ApiClient {
   }
 
   // oneway.cab API: Route Details & Cab Tiers
-  static async getRouteDetails(from, to) {
-    const res = await this.request(`/api/route-details?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
+  static async getRouteDetails(from, to, phone = "") {
+    const rawPhone = (phone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "").slice(-10);
+    const res = await this.request(`/api/route-details?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}${rawPhone ? `&phone=${encodeURIComponent(rawPhone)}` : ''}`);
     if (res && res.success) {
       return res;
     }

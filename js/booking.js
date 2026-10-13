@@ -114,11 +114,17 @@ class BookingManager {
       }
     }
 
-    // Transparent Fares: Automatically show fares when route is configured
+    // Fares remain strictly locked until a valid 10-digit mobile number is provided
     const section = document.getElementById("cab-selection-section");
     const mapSection = document.getElementById("route-map-section");
 
-    if (this.originCity && this.destCity) {
+    const phoneInput = document.getElementById("input-fare-phone");
+    const existingPhone = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    const hasInitialValidPhone = existingPhone.length === 10 && /^[6-9]\d{9}$/.test(existingPhone);
+
+    if (hasInitialValidPhone) {
+      this.userPhone = existingPhone;
+      if (phoneInput && !phoneInput.value) phoneInput.value = existingPhone;
       this.isFareUnlocked = true;
       if (section) {
         section.classList.remove("fare-section-closed");
@@ -130,26 +136,32 @@ class BookingManager {
       }
       this.calculateAndRenderFares();
     } else {
-      this.isFareUnlocked = true;
+      this.isFareUnlocked = false;
       if (section) {
-        section.classList.remove("fare-section-closed");
-        section.classList.add("fare-section-open");
+        section.classList.add("fare-section-closed");
+        section.classList.remove("fare-section-open");
       }
       if (mapSection) {
-        mapSection.classList.remove("fare-section-closed");
-        mapSection.classList.add("fare-section-open");
+        mapSection.classList.add("fare-section-closed");
+        mapSection.classList.remove("fare-section-open");
       }
-      this.calculateAndRenderFares();
     }
 
-    // If deep-link params were supplied, smooth-scroll to cab options
+    // If deep-link params were supplied, smooth-scroll to cab options or booking hero
     if (typeof window !== "undefined" && window.location.search) {
       try {
         const checkParams = new URLSearchParams(window.location.search);
         if (checkParams.get("from") || checkParams.get("to") || checkParams.get("cab") || window.location.hash === "#booking-hero") {
           setTimeout(() => {
-            const targetEl = document.getElementById("cab-selection-section") || document.getElementById("booking-hero");
-            targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+            if (this.isFareUnlocked) {
+              const targetEl = document.getElementById("cab-selection-section") || document.getElementById("booking-hero");
+              targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+              const targetEl = document.getElementById("booking-hero") || document.querySelector(".search-card-hero");
+              targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
+              const pInput = document.getElementById("input-fare-phone");
+              if (pInput && !pInput.value) pInput.focus();
+            }
           }, 350);
         }
       } catch (e) {}
@@ -1270,6 +1282,18 @@ class BookingManager {
             }
 
             this.transferLeadToHelpdesk(val, true, { source: "Homepage Phone Entered" });
+          } else {
+            this.isFareUnlocked = false;
+            const section = document.getElementById("cab-selection-section");
+            const mapSection = document.getElementById("route-map-section");
+            if (section) {
+              section.classList.add("fare-section-closed");
+              section.classList.remove("fare-section-open");
+            }
+            if (mapSection) {
+              mapSection.classList.add("fare-section-closed");
+              mapSection.classList.remove("fare-section-open");
+            }
           }
         }
         this.updateCheckFareButtonState();
@@ -1413,7 +1437,7 @@ class BookingManager {
       return false;
     }
 
-    // 3. Optional Phone capture at fare inquiry (silently captures inquiry if entered)
+    // 3. Strict Phone Number Validation: Mandatory to view fares
     let phoneToRecord = "";
     if (phoneInput && phoneInput.value) {
       phoneToRecord = phoneInput.value.trim().replace(/\D/g, "");
@@ -1433,13 +1457,44 @@ class BookingManager {
       phoneToRecord = phoneToRecord.slice(-10);
     }
 
-    if (phoneToRecord && phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord)) {
-      const clean10 = phoneToRecord;
-      this.userPhone = clean10;
-      this.passengerDetails.phone = `+91 ${clean10}`;
-      localStorage.setItem("oneway_fare_phone", clean10);
-      this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
+    const hasValidPhone = phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord);
+    if (!hasValidPhone) {
+      this.isFareUnlocked = false;
+      const section = document.getElementById("cab-selection-section");
+      const mapSection = document.getElementById("route-map-section");
+      if (section) {
+        section.classList.add("fare-section-closed");
+        section.classList.remove("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.add("fare-section-closed");
+        mapSection.classList.remove("fare-section-open");
+      }
+
+      const phoneGroup = document.getElementById("phone-check-group");
+      if (phoneGroup) {
+        phoneGroup.classList.add("shake-error");
+        phoneGroup.style.borderColor = "#ef4444";
+        phoneGroup.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.25)";
+        setTimeout(() => {
+          phoneGroup.classList.remove("shake-error");
+        }, 600);
+      }
+      if (phoneInput) {
+        phoneInput.focus();
+      }
+      if (!silent) {
+        window.showToast("Please enter your 10-digit mobile number to check fares & cab availability.", "warning");
+      }
+      this.updateCheckFareButtonState();
+      return false;
     }
+
+    const clean10 = phoneToRecord;
+    this.userPhone = clean10;
+    this.passengerDetails.phone = `+91 ${clean10}`;
+    try { localStorage.setItem("oneway_fare_phone", clean10); } catch (e) {}
+    this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
 
     // 4. Open and reveal Fare Details Section & Map Section
     this.isFareUnlocked = true;
@@ -1461,6 +1516,12 @@ class BookingManager {
       setTimeout(() => {
         window.onewayMap.map.invalidateSize();
       }, 250);
+    }
+
+    if (section) {
+      setTimeout(() => {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     }
 
     if (section && !silent) {
@@ -1628,6 +1689,27 @@ class BookingManager {
      ========================================================================== */
   calculateAndRenderFares() {
     const isRental = (this.tripType === "rental" || this.tripType === "local");
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawPhone = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+
+    // Fares can NEVER be checked or revealed without a valid 10-digit mobile number
+    if (!this.isFareUnlocked || !hasValidPhone) {
+      this.isFareUnlocked = false;
+      const section = document.getElementById("cab-selection-section");
+      const mapSection = document.getElementById("route-map-section");
+      if (section) {
+        section.classList.add("fare-section-closed");
+        section.classList.remove("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.add("fare-section-closed");
+        mapSection.classList.remove("fare-section-open");
+      }
+      this.updateCheckFareButtonState();
+      return;
+    }
+
     if (!this.originCity || (!this.destCity && !isRental)) {
       this.calculatedDistanceKm = isRental ? 80 : 100;
       this.calculatedDuration = isRental ? "8 Hours" : "2h 00m";
@@ -1927,7 +2009,7 @@ class BookingManager {
 
     container.innerHTML = OTB_POPULAR_ROUTES.slice(0, 6).map(r => `
       <button type="button" class="quick-route-chip" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-        ${r.from} → ${r.to} • ₹${r.baseFareHatchback}
+        ${r.from} → ${r.to} • Check Fare
       </button>
     `).join("");
   }

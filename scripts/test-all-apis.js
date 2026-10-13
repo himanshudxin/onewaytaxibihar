@@ -114,7 +114,7 @@ async function runAllApiTests() {
   record('Catalog', 'GET /api/locations/recommendations', locRecs.status === 200,
     `Status: ${locRecs.status}, Popular Routes: ${locRecs.data?.popularRoutes?.length || 0}`);
 
-  const routeDetails = await apiRequest('GET', '/route-details?from=Patna&to=Gaya');
+  const routeDetails = await apiRequest('GET', '/route-details?from=Patna&to=Gaya&phone=9835012345');
   record('Catalog', 'GET /api/route-details', routeDetails.status === 200 && routeDetails.data?.distanceKm > 0,
     `Status: ${routeDetails.status}, Distance: ${routeDetails.data?.distanceKm || 0} KM, Est: ${routeDetails.data?.duration || 'N/A'}`);
 

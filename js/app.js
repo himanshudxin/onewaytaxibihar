@@ -2256,7 +2256,14 @@ window.showToast = (msg, type = "info") => {
 window.selectFleetCategory = (cabId) => {
   if (window.bookingManager) {
     window.bookingManager.selectCabTier(cabId);
-    document.getElementById("cab-selection-section")?.scrollIntoView({ behavior: "smooth" });
+    if (!window.bookingManager.isFareUnlocked) {
+      const phoneInput = document.getElementById("input-fare-phone");
+      phoneInput?.focus();
+      document.querySelector(".search-card-hero")?.scrollIntoView({ behavior: "smooth" });
+      window.showToast("Please enter your 10-digit mobile number to check fares & cab availability.", "warning");
+    } else {
+      document.getElementById("cab-selection-section")?.scrollIntoView({ behavior: "smooth" });
+    }
   }
 };
 

@@ -1995,7 +1995,7 @@
             <div class="kpi-tile">
               <div class="kpi-title">Today's Revenue</div>
               <div class="kpi-value" id="kpi-today-revenue">₹0</div>
-              <div class="kpi-subtitle">Gross verified booking value</div>
+              <div class="kpi-subtitle">Confirmed payments received</div>
             </div>
             <div class="kpi-tile warning">
               <div class="kpi-title">Pending Payments</div>
@@ -2567,7 +2567,7 @@
             <div class="kpi-tile success">
               <div class="kpi-title">Delivered Revenue</div>
               <div class="kpi-value" id="rep-delivered-val">₹0</div>
-              <div class="kpi-subtitle">Completed trips only</div>
+              <div class="kpi-subtitle">Confirmed payment received</div>
             </div>
             <div class="kpi-tile">
               <div class="kpi-title">Conversion Rate</div>
@@ -3836,6 +3836,37 @@
       } catch (e) {}
     }
 
+    // Helper: Confirmed Payment Received Accounting Engine
+    // Revenue strictly contains only rides where confirmed payment was actually received.
+    // Unpaid rides (scheduled with Cash to Driver and zero advance) are NEVER counted as revenue.
+    function getConfirmedPaymentReceived(b) {
+      if (!b) return 0;
+      const bStatus = String(b.bookingStatus || b.status || '').toUpperCase();
+      if (bStatus === 'CANCELLED' || bStatus === 'REJECTED') return 0;
+
+      const payStatus = String(b.paymentStatus || '').toUpperCase();
+      const totalFare = Number(b.totalFare) || Number(b.fare) || Number(b.originalFare) || 0;
+      const advance = Number(b.advancePaid) || 0;
+
+      // 1. Completed trip - full payment collected (driver cash collection confirmed or online)
+      if (bStatus === 'COMPLETED') {
+        return totalFare > 0 ? totalFare : advance;
+      }
+
+      // 2. Full online payment received & verified (ride confirmed/in-progress)
+      if (payStatus.includes('PAID') && !payStatus.includes('PARTIALLY') && !payStatus.includes('PAYABLE') && !payStatus.includes('AWAITING') && !payStatus.includes('PENDING')) {
+        return totalFare > 0 ? totalFare : advance;
+      }
+
+      // 3. Partial advance payment received & verified (ride scheduled/in-progress)
+      if (advance > 0 && (payStatus.includes('PARTIALLY') || payStatus.includes('ADVANCE') || payStatus.includes('PAID'))) {
+        return advance;
+      }
+
+      // 4. Otherwise (unpaid booking, payable to driver upon completion, awaiting payment): 0 received
+      return 0;
+    }
+
     // =========================================================================
     // DASHBOARD KPI RENDERING
     // =========================================================================
@@ -3848,11 +3879,37 @@
       const availDrivers = _allDrivers.filter(d => d.status === 'available' || d.isAvailable).length;
       const newLeads = _allLeads.filter(l => !l.status || l.status === 'NEW').length;
 
-      // Calculate today's revenue
+      // Calculate today's confirmed payment received revenue
       const todayStr = new Date().toISOString().slice(0, 10);
-      const todayRev = _allBookings
-        .filter(b => (b.createdAt || '').slice(0, 10) === todayStr && b.bookingStatus !== 'CANCELLED')
-        .reduce((sum, b) => sum + (Number(b.totalFare) || Number(b.fare) || 0), 0);
+      const todayRev = _allBookings.reduce((sum, b) => {
+        if (!b) return sum;
+        const bStatus = String(b.bookingStatus || b.status || '').toUpperCase();
+        if (bStatus === 'CANCELLED' || bStatus === 'REJECTED') return sum;
+
+        const payStatus = String(b.paymentStatus || '').toUpperCase();
+        const totalFare = Number(b.totalFare) || Number(b.fare) || Number(b.originalFare) || 0;
+        const advance = Number(b.advancePaid) || 0;
+        const isCreatedToday = (b.createdAt || '').slice(0, 10) === todayStr;
+        const isCompletedToday = (b.completedAt || '').slice(0, 10) === todayStr ||
+          (bStatus === 'COMPLETED' && ((b.updatedAt || b.createdAt || '').slice(0, 10) === todayStr));
+
+        // Trip completed today: full fare received today
+        if (bStatus === 'COMPLETED' && isCompletedToday) {
+          return sum + (totalFare > 0 ? totalFare : advance);
+        }
+
+        // Full online payment received today
+        if (isCreatedToday && payStatus.includes('PAID') && !payStatus.includes('PARTIALLY') && !payStatus.includes('PAYABLE') && !payStatus.includes('AWAITING') && !payStatus.includes('PENDING')) {
+          return sum + (totalFare > 0 ? totalFare : advance);
+        }
+
+        // Advance payment received today
+        if (isCreatedToday && advance > 0 && (payStatus.includes('PARTIALLY') || payStatus.includes('ADVANCE') || payStatus.includes('PAID'))) {
+          return sum + advance;
+        }
+
+        return sum;
+      }, 0);
 
       // Expiring vehicles count (<30 days)
       const now = new Date();
@@ -5279,14 +5336,20 @@
     }
 
     function renderReportsView(data) {
-      setText("rep-gross-val", "₹" + (data.grossRevenue || 0).toLocaleString('en-IN'));
-      setText("rep-delivered-val", "₹" + (data.deliveredRevenue || 0).toLocaleString('en-IN'));
-      setText("rep-conversion-rate", (data.conversionRate || "92") + "%");
-      setText("rep-cancellation-rate", (data.cancellationRate || "4") + "%");
+      const stats = data?.stats || {};
+      const gross = data?.grossRevenue !== undefined ? data.grossRevenue : (stats.grossRevenue !== undefined ? stats.grossRevenue : (stats.grossVolume !== undefined ? stats.grossVolume : (stats.totalRevenue || 0)));
+      const delivered = data?.deliveredRevenue !== undefined ? data.deliveredRevenue : (stats.deliveredRevenue !== undefined ? stats.deliveredRevenue : (stats.totalRevenue || 0));
+      const convRate = data?.conversionRate !== undefined ? data.conversionRate : (stats.totalBookings > 0 ? Math.round(((stats.completedTrips || 0) / stats.totalBookings) * 100) : 92);
+      const cancRate = data?.cancellationRate !== undefined ? data.cancellationRate : (stats.totalBookings > 0 ? Math.round(((stats.cancelledTrips || 0) / stats.totalBookings) * 100) : 4);
+
+      setText("rep-gross-val", "₹" + Number(gross).toLocaleString('en-IN'));
+      setText("rep-delivered-val", "₹" + Number(delivered).toLocaleString('en-IN'));
+      setText("rep-conversion-rate", convRate + "%");
+      setText("rep-cancellation-rate", cancRate + "%");
 
       const tbody = document.getElementById("reports-routes-body");
       if (tbody) {
-        const routes = data.topRoutes || [
+        const routes = (Array.isArray(data?.topRoutes) && data.topRoutes.length > 0) ? data.topRoutes : [
           { origin: 'Patna', dest: 'Gaya', count: 18, share: '32%' },
           { origin: 'Patna', dest: 'Muzaffarpur', count: 14, share: '24%' },
           { origin: 'Patna', dest: 'Darbhanga', count: 12, share: '21%' },
@@ -5294,10 +5357,10 @@
         ];
         tbody.innerHTML = routes.map(r => `
           <tr>
-            <td><strong>${r.origin}</strong></td>
-            <td><strong>${r.dest}</strong></td>
+            <td><strong>${r.origin || (r.route ? r.route.split(' ➔ ')[0] : 'Patna')}</strong></td>
+            <td><strong>${r.dest || (r.route ? r.route.split(' ➔ ')[1] : 'Bihar')}</strong></td>
             <td>${r.count} completed</td>
-            <td><strong style="color:#059669;">${r.share}</strong></td>
+            <td><strong style="color:#059669;">${r.share || ''}</strong></td>
           </tr>
         `).join("");
       }

@@ -284,6 +284,37 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
   };
 }
 
+// Strict Financial Accounting: Confirmed Payment Received Engine
+// Revenue strictly contains only rides where confirmed payment was actually received.
+// Unpaid rides (e.g. scheduled with "Cash to Driver" and zero advance) are NEVER counted as revenue.
+function getConfirmedPaymentReceived(b) {
+  if (!b) return 0;
+  const status = String(b.bookingStatus || b.status || '').toUpperCase();
+  if (status === 'CANCELLED' || status === 'REJECTED') return 0;
+
+  const payStatus = String(b.paymentStatus || '').toUpperCase();
+  const totalFare = Number(b.totalFare) || Number(b.fare) || Number(b.originalFare) || 0;
+  const advancePaid = Number(b.advancePaid) || 0;
+
+  // 1. Completed trip - full payment collected (driver cash collection confirmed or online)
+  if (status === 'COMPLETED') {
+    return totalFare > 0 ? totalFare : advancePaid;
+  }
+
+  // 2. Full online payment received & verified (ride confirmed/in-progress)
+  if (payStatus.includes('PAID') && !payStatus.includes('PARTIALLY') && !payStatus.includes('PAYABLE') && !payStatus.includes('AWAITING') && !payStatus.includes('PENDING')) {
+    return totalFare > 0 ? totalFare : advancePaid;
+  }
+
+  // 3. Partial advance payment received & verified (ride scheduled/in-progress)
+  if (advancePaid > 0 && (payStatus.includes('PARTIALLY') || payStatus.includes('ADVANCE') || payStatus.includes('PAID'))) {
+    return advancePaid;
+  }
+
+  // 4. Otherwise (unpaid booking, payable to driver upon completion, awaiting payment): 0 received
+  return 0;
+}
+
 // In-Memory Rate Limiting for Telecom OTP Requests (Defensive Brute Force Protection)
 const otpRateLimitMap = new Map();
 function checkOtpRateLimit(phone) {
@@ -2584,8 +2615,17 @@ module.exports = async (req, res) => {
       const confirmed = bookings.filter(b => ['CONFIRMED', 'DRIVER ASSIGNED', 'STARTED', 'COMPLETED'].includes(b.bookingStatus));
       const cancelled = bookings.filter(b => ['CANCELLED', 'REJECTED'].includes(b.bookingStatus));
 
-      const totalRevenue = confirmed.reduce((sum, b) => sum + (Number(b.totalFare) || Number(b.originalFare) || 0), 0);
-      const advanceCollected = confirmed.reduce((sum, b) => sum + (Number(b.advancePaid) || 0), 0);
+      // Strict financial accounting: Only count rides with confirmed payment received
+      const grossRevenue = bookings.filter(b => !['CANCELLED', 'REJECTED'].includes(b.bookingStatus))
+        .reduce((sum, b) => sum + (Number(b.totalFare) || Number(b.fare) || Number(b.originalFare) || 0), 0);
+      const deliveredRevenue = bookings.reduce((sum, b) => sum + getConfirmedPaymentReceived(b), 0);
+      const totalRevenue = deliveredRevenue; // Confirmed payment received revenue
+      const advanceCollected = bookings.filter(b => !['CANCELLED', 'REJECTED'].includes(b.bookingStatus))
+        .reduce((sum, b) => sum + (Number(b.advancePaid) || 0), 0);
+
+      const paidRides = bookings.filter(b => getConfirmedPaymentReceived(b) > 0);
+      const conversionRate = bookings.length > 0 ? Math.round((completed.length / bookings.length) * 100) : 0;
+      const cancellationRate = bookings.length > 0 ? Math.round((cancelled.length / bookings.length) * 100) : 0;
 
       const routeStats = {};
       bookings.forEach(b => {
@@ -2593,21 +2633,40 @@ module.exports = async (req, res) => {
         routeStats[key] = (routeStats[key] || 0) + 1;
       });
 
+      const totalRouteCount = Object.values(routeStats).reduce((a, b) => a + b, 0) || 1;
       const topRoutes = Object.entries(routeStats)
         .sort((a,b) => b[1] - a[1])
         .slice(0, 8)
-        .map(([route, count]) => ({ route, count }));
+        .map(([routeKey, count]) => {
+          const parts = routeKey.split(' ➔ ');
+          return {
+            route: routeKey,
+            origin: parts[0] || 'Patna',
+            dest: parts[1] || 'Bihar',
+            count,
+            share: `${Math.round((count / totalRouteCount) * 100)}%`
+          };
+        });
 
       return sendJson(200, {
         success: true,
+        grossRevenue,
+        grossVolume: grossRevenue,
+        deliveredRevenue,
+        totalRevenue,
+        conversionRate,
+        cancellationRate,
         stats: {
           totalBookings: bookings.length,
           completedTrips: completed.length,
           activeDispatches: confirmed.length - completed.length,
           cancelledTrips: cancelled.length,
+          grossRevenue,
+          grossVolume: grossRevenue,
+          deliveredRevenue,
           totalRevenue,
           advanceCollected,
-          averageTicketSize: confirmed.length > 0 ? Math.round(totalRevenue / confirmed.length) : 0,
+          averageTicketSize: paidRides.length > 0 ? Math.round(deliveredRevenue / paidRides.length) : (confirmed.length > 0 ? Math.round(grossRevenue / confirmed.length) : 0),
           totalDrivers: (db.drivers || []).length,
           totalVehicles: (db.vehicles || []).length
         },
@@ -3168,6 +3227,19 @@ module.exports = async (req, res) => {
 
       const statusUpper = (newStatus || status || '').toUpperCase();
       booking.bookingStatus = statusUpper;
+      if (statusUpper === 'COMPLETED') {
+        booking.completedAt = new Date().toISOString();
+        if (!booking.paymentStatus || booking.paymentStatus.includes('PAYABLE') || booking.paymentStatus.includes('PENDING') || booking.paymentStatus.includes('AWAITING') || booking.paymentStatus.includes('PARTIALLY')) {
+          booking.paymentStatus = 'PAID (Ride Completed & Settled)';
+          booking.balanceDue = 0;
+        }
+        const payRec = (db.payments || []).find(p => p.bookingId === booking.bookingId || p.bookingId === booking.id);
+        if (payRec) {
+          payRec.status = 'PAID';
+          payRec.balanceDue = 0;
+          payRec.settledAt = new Date().toISOString();
+        }
+      }
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: statusUpper,
@@ -3557,8 +3629,20 @@ module.exports = async (req, res) => {
         note: note || `Chauffeur updated status to ${statusUpper}`
       });
 
-      // If completed, update driver earnings & stats
+      // If completed, update driver earnings & stats and settle trip payment
       if (statusUpper === 'COMPLETED') {
+        booking.completedAt = new Date().toISOString();
+        if (!booking.paymentStatus || booking.paymentStatus.includes('PAYABLE') || booking.paymentStatus.includes('PENDING') || booking.paymentStatus.includes('AWAITING') || booking.paymentStatus.includes('PARTIALLY')) {
+          booking.paymentStatus = 'PAID (Cash Handover to Driver Verified)';
+          booking.balanceDue = 0;
+        }
+        const payRec = (db.payments || []).find(p => p.bookingId === booking.bookingId || p.bookingId === booking.id);
+        if (payRec) {
+          payRec.status = 'PAID';
+          payRec.balanceDue = 0;
+          payRec.settledAt = new Date().toISOString();
+        }
+
         const targetDriver = (db.drivers || []).find(d => d.id === driverAuth.driver.id);
         if (targetDriver) {
           const tripFare = Number(booking.totalFare) || 2000;
@@ -3767,13 +3851,22 @@ module.exports = async (req, res) => {
 
       let totalRev = 0, todayRev = 0, unpaidCount = 0, unpaidAmount = 0;
       (db.payments || []).forEach(p => {
-        const amt = parseInt(p.amount) || 0;
-        if ((p.status || '').includes('PAID')) {
-          totalRev += amt;
-          if ((p.createdAt || '').startsWith(todayStr)) todayRev += amt;
+        const fullAmt = parseInt(p.amount) || 0;
+        const advanceAmt = parseInt(p.advancePaid) || 0;
+        const statusUpper = String(p.status || '').toUpperCase();
+
+        if (statusUpper === 'PAID') {
+          totalRev += fullAmt;
+          if ((p.verifiedAt || p.settledAt || p.createdAt || '').startsWith(todayStr)) todayRev += fullAmt;
+        } else if (statusUpper === 'PARTIALLY_PAID' || (statusUpper.includes('PAID') && advanceAmt > 0 && advanceAmt < fullAmt)) {
+          const recAmt = advanceAmt > 0 ? advanceAmt : Math.min(299, fullAmt);
+          totalRev += recAmt;
+          if ((p.verifiedAt || p.createdAt || '').startsWith(todayStr)) todayRev += recAmt;
+          unpaidCount++;
+          unpaidAmount += Math.max(0, fullAmt - recAmt);
         } else {
           unpaidCount++;
-          unpaidAmount += amt;
+          unpaidAmount += fullAmt;
         }
       });
 
@@ -4397,8 +4490,8 @@ module.exports = async (req, res) => {
       const activeTrips = bookings.filter(b => ['DRIVER ASSIGNED', 'ACCEPTED', 'ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus)).length;
       const completedTrips = bookings.filter(b => b.bookingStatus === 'COMPLETED').length;
       const cancelledTrips = bookings.filter(b => b.bookingStatus === 'CANCELLED').length;
-      const totalRevenue = bookings.reduce((sum, b) => sum + (Number(b.fare) || 0), 0);
-      const advanceCollected = bookings.reduce((sum, b) => sum + (Number(b.advancePaid) || 0), 0);
+      const totalRevenue = bookings.reduce((sum, b) => sum + getConfirmedPaymentReceived(b), 0);
+      const advanceCollected = bookings.filter(b => !['CANCELLED', 'REJECTED'].includes(b.bookingStatus)).reduce((sum, b) => sum + (Number(b.advancePaid) || 0), 0);
 
       return sendJson(200, {
         success: true,

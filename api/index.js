@@ -2772,7 +2772,14 @@ module.exports = async (req, res) => {
       pathname === '/leads' ||
       pathname === '/admin/leads' ||
       pathname.startsWith('/admin/leads') ||
-      pathname.startsWith('/leads')
+      pathname.startsWith('/leads') ||
+      pathname === '/enquiry' ||
+      pathname === '/enquiries' ||
+      pathname.startsWith('/enquiry') ||
+      pathname.startsWith('/enquiries') ||
+      pathname === '/admin/enquiry' ||
+      pathname === '/admin/enquiries' ||
+      pathname.startsWith('/admin/enquiries')
     ) {
       const leadsHandler = require('./leads.js');
       return leadsHandler(req, res);

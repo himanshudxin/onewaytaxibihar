@@ -15,19 +15,29 @@ let lastCacheTime = 0;
 const CACHE_TTL_MS = 2500; // 2.5 seconds cache TTL: lightning-fast zero-lag polling
 
 async function connectToDatabase() {
-  if (cachedDb) return cachedDb;
+  if (cachedDb && cachedClient) {
+    try {
+      await cachedDb.command({ ping: 1 });
+      return cachedDb;
+    } catch (e) {
+      cachedDb = null;
+      cachedClient = null;
+    }
+  }
   try {
     cachedClient = new MongoClient(MONGODB_URI, {
       maxPoolSize: 25,
       minPoolSize: 5,
-      serverSelectionTimeoutMS: 4000,
-      connectTimeoutMS: 4000
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000
     });
     await cachedClient.connect();
     cachedDb = cachedClient.db('onewaytaxibihar');
     return cachedDb;
   } catch (err) {
     console.warn('[Leads DB Connection Warning]:', err.message);
+    cachedDb = null;
+    cachedClient = null;
     return null;
   }
 }
@@ -118,8 +128,9 @@ module.exports = async (req, res) => {
   // =========================================================================
   if (req.method === 'GET') {
     const now = Date.now();
+    const forceRefresh = url.searchParams.has('refresh') || url.searchParams.has('t') || req.headers['cache-control'] === 'no-cache';
     // Return cached in-memory response if within TTL for instant <2ms delivery
-    if (cachedLeads && (now - lastCacheTime < CACHE_TTL_MS)) {
+    if (!forceRefresh && cachedLeads && (now - lastCacheTime < CACHE_TTL_MS)) {
       return sendJson(200, {
         success: true,
         count: cachedLeads.length,
@@ -134,8 +145,8 @@ module.exports = async (req, res) => {
       if (db) {
         const cloudLeads = await db.collection('leads')
           .find({})
-          .sort({ createdAt: -1, updatedAt: -1 })
-          .limit(150)
+          .sort({ updatedAt: -1, createdAt: -1 })
+          .limit(200)
           .toArray();
 
         // Sanitize MongoDB _id
@@ -150,7 +161,11 @@ module.exports = async (req, res) => {
           }
         });
 
-        cleanDocs.sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
+        cleanDocs.sort((a, b) => {
+          const tB = Math.max(new Date(b.updatedAt || 0).getTime(), new Date(b.createdAt || 0).getTime());
+          const tA = Math.max(new Date(a.updatedAt || 0).getTime(), new Date(a.createdAt || 0).getTime());
+          return tB - tA;
+        });
 
         cachedLeads = cleanDocs;
         lastCacheTime = now;
@@ -287,17 +302,12 @@ module.exports = async (req, res) => {
       try {
         const db = await connectToDatabase();
         if (db) {
-          const { id, createdAt, ...leadUpdateFields } = newLead;
           await db.collection('leads').updateOne(
             { cleanPhone: cleanPhone },
             {
               $set: {
-                ...leadUpdateFields,
+                ...newLead,
                 updatedAt: now
-              },
-              $setOnInsert: {
-                id: newLead.id,
-                createdAt: now
               }
             },
             { upsert: true }
@@ -321,16 +331,9 @@ module.exports = async (req, res) => {
       // 2. Persist to local backup
       saveLocalLead(newLead);
 
-      // 3. Immediately invalidate memory cache and prepend for instant 0ms poll return
-      if (cachedLeads) {
-        const existIdx = cachedLeads.findIndex(l => l.cleanPhone === cleanPhone);
-        if (existIdx >= 0) {
-          cachedLeads[existIdx] = { ...cachedLeads[existIdx], ...newLead };
-        } else {
-          cachedLeads.unshift(newLead);
-        }
-        lastCacheTime = Date.now();
-      }
+      // 3. Immediately invalidate memory cache for instant fresh delivery to Admin
+      cachedLeads = null;
+      lastCacheTime = 0;
 
       return sendJson(201, {
         success: true,

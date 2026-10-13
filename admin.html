@@ -1938,8 +1938,7 @@
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('ASSIGNED', this)">Assigned</button>
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('ON_TRIP', this)">Active On Trip</button>
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('COMPLETED', this)">Completed</button>
-              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('CANCELLED', this)">Cancelled</button>
-              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('LEADS', this)" style="border-color:#38bdf8; color:#0284c7;">⚡ Silent Leads</button>
+              <button type="button" class="tab-pill" id="tab-filter-leads" onclick="setBookingsStatusFilter('LEADS', this)" style="border-color:#0284c7; color:#0284c7; font-weight:700;">💬 Inquiries &amp; Leads <span class="nav-badge info" id="filter-pill-leads-count" style="margin-left:4px; font-size:10.5px; background:#0284c7; color:#fff;">0</span></button>
             </div>
 
             <div class="filter-group">
@@ -3461,7 +3460,7 @@
 
           if (!_isFirstLoad) {
             freshLeads.forEach(l => {
-              const lId = l.id || l.cleanPhone;
+              const lId = (l.id || l.cleanPhone) + '_' + (l.updatedAt || l.createdAt || '');
               if (lId && !_knownLeadIds.has(lId)) {
                 _knownLeadIds.add(lId);
                 playExecutiveChime();
@@ -3470,13 +3469,20 @@
             });
           } else {
             freshLeads.forEach(l => {
-              const lId = l.id || l.cleanPhone;
+              const lId = (l.id || l.cleanPhone) + '_' + (l.updatedAt || l.createdAt || '');
               if (lId) _knownLeadIds.add(lId);
             });
           }
 
-          _allLeads = freshLeads;
+          _allLeads = freshLeads.sort((a, b) => {
+            const tB = Math.max(new Date(b.updatedAt || 0).getTime(), new Date(b.createdAt || 0).getTime());
+            const tA = Math.max(new Date(a.updatedAt || 0).getTime(), new Date(a.createdAt || 0).getTime());
+            return tB - tA;
+          });
           renderLeadsTable();
+          if (_currentBookingsStatusFilter === 'LEADS') {
+            renderBookingsTable();
+          }
         }
 
         _isFirstLoad = false;
@@ -3539,9 +3545,10 @@
       setText("kpi-available-drivers", availDrivers);
       setText("kpi-expiring-docs", expiringVehicles);
 
-      // Sidebar badges
+      // Sidebar & filter pill badges
       setText("badge-bookings-count", _allBookings.length);
       setText("badge-leads-count", _allLeads.length);
+      setText("filter-pill-leads-count", _allLeads.length);
       setText("badge-live-dispatch", onTrip + newRequests);
       setText("badge-drivers-count", _allDrivers.length);
       if (pendingPay > 0) {
@@ -3584,6 +3591,37 @@
                   <button type="button" class="btn btn-secondary btn-sm" onclick="openBookingDrawer('${b.bookingId}')">Details</button>
                 </td>
               </tr>
+            `;
+          }).join("");
+        }
+      }
+
+      // Live Enquiries Stream in Dashboard Activity Feed
+      const feedEl = document.getElementById("dashboard-activity-feed");
+      if (feedEl) {
+        const recentLeads = (_allLeads || []).slice(0, 5);
+        if (recentLeads.length === 0) {
+          feedEl.innerHTML = `<div style="font-size:12px; color:#94a3b8; text-align:center; padding:16px;">No live passenger enquiries yet.</div>`;
+        } else {
+          feedEl.innerHTML = recentLeads.map(l => {
+            const p = cleanPhone(l.cleanPhone || l.phone);
+            const waMsg = encodeURIComponent(`Namaste! OneWayTaxiBihar here regarding your cab enquiry from ${l.originCity} to ${l.destCity}. Would you like to confirm your ride?`);
+            return `
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(0,0,0,0.06); gap:10px;">
+                <div style="min-width:0; flex:1;">
+                  <div style="font-weight:700; font-size:12.5px; color:var(--navy-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${escapeHtml(l.passengerName || 'Fare Visitor')}
+                    <span style="font-weight:400; font-size:11px; color:#64748b; margin-left:4px;">${escapeHtml(l.originCity)} ➔ ${escapeHtml(l.destCity)}</span>
+                  </div>
+                  <div style="font-size:11px; color:#0284c7; font-weight:600;">
+                    ₹${Number(l.cabPrice || l.estFareSedan || 2198).toLocaleString('en-IN')} • ${escapeHtml(l.cabName || 'Sedan')}
+                  </div>
+                </div>
+                <div style="display:flex; gap:4px; flex-shrink:0;">
+                  <a href="tel:${p}" class="btn btn-secondary btn-sm" style="font-size:10px; padding:2px 6px;">📞</a>
+                  <a href="https://wa.me/91${p}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:10px; padding:2px 6px; color:#059669; font-weight:700;">WA</a>
+                </div>
+              </div>
             `;
           }).join("");
         }
@@ -3719,10 +3757,14 @@
     // =========================================================================
     async function loadLeads() {
       try {
-        const res = await adminFetch("/api/leads");
+        const res = await adminFetch("/api/leads?t=" + Date.now());
         if (res.ok) {
           const data = await res.json();
-          _allLeads = data.leads || [];
+          _allLeads = (data.leads || []).sort((a, b) => {
+            const tB = Math.max(new Date(b.updatedAt || 0).getTime(), new Date(b.createdAt || 0).getTime());
+            const tA = Math.max(new Date(a.updatedAt || 0).getTime(), new Date(a.createdAt || 0).getTime());
+            return tB - tA;
+          });
           renderLeadsTable();
           renderDashboard();
           if (_currentBookingsStatusFilter === 'LEADS') {

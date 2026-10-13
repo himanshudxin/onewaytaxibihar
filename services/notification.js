@@ -6,8 +6,7 @@
 
 require('dotenv').config();
 
-const FAST2SMS_FALLBACK_KEY = '9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx';
-const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || FAST2SMS_FALLBACK_KEY;
+const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || '';
 const MSG91_AUTH_KEY = process.env.MSG91_AUTH_KEY || '';
 const MSG91_SENDER_ID = process.env.MSG91_SENDER_ID || 'OWTAXI';
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';
@@ -30,7 +29,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     return { success: false, error: 'Invalid 10-digit Indian phone number' };
   }
 
-  const apiKey = process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY || FAST2SMS_FALLBACK_KEY;
+  const apiKey = process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY;
   if (!apiKey) {
     return { success: false, error: 'FAST2SMS_API_KEY missing' };
   }
@@ -168,32 +167,83 @@ async function sendViaTwilio({ phone, message }) {
   }
 }
 
-// 4. WhatsApp Business Cloud API Integration
-async function sendViaWhatsAppCloud({ phone, message, templateName = null }) {
+// 4. WhatsApp Business Cloud API Integration (Meta Graph API v20.0)
+async function sendViaWhatsAppCloud({ phone, message, templateName = null, templateParams = null }) {
   const cleanPhone = cleanIndianPhone(phone);
-  if (!WHATSAPP_ACCESS_TOKEN || !WHATSAPP_PHONE_ID) {
-    return { success: false, error: 'WhatsApp Cloud API credentials not configured' };
+  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_WHATSAPP_TOKEN || WHATSAPP_ACCESS_TOKEN;
+  const phoneId = process.env.WHATSAPP_PHONE_ID || process.env.META_PHONE_NUMBER_ID || WHATSAPP_PHONE_ID;
+
+  if (!token || !phoneId) {
+    return {
+      success: false,
+      error: 'WhatsApp Cloud API credentials not configured (WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_ID)'
+    };
   }
 
   try {
-    const res = await fetch(`https://graph.facebook.com/v19.0/${WHATSAPP_PHONE_ID}/messages`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+    let payload = {};
+    if (templateName) {
+      payload = {
         messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: `91${cleanPhone}`,
+        type: 'template',
+        template: {
+          name: templateName,
+          language: { code: 'en' },
+          components: templateParams || []
+        }
+      };
+    } else {
+      payload = {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
         to: `91${cleanPhone}`,
         type: 'text',
-        text: { body: message }
-      })
+        text: {
+          preview_url: true,
+          body: message
+        }
+      };
+    }
+
+    const res = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
     });
+
     const data = await res.json();
-    return { success: res.ok, provider: 'whatsapp_cloud', data };
+    const isSuccess = Boolean(res.ok && data.messages && data.messages.length > 0);
+    const messageId = data.messages?.[0]?.id || null;
+
+    if (isSuccess) {
+      console.log(`[Meta WhatsApp Cloud] ✅ Message delivered to +91 ${cleanPhone} (ID: ${messageId})`);
+    } else {
+      console.warn(`[Meta WhatsApp Cloud] Delivery notice:`, data.error?.message || JSON.stringify(data));
+    }
+
+    return {
+      success: isSuccess,
+      provider: 'whatsapp_cloud',
+      messageId,
+      error: isSuccess ? null : (data.error?.message || 'Meta WhatsApp dispatch error'),
+      data
+    };
   } catch (err) {
+    console.warn(`[Meta WhatsApp Cloud] Network error:`, err.message);
     return { success: false, error: err.message };
   }
+}
+
+// Automated 6-digit OTP dispatch via Meta WhatsApp Cloud API
+async function sendOtpViaWhatsApp({ phone, otp, name = 'Passenger' }) {
+  const cleanPhone = cleanIndianPhone(phone);
+  const text = `Namaste ${name}! Your OneWayTaxiBihar secure login & booking verification code is: *${otp}*.\n\nValid for 10 minutes. Please do not share this code with anyone.\n\n24x7 Patna Central Dispatch: +91 80021 41816`;
+  return sendViaWhatsAppCloud({ phone: cleanPhone, message: text });
 }
 
 // 5. Unified High-Level Dispatcher
@@ -238,13 +288,14 @@ async function sendBookingConfirmationNotifications(booking) {
   const cleanPhone = cleanIndianPhone(booking.passengerPhone);
   const fromCity = booking.originCity || booking.pickupCity || booking.origin || 'Patna';
   const toCity = booking.destCity || booking.dropCity || booking.destination || 'Gaya';
-  const msg = `Namaste ${booking.passengerName || 'Passenger'}! Your OneWayTaxi from ${fromCity} to ${toCity} on ${booking.pickupDate} at ${booking.pickupTime} is CONFIRMED.\nBooking ID: ${booking.bookingId}\nTotal Fare: Rs ${booking.totalFare}\nAdvance Paid: Rs ${booking.advancePaid || 0}\nBalance due to driver: Rs ${booking.balanceDue || booking.totalFare}\n24x7 Patna Helpline: +91 80021 41816.\nHave a safe and comfortable trip!`;
+  const msg = `Namaste ${booking.passengerName || 'Passenger'}! Your OneWayTaxi from ${fromCity} to ${toCity} on ${booking.pickupDate} at ${booking.pickupTime} is CONFIRMED.\n\nBooking ID: ${booking.bookingId}\nTrip PIN: ${booking.tripOtp || 'Shared on arrival'}\nTotal Fare: Rs ${booking.totalFare}\nAdvance Paid: Rs ${booking.advancePaid || 0}\nBalance due to driver: Rs ${booking.balanceDue || booking.totalFare}\n\nLive GPS Tracking: https://onewaytaxibihar.com/#tracking?bookingId=${booking.bookingId}\n24x7 Patna Helpline: +91 80021 41816.\nHave a safe and comfortable trip!`;
 
   // SMS
   const smsRes = await sendSms({ phone: cleanPhone, message: msg });
 
   // WhatsApp Cloud API if enabled
-  if (WHATSAPP_ACCESS_TOKEN) {
+  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_WHATSAPP_TOKEN || WHATSAPP_ACCESS_TOKEN;
+  if (token) {
     sendViaWhatsAppCloud({ phone: cleanPhone, message: msg }).catch(() => {});
   }
 
@@ -258,9 +309,17 @@ async function sendDriverAssignmentNotifications(booking, driver) {
   const cleanPhone = cleanIndianPhone(booking.passengerPhone);
   const origin = booking.originCity || booking.pickupCity || 'Patna';
   const dest = booking.destCity || booking.dropCity || 'Bihar Outstation';
-  const msg = `OneWayTaxi Chauffeur Allocated!\nBooking: ${booking.bookingId}\nRoute: ${origin} -> ${dest}\nChauffeur: ${driver.name} (+91 ${cleanPhoneIndian(driver.phone)})\nCab: ${driver.vehicleModel || 'Sedan'} [${driver.vehicleNumber || 'Bihar Cab'}]\nRating: 4.9⭐\nYour driver will arrive 15 minutes before scheduled pickup time.`;
+  const driverPhoneClean = cleanPhoneIndian(driver.phone);
+  const msg = `OneWayTaxi Chauffeur Allocated!\n\nBooking: ${booking.bookingId}\nRoute: ${origin} -> ${dest}\nChauffeur: ${driver.name} (+91 ${driverPhoneClean})\nCab: ${driver.vehicleModel || 'Sedan'} [${driver.vehicleNumber || 'Bihar Cab'}]\nRating: ${driver.rating || '4.9'}⭐\nTrip PIN: ${booking.tripOtp || 'Shared upon arrival'}\n\nTrack Live Chauffeur GPS: https://onewaytaxibihar.com/#tracking?bookingId=${booking.bookingId}\n\nYour driver will arrive 15 minutes before scheduled pickup time.`;
 
   const smsRes = await sendSms({ phone: cleanPhone, message: msg });
+
+  // WhatsApp Cloud API automated delivery
+  const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_WHATSAPP_TOKEN || WHATSAPP_ACCESS_TOKEN;
+  if (token) {
+    sendViaWhatsAppCloud({ phone: cleanPhone, message: msg }).catch(() => {});
+  }
+
   return {
     sms: smsRes,
     whatsappLink: generateWhatsAppDeepLink(cleanPhone, msg)
@@ -273,10 +332,12 @@ function cleanPhoneIndian(p) {
 
 function getNotificationConfig() {
   return {
-    fast2smsConfigured: !!FAST2SMS_API_KEY,
-    msg91Configured: !!MSG91_AUTH_KEY,
-    twilioConfigured: !!TWILIO_ACCOUNT_SID,
-    whatsappCloudConfigured: !!WHATSAPP_ACCESS_TOKEN,
+    fast2smsConfigured: !!(process.env.FAST2SMS_API_KEY || FAST2SMS_API_KEY),
+    msg91Configured: !!(process.env.MSG91_AUTH_KEY || MSG91_AUTH_KEY),
+    twilioConfigured: !!(process.env.TWILIO_ACCOUNT_SID || TWILIO_ACCOUNT_SID),
+    whatsappCloudConfigured: !!(process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_WHATSAPP_TOKEN || WHATSAPP_ACCESS_TOKEN),
+    whatsappPhoneId: !!(process.env.WHATSAPP_PHONE_ID || process.env.META_PHONE_NUMBER_ID || WHATSAPP_PHONE_ID),
+    firebaseConfigured: !!(process.env.FIREBASE_PROJECT_ID || process.env.FIREBASE_API_KEY),
     helplinePhone: process.env.DISPATCH_HELPLINE || '+91 80021 41816'
   };
 }
@@ -287,6 +348,7 @@ module.exports = {
   sendViaMSG91,
   sendViaTwilio,
   sendViaWhatsAppCloud,
+  sendOtpViaWhatsApp,
   generateWhatsAppDeepLink,
   sendBookingConfirmationNotifications,
   sendDriverAssignmentNotifications,

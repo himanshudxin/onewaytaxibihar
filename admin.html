@@ -2983,6 +2983,69 @@
                 </div>
               </div>
             </div>
+
+            <!-- Communications & Gateway Diagnostics (Meta WhatsApp Cloud API & Google Firebase SMS) -->
+            <div class="ops-card" style="margin-top:20px;">
+              <div class="ops-card-header">
+                <div class="ops-card-title">📱 Meta WhatsApp Cloud API &amp; Google Firebase SMS Gateways</div>
+                <span class="pill" id="badge-comm-overall" style="background:#ecfdf5; color:#059669; font-weight:700;">Multi-Gateway Active</span>
+              </div>
+              <div class="ops-card-body">
+                <!-- Gateway Status Badges -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:20px;">
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">META WHATSAPP CLOUD API</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span id="dot-meta-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+                      <strong id="label-meta-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:4px;">1,000 Free Conversations / Month (Graph v20.0)</div>
+                  </div>
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">GOOGLE FIREBASE PHONE AUTH</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span id="dot-firebase-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+                      <strong id="label-firebase-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:4px;">10,000 Free Carrier SMS / Month</div>
+                  </div>
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">INDIAN TELECOM (FAST2SMS)</div>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <span id="dot-fast2sms-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+                      <strong id="label-fast2sms-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
+                    </div>
+                    <div style="font-size:11px; color:#64748b; margin-top:4px;">DLT / Quick Route Backup (~₹0.20/SMS)</div>
+                  </div>
+                </div>
+
+                <!-- Test Message Sender -->
+                <div style="border-top:1px solid #e2e8f0; padding-top:16px;">
+                  <h4 style="font-size:13.5px; font-weight:700; color:var(--navy-900); margin-bottom:8px;">Live Gateway Delivery Test</h4>
+                  <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Send an immediate live diagnostic message to verify WhatsApp Meta Cloud API or Indian Telecom SMS.</p>
+                  <div class="form-grid-2" style="margin-bottom:12px;">
+                    <div class="form-group">
+                      <label class="form-label">Recipient Mobile Number (10 digits)</label>
+                      <input type="text" class="form-control" id="diag-test-phone" placeholder="91XXXXXXXX" value="6206494214">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Custom Test Message</label>
+                      <input type="text" class="form-control" id="diag-test-message" value="OneWayTaxiBihar test message: Meta WhatsApp Cloud API &amp; Firebase SMS operational.">
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-test-whatsapp-cloud" onclick="testWhatsAppCloudAdmin()">
+                      <span>💬</span> Test Meta WhatsApp Cloud API
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-test-telecom-sms" onclick="testTelecomSmsAdmin()">
+                      <span>✉️</span> Test Telecom SMS Gateway
+                    </button>
+                  </div>
+                  <div id="diag-test-result-box" style="background:#0f172a; color:#f8fafc; font-family:var(--font-mono); font-size:11.5px; padding:12px; border-radius:var(--radius-sm); max-height:160px; overflow-y:auto; display:none; white-space:pre-wrap;">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
         </section>
@@ -3994,6 +4057,36 @@
           if (text) text.textContent = isAtlas ? "Atlas ONLINE" : "Local Sync Active";
           const diagEng = document.getElementById("diag-db-engine");
           if (diagEng) diagEng.textContent = `${data.engine || data.database?.engine || 'MongoDB Atlas Cloud'} (Ping: OK)`;
+
+          if (data.notifications) {
+            const n = data.notifications;
+            const metaDot = document.getElementById("dot-meta-status");
+            const metaLabel = document.getElementById("label-meta-status");
+            if (metaDot && metaLabel) {
+              const metaOk = Boolean(n.whatsappCloudConfigured && n.whatsappPhoneId);
+              metaDot.style.background = metaOk ? "#10b981" : "#f59e0b";
+              metaLabel.textContent = metaOk ? "ACTIVE (Graph API v20.0)" : "Config Pending (TOKEN/PHONE_ID)";
+              metaLabel.style.color = metaOk ? "#059669" : "#b45309";
+            }
+
+            const fbDot = document.getElementById("dot-firebase-status");
+            const fbLabel = document.getElementById("label-firebase-status");
+            if (fbDot && fbLabel) {
+              const fbOk = Boolean(n.firebaseConfigured);
+              fbDot.style.background = fbOk ? "#10b981" : "#f59e0b";
+              fbLabel.textContent = fbOk ? "ACTIVE (10,000 Free SMS/Mo)" : "Config Pending (FIREBASE_API_KEY)";
+              fbLabel.style.color = fbOk ? "#059669" : "#b45309";
+            }
+
+            const f2sDot = document.getElementById("dot-fast2sms-status");
+            const f2sLabel = document.getElementById("label-fast2sms-status");
+            if (f2sDot && f2sLabel) {
+              const f2sOk = Boolean(n.fast2smsConfigured);
+              f2sDot.style.background = f2sOk ? "#10b981" : "#64748b";
+              f2sLabel.textContent = f2sOk ? "ACTIVE (DLT Route)" : "Standby / WhatsApp Link Fallback";
+              f2sLabel.style.color = f2sOk ? "#059669" : "#475569";
+            }
+          }
         }
       } catch (e) {}
     }
@@ -6088,6 +6181,88 @@
         if (box) box.textContent = "Error logs cleared by admin.";
         showToast("Diagnostics error logs cleared", "info");
       } catch (e) {}
+    }
+
+    async function testWhatsAppCloudAdmin() {
+      const phoneInput = document.getElementById("diag-test-phone");
+      const msgInput = document.getElementById("diag-test-message");
+      const box = document.getElementById("diag-test-result-box");
+      const btn = document.getElementById("btn-test-whatsapp-cloud");
+
+      const cleanPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        showToast("Please enter a valid 10-digit mobile number", "warning");
+        return;
+      }
+
+      if (btn) { btn.disabled = true; btn.textContent = "Dispatching via Meta Cloud..."; }
+      if (box) { box.style.display = "block"; box.textContent = "Contacting Meta Graph API v20.0 endpoint..."; }
+
+      try {
+        const res = await adminFetch("/api/admin/whatsapp/test", {
+          method: "POST",
+          body: JSON.stringify({
+            phone: cleanPhone,
+            message: msgInput?.value || "OneWayTaxiBihar test message: Meta WhatsApp Cloud API operational."
+          })
+        });
+        const data = await res.json();
+        if (box) {
+          box.innerHTML = `<span style="color:#38bdf8;">[Meta WhatsApp Cloud API Response - ${new Date().toLocaleTimeString()}]:</span>\n` +
+            JSON.stringify(data, null, 2);
+        }
+        if (data.success) {
+          showToast("WhatsApp message dispatched successfully via Meta Cloud API!", "success");
+        } else {
+          showToast(data.message || "Meta API returned response. See details box.", "warning");
+        }
+      } catch (err) {
+        if (box) box.textContent = `[Request Failed]: ${err.message}`;
+        showToast("Network error testing WhatsApp Cloud API: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = `<span>💬</span> Test Meta WhatsApp Cloud API`; }
+      }
+    }
+
+    async function testTelecomSmsAdmin() {
+      const phoneInput = document.getElementById("diag-test-phone");
+      const msgInput = document.getElementById("diag-test-message");
+      const box = document.getElementById("diag-test-result-box");
+      const btn = document.getElementById("btn-test-telecom-sms");
+
+      const cleanPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        showToast("Please enter a valid 10-digit mobile number", "warning");
+        return;
+      }
+
+      if (btn) { btn.disabled = true; btn.textContent = "Dispatching SMS..."; }
+      if (box) { box.style.display = "block"; box.textContent = "Contacting Telecom SMS Gateway..."; }
+
+      try {
+        const res = await adminFetch("/api/notifications/test", {
+          method: "POST",
+          body: JSON.stringify({
+            phone: cleanPhone,
+            message: msgInput?.value || "OneWayTaxiBihar Telecom Test: System ready for live operations across Bihar."
+          })
+        });
+        const data = await res.json();
+        if (box) {
+          box.innerHTML = `<span style="color:#38bdf8;">[Telecom SMS Gateway Response - ${new Date().toLocaleTimeString()}]:</span>\n` +
+            JSON.stringify(data, null, 2);
+        }
+        if (data.success && data.result?.success) {
+          showToast("SMS dispatched successfully via telecom route!", "success");
+        } else {
+          showToast("Telecom gateway responded. See details box.", "info");
+        }
+      } catch (err) {
+        if (box) box.textContent = `[Request Failed]: ${err.message}`;
+        showToast("Error testing SMS Gateway: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = `<span>✉️</span> Test Telecom SMS Gateway`; }
+      }
     }
 
     async function toggleEmergencyPauseAdmin() {

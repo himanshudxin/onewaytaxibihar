@@ -77,6 +77,7 @@ async function runTests() {
     originCity: 'Patna',
     destCity: 'Gaya',
     cabTier: 'sedan',
+    pickupDate: '2026-10-25',
     passengerName: 'Anjali Sharma',
     passengerPhone: '9835012345',
     isForOther: true,

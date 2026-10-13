@@ -18,7 +18,7 @@
   class TelecomOtpService {
     constructor() {
       this.isInitialized = true;
-      this.provider = "Fast2SMS Indian Telecom Gateway";
+      this.provider = "Google Firebase Phone Auth & Indian Telecom";
       this.activePhone = "";
       this.activeName = "";
       this.onSuccessCallback = null;
@@ -27,8 +27,82 @@
       this.isVerifying = false;
       this.generatedOtpCode = "";
       this.isDemoMode = false;
+      this.confirmationResult = null;
+      this.firebaseEnabled = false;
 
       this.setupGlobalHandlers();
+      this.initFirebase();
+    }
+
+    async initFirebase() {
+      try {
+        let config = window.FIREBASE_CONFIG;
+        if (!config) {
+          const res = await fetch("/api/auth/firebase-config").catch(() => null);
+          if (res && res.ok) {
+            const data = await res.json().catch(() => null);
+            if (data && data.enabled && data.config) {
+              config = data.config;
+            }
+          }
+        }
+
+        if (config && config.apiKey && config.projectId) {
+          window.FIREBASE_CONFIG = config;
+          await this.loadFirebaseSdk();
+          if (window.firebase && !firebase.apps.length) {
+            firebase.initializeApp(config);
+          }
+          this.initRecaptcha();
+          this.firebaseEnabled = true;
+          this.provider = "Google Firebase SMS Gateway (10,000 Free/Mo)";
+          console.log("[Firebase Auth] Initialized successfully.");
+        }
+      } catch (e) {
+        console.warn("[Firebase Auth] Init notice:", e.message);
+      }
+    }
+
+    async loadFirebaseSdk() {
+      if (window.firebase && window.firebase.auth) return;
+      return new Promise((resolve) => {
+        if (!document.getElementById("firebase-app-script")) {
+          const s1 = document.createElement("script");
+          s1.id = "firebase-app-script";
+          s1.src = "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js";
+          s1.onload = () => {
+            const s2 = document.createElement("script");
+            s2.id = "firebase-auth-script";
+            s2.src = "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js";
+            s2.onload = () => resolve();
+            s2.onerror = () => resolve();
+            document.head.appendChild(s2);
+          };
+          s1.onerror = () => resolve();
+          document.head.appendChild(s1);
+        } else {
+          resolve();
+        }
+      });
+    }
+
+    initRecaptcha() {
+      if (!window.firebase || !window.firebase.auth) return;
+      let container = document.getElementById("recaptcha-container");
+      if (!container) {
+        container = document.createElement("div");
+        container.id = "recaptcha-container";
+        container.style.display = "none";
+        document.body.appendChild(container);
+      }
+      try {
+        if (!window.recaptchaVerifier) {
+          window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+            size: "invisible",
+            callback: () => {}
+          });
+        }
+      } catch (e) {}
     }
 
     /**
@@ -47,8 +121,9 @@
       this.activePhone = clean10;
       this.activeName = name || "Passenger";
       this.onSuccessCallback = onSuccess;
+      this.confirmationResult = null;
 
-      // Always open Modal UI and send fresh 6-digit SMS OTP via Fast2SMS
+      // Open Modal UI and dispatch OTP
       this.openOtpModal(clean10);
       await this.sendOtpCode(clean10);
       return true;
@@ -65,7 +140,25 @@
 
       this.startCountdown(30);
 
-      // Trigger authoritative backend API to dispatch code via telecom SMS & WhatsApp
+      // 1. Try Google Firebase Phone Auth if enabled
+      if (this.firebaseEnabled && window.firebase && window.firebase.auth && window.recaptchaVerifier) {
+        try {
+          const confirmationResult = await firebase.auth().signInWithPhoneNumber(`+91${clean10}`, window.recaptchaVerifier);
+          this.confirmationResult = confirmationResult;
+          if (statusEl) {
+            statusEl.textContent = `Google Firebase 6-digit SMS OTP dispatched to +91 ${clean10}. (Free SMS)`;
+            statusEl.style.color = "#059669";
+          }
+          window.showToast?.(`Firebase SMS OTP sent to +91 ${clean10}!`, "success");
+          this.focusFirstDigit();
+          return;
+        } catch (fbErr) {
+          console.warn("[Firebase Phone Auth] Fallback triggered:", fbErr.message);
+          this.confirmationResult = null;
+        }
+      }
+
+      // 2. Authoritative backend fallback via Telecom SMS & Meta WhatsApp Cloud
       try {
         if (window.ApiClient && ApiClient.sendOtp) {
           const apiRes = await ApiClient.sendOtp(clean10, this.activeName);
@@ -204,21 +297,51 @@
         let isVerified = false;
         let serverErrorMsg = "Invalid OTP code. Please enter the 6 digits sent to your phone.";
 
-        try {
-          if (window.ApiClient && ApiClient.verifyOtp) {
-            const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
-            if (verifyRes && verifyRes.success) {
-              isVerified = true;
-              if (verifyRes.user) {
-                window.currentUser = verifyRes.user;
-                localStorage.setItem("otb_current_user", JSON.stringify(verifyRes.user));
+        // 1. If Firebase Phone Auth confirmation result is active, verify via Firebase
+        if (this.confirmationResult) {
+          try {
+            const userCredential = await this.confirmationResult.confirm(enteredCode);
+            if (userCredential && userCredential.user) {
+              const idToken = await userCredential.user.getIdToken();
+              if (window.ApiClient && ApiClient.verifyFirebaseToken) {
+                const fbRes = await ApiClient.verifyFirebaseToken(idToken, this.activePhone, this.activeName);
+                if (fbRes && fbRes.success) {
+                  isVerified = true;
+                  if (fbRes.user) {
+                    window.currentUser = fbRes.user;
+                    localStorage.setItem("otb_current_user", JSON.stringify(fbRes.user));
+                  }
+                } else if (fbRes && fbRes.message) {
+                  serverErrorMsg = fbRes.message;
+                }
+              } else {
+                isVerified = true;
               }
-            } else if (verifyRes && verifyRes.message) {
-              serverErrorMsg = verifyRes.message;
             }
+          } catch (fbErr) {
+            console.warn("[Firebase Phone Auth] Confirm failed:", fbErr.message);
+            serverErrorMsg = fbErr.message || "Invalid Firebase SMS code. Please try again.";
           }
-        } catch (e) {
-          console.warn("[Telecom OTP] Backend verify error:", e);
+        }
+
+        // 2. Authoritative backend fallback verification if Firebase was not used or failed
+        if (!isVerified && !this.confirmationResult) {
+          try {
+            if (window.ApiClient && ApiClient.verifyOtp) {
+              const verifyRes = await ApiClient.verifyOtp(this.activePhone, enteredCode, this.activeName);
+              if (verifyRes && verifyRes.success) {
+                isVerified = true;
+                if (verifyRes.user) {
+                  window.currentUser = verifyRes.user;
+                  localStorage.setItem("otb_current_user", JSON.stringify(verifyRes.user));
+                }
+              } else if (verifyRes && verifyRes.message) {
+                serverErrorMsg = verifyRes.message;
+              }
+            }
+          } catch (e) {
+            console.warn("[Telecom OTP] Backend verify error:", e);
+          }
         }
 
         if (isVerified) {

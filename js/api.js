@@ -199,6 +199,24 @@ class ApiClient {
     }
   }
 
+  // Google Firebase Phone Auth Token Verification (10,000 Free SMS/Month)
+  static async verifyFirebaseToken(idToken, phone = "", name = "") {
+    const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
+    try {
+      let res = await this.request("/api/auth/firebase-verify", {
+        method: "POST",
+        body: JSON.stringify({ idToken, phone: cleanPhone, name })
+      });
+      if (res && res.success && res.token) {
+        localStorage.setItem("otb_auth_token", res.token);
+        localStorage.setItem("otb_current_user", JSON.stringify(res.user));
+      }
+      return res || { success: false, message: "Firebase verification failed." };
+    } catch (e) {
+      return { success: false, message: "Network error during Firebase verification." };
+    }
+  }
+
   // Privacy-Secured Official GST Tax Invoice Lookup (Booking ID + Phone verification)
   static async lookupInvoice(bookingId, phone = "") {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);

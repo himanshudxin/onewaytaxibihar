@@ -1,8 +1,8 @@
 {
   "bookings": [
     {
-      "id": "OTB-TOUR-3530",
-      "bookingId": "OTB-TOUR-3530",
+      "id": "OTB-TOUR-1163",
+      "bookingId": "OTB-TOUR-1163",
       "tripType": "TOURISM_PACKAGE",
       "packageCode": "TOUR-BODHGAYA-02",
       "packageTitle": "Bodh Gaya Enlightenment & Buddhist Circuit",
@@ -25,19 +25,19 @@
       "paymentStatus": "PAYMENT_PENDING",
       "bookingStatus": "CONFIRMED",
       "status": "CONFIRMED",
-      "tripOtp": "3844",
+      "tripOtp": "6787",
       "isForOther": false,
       "bookerName": null,
       "bookerPhone": null,
       "specialInstructions": "Sightseeing Tour Booking",
-      "createdAt": "2026-10-13T10:16:03.530Z",
-      "updatedAt": "2026-10-13T10:16:03.530Z"
+      "createdAt": "2026-10-13T11:05:41.163Z",
+      "updatedAt": "2026-10-13T11:05:41.163Z"
     },
     {
-      "bookingId": "OTB-2026-7283",
-      "tripOtp": "6135",
+      "bookingId": "OTB-2026-6673",
+      "tripOtp": "2698",
       "customerId": "usr_9835012345",
-      "paymentTxnId": "TXN_1791886555648_5874",
+      "paymentTxnId": "TXN_1791889534300_8927",
       "idempotencyKey": null,
       "passengerName": "Anjali Sharma",
       "passengerPhone": "+91 9835012345",
@@ -46,7 +46,7 @@
       "destCity": "Gaya",
       "pickupAddress": "Patna City",
       "dropAddress": "Gaya City",
-      "pickupDate": "2026-10-13",
+      "pickupDate": "2026-10-25",
       "pickupTime": "10:00 AM",
       "distanceKm": 104,
       "duration": "2h 18m",
@@ -98,38 +98,535 @@
       "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
-      "verifiedAt": "2026-10-13T10:15:55.648Z",
+      "verifiedAt": "2026-10-13T11:05:34.301Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
       "driverDetails": {
-        "id": "drv_104",
-        "name": "Sanjay Paswan",
-        "phone": "+91 82103 44556",
-        "vehicleNumber": "BR 01 PD 6024",
-        "vehicleModel": "Honda City (Brown)",
-        "rating": 4.95
+        "id": "drv_101",
+        "name": "Ramesh Kumar Sharma",
+        "phone": "+91 94310 12345",
+        "vehicleNumber": "BR 01 PA 4921",
+        "vehicleModel": "Swift Dzire (White)",
+        "rating": 4.9
       },
       "statusHistory": [
         {
           "status": "NEW",
-          "timestamp": "2026-10-13T10:15:55.648Z",
+          "timestamp": "2026-10-13T11:05:34.301Z",
           "actor": "Customer",
           "note": "Booking request placed. Availability verification in progress."
         },
         {
           "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-10-13T10:15:56.663Z",
+          "timestamp": "2026-10-13T11:05:35.307Z",
           "actor": "Admin Dispatcher (admin)",
-          "note": "Smart Dispatch matched Chauffeur Sanjay Paswan (BR 01 PD 6024) with score 99%: Super-close proximity: ~0 km (ETA: 5m), Top-tier Chauffeur Rating (5.0★), High Acceptance Rate (96%), Compatible Fleet Upgrade (Honda City (Brown)), Chauffeur fresh on shift (0 trips completed today)"
+          "note": "Smart Dispatch matched Chauffeur Ramesh Kumar Sharma (BR 01 PA 4921) with score 99%: Super-close proximity: ~0 km (ETA: 5m), Top-tier Chauffeur Rating (4.9★), High Acceptance Rate (96%), Compatible Fleet Upgrade (Swift Dzire (White)), Chauffeur fresh on shift (0 trips completed today)"
         },
         {
           "status": "TRIP STARTED",
-          "timestamp": "2026-10-13T10:15:59.532Z",
-          "actor": "Driver (Sanjay Paswan)",
+          "timestamp": "2026-10-13T11:05:37.229Z",
+          "actor": "Driver (Ramesh Kumar Sharma)",
           "note": "Chauffeur updated status to TRIP STARTED"
         }
       ],
-      "createdAt": "2026-10-13T10:15:55.648Z",
+      "createdAt": "2026-10-13T11:05:34.301Z",
+      "assignedDriverId": "drv_101",
+      "dispatchOffer": {
+        "driverId": "drv_101",
+        "offeredAt": "2026-10-13T11:05:35.307Z",
+        "expiresAt": "2026-10-13T11:06:35.307Z",
+        "suitabilityScore": 99,
+        "etaMinutes": 5,
+        "status": "OFFERED",
+        "reasons": [
+          "Super-close proximity: ~0 km (ETA: 5m)",
+          "Top-tier Chauffeur Rating (4.9★)",
+          "High Acceptance Rate (96%)",
+          "Compatible Fleet Upgrade (Swift Dzire (White))",
+          "Chauffeur fresh on shift (0 trips completed today)"
+        ]
+      },
+      "dispatchRanking": [
+        {
+          "driverId": "drv_101",
+          "name": "Ramesh Kumar Sharma",
+          "score": 99,
+          "etaMinutes": 5,
+          "reasons": [
+            "Super-close proximity: ~0 km (ETA: 5m)",
+            "Top-tier Chauffeur Rating (4.9★)",
+            "High Acceptance Rate (96%)",
+            "Compatible Fleet Upgrade (Swift Dzire (White))",
+            "Chauffeur fresh on shift (0 trips completed today)"
+          ]
+        },
+        {
+          "driverId": "drv_102",
+          "name": "Amit Kumar Singh",
+          "score": 99,
+          "etaMinutes": 5,
+          "reasons": [
+            "Super-close proximity: ~0 km (ETA: 5m)",
+            "Top-tier Chauffeur Rating (4.9★)",
+            "High Acceptance Rate (96%)",
+            "Compatible Fleet Upgrade (Maruti Ertiga (Silver))",
+            "Chauffeur fresh on shift (0 trips completed today)"
+          ]
+        },
+        {
+          "driverId": "drv_104",
+          "name": "Sanjay Paswan",
+          "score": 99,
+          "etaMinutes": 5,
+          "reasons": [
+            "Super-close proximity: ~0 km (ETA: 5m)",
+            "Top-tier Chauffeur Rating (5.0★)",
+            "High Acceptance Rate (96%)",
+            "Compatible Fleet Upgrade (Honda City (Brown))",
+            "Chauffeur fresh on shift (0 trips completed today)"
+          ]
+        }
+      ],
+      "updatedAt": "2026-10-13T11:05:35.307Z",
+      "review": {
+        "id": "rev_1791889543166",
+        "bookingId": "OTB-2026-6673",
+        "passengerName": "Anjali Sharma",
+        "passengerPhone": "+91 9835012345",
+        "route": "Patna to Gaya",
+        "cabType": "Prime Sedan",
+        "rating": 5,
+        "cleanlinessRating": 5,
+        "punctualityRating": 5,
+        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+        "driverId": "drv_101",
+        "driverName": "Ramesh Kumar Sharma",
+        "createdAt": "2026-10-13T11:05:43.166Z"
+      }
+    },
+    {
+      "bookingId": "OTB-TOUR-5174",
+      "advancePayable": 0,
+      "balanceAtDrop": 3800,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "CONFIRMED",
+      "createdAt": "2026-10-13T11:02:55.174Z",
+      "destCity": "Bodh",
+      "dropAddress": "Bodh Gaya Enlightenment & Buddhist Circuit Sightseeing Drop",
+      "durationDays": 1,
+      "finalPayable": 3800,
+      "fleetClass": "Prime Sedan (Dzire / Etios)",
+      "fleetModel": "Swift Dzire",
+      "id": "OTB-TOUR-5174",
+      "isForOther": false,
+      "originCity": "Patna",
+      "packageCode": "TOUR-BODHGAYA-02",
+      "packageTitle": "Bodh Gaya Enlightenment & Buddhist Circuit",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentStatus": "PAYMENT_PENDING",
+      "pickupAddress": "Patna City Hotel / Residence",
+      "pickupDate": "2026-10-15",
+      "pickupTime": "07:30",
+      "specialInstructions": "Sightseeing Tour Booking",
+      "status": "CONFIRMED",
+      "totalFare": 3800,
+      "tripOtp": "8251",
+      "tripType": "TOURISM_PACKAGE",
+      "updatedAt": "2026-10-13T11:02:55.174Z",
+      "vehicleCategory": "sedan"
+    },
+    {
+      "bookingId": "OTB-2026-6205",
+      "advancePaid": 0,
+      "balanceDue": 2600,
+      "bookerName": "Himanshu Dubey",
+      "bookerPhone": "+91 8002141816",
+      "bookingStatus": "NEW",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T11:02:51.174Z",
+      "customerId": "usr_9835012345",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "driverDetails": null,
+      "dropAddress": "Gaya City",
+      "duration": "2h 18m",
+      "fare": 2600,
+      "fareBreakdown": {
+        "distanceKm": 104,
+        "duration": "2h 18m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2198,
+        "perKmRate": 25,
+        "distanceCharge": 2600,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 82,
+        "gst": 124,
+        "totalFare": 2600,
+        "inclusions": [
+          "100% AC Chilled Ride",
+          "Doorstep Pickup & Drop",
+          "Driver Allowance Included",
+          "State Highway Tolls & FASTag Included",
+          "5% GST Tax Included",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Multiple city diversions not specified in booking",
+          "Overnight detention if passenger delays vehicle to following calendar day"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": true,
+      "originCity": "Patna",
+      "originalFare": 2600,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1791889371173_9252",
+      "phoneVerified": true,
+      "pickupAddress": "Patna City",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
+      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
+      "status": "NEW",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-13T11:02:51.174Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        }
+      ],
+      "totalFare": 2600,
+      "tripOtp": "4339",
+      "verifiedAt": "2026-10-13T11:02:51.174Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0,
+      "review": {
+        "id": "rev_1791889376249",
+        "bookingId": "OTB-2026-6205",
+        "passengerName": "Anjali Sharma",
+        "passengerPhone": "+91 9835012345",
+        "route": "Patna to Gaya",
+        "cabType": "Prime Sedan",
+        "rating": 5,
+        "cleanlinessRating": 5,
+        "punctualityRating": 5,
+        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+        "driverId": null,
+        "driverName": null,
+        "createdAt": "2026-10-13T11:02:56.249Z"
+      }
+    },
+    {
+      "bookingId": "OTB-TOUR-2442",
+      "advancePayable": 0,
+      "balanceAtDrop": 3800,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "CONFIRMED",
+      "createdAt": "2026-10-13T10:59:22.442Z",
+      "destCity": "Bodh",
+      "dropAddress": "Bodh Gaya Enlightenment & Buddhist Circuit Sightseeing Drop",
+      "durationDays": 1,
+      "finalPayable": 3800,
+      "fleetClass": "Prime Sedan (Dzire / Etios)",
+      "fleetModel": "Swift Dzire",
+      "id": "OTB-TOUR-2442",
+      "isForOther": false,
+      "originCity": "Patna",
+      "packageCode": "TOUR-BODHGAYA-02",
+      "packageTitle": "Bodh Gaya Enlightenment & Buddhist Circuit",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentStatus": "PAYMENT_PENDING",
+      "pickupAddress": "Patna City Hotel / Residence",
+      "pickupDate": "2026-10-15",
+      "pickupTime": "07:30",
+      "specialInstructions": "Sightseeing Tour Booking",
+      "status": "CONFIRMED",
+      "totalFare": 3800,
+      "tripOtp": "4611",
+      "tripType": "TOURISM_PACKAGE",
+      "updatedAt": "2026-10-13T10:59:22.442Z",
+      "vehicleCategory": "sedan"
+    },
+    {
+      "bookingId": "OTB-2026-8704",
+      "advancePaid": 0,
+      "balanceDue": 2600,
+      "bookerName": "Himanshu Dubey",
+      "bookerPhone": "+91 8002141816",
+      "bookingStatus": "NEW",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:59:18.445Z",
+      "customerId": "usr_9835012345",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "driverDetails": null,
+      "dropAddress": "Gaya City",
+      "duration": "2h 18m",
+      "fare": 2600,
+      "fareBreakdown": {
+        "distanceKm": 104,
+        "duration": "2h 18m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2198,
+        "perKmRate": 25,
+        "distanceCharge": 2600,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 82,
+        "gst": 124,
+        "totalFare": 2600,
+        "inclusions": [
+          "100% AC Chilled Ride",
+          "Doorstep Pickup & Drop",
+          "Driver Allowance Included",
+          "State Highway Tolls & FASTag Included",
+          "5% GST Tax Included",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Multiple city diversions not specified in booking",
+          "Overnight detention if passenger delays vehicle to following calendar day"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": true,
+      "originCity": "Patna",
+      "originalFare": 2600,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1791889158445_2539",
+      "phoneVerified": true,
+      "pickupAddress": "Patna City",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
+      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
+      "status": "NEW",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-13T10:59:18.445Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        }
+      ],
+      "totalFare": 2600,
+      "tripOtp": "8730",
+      "verifiedAt": "2026-10-13T10:59:18.445Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0,
+      "review": {
+        "id": "rev_1791889163449",
+        "bookingId": "OTB-2026-8704",
+        "passengerName": "Anjali Sharma",
+        "passengerPhone": "+91 9835012345",
+        "route": "Patna to Gaya",
+        "cabType": "Prime Sedan",
+        "rating": 5,
+        "cleanlinessRating": 5,
+        "punctualityRating": 5,
+        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+        "driverId": null,
+        "driverName": null,
+        "createdAt": "2026-10-13T10:59:23.449Z"
+      }
+    },
+    {
+      "bookingId": "OTB-TOUR-7668",
+      "advancePayable": 0,
+      "balanceAtDrop": 3800,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "CONFIRMED",
+      "createdAt": "2026-10-13T10:57:27.668Z",
+      "destCity": "Bodh",
+      "dropAddress": "Bodh Gaya Enlightenment & Buddhist Circuit Sightseeing Drop",
+      "durationDays": 1,
+      "finalPayable": 3800,
+      "fleetClass": "Prime Sedan (Dzire / Etios)",
+      "fleetModel": "Swift Dzire",
+      "id": "OTB-TOUR-7668",
+      "isForOther": false,
+      "originCity": "Patna",
+      "packageCode": "TOUR-BODHGAYA-02",
+      "packageTitle": "Bodh Gaya Enlightenment & Buddhist Circuit",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentStatus": "PAYMENT_PENDING",
+      "pickupAddress": "Patna City Hotel / Residence",
+      "pickupDate": "2026-10-15",
+      "pickupTime": "07:30",
+      "specialInstructions": "Sightseeing Tour Booking",
+      "status": "CONFIRMED",
+      "totalFare": 3800,
+      "tripOtp": "8023",
+      "tripType": "TOURISM_PACKAGE",
+      "updatedAt": "2026-10-13T10:57:27.668Z",
+      "vehicleCategory": "sedan"
+    },
+    {
+      "bookingId": "OTB-2026-2192",
+      "advancePaid": 0,
+      "balanceDue": 2600,
+      "bookerName": "Himanshu Dubey",
+      "bookerPhone": "+91 8002141816",
+      "bookingStatus": "NEW",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:57:21.805Z",
+      "customerId": "usr_9835012345",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "driverDetails": null,
+      "dropAddress": "Gaya City",
+      "duration": "2h 18m",
+      "fare": 2600,
+      "fareBreakdown": {
+        "distanceKm": 104,
+        "duration": "2h 18m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2198,
+        "perKmRate": 25,
+        "distanceCharge": 2600,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 82,
+        "gst": 124,
+        "totalFare": 2600,
+        "inclusions": [
+          "100% AC Chilled Ride",
+          "Doorstep Pickup & Drop",
+          "Driver Allowance Included",
+          "State Highway Tolls & FASTag Included",
+          "5% GST Tax Included",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Multiple city diversions not specified in booking",
+          "Overnight detention if passenger delays vehicle to following calendar day"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": true,
+      "originCity": "Patna",
+      "originalFare": 2600,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1791889041805_6123",
+      "phoneVerified": true,
+      "pickupAddress": "Patna City",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
+      "review": {
+        "id": "rev_1791889049685",
+        "bookingId": "OTB-2026-2192",
+        "passengerName": "Anjali Sharma",
+        "passengerPhone": "+91 9835012345",
+        "route": "Patna to Gaya",
+        "cabType": "Prime Sedan",
+        "rating": 5,
+        "cleanlinessRating": 5,
+        "punctualityRating": 5,
+        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+        "driverId": null,
+        "driverName": null,
+        "createdAt": "2026-10-13T10:57:29.685Z"
+      },
+      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
+      "status": "NEW",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-13T10:57:21.805Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        }
+      ],
+      "totalFare": 2600,
+      "tripOtp": "7401",
+      "verifiedAt": "2026-10-13T10:57:21.805Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0
+    },
+    {
+      "bookingId": "OTB-TOUR-3530",
+      "advancePayable": 0,
+      "balanceAtDrop": 3800,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "CONFIRMED",
+      "createdAt": "2026-10-13T10:16:03.530Z",
+      "destCity": "Bodh",
+      "dropAddress": "Bodh Gaya Enlightenment & Buddhist Circuit Sightseeing Drop",
+      "durationDays": 1,
+      "finalPayable": 3800,
+      "fleetClass": "Prime Sedan (Dzire / Etios)",
+      "fleetModel": "Swift Dzire",
+      "id": "OTB-TOUR-3530",
+      "isForOther": false,
+      "originCity": "Patna",
+      "packageCode": "TOUR-BODHGAYA-02",
+      "packageTitle": "Bodh Gaya Enlightenment & Buddhist Circuit",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentStatus": "PAYMENT_PENDING",
+      "pickupAddress": "Patna City Hotel / Residence",
+      "pickupDate": "2026-10-15",
+      "pickupTime": "07:30",
+      "specialInstructions": "Sightseeing Tour Booking",
+      "status": "CONFIRMED",
+      "totalFare": 3800,
+      "tripOtp": "3844",
+      "tripType": "TOURISM_PACKAGE",
+      "updatedAt": "2026-10-13T10:16:03.530Z",
+      "vehicleCategory": "sedan"
+    },
+    {
+      "bookingId": "OTB-2026-7283",
+      "advancePaid": 0,
       "assignedDriverId": "drv_104",
+      "balanceDue": 2600,
+      "bookerName": "Himanshu Dubey",
+      "bookerPhone": "+91 8002141816",
+      "bookingStatus": "TRIP STARTED",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:15:55.648Z",
+      "customerId": "usr_9835012345",
+      "destCity": "Gaya",
       "dispatchOffer": {
         "driverId": "drv_104",
         "offeredAt": "2026-10-13T10:15:56.663Z",
@@ -160,7 +657,63 @@
           ]
         }
       ],
-      "updatedAt": "2026-10-13T10:15:56.663Z",
+      "distanceKm": 104,
+      "driverDetails": {
+        "id": "drv_104",
+        "name": "Sanjay Paswan",
+        "phone": "+91 82103 44556",
+        "vehicleNumber": "BR 01 PD 6024",
+        "vehicleModel": "Honda City (Brown)",
+        "rating": 4.95
+      },
+      "dropAddress": "Gaya City",
+      "duration": "2h 18m",
+      "fare": 2600,
+      "fareBreakdown": {
+        "distanceKm": 104,
+        "duration": "2h 18m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2198,
+        "perKmRate": 25,
+        "distanceCharge": 2600,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 82,
+        "gst": 124,
+        "totalFare": 2600,
+        "inclusions": [
+          "100% AC Chilled Ride",
+          "Doorstep Pickup & Drop",
+          "Driver Allowance Included",
+          "State Highway Tolls & FASTag Included",
+          "5% GST Tax Included",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Multiple city diversions not specified in booking",
+          "Overnight detention if passenger delays vehicle to following calendar day"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": true,
+      "originCity": "Patna",
+      "originalFare": 2600,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1791886555648_5874",
+      "phoneVerified": true,
+      "pickupAddress": "Patna City",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
       "review": {
         "id": "rev_1791886565538",
         "bookingId": "OTB-2026-7283",
@@ -175,7 +728,35 @@
         "driverId": "drv_104",
         "driverName": "Sanjay Paswan",
         "createdAt": "2026-10-13T10:16:05.538Z"
-      }
+      },
+      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
+      "status": "TRIP STARTED",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-13T10:15:55.648Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-10-13T10:15:56.663Z",
+          "actor": "Admin Dispatcher (admin)",
+          "note": "Smart Dispatch matched Chauffeur Sanjay Paswan (BR 01 PD 6024) with score 99%: Super-close proximity: ~0 km (ETA: 5m), Top-tier Chauffeur Rating (5.0★), High Acceptance Rate (96%), Compatible Fleet Upgrade (Honda City (Brown)), Chauffeur fresh on shift (0 trips completed today)"
+        },
+        {
+          "status": "TRIP STARTED",
+          "timestamp": "2026-10-13T10:15:59.532Z",
+          "actor": "Driver (Sanjay Paswan)",
+          "note": "Chauffeur updated status to TRIP STARTED"
+        }
+      ],
+      "totalFare": 2600,
+      "tripOtp": "6135",
+      "updatedAt": "2026-10-13T10:15:56.663Z",
+      "verifiedAt": "2026-10-13T10:15:55.648Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0
     },
     {
       "bookingId": "OTB-TOUR-8912",
@@ -213,6 +794,7 @@
     {
       "bookingId": "OTB-2026-8665",
       "advancePaid": 0,
+      "assignedDriverId": "drv_102",
       "balanceDue": 2600,
       "bookerName": "Himanshu Dubey",
       "bookerPhone": "+91 8002141816",
@@ -222,6 +804,49 @@
       "createdAt": "2026-10-13T10:14:42.046Z",
       "customerId": "usr_9835012345",
       "destCity": "Gaya",
+      "dispatchOffer": {
+        "driverId": "drv_102",
+        "offeredAt": "2026-10-13T10:14:42.946Z",
+        "expiresAt": "2026-10-13T10:15:42.946Z",
+        "suitabilityScore": 99,
+        "etaMinutes": 5,
+        "status": "OFFERED",
+        "reasons": [
+          "Super-close proximity: ~0 km (ETA: 5m)",
+          "High Chauffeur Rating (4.8★)",
+          "High Acceptance Rate (96%)",
+          "Compatible Fleet Upgrade (Maruti Ertiga (Silver))",
+          "Chauffeur fresh on shift (0 trips completed today)"
+        ]
+      },
+      "dispatchRanking": [
+        {
+          "driverId": "drv_102",
+          "name": "Amit Kumar Singh",
+          "score": 99,
+          "etaMinutes": 5,
+          "reasons": [
+            "Super-close proximity: ~0 km (ETA: 5m)",
+            "High Chauffeur Rating (4.8★)",
+            "High Acceptance Rate (96%)",
+            "Compatible Fleet Upgrade (Maruti Ertiga (Silver))",
+            "Chauffeur fresh on shift (0 trips completed today)"
+          ]
+        },
+        {
+          "driverId": "drv_104",
+          "name": "Sanjay Paswan",
+          "score": 99,
+          "etaMinutes": 5,
+          "reasons": [
+            "Super-close proximity: ~0 km (ETA: 5m)",
+            "Top-tier Chauffeur Rating (5.0★)",
+            "High Acceptance Rate (96%)",
+            "Compatible Fleet Upgrade (Honda City (Brown))",
+            "Chauffeur fresh on shift (0 trips completed today)"
+          ]
+        }
+      ],
       "distanceKm": 104,
       "driverDetails": {
         "id": "drv_102",
@@ -279,6 +904,21 @@
       "pickupAddress": "Patna City",
       "pickupDate": "2026-10-13",
       "pickupTime": "10:00 AM",
+      "review": {
+        "id": "rev_1791886491036",
+        "bookingId": "OTB-2026-8665",
+        "passengerName": "Anjali Sharma",
+        "passengerPhone": "+91 9835012345",
+        "route": "Patna to Gaya",
+        "cabType": "Prime Sedan",
+        "rating": 5,
+        "cleanlinessRating": 5,
+        "punctualityRating": 5,
+        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+        "driverId": "drv_102",
+        "driverName": "Amit Kumar Singh",
+        "createdAt": "2026-10-13T10:14:51.036Z"
+      },
       "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
       "status": "DRIVER_ASSIGNED",
       "statusHistory": [
@@ -297,69 +937,10 @@
       ],
       "totalFare": 2600,
       "tripOtp": "6918",
+      "updatedAt": "2026-10-13T10:14:42.946Z",
       "verifiedAt": "2026-10-13T10:14:42.046Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
-      "walletUsed": 0,
-      "assignedDriverId": "drv_102",
-      "dispatchOffer": {
-        "driverId": "drv_102",
-        "offeredAt": "2026-10-13T10:14:42.946Z",
-        "expiresAt": "2026-10-13T10:15:42.946Z",
-        "suitabilityScore": 99,
-        "etaMinutes": 5,
-        "status": "OFFERED",
-        "reasons": [
-          "Super-close proximity: ~0 km (ETA: 5m)",
-          "High Chauffeur Rating (4.8★)",
-          "High Acceptance Rate (96%)",
-          "Compatible Fleet Upgrade (Maruti Ertiga (Silver))",
-          "Chauffeur fresh on shift (0 trips completed today)"
-        ]
-      },
-      "dispatchRanking": [
-        {
-          "driverId": "drv_102",
-          "name": "Amit Kumar Singh",
-          "score": 99,
-          "etaMinutes": 5,
-          "reasons": [
-            "Super-close proximity: ~0 km (ETA: 5m)",
-            "High Chauffeur Rating (4.8★)",
-            "High Acceptance Rate (96%)",
-            "Compatible Fleet Upgrade (Maruti Ertiga (Silver))",
-            "Chauffeur fresh on shift (0 trips completed today)"
-          ]
-        },
-        {
-          "driverId": "drv_104",
-          "name": "Sanjay Paswan",
-          "score": 99,
-          "etaMinutes": 5,
-          "reasons": [
-            "Super-close proximity: ~0 km (ETA: 5m)",
-            "Top-tier Chauffeur Rating (5.0★)",
-            "High Acceptance Rate (96%)",
-            "Compatible Fleet Upgrade (Honda City (Brown))",
-            "Chauffeur fresh on shift (0 trips completed today)"
-          ]
-        }
-      ],
-      "updatedAt": "2026-10-13T10:14:42.946Z",
-      "review": {
-        "id": "rev_1791886491036",
-        "bookingId": "OTB-2026-8665",
-        "passengerName": "Anjali Sharma",
-        "passengerPhone": "+91 9835012345",
-        "route": "Patna to Gaya",
-        "cabType": "Prime Sedan",
-        "rating": 5,
-        "cleanlinessRating": 5,
-        "punctualityRating": 5,
-        "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
-        "driverId": "drv_102",
-        "driverName": "Amit Kumar Singh",
-        "createdAt": "2026-10-13T10:14:51.036Z"
-      }
+      "walletUsed": 0
     },
     {
       "bookingId": "OTB-2026-8758",
@@ -438,6 +1019,7 @@
     {
       "bookingId": "OTB-2026-1658",
       "advancePaid": 0,
+      "assignedDriverId": "drv_101",
       "balanceDue": 2600,
       "bookerName": "Himanshu Dubey",
       "bookerPhone": "+91 8002141816",
@@ -447,91 +1029,6 @@
       "createdAt": "2026-10-13T09:25:27.568Z",
       "customerId": "usr_9835012345",
       "destCity": "Gaya",
-      "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_101",
-        "name": "Ramesh Kumar Sharma",
-        "phone": "+91 94310 12345",
-        "vehicleNumber": "BR 01 PA 4921",
-        "vehicleModel": "Swift Dzire (White)",
-        "rating": 4.9
-      },
-      "dropAddress": "Gaya City",
-      "duration": "2h 18m",
-      "fare": 2600,
-      "fareBreakdown": {
-        "distanceKm": 104,
-        "duration": "2h 18m",
-        "tierId": "sedan",
-        "tierName": "Prime Sedan",
-        "tierModel": "Dzire, Etios, Amaze",
-        "seats": 4,
-        "baseFare": 2198,
-        "perKmRate": 25,
-        "distanceCharge": 2600,
-        "driverAllowance": 0,
-        "roundTripDiscount": 0,
-        "tollFastag": 82,
-        "gst": 124,
-        "totalFare": 2600,
-        "inclusions": [
-          "100% AC Chilled Ride",
-          "Doorstep Pickup & Drop",
-          "Driver Allowance Included",
-          "State Highway Tolls & FASTag Included",
-          "5% GST Tax Included",
-          "Zero Return Fare Charged"
-        ],
-        "exclusions": [
-          "Multiple city diversions not specified in booking",
-          "Overnight detention if passenger delays vehicle to following calendar day"
-        ]
-      },
-      "fleetClass": "Prime Sedan",
-      "fleetModel": "Dzire, Etios, Amaze",
-      "idempotencyKey": null,
-      "isForOther": true,
-      "originCity": "Patna",
-      "originalFare": 2600,
-      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "passengerEmail": "",
-      "passengerName": "Anjali Sharma",
-      "passengerPhone": "+91 9835012345",
-      "paymentMethod": "Cash on Ride (Zero Advance)",
-      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
-      "paymentTxnId": "TXN_1791883527567_9202",
-      "phoneVerified": true,
-      "pickupAddress": "Patna City",
-      "pickupDate": "2026-10-13",
-      "pickupTime": "10:00 AM",
-      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
-      "status": "TRIP STARTED",
-      "statusHistory": [
-        {
-          "status": "NEW",
-          "timestamp": "2026-10-13T09:25:27.568Z",
-          "actor": "Customer",
-          "note": "Booking request placed. Availability verification in progress."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-10-13T09:25:28.564Z",
-          "actor": "Admin Dispatcher (admin)",
-          "note": "Smart Dispatch matched Chauffeur Ramesh Kumar Sharma (BR 01 PA 4921) with score 99%: Super-close proximity: ~0 km (ETA: 5m), Top-tier Chauffeur Rating (4.9★), High Acceptance Rate (96%), Compatible Fleet Upgrade (Swift Dzire (White)), Chauffeur fresh on shift (0 trips completed today)"
-        },
-        {
-          "status": "TRIP STARTED",
-          "timestamp": "2026-10-13T09:25:30.371Z",
-          "actor": "Driver (Ramesh Kumar Sharma)",
-          "note": "Chauffeur updated status to TRIP STARTED"
-        }
-      ],
-      "totalFare": 2600,
-      "tripOtp": "5734",
-      "verifiedAt": "2026-10-13T09:25:27.568Z",
-      "verifiedMethod": "Telecom SMS OTP (Verified)",
-      "walletUsed": 0,
-      "assignedDriverId": "drv_101",
       "dispatchOffer": {
         "driverId": "drv_101",
         "offeredAt": "2026-10-13T09:25:28.564Z",
@@ -588,14 +1085,98 @@
           ]
         }
       ],
-      "updatedAt": "2026-10-13T09:25:28.564Z",
+      "distanceKm": 104,
+      "driverDetails": {
+        "id": "drv_101",
+        "name": "Ramesh Kumar Sharma",
+        "phone": "+91 94310 12345",
+        "vehicleNumber": "BR 01 PA 4921",
+        "vehicleModel": "Swift Dzire (White)",
+        "rating": 4.9
+      },
+      "dropAddress": "Gaya City",
+      "duration": "2h 18m",
+      "fare": 2600,
+      "fareBreakdown": {
+        "distanceKm": 104,
+        "duration": "2h 18m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2198,
+        "perKmRate": 25,
+        "distanceCharge": 2600,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 82,
+        "gst": 124,
+        "totalFare": 2600,
+        "inclusions": [
+          "100% AC Chilled Ride",
+          "Doorstep Pickup & Drop",
+          "Driver Allowance Included",
+          "State Highway Tolls & FASTag Included",
+          "5% GST Tax Included",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Multiple city diversions not specified in booking",
+          "Overnight detention if passenger delays vehicle to following calendar day"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": true,
       "liveTelemetry": {
         "lat": 25.5941,
         "lng": 85.1376,
         "heading": 90,
         "speed": 35,
-        "updatedAt": "2026-10-13T10:14:44.908Z"
-      }
+        "updatedAt": "2026-10-13T11:05:37.163Z"
+      },
+      "originCity": "Patna",
+      "originalFare": 2600,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1791883527567_9202",
+      "phoneVerified": true,
+      "pickupAddress": "Patna City",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
+      "specialInstructions": "Senior citizen passenger, please assist with luggage at pickup point.",
+      "status": "TRIP STARTED",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-13T09:25:27.568Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-10-13T09:25:28.564Z",
+          "actor": "Admin Dispatcher (admin)",
+          "note": "Smart Dispatch matched Chauffeur Ramesh Kumar Sharma (BR 01 PA 4921) with score 99%: Super-close proximity: ~0 km (ETA: 5m), Top-tier Chauffeur Rating (4.9★), High Acceptance Rate (96%), Compatible Fleet Upgrade (Swift Dzire (White)), Chauffeur fresh on shift (0 trips completed today)"
+        },
+        {
+          "status": "TRIP STARTED",
+          "timestamp": "2026-10-13T09:25:30.371Z",
+          "actor": "Driver (Ramesh Kumar Sharma)",
+          "note": "Chauffeur updated status to TRIP STARTED"
+        }
+      ],
+      "totalFare": 2600,
+      "tripOtp": "5734",
+      "updatedAt": "2026-10-13T09:25:28.564Z",
+      "verifiedAt": "2026-10-13T09:25:27.568Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0
     },
     {
       "bookingId": "OTB-2026-2662",
@@ -931,13 +1512,14 @@
       "currentLat": 25.5941,
       "currentLng": 85.1376,
       "heading": 90,
-      "locationUpdatedAt": "2026-10-13T10:14:44.908Z",
+      "locationUpdatedAt": "2026-10-13T11:05:37.163Z",
       "speed": 35,
       "isVerified": true,
       "verificationNote": "RC, Driving License, Commercial Permit verified by Patna RTO desk",
       "verificationStatus": "VERIFIED",
-      "verifiedAt": "2026-10-13T10:16:01.529Z",
-      "verifiedBy": "admin"
+      "verifiedAt": "2026-10-13T11:05:39.169Z",
+      "verifiedBy": "admin",
+      "ratingsCount": 13
     },
     {
       "id": "drv_102",
@@ -978,51 +1560,19 @@
       "currentLat": 25.5941,
       "currentLng": 85.1376,
       "heading": 90,
-      "speed": 35,
       "locationUpdatedAt": "2026-10-13T10:15:58.522Z",
+      "speed": 35,
       "ratingsCount": 13
     }
   ],
   "driver_applications": [],
   "users": [
     {
-      "id": "usr_9835011391",
-      "createdAt": "2026-10-13T09:27:54.713Z",
-      "email": "",
-      "name": "Automated Test Passenger",
-      "phone": "+91 9835011391",
-      "walletBalance": 100
-    },
-    {
       "id": "usr_9835012345",
-      "createdAt": "2026-10-13T09:22:15.248Z",
+      "createdAt": "2026-10-13T10:59:18.445Z",
       "email": "",
       "name": "Anjali Sharma",
       "phone": "+91 9835012345",
-      "walletBalance": 100
-    },
-    {
-      "id": "usr_9835017254",
-      "createdAt": "2026-10-13T09:04:44.358Z",
-      "email": "",
-      "name": "Automated Test Passenger",
-      "phone": "+91 9835017254",
-      "walletBalance": 100
-    },
-    {
-      "id": "usr_9835018982",
-      "createdAt": "2026-10-13T07:15:14.677Z",
-      "email": "",
-      "name": "Automated Test Passenger",
-      "phone": "+91 9835018982",
-      "walletBalance": 100
-    },
-    {
-      "id": "usr_9835013026",
-      "createdAt": "2026-10-13T07:01:18.406Z",
-      "email": "",
-      "name": "Automated Test Passenger",
-      "phone": "+91 9835013026",
       "walletBalance": 100
     },
     {
@@ -1103,8 +1653,8 @@
   ],
   "payments": [
     {
-      "id": "TXN_1791886555648_5874",
-      "bookingId": "OTB-2026-7283",
+      "id": "TXN_1791889534300_8927",
+      "bookingId": "OTB-2026-6673",
       "customerId": "usr_9835012345",
       "passengerPhone": "+91 9835012345",
       "amount": 2600,
@@ -1119,7 +1669,83 @@
       "upiUtr": "",
       "verifiedBy": null,
       "verifiedAt": null,
-      "createdAt": "2026-10-13T10:15:55.648Z"
+      "createdAt": "2026-10-13T11:05:34.301Z"
+    },
+    {
+      "id": "TXN_1791889371173_9252",
+      "advancePaid": 0,
+      "amount": 2600,
+      "balanceDue": 2600,
+      "bookingId": "OTB-2026-6205",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T11:02:51.173Z",
+      "customerId": "usr_9835012345",
+      "method": "Cash on Ride (Zero Advance)",
+      "originalAmount": 2600,
+      "passengerPhone": "+91 9835012345",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
+    },
+    {
+      "id": "TXN_1791889158445_2539",
+      "advancePaid": 0,
+      "amount": 2600,
+      "balanceDue": 2600,
+      "bookingId": "OTB-2026-8704",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:59:18.445Z",
+      "customerId": "usr_9835012345",
+      "method": "Cash on Ride (Zero Advance)",
+      "originalAmount": 2600,
+      "passengerPhone": "+91 9835012345",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
+    },
+    {
+      "id": "TXN_1791889041805_6123",
+      "advancePaid": 0,
+      "amount": 2600,
+      "balanceDue": 2600,
+      "bookingId": "OTB-2026-2192",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:57:21.805Z",
+      "customerId": "usr_9835012345",
+      "method": "Cash on Ride (Zero Advance)",
+      "originalAmount": 2600,
+      "passengerPhone": "+91 9835012345",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
+    },
+    {
+      "id": "TXN_1791886555648_5874",
+      "advancePaid": 0,
+      "amount": 2600,
+      "balanceDue": 2600,
+      "bookingId": "OTB-2026-7283",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-13T10:15:55.648Z",
+      "customerId": "usr_9835012345",
+      "method": "Cash on Ride (Zero Advance)",
+      "originalAmount": 2600,
+      "passengerPhone": "+91 9835012345",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
     },
     {
       "id": "TXN_1791886482046_1580",
@@ -1258,6 +1884,56 @@
   "wallet_ledger": [],
   "leads": [
     {
+      "id": "lead_6206494214_8590",
+      "cabName": "Prime Sedan",
+      "cabPrice": 2198,
+      "cleanPhone": "6206494214",
+      "createdAt": "2026-10-13T10:28:38.590Z",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "duration": "2h 15m",
+      "estFareHatch": 1698,
+      "estFareSedan": 2198,
+      "estFareSuv": 3398,
+      "notes": "Inquiry for Patna ➔ Gaya",
+      "originCity": "Patna",
+      "passengerName": "aman kumar",
+      "phone": "+91 6206494214",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "Immediate",
+      "rawPhone": "6206494214",
+      "selectedCab": "sedan",
+      "source": "Customer Mobile OTP Request",
+      "status": "NEW",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-13T10:28:38.590Z"
+    },
+    {
+      "id": "lead_9876543210_7487",
+      "cabName": "Prime Sedan",
+      "cabPrice": 2600,
+      "cleanPhone": "9876543210",
+      "createdAt": "2026-10-13T10:17:47.487Z",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "duration": "2h 15m",
+      "estFareHatch": 2184,
+      "estFareSedan": 2600,
+      "estFareSuv": 3432,
+      "notes": "Inquiry for Patna ➔ Gaya",
+      "originCity": "Patna",
+      "passengerName": "Fare Check Visitor",
+      "phone": "+91 9876543210",
+      "pickupDate": "2026-10-13",
+      "pickupTime": "10:00 AM",
+      "rawPhone": "9876543210",
+      "selectedCab": "sedan",
+      "source": "Check Fares & Availability Button",
+      "status": "NEW",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-13T10:17:47.487Z"
+    },
+    {
       "id": "lead_9876543210_9245",
       "cabName": "Prime Sedan",
       "cabPrice": 2600,
@@ -1308,9 +1984,10 @@
       "updatedAt": "2026-10-13T09:41:58.360Z"
     },
     {
-      "cleanPhone": "9876543210",
+      "id": "lead_9876543210_8339",
       "cabName": "Prime Sedan",
       "cabPrice": 2600,
+      "cleanPhone": "9876543210",
       "createdAt": "2026-10-13T09:41:58.339Z",
       "destCity": "Gaya",
       "distanceKm": 104,
@@ -1318,7 +1995,6 @@
       "estFareHatch": 2184,
       "estFareSedan": 2600,
       "estFareSuv": 3432,
-      "id": "lead_9876543210_8339",
       "notes": "Inquiry for Patna ➔ Gaya",
       "originCity": "Patna",
       "passengerName": "Fare Check Visitor",
@@ -1376,7 +2052,7 @@
     },
     {
       "id": "LEAD_1791883335248",
-      "bookingId": "OTB-2026-7283",
+      "bookingId": "OTB-2026-6673",
       "cleanPhone": "9835012345",
       "createdAt": "2026-10-13T09:22:15.248Z",
       "destCity": "Gaya",
@@ -1387,9 +2063,10 @@
       "phone": "+91 9835012345",
       "pickupDate": "2026-10-13",
       "pickupTime": "10:00 AM",
+      "source": "Firebase SMS Verified Login",
       "status": "CONVERTED",
       "tripType": "oneway",
-      "updatedAt": "2026-10-13T10:15:55.648Z"
+      "updatedAt": "2026-10-13T11:05:34.301Z"
     },
     {
       "id": "LEAD_1791882284358",
@@ -1506,9 +2183,10 @@
       "tripType": "oneway"
     },
     {
-      "cleanPhone": "8434855686",
+      "id": "lead_8434855686_2303",
       "cabName": "Prime Sedan",
       "cabPrice": 2198,
+      "cleanPhone": "8434855686",
       "createdAt": "2026-10-13T06:33:02.303Z",
       "destCity": "Gaya",
       "distanceKm": 104,
@@ -1516,7 +2194,6 @@
       "estFareHatch": 1698,
       "estFareSedan": 2198,
       "estFareSuv": 3398,
-      "id": "lead_8434855686_2303",
       "notes": "Inquiry for Patna ➔ Gaya",
       "originCity": "Patna",
       "passengerName": "Passenger",
@@ -1531,9 +2208,10 @@
       "updatedAt": "2026-10-13T06:33:02.303Z"
     },
     {
-      "cleanPhone": "9905057552",
+      "id": "lead_9905057552_2144",
       "cabName": "Prime Sedan",
       "cabPrice": 2198,
+      "cleanPhone": "9905057552",
       "createdAt": "2026-10-13T06:32:22.144Z",
       "destCity": "Gaya",
       "distanceKm": 104,
@@ -1541,7 +2219,6 @@
       "estFareHatch": 1698,
       "estFareSedan": 2198,
       "estFareSuv": 3398,
-      "id": "lead_9905057552_2144",
       "notes": "Inquiry for Patna ➔ Gaya",
       "originCity": "Patna",
       "passengerName": "Ankit",
@@ -1556,9 +2233,10 @@
       "updatedAt": "2026-10-13T06:32:22.144Z"
     },
     {
-      "cleanPhone": "6299375016",
+      "id": "lead_6299375016_6583",
       "cabName": "Prime Sedan",
       "cabPrice": 2600,
+      "cleanPhone": "6299375016",
       "createdAt": "2026-10-13T06:25:16.583Z",
       "destCity": "Gaya",
       "distanceKm": 104,
@@ -1566,7 +2244,6 @@
       "estFareHatch": 2184,
       "estFareSedan": 2600,
       "estFareSuv": 3432,
-      "id": "lead_6299375016_6583",
       "notes": "Inquiry for Patna ➔ Gaya",
       "originCity": "Patna",
       "passengerName": "Himanshu Dubey",
@@ -1582,7 +2259,7 @@
     },
     {
       "id": "LEAD_1791883335248",
-      "bookingId": "OTB-2026-8665",
+      "bookingId": "OTB-2026-6205",
       "cleanPhone": "9835012345",
       "createdAt": "2026-10-13T09:22:15.248Z",
       "destCity": "Gaya",
@@ -1593,421 +2270,135 @@
       "phone": "+91 9835012345",
       "pickupDate": "2026-10-13",
       "pickupTime": "10:00 AM",
+      "source": "Firebase SMS Verified Login",
       "status": "CONVERTED",
       "tripType": "oneway",
-      "updatedAt": "2026-10-13T10:14:42.046Z"
+      "updatedAt": "2026-10-13T11:02:51.174Z"
     }
   ],
   "notifications": [
     {
-      "id": "notif_corp_1791886564533",
+      "id": "notif_corp_1791889542170",
       "type": "CORPORATE_INQUIRY",
       "title": "🏢 CORPORATE DESK: Bihar State Power Holding Company Ltd",
       "message": "Inquiry from Sanjay Sinha (+91 9431098765) for approx 50 monthly intercity rides.",
       "priority": "HIGH",
-      "createdAt": "2026-10-13T10:16:04.533Z"
+      "createdAt": "2026-10-13T11:05:42.170Z"
     },
     {
-      "id": "notif_tour_1791886563530",
+      "id": "notif_tour_1791889541163",
       "type": "TOURISM_BOOKING",
-      "title": "🏛️ BIHAR TOURISM: OTB-TOUR-3530",
+      "title": "🏛️ BIHAR TOURISM: OTB-TOUR-1163",
       "message": "Bodh Gaya Enlightenment & Buddhist Circuit booked by Anjali Sharma (+91 9835012345) for 2026-10-15. Package Fare: ₹3800",
-      "bookingId": "OTB-TOUR-3530",
+      "bookingId": "OTB-TOUR-1163",
       "priority": "HIGH",
-      "createdAt": "2026-10-13T10:16:03.530Z"
+      "createdAt": "2026-10-13T11:05:41.163Z"
     },
     {
-      "id": "NOTIF_SOS_1791886560790",
+      "id": "NOTIF_SOS_1791889538168",
       "type": "EMERGENCY_SOS_ALERT",
-      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-7283",
-      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-7283! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
+      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-6673",
+      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-6673! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
       "priority": "CRITICAL",
-      "incidentId": "SOS_1791886560790_3384",
-      "createdAt": "2026-10-13T10:16:00.790Z"
+      "incidentId": "SOS_1791889538168_3854",
+      "createdAt": "2026-10-13T11:05:38.168Z"
     },
     {
-      "id": "NOTIF_LOGIN_1791886557654",
+      "id": "NOTIF_LOGIN_1791889536278",
       "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Sanjay Paswan",
-      "message": "Chauffeur Sanjay Paswan (+91 82103 44556) is active on duty. Direct Contact: +91 82103 44556, Admin Support: 6206494214.",
-      "createdAt": "2026-10-13T10:15:57.654Z"
+      "title": "Driver Online: Ramesh Kumar Sharma",
+      "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
+      "createdAt": "2026-10-13T11:05:36.278Z"
     },
     {
-      "id": "NOTIF_BOOK_1791886555648",
+      "id": "NOTIF_BOOK_1791889534301",
       "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-7283",
+      "title": "New Cab Booking: OTB-2026-6673",
       "message": "Anjali Sharma (+91 9835012345) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹2600.",
-      "bookingId": "OTB-2026-7283",
-      "createdAt": "2026-10-13T10:15:55.648Z"
+      "bookingId": "OTB-2026-6673",
+      "createdAt": "2026-10-13T11:05:34.301Z"
     },
     {
-      "id": "notif_corp_1791886489910",
-      "createdAt": "2026-10-13T10:14:49.910Z",
+      "id": "notif_corp_1791889376175",
+      "createdAt": "2026-10-13T11:02:56.175Z",
       "message": "Inquiry from Sanjay Sinha (+91 9431098765) for approx 50 monthly intercity rides.",
       "priority": "HIGH",
       "title": "🏢 CORPORATE DESK: Bihar State Power Holding Company Ltd",
       "type": "CORPORATE_INQUIRY"
     },
     {
-      "id": "notif_tour_1791886488912",
-      "bookingId": "OTB-TOUR-8912",
-      "createdAt": "2026-10-13T10:14:48.912Z",
+      "id": "notif_tour_1791889375174",
+      "bookingId": "OTB-TOUR-5174",
+      "createdAt": "2026-10-13T11:02:55.174Z",
       "message": "Bodh Gaya Enlightenment & Buddhist Circuit booked by Anjali Sharma (+91 9835012345) for 2026-10-15. Package Fare: ₹3800",
       "priority": "HIGH",
-      "title": "🏛️ BIHAR TOURISM: OTB-TOUR-8912",
+      "title": "🏛️ BIHAR TOURISM: OTB-TOUR-5174",
       "type": "TOURISM_BOOKING"
     },
     {
-      "id": "NOTIF_SOS_1791886485917",
-      "createdAt": "2026-10-13T10:14:45.917Z",
-      "incidentId": "SOS_1791886485917_9587",
-      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-8665! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
+      "id": "NOTIF_SOS_1791889373180",
+      "createdAt": "2026-10-13T11:02:53.180Z",
+      "incidentId": "SOS_1791889373180_2644",
+      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-6205! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
       "priority": "CRITICAL",
-      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-8665",
+      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-6205",
       "type": "EMERGENCY_SOS_ALERT"
     },
     {
-      "id": "NOTIF_LOGIN_1791886484041",
-      "createdAt": "2026-10-13T10:14:44.041Z",
+      "id": "NOTIF_LOGIN_1791889371551",
+      "createdAt": "2026-10-13T11:02:51.551Z",
       "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
       "title": "Driver Online: Ramesh Kumar Sharma",
       "type": "DRIVER_LOGGED_IN"
     },
     {
-      "id": "NOTIF_BOOK_1791886482046",
-      "bookingId": "OTB-2026-8665",
-      "createdAt": "2026-10-13T10:14:42.046Z",
+      "id": "NOTIF_BOOK_1791889371174",
+      "bookingId": "OTB-2026-6205",
+      "createdAt": "2026-10-13T11:02:51.174Z",
       "message": "Anjali Sharma (+91 9835012345) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹2600.",
-      "title": "New Cab Booking: OTB-2026-8665",
+      "title": "New Cab Booking: OTB-2026-6205",
       "type": "NEW_BOOKING_REQUEST"
     },
     {
-      "id": "NOTIF_LOGIN_1791884528164",
-      "createdAt": "2026-10-13T09:42:08.164Z",
-      "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
-      "title": "Driver Online: Ramesh Kumar Sharma",
-      "type": "DRIVER_LOGGED_IN"
-    },
-    {
-      "id": "NOTIF_1791884521036",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9876543210_9245",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:41:59.245Z"
-    },
-    {
-      "id": "NOTIF_1791884520159",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9876543210_8360",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:41:58.360Z"
-    },
-    {
-      "id": "NOTIF_1791884522087",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9876543210_8339",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:41:58.339Z"
-    },
-    {
-      "id": "NOTIF_1791884518414",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9876543210_8029",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:41:58.029Z"
-    },
-    {
-      "id": "notif_tck_1791883685301",
-      "bookingId": null,
-      "createdAt": "2026-10-13T09:28:05.301Z",
-      "message": "From +91 9835012345 : Automated test inquiry regarding airport transfer rate",
+      "id": "notif_corp_1791889162832",
+      "createdAt": "2026-10-13T10:59:22.832Z",
+      "message": "Inquiry from Sanjay Sinha (+91 9431098765) for approx 50 monthly intercity rides.",
       "priority": "HIGH",
-      "title": "🚨 SUPPORT TICKET: TCK-685301 [INQUIRY]",
-      "type": "CUSTOMER_TICKET"
+      "title": "🏢 CORPORATE DESK: Bihar State Power Holding Company Ltd",
+      "type": "CORPORATE_INQUIRY"
     },
     {
-      "id": "NOTIF_BOOK_1791883674714",
-      "bookingId": "OTB-2026-8758",
-      "createdAt": "2026-10-13T09:27:54.714Z",
-      "message": "Automated Test Passenger (+91 9835011391) requested Patna Junction ➔ Darbhanga Tower (Prime Sedan). Total Fare: ₹3125.",
-      "title": "New Cab Booking: OTB-2026-8758",
-      "type": "NEW_BOOKING_REQUEST"
+      "id": "notif_tour_1791889162442",
+      "bookingId": "OTB-TOUR-2442",
+      "createdAt": "2026-10-13T10:59:22.442Z",
+      "message": "Bodh Gaya Enlightenment & Buddhist Circuit booked by Anjali Sharma (+91 9835012345) for 2026-10-15. Package Fare: ₹3800",
+      "priority": "HIGH",
+      "title": "🏛️ BIHAR TOURISM: OTB-TOUR-2442",
+      "type": "TOURISM_BOOKING"
     },
     {
-      "id": "NOTIF_SOS_1791883531368",
-      "createdAt": "2026-10-13T09:25:31.368Z",
-      "incidentId": "SOS_1791883531368_9413",
-      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-1658! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
+      "id": "NOTIF_SOS_1791889160464",
+      "createdAt": "2026-10-13T10:59:20.464Z",
+      "incidentId": "SOS_1791889160464_6778",
+      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-8704! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
       "priority": "CRITICAL",
-      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-1658",
+      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-8704",
       "type": "EMERGENCY_SOS_ALERT"
     },
     {
-      "id": "NOTIF_LOGIN_1791883529374",
-      "createdAt": "2026-10-13T09:25:29.374Z",
+      "id": "NOTIF_LOGIN_1791889158794",
+      "createdAt": "2026-10-13T10:59:18.794Z",
       "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
       "title": "Driver Online: Ramesh Kumar Sharma",
       "type": "DRIVER_LOGGED_IN"
     },
     {
-      "id": "NOTIF_BOOK_1791883527568",
-      "bookingId": "OTB-2026-1658",
-      "createdAt": "2026-10-13T09:25:27.568Z",
+      "id": "NOTIF_BOOK_1791889158445",
+      "bookingId": "OTB-2026-8704",
+      "createdAt": "2026-10-13T10:59:18.445Z",
       "message": "Anjali Sharma (+91 9835012345) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹2600.",
-      "title": "New Cab Booking: OTB-2026-1658",
+      "title": "New Cab Booking: OTB-2026-8704",
       "type": "NEW_BOOKING_REQUEST"
-    },
-    {
-      "id": "NOTIF_SOS_1791883337156",
-      "createdAt": "2026-10-13T09:22:17.156Z",
-      "incidentId": "SOS_1791883337156_3065",
-      "message": "Passenger / Driver triggered emergency SOS alert for trip OTB-2026-2662! Reporter Phone: 9835012345. Coordinate: 25.5941, 85.1376. Immediate response required.",
-      "priority": "CRITICAL",
-      "title": "🚨 EMERGENCY SOS ALERT: Trip OTB-2026-2662",
-      "type": "EMERGENCY_SOS_ALERT"
-    },
-    {
-      "id": "NOTIF_LOGIN_1791883336191",
-      "createdAt": "2026-10-13T09:22:16.191Z",
-      "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
-      "title": "Driver Online: Ramesh Kumar Sharma",
-      "type": "DRIVER_LOGGED_IN"
-    },
-    {
-      "id": "NOTIF_BOOK_1791883335248",
-      "bookingId": "OTB-2026-2662",
-      "createdAt": "2026-10-13T09:22:15.248Z",
-      "message": "Anjali Sharma (+91 9835012345) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹2600.",
-      "title": "New Cab Booking: OTB-2026-2662",
-      "type": "NEW_BOOKING_REQUEST"
-    },
-    {
-      "id": "notif_tck_1791882292493",
-      "bookingId": null,
-      "createdAt": "2026-10-13T09:04:52.493Z",
-      "message": "From +91 9835012345 : Automated test inquiry regarding airport transfer rate",
-      "priority": "HIGH",
-      "title": "🚨 SUPPORT TICKET: TCK-292492 [INQUIRY]",
-      "type": "CUSTOMER_TICKET"
-    },
-    {
-      "id": "NOTIF_BOOK_1791882284358",
-      "bookingId": "OTB-2026-4674",
-      "createdAt": "2026-10-13T09:04:44.358Z",
-      "message": "Automated Test Passenger (+91 9835017254) requested Patna Junction ➔ Darbhanga Tower (Prime Sedan). Total Fare: ₹3125.",
-      "title": "New Cab Booking: OTB-2026-4674",
-      "type": "NEW_BOOKING_REQUEST"
-    },
-    {
-      "id": "NOTIF_LOGIN_1791882253315",
-      "createdAt": "2026-10-13T09:04:13.315Z",
-      "message": "Chauffeur Ramesh Kumar Sharma (+91 94310 12345) is active on duty. Direct Contact: +91 94310 12345, Admin Support: 6206494214.",
-      "title": "Driver Online: Ramesh Kumar Sharma",
-      "type": "DRIVER_LOGGED_IN"
-    },
-    {
-      "id": "NOTIF_1791882246187",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9876543210_4417",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:04:04.417Z"
-    },
-    {
-      "id": "NOTIF_1791882245630",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9876543210_3865",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:04:03.865Z"
-    },
-    {
-      "id": "NOTIF_1791882247153",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9876543210_3835",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:04:03.835Z"
-    },
-    {
-      "id": "NOTIF_1791882246725",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Fare Check Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9876543210_3828",
-      "isRead": false,
-      "createdAt": "2026-10-13T09:04:03.828Z"
-    },
-    {
-      "id": "notif_tck_1791875723773",
-      "bookingId": null,
-      "createdAt": "2026-10-13T07:15:23.773Z",
-      "message": "From +91 9835012345 : Automated test inquiry regarding airport transfer rate",
-      "priority": "HIGH",
-      "title": "🚨 SUPPORT TICKET: TCK-723773 [INQUIRY]",
-      "type": "CUSTOMER_TICKET"
-    },
-    {
-      "id": "NOTIF_BOOK_1791875714677",
-      "bookingId": "OTB-2026-1738",
-      "createdAt": "2026-10-13T07:15:14.677Z",
-      "message": "Automated Test Passenger (+91 9835018982) requested Patna Junction ➔ Darbhanga Tower (Prime Sedan). Total Fare: ₹3125.",
-      "title": "New Cab Booking: OTB-2026-1738",
-      "type": "NEW_BOOKING_REQUEST"
-    },
-    {
-      "id": "notif_tck_1791874887144",
-      "bookingId": null,
-      "createdAt": "2026-10-13T07:01:27.144Z",
-      "message": "From +91 9835012345 : Automated test inquiry regarding airport transfer rate",
-      "priority": "HIGH",
-      "title": "🚨 SUPPORT TICKET: TCK-887144 [INQUIRY]",
-      "type": "CUSTOMER_TICKET"
-    },
-    {
-      "id": "NOTIF_BOOK_1791874878407",
-      "bookingId": "OTB-2026-7639",
-      "createdAt": "2026-10-13T07:01:18.407Z",
-      "message": "Automated Test Passenger (+91 9835013026) requested Patna Junction ➔ Darbhanga Tower (Prime Sedan). Total Fare: ₹3125.",
-      "title": "New Cab Booking: OTB-2026-7639",
-      "type": "NEW_BOOKING_REQUEST"
-    },
-    {
-      "id": "NOTIF_1791873182714",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2198.",
-      "leadId": "lead_8434855686_2303",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:33:02.303Z"
-    },
-    {
-      "id": "NOTIF_1791873174563",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Delhi NCR",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Delhi NCR (1109 KM). Rate: ₹27725.",
-      "leadId": "lead_8434855686_4152",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:54.152Z"
-    },
-    {
-      "id": "NOTIF_1791873164991",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Delhi NCR",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Delhi NCR (1109 KM). Rate: ₹27725.",
-      "leadId": "lead_8434855686_4580",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:44.580Z"
-    },
-    {
-      "id": "NOTIF_1791873164972",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Delhi NCR",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Delhi NCR (1109 KM). Rate: ₹27725.",
-      "leadId": "lead_8434855686_4565",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:44.565Z"
-    },
-    {
-      "id": "NOTIF_1791873142551",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2198.",
-      "leadId": "lead_9905057552_2144",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:22.144Z"
-    },
-    {
-      "id": "NOTIF_1791873138186",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9905057552_6298",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:16.298Z"
-    },
-    {
-      "id": "NOTIF_1791873136147",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9905057552_5737",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:15.737Z"
-    },
-    {
-      "id": "NOTIF_1791873136044",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (100 KM). Rate: ₹2500.",
-      "leadId": "lead_9905057552_5670",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:15.670Z"
-    },
-    {
-      "id": "NOTIF_1791873136041",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_9905057552_5666",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:32:15.666Z"
-    },
-    {
-      "id": "NOTIF_1791872932878",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_8434855686_2489",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:28:52.489Z"
-    },
-    {
-      "id": "NOTIF_1791872932902",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_8434855686_2468",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:28:52.468Z"
-    },
-    {
-      "id": "NOTIF_1791872932012",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Passenger (+91 8434855686) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_8434855686_1576",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:28:51.576Z"
-    },
-    {
-      "id": "NOTIF_1791872716957",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_6299375016_6583",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:25:16.583Z"
-    },
-    {
-      "id": "NOTIF_1791872716943",
-      "type": "NEW_LEAD",
-      "title": "New Fare Inquiry: Patna ➔ Gaya",
-      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
-      "leadId": "lead_6299375016_6560",
-      "isRead": false,
-      "createdAt": "2026-10-13T06:25:16.560Z"
     }
   ],
   "coupons": [
@@ -2062,7 +2453,7 @@
   ],
   "audit_logs": [
     {
-      "id": "audit_1791874881087_1801",
+      "id": "audit_1791874912203_7986",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2070,9 +2461,48 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:01:52.203Z"
+    },
+    {
+      "id": "audit_1791875717837_2446",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:01:21.087Z"
+      "timestamp": "2026-10-13T07:15:17.837Z"
+    },
+    {
+      "id": "audit_1791875666723_5025",
+      "actor": "admin",
+      "role": "owner",
+      "action": "PASSWORD_CHANGED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator successfully updated their password",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:26.723Z"
+    },
+    {
+      "id": "audit_1791875666601_6187",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:26.601Z"
     },
     {
       "id": "audit_1791875665719_9137",
@@ -2140,7 +2570,7 @@
       "timestamp": "2026-10-13T07:01:52.430Z"
     },
     {
-      "id": "audit_1791874912203_7986",
+      "id": "audit_1791875718736_1979",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2148,9 +2578,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:01:52.203Z"
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T07:15:18.736Z"
     },
     {
       "id": "audit_1791874891228_5433",
@@ -2179,7 +2609,7 @@
       "timestamp": "2026-10-13T07:01:28.285Z"
     },
     {
-      "id": "audit_1791875666601_6187",
+      "id": "audit_1791874881087_1801",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2187,9 +2617,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:14:26.601Z"
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T07:01:21.087Z"
     },
     {
       "id": "audit_1791874880394_5892",
@@ -2257,33 +2687,20 @@
       "timestamp": "2026-10-13T06:29:02.835Z"
     },
     {
-      "id": "audit_1791872936324_1589",
+      "id": "audit_1791883677419_1799",
       "actor": "admin",
       "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "note": "Operational settings modified",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:28:56.324Z"
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T09:27:57.419Z"
     },
     {
-      "id": "audit_1791872885185_7266",
-      "actor": "admin",
-      "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "note": "Operational settings modified",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:28:05.186Z"
-    },
-    {
-      "id": "audit_1791882287223_4351",
+      "id": "audit_1791889370117_6051",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2291,9 +2708,48 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T09:04:47.223Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T11:02:50.117Z"
+    },
+    {
+      "id": "audit_1791889157377_4468",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T10:59:17.377Z"
+    },
+    {
+      "id": "audit_1791889040582_1957",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T10:57:20.582Z"
+    },
+    {
+      "id": "audit_1791886554471_6284",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T10:15:54.471Z"
     },
     {
       "id": "audit_1791886480859_5646",
@@ -2348,17 +2804,17 @@
       "timestamp": "2026-10-13T09:27:58.405Z"
     },
     {
-      "id": "audit_1791883677419_1799",
+      "id": "audit_1791872936324_1589",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T09:27:57.419Z"
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "note": "Operational settings modified",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T06:28:56.324Z"
     },
     {
       "id": "audit_1791883527316_2910",
@@ -2400,17 +2856,17 @@
       "timestamp": "2026-10-13T09:04:53.790Z"
     },
     {
-      "id": "audit_1791872870894_4340",
+      "id": "audit_1791882287223_4351",
       "actor": "admin",
       "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "note": "Operational settings modified",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:27:50.894Z"
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T09:04:47.223Z"
     },
     {
       "id": "audit_1791882286559_1714",
@@ -2465,46 +2921,7 @@
       "timestamp": "2026-10-13T07:15:25.024Z"
     },
     {
-      "id": "audit_1791875718736_1979",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:15:18.736Z"
-    },
-    {
-      "id": "audit_1791875717837_2446",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:15:17.837Z"
-    },
-    {
-      "id": "audit_1791875666723_5025",
-      "actor": "admin",
-      "role": "owner",
-      "action": "PASSWORD_CHANGED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator successfully updated their password",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:14:26.723Z"
-    },
-    {
-      "id": "audit_1791860954376_4411",
+      "id": "audit_1791860980688_4892",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2514,7 +2931,20 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T03:09:14.376Z"
+      "timestamp": "2026-10-13T03:09:40.688Z"
+    },
+    {
+      "id": "audit_1791865520834_5994",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T04:25:20.835Z"
     },
     {
       "id": "audit_1791865424539_3616",
@@ -2608,20 +3038,7 @@
       "timestamp": "2026-10-13T03:14:45.159Z"
     },
     {
-      "id": "audit_1791860980688_4892",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T03:09:40.688Z"
-    },
-    {
-      "id": "audit_1791865520834_5994",
+      "id": "audit_1791866517784_1714",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2631,7 +3048,20 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T04:25:20.835Z"
+      "timestamp": "2026-10-13T04:41:57.784Z"
+    },
+    {
+      "id": "audit_1791860954376_4411",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T03:09:14.376Z"
     },
     {
       "id": "audit_1791860157606_1438",
@@ -2725,7 +3155,7 @@
       "timestamp": "2026-10-10T18:24:08.676Z"
     },
     {
-      "id": "audit_1791870045973_7969",
+      "id": "audit_1791872130672_8909",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2733,9 +3163,35 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T06:15:30.672Z"
+    },
+    {
+      "id": "audit_1791872885185_7266",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "note": "Operational settings modified",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T05:40:45.973Z"
+      "timestamp": "2026-10-13T06:28:05.186Z"
+    },
+    {
+      "id": "audit_1791872870894_4340",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "note": "Operational settings modified",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T06:27:50.894Z"
     },
     {
       "id": "audit_1791872860527_3493",
@@ -2816,17 +3272,17 @@
       "timestamp": "2026-10-13T06:15:40.630Z"
     },
     {
-      "id": "audit_1791872130672_8909",
+      "id": "audit_1791656648506_2671",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T06:15:30.672Z"
+      "note": "Failed credentials login from IP ::1",
+      "ip": "::1",
+      "timestamp": "2026-10-10T18:24:08.518Z"
     },
     {
       "id": "audit_1791872129151_4511",
@@ -2842,17 +3298,17 @@
       "timestamp": "2026-10-13T06:15:29.151Z"
     },
     {
-      "id": "audit_1791656648506_2671",
+      "id": "audit_1791870045973_7969",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP ::1",
-      "ip": "::1",
-      "timestamp": "2026-10-10T18:24:08.518Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T05:40:45.973Z"
     },
     {
       "id": "audit_1791869820456_6921",
@@ -2933,53 +3389,40 @@
       "timestamp": "2026-10-13T05:09:26.484Z"
     },
     {
-      "id": "audit_1791866517784_1714",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T04:41:57.784Z"
-    },
-    {
-      "id": "AUD_1791886555648",
+      "id": "AUD_1791889534301",
       "entity": "BOOKING",
-      "entityId": "OTB-2026-7283",
+      "entityId": "OTB-2026-6673",
       "action": "CREATE_REQUEST",
       "actor": "+91 9835012345",
       "details": "Patna → Gaya for ₹2600 (Cash on Ride (Zero Advance))",
-      "createdAt": "2026-10-13T10:15:55.648Z"
+      "createdAt": "2026-10-13T11:05:34.301Z"
     },
     {
-      "id": "AUD_1791886559532",
+      "id": "AUD_1791889537229",
       "entity": "BOOKING",
-      "entityId": "OTB-2026-7283",
+      "entityId": "OTB-2026-6673",
       "action": "DRIVER_STATUS_UPDATE",
-      "actor": "driver_drv_104",
+      "actor": "driver_drv_101",
       "details": "Status set to TRIP STARTED",
-      "createdAt": "2026-10-13T10:15:59.532Z"
+      "createdAt": "2026-10-13T11:05:37.229Z"
     },
     {
-      "id": "AUD_DRV_VER_1791886561529",
+      "id": "AUD_DRV_VER_1791889539169",
       "entity": "DRIVER",
       "entityId": "drv_101",
       "action": "VERIFICATION_UPDATE",
       "actor": "admin",
       "details": "Driver Ramesh Kumar Sharma status updated to VERIFIED",
-      "createdAt": "2026-10-13T10:16:01.529Z"
+      "createdAt": "2026-10-13T11:05:39.169Z"
     },
     {
-      "id": "AUD_SETTLE_1791886562526",
+      "id": "AUD_SETTLE_1791889540163",
       "entity": "DRIVER_FINANCE",
       "entityId": "drv_101",
       "action": "SETTLEMENT_PROCESSED",
       "actor": "admin",
       "details": "Payout ₹1500 settled to Ramesh Kumar Sharma via Bank IMPS (Ref: IMPS_982348234723)",
-      "createdAt": "2026-10-13T10:16:02.526Z"
+      "createdAt": "2026-10-13T11:05:40.163Z"
     }
   ],
   "sessions": [
@@ -3095,10 +3538,10 @@
       "userId": "usr_6206494214"
     },
     {
-      "token": "drv_sess_d92a44a0d5ffec61ae7cd28bd0c739e110d9284fda9e2629",
-      "driverId": "drv_104",
+      "token": "drv_sess_60ac614747e57e05cd8445bae10aace2cfe1d482b3e57cf2",
+      "driverId": "drv_101",
       "role": "driver",
-      "createdAt": "2026-10-13T10:15:57.654Z"
+      "createdAt": "2026-10-13T11:05:36.278Z"
     }
   ],
   "settings": {
@@ -3204,6 +3647,70 @@
   ],
   "safety_incidents": [
     {
+      "id": "SOS_1791889538168_3854",
+      "bookingId": "OTB-2026-6673",
+      "reporterPhone": "9835012345",
+      "passengerName": "Anjali Sharma",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "route": "Patna ➔ Gaya",
+      "location": {
+        "lat": 25.5941,
+        "lng": 85.1376
+      },
+      "reason": "Emergency route deviation check",
+      "status": "ACTIVE_EMERGENCY",
+      "createdAt": "2026-10-13T11:05:38.168Z"
+    },
+    {
+      "id": "SOS_1791889373180_2644",
+      "bookingId": "OTB-2026-6205",
+      "reporterPhone": "9835012345",
+      "passengerName": "Anjali Sharma",
+      "driverName": null,
+      "driverPhone": null,
+      "route": "Patna ➔ Gaya",
+      "location": {
+        "lat": 25.5941,
+        "lng": 85.1376
+      },
+      "reason": "Emergency route deviation check",
+      "status": "ACTIVE_EMERGENCY",
+      "createdAt": "2026-10-13T11:02:53.180Z"
+    },
+    {
+      "id": "SOS_1791889160464_6778",
+      "bookingId": "OTB-2026-8704",
+      "reporterPhone": "9835012345",
+      "passengerName": "Anjali Sharma",
+      "driverName": null,
+      "driverPhone": null,
+      "route": "Patna ➔ Gaya",
+      "location": {
+        "lat": 25.5941,
+        "lng": 85.1376
+      },
+      "reason": "Emergency route deviation check",
+      "status": "ACTIVE_EMERGENCY",
+      "createdAt": "2026-10-13T10:59:20.464Z"
+    },
+    {
+      "id": "SOS_1791889044671_5608",
+      "bookingId": "OTB-2026-2192",
+      "reporterPhone": "9835012345",
+      "passengerName": "Anjali Sharma",
+      "driverName": null,
+      "driverPhone": null,
+      "route": "Patna ➔ Gaya",
+      "location": {
+        "lat": 25.5941,
+        "lng": 85.1376
+      },
+      "reason": "Emergency route deviation check",
+      "status": "ACTIVE_EMERGENCY",
+      "createdAt": "2026-10-13T10:57:24.671Z"
+    },
+    {
       "id": "SOS_1791886560790_3384",
       "bookingId": "OTB-2026-7283",
       "reporterPhone": "9835012345",
@@ -3270,6 +3777,58 @@
   ],
   "driver_settlements": [
     {
+      "id": "SETTLE_1791889540163_2881",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "amount": 1500,
+      "paymentMethod": "Bank IMPS",
+      "referenceId": "IMPS_982348234723",
+      "status": "PAID",
+      "processedBy": "admin",
+      "note": "Weekly trip payout",
+      "createdAt": "2026-10-13T11:05:40.163Z"
+    },
+    {
+      "id": "SETTLE_1791889374173_8667",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "amount": 1500,
+      "paymentMethod": "Bank IMPS",
+      "referenceId": "IMPS_982348234723",
+      "status": "PAID",
+      "processedBy": "admin",
+      "note": "Weekly trip payout",
+      "createdAt": "2026-10-13T11:02:54.174Z"
+    },
+    {
+      "id": "SETTLE_1791889161452_7095",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "amount": 1500,
+      "paymentMethod": "Bank IMPS",
+      "referenceId": "IMPS_982348234723",
+      "status": "PAID",
+      "processedBy": "admin",
+      "note": "Weekly trip payout",
+      "createdAt": "2026-10-13T10:59:21.452Z"
+    },
+    {
+      "id": "SETTLE_1791889046663_1561",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "driverPhone": "+91 94310 12345",
+      "amount": 1500,
+      "paymentMethod": "Bank IMPS",
+      "referenceId": "IMPS_982348234723",
+      "status": "PAID",
+      "processedBy": "admin",
+      "note": "Weekly trip payout",
+      "createdAt": "2026-10-13T10:57:26.663Z"
+    },
+    {
       "id": "SETTLE_1791886562526_1977",
       "driverId": "drv_101",
       "driverName": "Ramesh Kumar Sharma",
@@ -3311,8 +3870,8 @@
   ],
   "corporate_inquiries": [
     {
-      "id": "CORP-INQ-64533",
-      "inquiryId": "CORP-INQ-64533",
+      "id": "CORP-INQ-42170",
+      "inquiryId": "CORP-INQ-42170",
       "companyName": "Bihar State Power Holding Company Ltd",
       "contactPerson": "Sanjay Sinha",
       "phone": "+91 9431098765",
@@ -3322,7 +3881,67 @@
       "estimatedMonthlyRides": 50,
       "notes": "Standard corporate mobility solution request",
       "status": "NEW",
+      "createdAt": "2026-10-13T11:05:42.170Z",
+      "updatedAt": "2026-10-13T11:05:42.170Z"
+    },
+    {
+      "id": "CORP-INQ-76175",
+      "cleanPhone": "9431098765",
+      "companyName": "Bihar State Power Holding Company Ltd",
+      "contactPerson": "Sanjay Sinha",
+      "createdAt": "2026-10-13T11:02:56.175Z",
+      "email": "corporate@bsphcl.bih.nic.in",
+      "estimatedMonthlyRides": 50,
+      "gstin": "10AAACB1234F1Z5",
+      "inquiryId": "CORP-INQ-76175",
+      "notes": "Standard corporate mobility solution request",
+      "phone": "+91 9431098765",
+      "status": "NEW",
+      "updatedAt": "2026-10-13T11:02:56.175Z"
+    },
+    {
+      "id": "CORP-INQ-62832",
+      "cleanPhone": "9431098765",
+      "companyName": "Bihar State Power Holding Company Ltd",
+      "contactPerson": "Sanjay Sinha",
+      "createdAt": "2026-10-13T10:59:22.832Z",
+      "email": "corporate@bsphcl.bih.nic.in",
+      "estimatedMonthlyRides": 50,
+      "gstin": "10AAACB1234F1Z5",
+      "inquiryId": "CORP-INQ-62832",
+      "notes": "Standard corporate mobility solution request",
+      "phone": "+91 9431098765",
+      "status": "NEW",
+      "updatedAt": "2026-10-13T10:59:22.832Z"
+    },
+    {
+      "id": "CORP-INQ-48665",
+      "cleanPhone": "9431098765",
+      "companyName": "Bihar State Power Holding Company Ltd",
+      "contactPerson": "Sanjay Sinha",
+      "createdAt": "2026-10-13T10:57:28.665Z",
+      "email": "corporate@bsphcl.bih.nic.in",
+      "estimatedMonthlyRides": 50,
+      "gstin": "10AAACB1234F1Z5",
+      "inquiryId": "CORP-INQ-48665",
+      "notes": "Standard corporate mobility solution request",
+      "phone": "+91 9431098765",
+      "status": "NEW",
+      "updatedAt": "2026-10-13T10:57:28.665Z"
+    },
+    {
+      "id": "CORP-INQ-64533",
+      "cleanPhone": "9431098765",
+      "companyName": "Bihar State Power Holding Company Ltd",
+      "contactPerson": "Sanjay Sinha",
       "createdAt": "2026-10-13T10:16:04.533Z",
+      "email": "corporate@bsphcl.bih.nic.in",
+      "estimatedMonthlyRides": 50,
+      "gstin": "10AAACB1234F1Z5",
+      "inquiryId": "CORP-INQ-64533",
+      "notes": "Standard corporate mobility solution request",
+      "phone": "+91 9431098765",
+      "status": "NEW",
       "updatedAt": "2026-10-13T10:16:04.533Z"
     },
     {
@@ -3343,8 +3962,8 @@
   ],
   "passenger_reviews": [
     {
-      "id": "rev_1791886565538",
-      "bookingId": "OTB-2026-7283",
+      "id": "rev_1791889543166",
+      "bookingId": "OTB-2026-6673",
       "passengerName": "Anjali Sharma",
       "passengerPhone": "+91 9835012345",
       "route": "Patna to Gaya",
@@ -3353,9 +3972,69 @@
       "cleanlinessRating": 5,
       "punctualityRating": 5,
       "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "driverId": "drv_101",
+      "driverName": "Ramesh Kumar Sharma",
+      "createdAt": "2026-10-13T11:05:43.166Z"
+    },
+    {
+      "id": "rev_1791889376249",
+      "bookingId": "OTB-2026-6205",
+      "cabType": "Prime Sedan",
+      "cleanlinessRating": 5,
+      "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "createdAt": "2026-10-13T11:02:56.249Z",
+      "driverId": null,
+      "driverName": null,
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "punctualityRating": 5,
+      "rating": 5,
+      "route": "Patna to Gaya"
+    },
+    {
+      "id": "rev_1791889163449",
+      "bookingId": "OTB-2026-8704",
+      "cabType": "Prime Sedan",
+      "cleanlinessRating": 5,
+      "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "createdAt": "2026-10-13T10:59:23.449Z",
+      "driverId": null,
+      "driverName": null,
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "punctualityRating": 5,
+      "rating": 5,
+      "route": "Patna to Gaya"
+    },
+    {
+      "id": "rev_1791889049685",
+      "bookingId": "OTB-2026-2192",
+      "cabType": "Prime Sedan",
+      "cleanlinessRating": 5,
+      "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "createdAt": "2026-10-13T10:57:29.685Z",
+      "driverId": null,
+      "driverName": null,
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "punctualityRating": 5,
+      "rating": 5,
+      "route": "Patna to Gaya"
+    },
+    {
+      "id": "rev_1791886565538",
+      "bookingId": "OTB-2026-7283",
+      "cabType": "Prime Sedan",
+      "cleanlinessRating": 5,
+      "comment": "Exceptional highway ride! Chauffeur arrived right on time at Patna airport.",
+      "createdAt": "2026-10-13T10:16:05.538Z",
       "driverId": "drv_104",
       "driverName": "Sanjay Paswan",
-      "createdAt": "2026-10-13T10:16:05.538Z"
+      "passengerName": "Anjali Sharma",
+      "passengerPhone": "+91 9835012345",
+      "punctualityRating": 5,
+      "rating": 5,
+      "route": "Patna to Gaya"
     },
     {
       "id": "rev_1791886491036",

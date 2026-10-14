@@ -114,37 +114,17 @@ class BookingManager {
       }
     }
 
-    // Fares remain strictly locked until a valid 10-digit mobile number is provided
+    // Fares remain strictly locked until user explicitly enters a 10-digit mobile number and clicks "Check Fares"
+    this.isFareUnlocked = false;
     const section = document.getElementById("cab-selection-section");
     const mapSection = document.getElementById("route-map-section");
-
-    const phoneInput = document.getElementById("input-fare-phone");
-    const existingPhone = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
-    const hasInitialValidPhone = existingPhone.length === 10 && /^[6-9]\d{9}$/.test(existingPhone);
-
-    if (hasInitialValidPhone) {
-      this.userPhone = existingPhone;
-      if (phoneInput && !phoneInput.value) phoneInput.value = existingPhone;
-      this.isFareUnlocked = true;
-      if (section) {
-        section.classList.remove("fare-section-closed");
-        section.classList.add("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.remove("fare-section-closed");
-        mapSection.classList.add("fare-section-open");
-      }
-      this.calculateAndRenderFares();
-    } else {
-      this.isFareUnlocked = false;
-      if (section) {
-        section.classList.add("fare-section-closed");
-        section.classList.remove("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.add("fare-section-closed");
-        mapSection.classList.remove("fare-section-open");
-      }
+    if (section) {
+      section.classList.add("fare-section-closed");
+      section.classList.remove("fare-section-open");
+    }
+    if (mapSection) {
+      mapSection.classList.add("fare-section-closed");
+      mapSection.classList.remove("fare-section-open");
     }
 
     // If deep-link params were supplied, smooth-scroll to cab options or booking hero
@@ -556,36 +536,6 @@ class BookingManager {
         }
       }
 
-      const phoneInput = document.getElementById("input-fare-phone");
-      const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
-      const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
-
-      if (this.originCity && this.destCity && hasValidPhone) {
-        this.isFareUnlocked = true;
-        const section = document.getElementById("cab-selection-section");
-        const mapSection = document.getElementById("route-map-section");
-        if (section) {
-          section.classList.remove("fare-section-closed");
-          section.classList.add("fare-section-open");
-        }
-        if (mapSection) {
-          mapSection.classList.remove("fare-section-closed");
-          mapSection.classList.add("fare-section-open");
-        }
-        this.calculateAndRenderFares();
-      } else {
-        this.isFareUnlocked = false;
-        const section = document.getElementById("cab-selection-section");
-        const mapSection = document.getElementById("route-map-section");
-        if (section) {
-          section.classList.add("fare-section-closed");
-          section.classList.remove("fare-section-open");
-        }
-        if (mapSection) {
-          mapSection.classList.add("fare-section-closed");
-          mapSection.classList.remove("fare-section-open");
-        }
-      }
       this.updateCheckFareButtonState();
     }
   }
@@ -1192,37 +1142,6 @@ class BookingManager {
       }
     }
 
-    const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
-    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
-
-    const isRental = (this.tripType === "rental" || this.tripType === "local");
-    if (((this.originCity && this.destCity) || (this.originCity && isRental)) && hasValidPhone) {
-      this.isFareUnlocked = true;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.remove("fare-section-closed");
-        section.classList.add("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.remove("fare-section-closed");
-        mapSection.classList.add("fare-section-open");
-      }
-      this.calculateAndRenderFares();
-    } else {
-      this.isFareUnlocked = false;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.add("fare-section-closed");
-        section.classList.remove("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.add("fare-section-closed");
-        mapSection.classList.remove("fare-section-open");
-      }
-    }
     this.updateCheckFareButtonState();
   }
 
@@ -1269,18 +1188,6 @@ class BookingManager {
             this.userPhone = val;
             this.passengerDetails.phone = `+91 ${val}`;
             try { localStorage.setItem("oneway_fare_phone", val); } catch (e) {}
-
-            if (!this.originCity) {
-              const pickupInput = document.getElementById("input-pickup");
-              const pVal = (pickupInput?.value || "Patna").trim();
-              this.originCity = OTB_CITIES.find(c => c.name.toLowerCase() === pVal.toLowerCase() || c.id === pVal.toLowerCase()) || { id: "patna", name: pVal || "Patna" };
-            }
-            if (!this.destCity) {
-              const dropInput = document.getElementById("input-drop");
-              const dVal = (dropInput?.value || "Gaya").trim();
-              this.destCity = OTB_CITIES.find(c => c.name.toLowerCase() === dVal.toLowerCase() || c.id === dVal.toLowerCase()) || { id: "gaya", name: dVal || "Gaya" };
-            }
-
             this.transferLeadToHelpdesk(val, true, { source: "Homepage Phone Entered" });
           } else {
             this.isFareUnlocked = false;
@@ -1438,21 +1345,7 @@ class BookingManager {
     }
 
     // 3. Strict Phone Number Validation: Mandatory to view fares
-    let phoneToRecord = "";
-    if (phoneInput && phoneInput.value) {
-      phoneToRecord = phoneInput.value.trim().replace(/\D/g, "");
-    }
-    if (!phoneToRecord && this.userPhone) {
-      phoneToRecord = this.userPhone.replace(/\D/g, "");
-    }
-    if (!phoneToRecord && window.currentUser && window.currentUser.phone) {
-      phoneToRecord = window.currentUser.phone.replace(/\D/g, "");
-    }
-    if (!phoneToRecord) {
-      const cachedPhone = localStorage.getItem("oneway_fare_phone");
-      if (cachedPhone) phoneToRecord = cachedPhone.replace(/\D/g, "");
-    }
-
+    let phoneToRecord = phoneInput ? phoneInput.value.trim().replace(/\D/g, "") : "";
     if (phoneToRecord.length > 10) {
       phoneToRecord = phoneToRecord.slice(-10);
     }
@@ -1655,6 +1548,19 @@ class BookingManager {
     return;
   }
 
+  setTripType(tripType) {
+    this.tripType = tripType;
+    const tabBtns = document.querySelectorAll(".trip-tab-btn");
+    tabBtns.forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-trip") === tripType);
+    });
+    this.updateTripTypeUI();
+    const hero = document.getElementById("booking-hero");
+    if (hero) {
+      hero.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
   updateTripTypeUI() {
     const returnDateRow = document.getElementById("return-date-row");
     const localPkgRow = document.getElementById("local-pkg-row");
@@ -1690,8 +1596,9 @@ class BookingManager {
   calculateAndRenderFares() {
     const isRental = (this.tripType === "rental" || this.tripType === "local");
     const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
-    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
+    const clean10 = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
+    const hasValidPhone = clean10.length === 10 && /^[6-9]\d{9}$/.test(clean10);
 
     // Fares can NEVER be checked or revealed without a valid 10-digit mobile number
     if (!this.isFareUnlocked || !hasValidPhone) {
@@ -1981,6 +1888,34 @@ class BookingManager {
     this.renderFleetCards();
   }
 
+  setFleetTypeAndScroll(cabId) {
+    this.selectedCabId = cabId;
+    const hero = document.getElementById("booking-hero");
+    if (hero) {
+      hero.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
+    if (rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone) && this.originCity && this.destCity) {
+      this.handleCheckFare();
+    } else {
+      setTimeout(() => {
+        if (!this.originCity) {
+          document.getElementById("input-pickup")?.focus();
+        } else if (!this.destCity) {
+          document.getElementById("input-drop")?.focus();
+        } else if (phoneInput) {
+          phoneInput.focus();
+          const phoneGroup = document.getElementById("phone-check-group");
+          if (phoneGroup) {
+            phoneGroup.classList.add("shake-error");
+            setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
+          }
+        }
+      }, 400);
+    }
+  }
+
   loadRoutePreset(fromId, toId) {
     const from = OTB_CITIES.find(c => c.id === fromId);
     const to = OTB_CITIES.find(c => c.id === toId);
@@ -1997,8 +1932,9 @@ class BookingManager {
     window.closeAllModals();
 
     const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
-    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
+    const clean10 = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
+    const hasValidPhone = clean10.length === 10 && /^[6-9]\d{9}$/.test(clean10);
 
     if (hasValidPhone) {
       this.isFareUnlocked = true;
@@ -4002,5 +3938,34 @@ if (typeof window !== "undefined") {
     if (tabEl) tabEl.classList.add("active");
     window.currentFareFilter = filterType;
     window.filterFareChartTable(filterType);
+  };
+
+  window.filterCorridorCards = (query = '') => {
+    const cards = document.querySelectorAll(".corridor-card");
+    const q = (query || "").toLowerCase().trim();
+    cards.forEach(card => {
+      const dest = (card.getAttribute("data-dest") || "").toLowerCase();
+      const name = (card.querySelector(".corridor-route-name")?.textContent || "").toLowerCase();
+      const matches = !q || dest.includes(q) || name.includes(q);
+      card.style.display = matches ? "" : "none";
+    });
+  };
+
+  window.setCorridorFilter = (btnEl, range = 'all') => {
+    document.querySelectorAll(".route-filter-pill").forEach(p => p.classList.remove("active"));
+    if (btnEl) btnEl.classList.add("active");
+    const cards = document.querySelectorAll(".corridor-card");
+    const searchVal = (document.getElementById("route-corridor-search")?.value || "").toLowerCase().trim();
+    cards.forEach(card => {
+      const dist = parseInt(card.getAttribute("data-dist") || "0", 10);
+      const dest = (card.getAttribute("data-dest") || "").toLowerCase();
+      const name = (card.querySelector(".corridor-route-name")?.textContent || "").toLowerCase();
+      let matchesRange = true;
+      if (range === 'near') matchesRange = dist < 100;
+      else if (range === 'mid') matchesRange = dist >= 100 && dist <= 200;
+      else if (range === 'far') matchesRange = dist > 200;
+      const matchesSearch = !searchVal || dest.includes(searchVal) || name.includes(searchVal);
+      card.style.display = (matchesRange && matchesSearch) ? "" : "none";
+    });
   };
 }

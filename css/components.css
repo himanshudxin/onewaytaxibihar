@@ -6764,441 +6764,629 @@ body.drawer-open .mobile-sticky-bottom-bar {
 }
 
 /* ==========================================================================
-   MARKET-CALIBRATED FARE CHART SECTION & TRANSPARENT POLICY BADGE
+   EXECUTIVE MODULAR REDESIGN: CLEAN SECTIONS (FLEET, SERVICES, CORRIDORS, WHY-US)
    ========================================================================== */
-.fare-chart-section {
-  background: var(--owc-bg);
-  padding: 64px 0 72px;
-}
 
-.fare-chart-controls-card {
-  background: var(--owc-surface);
-  border: 1px solid var(--owc-border);
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 20px;
+/* Hero Title Box & Header */
+.hero-header-box {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 28px auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
-.fare-search-input-wrap {
-  position: relative;
-  flex: 1;
-  min-width: 280px;
-}
-
-.fare-search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
-.fare-search-input {
-  width: 100%;
-  padding: 11px 14px 11px 42px;
-  border-radius: 10px;
-  border: 1.5px solid var(--owc-border);
-  background: var(--owc-input-bg, #ffffff);
-  color: var(--owc-text);
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  outline: none;
-}
-
-.fare-search-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.fare-filter-chips-row {
-  display: flex;
+.hero-badge-pill {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
-}
-
-.fare-filter-chip {
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--owc-border);
-  background: var(--owc-surface);
-  color: var(--owc-text-muted);
-  font-size: 12.5px;
-  font-weight: 650;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.fare-filter-chip:hover {
-  color: #2563eb;
-  border-color: #93c5fd;
-  background: rgba(37, 99, 235, 0.04);
-}
-
-.fare-filter-chip.active {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-}
-
-.fare-chart-count-tag {
-  font-size: 12.5px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: rgba(0, 149, 246, 0.08);
+  border: 1px solid rgba(0, 149, 246, 0.25);
+  color: var(--owc-primary);
+  font-size: 13px;
   font-weight: 700;
-  color: var(--owc-text-muted);
-  white-space: nowrap;
+  margin-bottom: 14px;
+  letter-spacing: 0.2px;
 }
 
-.fare-chart-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  background: var(--owc-surface);
-  border: 1px solid var(--owc-border);
-  border-radius: 18px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-  margin-bottom: 28px;
+.hero-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--owc-primary);
+  box-shadow: 0 0 8px var(--owc-primary);
+  animation: pulse 2s infinite;
 }
 
-.fare-chart-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 14px;
-}
-
-.fare-chart-table thead {
-  background: #f8fafc;
-  border-bottom: 2px solid var(--owc-border);
-}
-
-[data-theme="dark"] .fare-chart-table thead {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.fare-chart-table th {
-  padding: 14px 16px;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--owc-text-muted);
-  white-space: nowrap;
-}
-
-.th-sub {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
-  text-transform: none;
-  opacity: 0.75;
-  margin-top: 2px;
-}
-
-.fare-chart-row {
-  border-bottom: 1px solid var(--owc-border);
-  transition: background 0.15s ease;
-}
-
-.fare-chart-row:hover {
-  background: rgba(37, 99, 235, 0.03);
-}
-
-.fare-chart-row:last-child {
-  border-bottom: none;
-}
-
-.fare-chart-table td {
-  padding: 13px 16px;
-  vertical-align: middle;
-}
-
-.cell-dest .dest-name {
-  font-weight: 800;
-  color: var(--owc-text);
-  font-size: 14.5px;
-}
-
-.cell-dest .dest-sub {
-  font-size: 11.5px;
-  color: var(--owc-text-muted);
-  margin-top: 2px;
-}
-
-.cell-dist {
-  text-align: center;
-}
-
-.dist-badge {
-  display: inline-block;
-  padding: 4px 9px;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-weight: 750;
-  font-size: 12px;
-  color: #334155;
-  white-space: nowrap;
-}
-
-[data-theme="dark"] .dist-badge {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
-}
-
-.cell-fare {
-  text-align: right;
-}
-
-.cell-fare .fare-num {
-  display: block;
-  font-size: 15px;
+.hero-main-title {
+  font-size: clamp(26px, 4vw, 42px);
   font-weight: 850;
   color: var(--owc-text);
+  letter-spacing: -0.03em;
+  line-height: 1.22;
+  margin-bottom: 12px;
 }
 
-.fare-hatch .fare-num {
-  color: #0284c7;
-}
-
-.fare-sedan .fare-num {
-  color: #2563eb;
-}
-
-.fare-suv .fare-num {
-  color: #7c3aed;
-}
-
-.cell-fare .fare-sub {
-  display: block;
-  font-size: 10.5px;
+.hero-main-subtitle {
+  font-size: clamp(14.5px, 1.8vw, 16.5px);
   color: var(--owc-text-muted);
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.cell-market {
-  text-align: right;
-}
-
-.market-rate {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #94a3b8;
-  text-decoration: line-through;
-}
-
-.savings-tag {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 800;
-  color: #059669;
-  background: rgba(5, 150, 105, 0.08);
-  border: 1px solid rgba(5, 150, 105, 0.2);
-  padding: 2px 7px;
-  border-radius: 4px;
-  margin-top: 2px;
-}
-
-.cell-action {
+.booking-card-micro-trust {
   text-align: center;
+  font-size: 12px;
+  color: var(--owc-text-dim);
+  margin-top: 14px;
+  line-height: 1.5;
 }
 
-.btn-table-book {
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 750;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
-}
-
-.btn-table-book:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
-}
-
-/* ==========================================================================
-   TRANSPARENT FARE POLICY BADGE CARD (Clean 3-Pillar Breakdown)
-   ========================================================================== */
-.fare-policy-badge-card {
-  background: var(--owc-surface);
-  border: 1.5px solid var(--owc-border);
-  border-radius: 18px;
-  padding: 24px 28px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-}
-
-.fare-policy-card-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--owc-border);
-}
-
-.fare-policy-shield-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(37, 99, 235, 0.08);
+/* Operational Guarantees Strip below booking card */
+.hero-trust-guarantees-strip {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
 }
 
-.fare-policy-title {
-  font-size: 18px;
-  font-weight: 850;
+.trust-guarantee-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--owc-surface);
+  border: 1px solid var(--owc-border);
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 650;
   color: var(--owc-text);
-  margin: 0;
-  letter-spacing: -0.01em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
 }
 
-.fare-policy-subtitle {
-  font-size: 13.5px;
-  color: var(--owc-text-muted);
-  margin: 3px 0 0;
+.trust-guarantee-pill svg {
+  color: #10b981;
 }
 
-.fare-policy-grid {
+.trust-guarantee-pill:hover {
+  border-color: var(--owc-primary);
+  transform: translateY(-1px);
+}
+
+/* SECTION 3: FLEET SHOWCASE GRID */
+.fleet-showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
 }
 
-.fare-policy-pillar {
-  padding: 18px 20px;
-  border-radius: 14px;
+.fleet-showcase-card {
+  position: relative;
+  background: var(--owc-card-bg);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
-.fare-policy-pillar:hover {
-  transform: translateY(-2px);
+.fleet-showcase-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+  border-color: var(--owc-primary);
 }
 
-.pillar-included {
-  background: rgba(5, 150, 105, 0.04);
-  border: 1.5px solid rgba(5, 150, 105, 0.25);
+.fleet-showcase-card.featured {
+  border-color: #0095f6;
+  background: linear-gradient(180deg, rgba(0, 149, 246, 0.03) 0%, var(--owc-card-bg) 100%);
+  box-shadow: 0 8px 30px rgba(0, 149, 246, 0.12);
 }
 
-.pillar-excluded {
-  background: rgba(245, 158, 11, 0.04);
-  border: 1.5px solid rgba(245, 158, 11, 0.25);
+.fleet-showcase-card.luxury {
+  border-color: #f59e0b;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.03) 0%, var(--owc-card-bg) 100%);
 }
 
-.pillar-advance {
-  background: rgba(37, 99, 235, 0.04);
-  border: 1.5px solid rgba(37, 99, 235, 0.25);
+.fleet-popular-ribbon {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: #0095f6;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 9999px;
 }
 
-.pillar-top {
+.fleet-badge-luxury {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: #f59e0b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.fleet-card-icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
+
+.fleet-card-header .fleet-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--owc-text);
+  margin-bottom: 4px;
+}
+
+.fleet-card-header .fleet-models {
+  font-size: 13px;
+  color: var(--owc-text-muted);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.fleet-specs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.fleet-spec-badge {
+  background: var(--owc-slate-50);
+  border: 1px solid var(--owc-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--owc-text);
+}
+
+.fleet-desc {
+  font-size: 13.5px;
+  color: var(--owc-text-muted);
+  line-height: 1.55;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.fleet-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fleet-feature-list li {
+  font-size: 12.5px;
+  color: var(--owc-text);
+  font-weight: 550;
+}
+
+.btn-fleet-select {
+  width: 100%;
+  padding: 12px 18px;
+  background: var(--owc-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-fleet-select:hover {
+  background: var(--owc-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-fleet-select.outline {
+  background: transparent;
+  border: 1.5px solid var(--owc-primary);
+  color: var(--owc-primary);
+}
+
+.btn-fleet-select.outline:hover {
+  background: var(--owc-primary);
+  color: #ffffff;
+}
+
+.btn-fleet-select.luxury {
+  background: #f59e0b;
+}
+
+.btn-fleet-select.luxury:hover {
+  background: #d97706;
+}
+
+/* SECTION 4: SERVICES GRID 4 */
+.services-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.service-card-modern {
+  background: var(--owc-card-bg);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.service-card-modern:hover {
+  transform: translateY(-4px);
+  border-color: var(--owc-primary);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+}
+
+.service-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.service-icon-wrap.blue { background: rgba(0, 149, 246, 0.12); color: #0095f6; }
+.service-icon-wrap.emerald { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.service-icon-wrap.purple { background: rgba(147, 51, 234, 0.12); color: #9333ea; }
+.service-icon-wrap.amber { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+
+.service-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--owc-text);
   margin-bottom: 10px;
 }
 
-.pillar-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+.service-desc {
+  font-size: 13.5px;
+  color: var(--owc-text-muted);
+  line-height: 1.55;
+  margin-bottom: 18px;
+  flex-grow: 1;
+}
+
+.service-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 22px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--owc-border);
+}
+
+.service-perks span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--owc-text);
+}
+
+.service-action-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 850;
-}
-
-.pillar-included .pillar-icon {
-  background: #059669;
-  color: white;
-}
-
-.pillar-excluded .pillar-icon {
-  background: #f59e0b;
-  color: white;
-}
-
-.pillar-advance .pillar-icon {
-  background: #2563eb;
-  color: white;
-}
-
-.pillar-badge {
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.badge-green {
-  color: #059669;
-}
-
-.badge-amber {
-  color: #d97706;
-}
-
-.badge-blue {
-  color: #2563eb;
-}
-
-.pillar-text {
   font-size: 13.5px;
-  line-height: 1.55;
+  font-weight: 750;
+  color: var(--owc-primary);
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.service-action-link:hover {
+  transform: translateX(4px);
+}
+
+/* SECTION 5: POPULAR ROUTES & CORRIDORS */
+.route-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 32px 0 24px 0;
+  background: var(--owc-card-bg);
+  border: 1px solid var(--owc-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.route-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.route-search-input-wrap input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 14px;
   color: var(--owc-text);
-  margin: 0 0 12px;
+  outline: none;
+  font-family: var(--font-sans);
 }
 
-.pillar-text strong {
+.route-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.route-filter-pill {
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--owc-border);
+  background: transparent;
+  font-size: 12.5px;
   font-weight: 650;
-}
-
-.pillar-footer {
-  font-size: 11.5px;
-  font-weight: 600;
   color: var(--owc-text-muted);
-  border-top: 1px dashed rgba(0, 0, 0, 0.08);
-  padding-top: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-[data-theme="dark"] .pillar-footer {
-  border-top-color: rgba(255, 255, 255, 0.08);
+.route-filter-pill.active,
+.route-filter-pill:hover {
+  background: var(--owc-primary);
+  border-color: var(--owc-primary);
+  color: #ffffff;
+}
+
+.corridor-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.corridor-card {
+  background: var(--owc-card-bg);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.22s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.corridor-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--owc-primary);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+}
+
+.corridor-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.corridor-highway-tag {
+  font-size: 11px;
+  font-weight: 750;
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.corridor-dist-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--owc-text-muted);
+}
+
+.corridor-route-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--owc-text);
+  margin-bottom: 6px;
+}
+
+.corridor-route-desc {
+  font-size: 12.5px;
+  color: var(--owc-text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  flex-grow: 1;
+}
+
+.corridor-features {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 650;
+  color: #059669;
+  margin-bottom: 16px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--owc-border);
+}
+
+.btn-corridor-check {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(0, 149, 246, 0.08);
+  border: 1.5px solid rgba(0, 149, 246, 0.3);
+  color: var(--owc-primary);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.btn-corridor-check:hover {
+  background: var(--owc-primary);
+  border-color: var(--owc-primary);
+  color: #ffffff;
+}
+
+.btn-corridor-check .arrow {
+  font-size: 15px;
+  transition: transform 0.2s ease;
+}
+
+.btn-corridor-check:hover .arrow {
+  transform: translateX(4px);
+}
+
+.districts-coverage-box {
+  margin-top: 36px;
+  background: var(--owc-card-bg);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.coverage-left h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--owc-text);
+  margin-bottom: 6px;
+}
+
+.coverage-left p {
+  font-size: 13px;
+  color: var(--owc-text-muted);
+  line-height: 1.5;
+  max-width: 650px;
+  margin: 0;
+}
+
+.btn-check-all-districts {
+  padding: 12px 22px;
+  background: var(--owc-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-check-all-districts:hover {
+  background: var(--owc-primary-hover);
+  transform: translateY(-1px);
+}
+
+/* SECTION 6: WHY US PILLARS */
+.why-us-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.why-us-pillar-card {
+  background: var(--owc-card-bg);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-xl);
+  padding: 26px 22px;
+  transition: all 0.22s ease;
+}
+
+.why-us-pillar-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--owc-primary);
+}
+
+.pillar-icon-box {
+  font-size: 32px;
+  margin-bottom: 14px;
+}
+
+.why-us-pillar-card h3 {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: var(--owc-text);
+  margin-bottom: 8px;
+}
+
+.why-us-pillar-card p {
+  font-size: 13px;
+  color: var(--owc-text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.how-it-works-subblock {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--owc-border);
+}
+
+.how-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 850;
+  color: var(--owc-text);
+  margin-bottom: 28px;
 }
 
 @media (max-width: 768px) {
-  .fare-chart-controls-card {
+  .hero-trust-guarantees-strip {
+    gap: 8px;
+  }
+  .trust-guarantee-pill {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .route-filter-bar {
     flex-direction: column;
     align-items: stretch;
   }
-  .fare-search-input-wrap {
-    min-width: 100%;
+  .districts-coverage-box {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .fare-filter-chips-row {
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .fare-policy-badge-card {
-    padding: 18px 16px;
+  .btn-check-all-districts {
+    width: 100%;
+    text-align: center;
   }
 }

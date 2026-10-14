@@ -176,12 +176,13 @@
 
       <!-- Desktop Nav Links -->
       <ul class="nav-links">
-        <li><a href="#fare-chart-section" style="font-weight: 750; color: #2563eb;">Fare Chart</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Services</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">Routes</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
+        <li><a href="#booking-hero" class="nav-link active">Book Cab</a></li>
+        <li><a href="#fleet-section" class="nav-link">Our Fleet</a></li>
+        <li><a href="#services-section" class="nav-link">Services</a></li>
+        <li><a href="#routes-section" class="nav-link">Popular Routes</a></li>
+        <li><a href="#why-us-section" class="nav-link">Why Us</a></li>
+        <li><a href="#reviews-section" class="nav-link">Reviews</a></li>
+        <li><a href="#faq-section" class="nav-link">FAQ</a></li>
       </ul>
 
       <!-- Nav Actions -->
@@ -287,68 +288,74 @@
         <span class="drawer-hero-cta-arrow">→</span>
       </a>
 
-      <!-- Navigation Category 1: Ride Services -->
+      <!-- Navigation Category 1: Main Sections -->
       <div class="drawer-section">
-        <div class="drawer-section-title">RIDE SERVICES</div>
+        <div class="drawer-section-title">EXPLORE SERVICES</div>
+        <nav class="drawer-nav-list">
+          <a href="#booking-hero" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            </span>
+            <span class="drawer-nav-text">Book One-Way Cab</span>
+            <span class="drawer-nav-badge">Book Now</span>
+          </a>
+          <a href="#fleet-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </span>
+            <span class="drawer-nav-text">Our Fleet Categories</span>
+            <span class="drawer-nav-badge blue">5 Tiers</span>
+          </a>
+          <a href="#services-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+            </span>
+            <span class="drawer-nav-text">Ride Services &amp; Rentals</span>
+          </a>
+          <a href="#routes-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <span class="drawer-nav-text">Popular Routes &amp; Corridors</span>
+          </a>
+          <a href="#why-us-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
+            <span class="drawer-nav-text">Why OneWayTaxiBihar</span>
+          </a>
+          <a href="#reviews-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </span>
+            <span class="drawer-nav-text">Passenger Reviews</span>
+            <span class="drawer-nav-badge gold">4.9 ★</span>
+          </a>
+          <a href="#faq-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
+            <span class="drawer-nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </span>
+            <span class="drawer-nav-text">Frequently Asked Questions</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Navigation Category 2: Passenger Trips & Corporate -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">MY ACCOUNT &amp; BILLING</div>
         <nav class="drawer-nav-list">
           <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openMyTripsModal();">
             <span class="drawer-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             </span>
             <span class="drawer-nav-text">My Trips &amp; Bookings</span>
-            <span class="drawer-nav-badge">Active</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openRoutesModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            </span>
-            <span class="drawer-nav-text">38 Districts &amp; Fixed Fares</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openServicesModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            </span>
-            <span class="drawer-nav-text">Services &amp; Rental Packages</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Navigation Category 2: Pricing & Corporate -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">PRICING &amp; BUSINESS</div>
-        <nav class="drawer-nav-list">
-          <a href="#fare-chart-section" class="drawer-nav-item" onclick="window.closeMobileDrawer();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </span>
-            <span class="drawer-nav-text">Fare &amp; Rate Chart</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openCorporateModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            </span>
-            <span class="drawer-nav-text">Corporate Travel Desk</span>
-            <span class="drawer-nav-badge">GST Billing</span>
           </a>
           <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openInvoiceModal();">
             <span class="drawer-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
             </span>
             <span class="drawer-nav-text">Request GST Tax Invoice</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Navigation Category 3: Trust & Rewards -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">REVIEWS &amp; REWARDS</div>
-        <nav class="drawer-nav-list">
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openFriendsReviewModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </span>
-            <span class="drawer-nav-text">Passenger Reviews</span>
-            <span class="drawer-nav-badge gold">4.9 ★</span>
+            <span class="drawer-nav-badge">GST Billing</span>
           </a>
           <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openReferModal();">
             <span class="drawer-nav-icon">
@@ -399,6 +406,18 @@
 
         <!-- Emergency Incident / Booking Pause Banner Container -->
         <div id="emergency-pause-container" style="display:none;" role="alert" aria-live="assertive"></div>
+
+        <!-- Sleek Executive Hero Title Header -->
+        <div class="hero-header-box">
+          <div class="hero-badge-pill">
+            <span class="hero-badge-dot"></span>
+            <span>Bihar's Dedicated Intercity One-Way Mobility Network</span>
+          </div>
+          <h1 class="hero-main-title">Book One-Way Outstation Cabs Across Bihar</h1>
+          <p class="hero-main-subtitle">
+            Guaranteed zero return fare across all 38 districts. Doorstep pickup, transparent all-inclusive pricing, and 24×7 verified highway chauffeurs.
+          </p>
+        </div>
 
         <!-- Main Booking Widget Card -->
         <div class="booking-widget-card">
@@ -488,7 +507,7 @@
                 SELECT CAR RENTAL MODE
               </label>
               <span class="rental-rate-hint" id="rental-rate-hint" style="font-size: 11px; color: #059669; font-weight: 700; background: #ecfdf5; padding: 3px 10px; border-radius: 999px; border: 1px solid #a7f3d0;">
-                Sedan ₹2,200 • SUV ₹4,000 / Day (Self-Drive)
+                Flexible Daily &amp; Hourly Packages
               </span>
             </div>
             <div class="rental-mode-toggle-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -496,14 +515,14 @@
                 <span style="font-size: 20px;">🚗</span>
                 <span>
                   <strong style="display:block; font-size:12.5px;">Rented without Driver</strong>
-                  <span style="font-size:11px; font-weight:500; opacity:0.85;">Self-Drive Freedom (Fixed Price)</span>
+                  <span style="font-size:11px; font-weight:500; opacity:0.85;">Self-Drive Freedom (Check Fares)</span>
                 </span>
               </button>
               <button type="button" class="rental-mode-btn" id="btn-rental-with-driver" onclick="window.bookingManager.setRentalMode('with_driver')" style="padding: 10px 14px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #334155; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; text-align: left;">
                 <span style="font-size: 20px;">👨‍✈️</span>
                 <span>
                   <strong style="display:block; font-size:12.5px;">Rent with Driver</strong>
-                  <span style="font-size:11px; font-weight:600; color:#059669;">+₹1,000 Chauffeur Allowance</span>
+                  <span style="font-size:11px; font-weight:600; color:#059669;">Commercial Chauffeur Included</span>
                 </span>
               </button>
             </div>
@@ -673,63 +692,31 @@
             </svg>
           </button>
 
-          <!-- BELOW CHECK FARE OPTION: Built in Bihar for BHARAT (Prestigious National Identity Badge) -->
-          <div class="hero-center-header below-check-fare">
-            <div class="hero-pride-badge-wrap">
-              <div class="hero-pride-monumental-badge" title="Built with pride in Bihar, serving all of Bharat">
-                <span class="pride-tricolor-accent"></span>
-                <span class="pride-text-prefix">Built in</span>
-                <span class="pride-bihar-hindi">बिहार</span>
-                <span class="pride-emblem-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </span>
-                <span class="pride-text-mid">for</span>
-                <span class="pride-bharat-bold">BHARAT</span>
-              </div>
-            </div>
-
-            <h1 class="hero-main-title">Bihar's Dedicated &amp; Trusted One-Way Cab Service</h1>
-
-            <!-- Executive Styled Value Proposition Tags -->
-            <div class="hero-value-props">
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Honest Transparent Pricing</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Pay Only For Distance Traveled</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Dedicated 24×7 State-Wide Support</span>
-              </div>
-            </div>
+          <!-- Micro Trust Assurance -->
+          <div class="booking-card-micro-trust">
+            <span>🔒 Strict Privacy: Fares &amp; live cab availability are unlocked upon mobile number verification. Zero return fare.</span>
           </div>
 
-          <!-- Genuine Operational Guarantees -->
-          <div class="trust-metrics-strip">
-            <div class="trust-metric-item">
-              <span>Direct Patna Dispatch Desk</span>
-            </div>
-            <span class="trust-divider">|</span>
-            <div class="trust-metric-item">
-              <span>Verified Commercial Fleet</span>
-            </div>
-            <span class="trust-divider">|</span>
-            <div class="trust-metric-item">
-              <span style="color: var(--owc-primary); font-weight: 700;">₹0 Cancellation Fee</span>
-            </div>
-          </div>
+        </div>
 
-          <!-- "Return Fare, Not Fair" Box -->
-          <div class="return-fare-banner">
-            <p class="rf-main-text">Pay only for the distance you travel across Bihar, No return charges.</p>
-            <p class="rf-bold-highlight">Return Fare, Not Fair</p>
+        <!-- Executive Operational Guarantees Strip (Clean horizontal pills) -->
+        <div class="hero-trust-guarantees-strip">
+          <div class="trust-guarantee-pill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Guaranteed Zero Return Fare</span>
           </div>
-
+          <div class="trust-guarantee-pill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>All 38 Bihar Districts</span>
+          </div>
+          <div class="trust-guarantee-pill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Police-Verified Chauffeurs</span>
+          </div>
+          <div class="trust-guarantee-pill">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>24×7 Central Dispatch Desk</span>
+          </div>
         </div>
 
         <!-- Popular Routes Quick Bar -->
@@ -838,1137 +825,486 @@
     </section>
 
     <!-- ======================================================================
-         3B. COMPLETE ONE-WAY FARE CHART (PATNA TO ALL BIHAR DISTRICTS)
+         3. OUR FLEET CATEGORIES SECTION
          ====================================================================== -->
-    <section class="app-section fare-chart-section" id="fare-chart-section">
+    <section class="app-section" id="fleet-section">
       <div class="container">
-        
-        <div class="section-header text-center" style="max-width: 840px; margin: 0 auto 28px;">
-          <div class="badge-pill" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(5, 150, 105, 0.1); color: #059669; border: 1px solid rgba(5, 150, 105, 0.25); border-radius: 999px; font-size: 12.5px; font-weight: 750; margin-bottom: 12px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>Market-Calibrated • Zero Return Fare Formula</span>
+        <div class="section-header text-center">
+          <span class="section-pill-tag blue">OUR VEHICLE CATEGORIES</span>
+          <h2 class="section-title">Clean, Well-Maintained Commercial Fleet</h2>
+          <p class="section-subtitle">Choose from economy hatchbacks to executive sedans and spacious 7-seater SUVs. All cabs are 100% AC with police-verified highway captains.</p>
+        </div>
+
+        <div class="fleet-showcase-grid">
+          <!-- Fleet 1: Prime Sedan -->
+          <div class="fleet-showcase-card featured">
+            <div class="fleet-popular-ribbon">Most Popular</div>
+            <div class="fleet-card-icon">🚗</div>
+            <div class="fleet-card-header">
+              <h3 class="fleet-name">Prime Sedan</h3>
+              <p class="fleet-models">Maruti Dzire • Toyota Etios • Hyundai Aura</p>
+            </div>
+            <div class="fleet-specs-row">
+              <span class="fleet-spec-badge">👥 4 Passengers</span>
+              <span class="fleet-spec-badge">🧳 2 Large Bags</span>
+              <span class="fleet-spec-badge">❄️ AC Guaranteed</span>
+            </div>
+            <p class="fleet-desc">Perfect balance of highway comfort, smooth suspension, and affordability for solo commuters, business travelers, and couples.</p>
+            <ul class="fleet-feature-list">
+              <li>✓ Boot space for 2 trolley bags + 2 hand luggage</li>
+              <li>✓ Fastag enabled with zero highway delay</li>
+              <li>✓ Phone charger &amp; clean sanitized cabin</li>
+            </ul>
+            <button type="button" class="btn-fleet-select" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('sedan')">
+              Select Prime Sedan →
+            </button>
           </div>
-          <h2 style="font-size: clamp(24px, 3.2vw, 34px); font-weight: 850; color: var(--owc-text); letter-spacing: -0.02em; margin-bottom: 10px;">
-            Complete One-Way Fare Chart (From Patna)
-          </h2>
-          <p style="font-size: 15px; color: var(--owc-text-muted); line-height: 1.6; margin: 0 auto;">
-            Benchmarked against RodBez's fair one-way pricing formula (roughly <strong>₹10.50/km for Hatchback</strong>, <strong>₹11.50 – ₹12.00/km for Sedan</strong>, and <strong>₹15.50 – ₹16.00/km for 6-Seater SUV/Ertiga</strong>, with minimum slabs applied for shorter distances) compared against traditional double round-trip market charges.
+
+          <!-- Fleet 2: Go Hatchback -->
+          <div class="fleet-showcase-card">
+            <div class="fleet-card-icon">🚙</div>
+            <div class="fleet-card-header">
+              <h3 class="fleet-name">Go Hatchback</h3>
+              <p class="fleet-models">Maruti WagonR • Tata Tiago • Celerio</p>
+            </div>
+            <div class="fleet-specs-row">
+              <span class="fleet-spec-badge">👥 4 Passengers</span>
+              <span class="fleet-spec-badge">🧳 1-2 Medium Bags</span>
+              <span class="fleet-spec-badge">❄️ AC Guaranteed</span>
+            </div>
+            <p class="fleet-desc">Most budget-friendly outstation travel across Bihar. Ideal for short to mid-range trips with light luggage.</p>
+            <ul class="fleet-feature-list">
+              <li>✓ Compact &amp; agile on intercity state highways</li>
+              <li>✓ Lowest price per kilometer in Bihar</li>
+              <li>✓ Sanitized interior with full climate control</li>
+            </ul>
+            <button type="button" class="btn-fleet-select outline" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('hatchback')">
+              Select Go Hatchback →
+            </button>
+          </div>
+
+          <!-- Fleet 3: Executive Sedan -->
+          <div class="fleet-showcase-card">
+            <div class="fleet-card-icon">🚘</div>
+            <div class="fleet-card-header">
+              <h3 class="fleet-name">Executive Sedan</h3>
+              <p class="fleet-models">Honda City • Maruti Ciaz • Hyundai Verna</p>
+            </div>
+            <div class="fleet-specs-row">
+              <span class="fleet-spec-badge">👥 4 Passengers</span>
+              <span class="fleet-spec-badge">🧳 3 Large Bags</span>
+              <span class="fleet-spec-badge">❄️ Dual AC</span>
+            </div>
+            <p class="fleet-desc">Executive highway cruiser with superior rear legroom, plush leatherette seating, and quiet cabin insulation.</p>
+            <ul class="fleet-feature-list">
+              <li>✓ Generous 500L+ boot space for extended travel</li>
+              <li>✓ Rear AC vents &amp; personal reading lamps</li>
+              <li>✓ Top-rated senior chauffeur assigned</li>
+            </ul>
+            <button type="button" class="btn-fleet-select outline" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('sedan_prime')">
+              Select Executive Sedan →
+            </button>
+          </div>
+
+          <!-- Fleet 4: Family SUV -->
+          <div class="fleet-showcase-card">
+            <div class="fleet-card-icon">🚐</div>
+            <div class="fleet-card-header">
+              <h3 class="fleet-name">Family SUV (6+1)</h3>
+              <p class="fleet-models">Maruti Ertiga • Kia Carens</p>
+            </div>
+            <div class="fleet-specs-row">
+              <span class="fleet-spec-badge">👥 6 Passengers</span>
+              <span class="fleet-spec-badge">🧳 3-4 Large Bags</span>
+              <span class="fleet-spec-badge">❄️ Dual Roof AC</span>
+            </div>
+            <p class="fleet-desc">Spacious 3-row seating designed for family vacations, pilgrimage tours, and group outstation travel across Bihar.</p>
+            <ul class="fleet-feature-list">
+              <li>✓ Flexible folding third-row seats for luggage</li>
+              <li>✓ Independent roof-mounted AC vents</li>
+              <li>✓ High ground clearance for all road conditions</li>
+            </ul>
+            <button type="button" class="btn-fleet-select outline" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('suv')">
+              Select Family SUV →
+            </button>
+          </div>
+
+          <!-- Fleet 5: Toyota Innova Crysta -->
+          <div class="fleet-showcase-card luxury">
+            <div class="fleet-badge-luxury">Luxury Gold</div>
+            <div class="fleet-card-icon">👑</div>
+            <div class="fleet-card-header">
+              <h3 class="fleet-name">Innova Crysta</h3>
+              <p class="fleet-models">Toyota Innova Crysta 2.4 VX/ZX</p>
+            </div>
+            <div class="fleet-specs-row">
+              <span class="fleet-spec-badge">👥 7 Passengers</span>
+              <span class="fleet-spec-badge">🧳 4-5 Large Bags</span>
+              <span class="fleet-spec-badge">❄️ Triple Zone AC</span>
+            </div>
+            <p class="fleet-desc">The unchallenged king of Indian highways. Reclining captain seats, unparalleled ride comfort, and VIP presence.</p>
+            <ul class="fleet-feature-list">
+              <li>✓ Reclining captain seats with armrests</li>
+              <li>✓ Maximum safety with multiple airbags &amp; ABS</li>
+              <li>✓ Preferred choice for VIPs &amp; wedding travel</li>
+            </ul>
+            <button type="button" class="btn-fleet-select luxury" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('innova_crysta')">
+              Select Innova Crysta →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. OUR RIDE SERVICES SECTION
+         ====================================================================== -->
+    <section class="app-section alt-bg" id="services-section">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-pill-tag">RIDE SERVICES</span>
+          <h2 class="section-title">Dedicated Intercity Mobility Solutions</h2>
+          <p class="section-subtitle">Tailored cab services designed for every intercity travel need across Bihar and neighboring states</p>
+        </div>
+
+        <div class="services-grid-4">
+          <!-- Service 1: One-Way Drop -->
+          <div class="service-card-modern">
+            <div class="service-icon-wrap blue">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            </div>
+            <h3 class="service-title">One-Way Intercity Drop</h3>
+            <p class="service-desc">Travel between any two districts or towns in Bihar without paying for the driver's return trip. Pay only for one-way distance and save 40%–50%.</p>
+            <div class="service-perks">
+              <span>✓ Guaranteed Zero Return Fare</span>
+              <span>✓ Doorstep Pickup &amp; Drop</span>
+              <span>✓ All Highway Tolls &amp; GST Included</span>
+            </div>
+            <a href="#booking-hero" class="service-action-link" onclick="window.bookingManager && window.bookingManager.setTripType('oneway')">
+              Book One-Way Cab →
+            </a>
+          </div>
+
+          <!-- Service 2: Round-Trip Outstation -->
+          <div class="service-card-modern">
+            <div class="service-icon-wrap emerald">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+            </div>
+            <h3 class="service-title">Round-Trip Outstation</h3>
+            <p class="service-desc">Multi-day or same-day return journey with a dedicated cab and driver at your disposal. Flexible stops, sightseeing, and zero surge pricing.</p>
+            <div class="service-perks">
+              <span>✓ Driver Stay &amp; Night Allowance Included</span>
+              <span>✓ Multiple Stops &amp; Sightseeing</span>
+              <span>✓ Transparent Daily Kilometer Slabs</span>
+            </div>
+            <a href="#booking-hero" class="service-action-link" onclick="window.bookingManager && window.bookingManager.setTripType('roundtrip')">
+              Book Round-Trip →
+            </a>
+          </div>
+
+          <!-- Service 3: Airport Transfers -->
+          <div class="service-card-modern">
+            <div class="service-icon-wrap purple">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.5.1-1.8.7l-.5.9c-.3.7 0 1.5.6 1.9l6.5 4.7-3.5 3.5-2.8-.9c-.4-.1-.8 0-1.1.3l-.4.4c-.3.3-.3.8 0 1.1l2.3 2.3c.3.3.8.3 1.1 0l.4-.4c.3-.3.4-.7.3-1.1l-.9-2.8 3.5-3.5 4.7 6.5c.4.6 1.2.9 1.9.6l.9-.5c.6-.3.9-1 .7-1.8z"/></svg>
+            </div>
+            <h3 class="service-title">Patna &amp; Gaya Airport Cabs</h3>
+            <p class="service-desc">Punctual airport pickup and drop connecting Jay Prakash Narayan International Airport (PAT) and Gaya Airport (GAY) to all 38 districts.</p>
+            <div class="service-perks">
+              <span>✓ Live Flight Delay Tracking</span>
+              <span>✓ Free 45-Min Waiting Time</span>
+              <span>✓ Driver Meets at Terminal Exit</span>
+            </div>
+            <a href="#booking-hero" class="service-action-link" onclick="window.bookingManager && window.bookingManager.setTripType('airport')">
+              Book Airport Taxi →
+            </a>
+          </div>
+
+          <!-- Service 4: Car Rental Packages -->
+          <div class="service-card-modern">
+            <div class="service-icon-wrap amber">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+            </div>
+            <h3 class="service-title">Hourly &amp; Day Rental Packages</h3>
+            <p class="service-desc">Flexible 8 Hr / 80 KM or 12 Hr / 120 KM packages with or without driver for city errands, business meetings, family functions, and weddings.</p>
+            <div class="service-perks">
+              <span>✓ With Chauffeur or Self-Drive</span>
+              <span>✓ Unlimited Fuel / Distance Options</span>
+              <span>✓ Corporate GST Tax Invoicing</span>
+            </div>
+            <a href="#booking-hero" class="service-action-link" onclick="window.bookingManager && window.bookingManager.setTripType('rental')">
+              Book Car Rental →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         5. POPULAR OUTSTATION ROUTES & CORRIDORS
+         ====================================================================== -->
+    <section class="app-section" id="routes-section">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-pill-tag blue">POPULAR CORRIDORS</span>
+          <h2 class="section-title">Top Intercity Routes Across Bihar</h2>
+          <p class="section-subtitle">
+            Frequent one-way corridors benchmarked with guaranteed zero return fare. Select any route and enter your mobile number in the booking portal to view exact rates and available cabs.
           </p>
         </div>
 
-        <!-- Filter & Search Controls Bar -->
-        <div class="fare-chart-controls-card">
-          <div class="fare-search-input-wrap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.2" class="fare-search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="fare-chart-search" class="fare-search-input" placeholder="Search destination district or town (e.g. Gaya, Muzaffarpur, Bhagalpur, Darbhanga...)" oninput="window.filterFareChartTable && window.filterFareChartTable(window.currentFareFilter || 'all', this.value)">
+        <!-- Interactive Quick Route Search & Filter -->
+        <div class="route-filter-bar">
+          <div class="route-search-input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="route-corridor-search" placeholder="Search destination (e.g. Gaya, Muzaffarpur, Darbhanga, Bhagalpur, Purnea...)" oninput="window.filterCorridorCards(this.value)">
           </div>
-
-          <div class="fare-filter-chips-row">
-            <button type="button" class="fare-filter-chip active" onclick="window.setFareChartFilterTab && window.setFareChartFilterTab(this, 'all')">
-              All 34 Routes
-            </button>
-            <button type="button" class="fare-filter-chip" onclick="window.setFareChartFilterTab && window.setFareChartFilterTab(this, 'under100')">
-              &lt; 100 KM (Commuter)
-            </button>
-            <button type="button" class="fare-filter-chip" onclick="window.setFareChartFilterTab && window.setFareChartFilterTab(this, '100to200')">
-              100 – 200 KM (Mid-Distance)
-            </button>
-            <button type="button" class="fare-filter-chip" onclick="window.setFareChartFilterTab && window.setFareChartFilterTab(this, 'over200')">
-              200+ KM (Long Haul)
-            </button>
-          </div>
-
-          <div class="fare-chart-count-tag" id="fare-chart-count">
-            Showing 34 of 34 verified routes
+          <div class="route-pills-row">
+            <button type="button" class="route-filter-pill active" onclick="window.setCorridorFilter(this, 'all')">All Key Routes</button>
+            <button type="button" class="route-filter-pill" onclick="window.setCorridorFilter(this, 'near')">&lt; 100 KM</button>
+            <button type="button" class="route-filter-pill" onclick="window.setCorridorFilter(this, 'mid')">100 – 200 KM</button>
+            <button type="button" class="route-filter-pill" onclick="window.setCorridorFilter(this, 'far')">200+ KM</button>
           </div>
         </div>
 
-        <!-- Fare Chart Table Frame -->
-        <div class="fare-chart-table-wrap">
-          <table class="fare-chart-table" id="table-patna-fares">
-            <thead>
-              <tr>
-                <th style="min-width: 180px;">Destination District / City</th>
-                <th style="text-align: center; min-width: 95px;">Approx. Dist.</th>
-                <th style="text-align: right; min-width: 130px;">Hatchback<span class="th-sub">WagonR / Tiago</span></th>
-                <th style="text-align: right; min-width: 135px;">Sedan<span class="th-sub">Dzire / Etios / Aura</span></th>
-                <th style="text-align: right; min-width: 145px;">SUV / 6-Seater<span class="th-sub">Ertiga / Triber</span></th>
-                <th style="text-align: right; min-width: 160px;">Traditional Market Rate<span class="th-sub">(Round-trip charged)</span></th>
-                <th style="text-align: center; min-width: 110px;">Instant Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="fare-chart-row" data-dest="hajipur (vaishali) vaishali" data-dist="25">
-                <td class="cell-dest">
-                  <div class="dest-name">Hajipur (Vaishali)</div>
-                  <div class="dest-sub">From Patna (45m • Mahatma Gandhi Setu / JP Ganga Path)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">25 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹699</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,199</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹1,500 – ₹1,800</span>
-                  <span class="savings-tag">Save ₹900+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'vaishali')" title="Book one-way cab to Hajipur (Vaishali)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="arrah (bhojpur) bhojpur" data-dist="55">
-                <td class="cell-dest">
-                  <div class="dest-name">Arrah (Bhojpur)</div>
-                  <div class="dest-sub">From Patna (1h 15m • Koilwar 6-Lane Bridge / NH-922)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">55 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹899</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹999</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,399</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,000 – ₹2,200</span>
-                  <span class="savings-tag">Save ₹1,150+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'bhojpur')" title="Book one-way cab to Arrah (Bhojpur)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="jehanabad jehanabad" data-dist="50">
-                <td class="cell-dest">
-                  <div class="dest-name">Jehanabad</div>
-                  <div class="dest-sub">From Patna (1h 10m • NH-22 (Patna-Gaya Highway))</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">50 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹899</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹999</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,399</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹1,800 – ₹2,200</span>
-                  <span class="savings-tag">Save ₹1,000+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'jehanabad')" title="Book one-way cab to Jehanabad">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="chapra (saran) saran" data-dist="70">
-                <td class="cell-dest">
-                  <div class="dest-name">Chapra (Saran)</div>
-                  <div class="dest-sub">From Patna (1h 35m • JP Setu / NH-19 via Sonpur Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">70 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,099</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,199</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,699</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,200 – ₹2,500</span>
-                  <span class="savings-tag">Save ₹1,200+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'saran')" title="Book one-way cab to Chapra (Saran)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="muzaffarpur muzaffarpur" data-dist="75">
-                <td class="cell-dest">
-                  <div class="dest-name">Muzaffarpur</div>
-                  <div class="dest-sub">From Patna (1h 45m • NH-22 via JP Setu & Hajipur Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">75 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,099</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,249</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,749</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,200 – ₹2,600</span>
-                  <span class="savings-tag">Save ₹1,250+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'muzaffarpur')" title="Book one-way cab to Muzaffarpur">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="bihar sharif (nalanda) nalanda" data-dist="75">
-                <td class="cell-dest">
-                  <div class="dest-name">Bihar Sharif (Nalanda)</div>
-                  <div class="dest-sub">From Patna (1h 40m • Bakhtiyarpur-Bihar Sharif 4-Lane NH-20)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">75 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,099</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,249</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,749</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,200 – ₹2,500</span>
-                  <span class="savings-tag">Save ₹1,200+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'nalanda')" title="Book one-way cab to Bihar Sharif (Nalanda)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="rajgir rajgir" data-dist="100">
-                <td class="cell-dest">
-                  <div class="dest-name">Rajgir</div>
-                  <div class="dest-sub">From Patna (2h 00m • SH-4 / NH-20 Express Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">100 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,299</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,449</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,999</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,600 – ₹3,000</span>
-                  <span class="savings-tag">Save ₹1,450+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'rajgir')" title="Book one-way cab to Rajgir">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="samastipur samastipur" data-dist="95">
-                <td class="cell-dest">
-                  <div class="dest-name">Samastipur</div>
-                  <div class="dest-sub">From Patna (2h 10m • NH-122 / SH-49 via Jandaha)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">95 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,249</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,399</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹1,949</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,500 – ₹2,800</span>
-                  <span class="savings-tag">Save ₹1,350+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'samastipur')" title="Book one-way cab to Samastipur">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="gaya / bodh gaya gaya" data-dist="110">
-                <td class="cell-dest">
-                  <div class="dest-name">Gaya / Bodh Gaya</div>
-                  <div class="dest-sub">From Patna (2h 15m • Patna-Gaya 4-lane Highway (NH-22))</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">110 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,399</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,549</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,149</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,800 – ₹3,200</span>
-                  <span class="savings-tag">Save ₹1,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'gaya')" title="Book one-way cab to Gaya / Bodh Gaya">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="begusarai begusarai" data-dist="125">
-                <td class="cell-dest">
-                  <div class="dest-name">Begusarai</div>
-                  <div class="dest-sub">From Patna (2h 30m • NH-31 4-Lane Industrial Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">125 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,499</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,699</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,349</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,000 – ₹3,400</span>
-                  <span class="savings-tag">Save ₹1,600+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'begusarai')" title="Book one-way cab to Begusarai">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="nawada nawada" data-dist="115">
-                <td class="cell-dest">
-                  <div class="dest-name">Nawada</div>
-                  <div class="dest-sub">From Patna (2h 25m • NH-20 via Bihar Sharif Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">115 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,449</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,599</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,249</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹2,800 – ₹3,200</span>
-                  <span class="savings-tag">Save ₹1,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'nawada')" title="Book one-way cab to Nawada">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="siwan siwan" data-dist="135">
-                <td class="cell-dest">
-                  <div class="dest-name">Siwan</div>
-                  <div class="dest-sub">From Patna (2h 55m • NH-531 via Chapra Express Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">135 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,599</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,499</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,200 – ₹3,600</span>
-                  <span class="savings-tag">Save ₹1,700+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'siwan')" title="Book one-way cab to Siwan">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="darbhanga darbhanga" data-dist="140">
-                <td class="cell-dest">
-                  <div class="dest-name">Darbhanga</div>
-                  <div class="dest-sub">From Patna (2h 50m • NH-27 / NH-527 via Samastipur)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">140 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,599</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,549</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,200 – ₹3,600</span>
-                  <span class="savings-tag">Save ₹1,700+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'darbhanga')" title="Book one-way cab to Darbhanga">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="aurangabad aurangabad-bihar" data-dist="140">
-                <td class="cell-dest">
-                  <div class="dest-name">Aurangabad</div>
-                  <div class="dest-sub">From Patna (2h 55m • SH-69 / NH-19 GT Road)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">140 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,599</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,549</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,200 – ₹3,600</span>
-                  <span class="savings-tag">Save ₹1,700+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'aurangabad-bihar')" title="Book one-way cab to Aurangabad">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="sasaram (rohtas) rohtas" data-dist="155">
-                <td class="cell-dest">
-                  <div class="dest-name">Sasaram (Rohtas)</div>
-                  <div class="dest-sub">From Patna (3h 15m • NH-119 / SH-15 via Ara-Bikramganj)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">155 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,799</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,999</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,799</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,500 – ₹4,000</span>
-                  <span class="savings-tag">Save ₹1,850+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'rohtas')" title="Book one-way cab to Sasaram (Rohtas)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="madhubani madhubani" data-dist="165">
-                <td class="cell-dest">
-                  <div class="dest-name">Madhubani</div>
-                  <div class="dest-sub">From Patna (3h 25m • NH-27 / SH-52 via Darbhanga)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">165 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,899</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,099</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,899</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,600 – ₹4,200</span>
-                  <span class="savings-tag">Save ₹1,950+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'madhubani')" title="Book one-way cab to Madhubani">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="munger munger" data-dist="175">
-                <td class="cell-dest">
-                  <div class="dest-name">Munger</div>
-                  <div class="dest-sub">From Patna (3h 40m • NH-33 / NH-80 via Mokama)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">175 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,999</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,249</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,099</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,000 – ₹4,500</span>
-                  <span class="savings-tag">Save ₹2,100+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'munger')" title="Book one-way cab to Munger">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="sitamarhi sitamarhi" data-dist="140">
-                <td class="cell-dest">
-                  <div class="dest-name">Sitamarhi</div>
-                  <div class="dest-sub">From Patna (3h 05m • NH-22 / NH-77 via Muzaffarpur)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">140 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,649</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,849</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,599</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,200 – ₹3,800</span>
-                  <span class="savings-tag">Save ₹1,750+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'sitamarhi')" title="Book one-way cab to Sitamarhi">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="motihari (east champaran) east-champaran" data-dist="155">
-                <td class="cell-dest">
-                  <div class="dest-name">Motihari (East Champaran)</div>
-                  <div class="dest-sub">From Patna (3h 15m • NH-22 & NH-27 via Muzaffarpur Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">155 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,799</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,999</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,799</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,500 – ₹4,000</span>
-                  <span class="savings-tag">Save ₹1,850+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'east-champaran')" title="Book one-way cab to Motihari (East Champaran)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="gopalganj gopalganj" data-dist="150">
-                <td class="cell-dest">
-                  <div class="dest-name">Gopalganj</div>
-                  <div class="dest-sub">From Patna (3h 10m • NH-27 / NH-531 via Chapra)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">150 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,749</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,949</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,699</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,400 – ₹3,800</span>
-                  <span class="savings-tag">Save ₹1,750+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'gopalganj')" title="Book one-way cab to Gopalganj">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="jamui jamui" data-dist="160">
-                <td class="cell-dest">
-                  <div class="dest-name">Jamui</div>
-                  <div class="dest-sub">From Patna (3h 30m • SH-8 / SH-82 via Lakhisarai)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">160 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,849</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,049</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,849</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,600 – ₹4,000</span>
-                  <span class="savings-tag">Save ₹1,850+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'jamui')" title="Book one-way cab to Jamui">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="buxar buxar" data-dist="130">
-                <td class="cell-dest">
-                  <div class="dest-name">Buxar</div>
-                  <div class="dest-sub">From Patna (2h 45m • NH-922 (Patna-Buxar 4-lane Expressway))</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">130 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,549</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹1,749</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,449</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,000 – ₹3,400</span>
-                  <span class="savings-tag">Save ₹1,550+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'buxar')" title="Book one-way cab to Buxar">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="bhabua (kaimur) kaimur" data-dist="190">
-                <td class="cell-dest">
-                  <div class="dest-name">Bhabua (Kaimur)</div>
-                  <div class="dest-sub">From Patna (3h 55m • NH-19 GT Road Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">190 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,199</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,449</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,399</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,200 – ₹4,800</span>
-                  <span class="savings-tag">Save ₹2,200+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'kaimur')" title="Book one-way cab to Bhabua (Kaimur)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="saharsa saharsa" data-dist="185">
-                <td class="cell-dest">
-                  <div class="dest-name">Saharsa</div>
-                  <div class="dest-sub">From Patna (3h 50m • NH-31 & SH-95 via Simri Bakhtiarpur)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">185 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,149</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,399</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,299</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,200 – ₹4,600</span>
-                  <span class="savings-tag">Save ₹2,150+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'saharsa')" title="Book one-way cab to Saharsa">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="khagaria khagaria" data-dist="165">
-                <td class="cell-dest">
-                  <div class="dest-name">Khagaria</div>
-                  <div class="dest-sub">From Patna (3h 25m • NH-31 4-Lane East-West Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">165 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹1,899</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,149</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹2,999</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹3,800 – ₹4,200</span>
-                  <span class="savings-tag">Save ₹1,950+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'khagaria')" title="Book one-way cab to Khagaria">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="bettiah (west champaran) west-champaran" data-dist="205">
-                <td class="cell-dest">
-                  <div class="dest-name">Bettiah (West Champaran)</div>
-                  <div class="dest-sub">From Patna (4h 15m • NH-727 via Motihari Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">205 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,399</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,649</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,699</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,800 – ₹5,400</span>
-                  <span class="savings-tag">Save ₹2,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'west-champaran')" title="Book one-way cab to Bettiah (West Champaran)">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="supaul supaul" data-dist="215">
-                <td class="cell-dest">
-                  <div class="dest-name">Supaul</div>
-                  <div class="dest-sub">From Patna (4h 25m • NH-327A / NH-27 East-West Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">215 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,499</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,849</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,800 – ₹5,500</span>
-                  <span class="savings-tag">Save ₹2,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'supaul')" title="Book one-way cab to Supaul">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="madhepura madhepura" data-dist="210">
-                <td class="cell-dest">
-                  <div class="dest-name">Madhepura</div>
-                  <div class="dest-sub">From Patna (4h 20m • NH-106 via Saharsa Bypass)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">210 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,449</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,749</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹3,799</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹4,800 – ₹5,400</span>
-                  <span class="savings-tag">Save ₹2,450+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'madhepura')" title="Book one-way cab to Madhepura">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="bhagalpur bhagalpur" data-dist="235">
-                <td class="cell-dest">
-                  <div class="dest-name">Bhagalpur</div>
-                  <div class="dest-sub">From Patna (4h 45m • NH-31 & NH-80 via Mokama-Munger 4-lane)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">235 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,699</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,999</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹4,199</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹5,200 – ₹6,000</span>
-                  <span class="savings-tag">Save ₹2,700+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'bhagalpur')" title="Book one-way cab to Bhagalpur">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="banka banka" data-dist="225">
-                <td class="cell-dest">
-                  <div class="dest-name">Banka</div>
-                  <div class="dest-sub">From Patna (4h 40m • SH-22 / NH-333A via Jamui)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">225 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹2,599</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹2,899</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹4,049</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹5,000 – ₹5,800</span>
-                  <span class="savings-tag">Save ₹2,600+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'banka')" title="Book one-way cab to Banka">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="purnea purnia" data-dist="290">
-                <td class="cell-dest">
-                  <div class="dest-name">Purnea</div>
-                  <div class="dest-sub">From Patna (5h 45m • NH-31 East-West Expressway Corridor)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">290 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹3,299</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹3,649</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹5,099</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹6,500 – ₹7,200</span>
-                  <span class="savings-tag">Save ₹3,350+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'purnia')" title="Book one-way cab to Purnea">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="araria araria" data-dist="310">
-                <td class="cell-dest">
-                  <div class="dest-name">Araria</div>
-                  <div class="dest-sub">From Patna (6h 05m • NH-27 / NH-57 East-West Express)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">310 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹3,499</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹3,899</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹5,449</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹6,800 – ₹7,500</span>
-                  <span class="savings-tag">Save ₹3,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'araria')" title="Book one-way cab to Araria">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="katihar katihar" data-dist="305">
-                <td class="cell-dest">
-                  <div class="dest-name">Katihar</div>
-                  <div class="dest-sub">From Patna (6h 00m • NH-31 via Purnea Bypass & SH-77)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">305 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹3,449</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹3,849</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹5,399</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹6,800 – ₹7,500</span>
-                  <span class="savings-tag">Save ₹3,500+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'katihar')" title="Book one-way cab to Katihar">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-              <tr class="fare-chart-row" data-dest="kishanganj kishanganj" data-dist="380">
-                <td class="cell-dest">
-                  <div class="dest-name">Kishanganj</div>
-                  <div class="dest-sub">From Patna (7h 15m • NH-27 / NH-31 Chicken's Neck Highway)</div>
-                </td>
-                <td class="cell-dist">
-                  <span class="dist-badge">380 km</span>
-                </td>
-                <td class="cell-fare fare-hatch">
-                  <span class="fare-num">₹4,299</span>
-                  <span class="fare-sub">AC Hatchback</span>
-                </td>
-                <td class="cell-fare fare-sedan">
-                  <span class="fare-num">₹4,799</span>
-                  <span class="fare-sub">Prime Sedan</span>
-                </td>
-                <td class="cell-fare fare-suv">
-                  <span class="fare-num">₹6,699</span>
-                  <span class="fare-sub">Ertiga / 6-Seater</span>
-                </td>
-                <td class="cell-market">
-                  <span class="market-rate">₹8,500 – ₹9,500</span>
-                  <span class="savings-tag">Save ₹4,400+</span>
-                </td>
-                <td class="cell-action">
-                  <button type="button" class="btn-table-book" onclick="window.selectFareChartRoute('patna', 'kishanganj')" title="Book one-way cab to Kishanganj">
-                    Book Cab
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Transparent Fare Policy Notice directly beneath table as requested -->
-        <div class="fare-policy-badge-card" id="fare-policy-notice">
-          <div class="fare-policy-card-header">
-            <div class="fare-policy-shield-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        <!-- Grid of Clean Corridor Cards (No bare public prices; prompts for phone in booking engine) -->
+        <div class="corridor-cards-grid" id="corridor-cards-grid">
+          <!-- Corridor 1: Patna -> Gaya -->
+          <div class="corridor-card" data-dest="gaya bodhgaya bodh gaya" data-dist="104">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">NH-83 Expressway</span>
+              <span class="corridor-dist-badge">104 KM • 2h 15m</span>
             </div>
-            <div>
-              <h3 class="fare-policy-title">Transparent Fare Policy Notice for Website</h3>
-              <p class="fare-policy-subtitle">100% honest pricing with zero hidden charges or inflated return-trip buffers</p>
+            <h3 class="corridor-route-name">Patna ➔ Gaya (Bodh Gaya)</h3>
+            <p class="corridor-route-desc">Takht Sri Patna Sahib to Mahabodhi Temple / Vishnupad Temple via 4-lane expressway.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Toll &amp; GST Included</span>
             </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'gaya')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
           </div>
 
-          <div class="fare-policy-grid">
-            <!-- Pillar 1: Included -->
-            <div class="fare-policy-pillar pillar-included">
-              <div class="pillar-top">
-                <span class="pillar-icon">✓</span>
-                <span class="pillar-badge badge-green">What is Included</span>
+          <!-- Corridor 2: Patna -> Muzaffarpur -->
+          <div class="corridor-card" data-dest="muzaffarpur tirhut" data-dist="75">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">JP Ganga Path / NH-22</span>
+              <span class="corridor-dist-badge">75 KM • 1h 45m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Muzaffarpur</h3>
+            <p class="corridor-route-desc">Via Mahatma Gandhi Setu &amp; NH-22. Doorstep pickup across North Bihar.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Fastag Tolls Included</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'muzaffarpur')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 3: Patna -> Darbhanga -->
+          <div class="corridor-card" data-dest="darbhanga mithila" data-dist="135">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">NH-27 East-West Expressway</span>
+              <span class="corridor-dist-badge">135 KM • 2h 45m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Darbhanga</h3>
+            <p class="corridor-route-desc">Direct connectivity between Patna capital and Darbhanga Airport / Mithila region.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Airport Drop Available</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'darbhanga')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 4: Patna -> Bhagalpur -->
+          <div class="corridor-card" data-dest="bhagalpur silk city" data-dist="230">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">NH-31 Ganga Expressway</span>
+              <span class="corridor-dist-badge">230 KM • 4h 30m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Bhagalpur</h3>
+            <p class="corridor-route-desc">Silk City express route via Mokama bridge &amp; Begusarai / Munger corridor.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Commercial AC Cabs</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'bhagalpur')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 5: Patna -> Purnea -->
+          <div class="corridor-card" data-dest="purnia purnea seemanchal" data-dist="310">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">NH-31 Kosi Express Corridor</span>
+              <span class="corridor-dist-badge">310 KM • 6h 00m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Purnea</h3>
+            <p class="corridor-route-desc">Seemanchal commercial hub corridor via Khagaria and Naugachia highway.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Long-Haul Comfort</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'purnia')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 6: Patna -> Rajgir / Nalanda -->
+          <div class="corridor-card" data-dest="rajgir nalanda biharsharif" data-dist="95">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">SH-78 Heritage Highway</span>
+              <span class="corridor-dist-badge">95 KM • 2h 10m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Rajgir &amp; Nalanda</h3>
+            <p class="corridor-route-desc">Vishwa Shanti Stupa, Glass Skywalk, and Nalanda Mahavihara ruins.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Sightseeing Friendly</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'rajgir')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 7: Patna -> Arrah (Bhojpur) -->
+          <div class="corridor-card" data-dest="arrah bhojpur" data-dist="55">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">Koilwar 6-Lane / NH-922</span>
+              <span class="corridor-dist-badge">55 KM • 1h 15m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Arrah (Bhojpur)</h3>
+            <p class="corridor-route-desc">Smooth expressway transit across Son River connecting Patna to Bhojpur district.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Instant Cab Allotment</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'bhojpur')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 8: Patna -> Chapra (Saran) -->
+          <div class="corridor-card" data-dest="chapra saran" data-dist="50">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">Digha Setu / NH-531</span>
+              <span class="corridor-dist-badge">50 KM • 1h 20m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Chapra (Saran)</h3>
+            <p class="corridor-route-desc">Fast transit via JP Ganga Path &amp; Digha-Sonpur 4-lane bridge.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ Doorstep Pickup</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'saran')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+
+          <!-- Corridor 9: Patna -> Varanasi -->
+          <div class="corridor-card" data-dest="varanasi kashi banaras" data-dist="260">
+            <div class="corridor-card-top">
+              <span class="corridor-highway-tag">GT Road / NH-19 Corridor</span>
+              <span class="corridor-dist-badge">260 KM • 5h 30m</span>
+            </div>
+            <h3 class="corridor-route-name">Patna ➔ Varanasi (Kashi)</h3>
+            <p class="corridor-route-desc">Interstate corridor connecting Patna to Kashi Vishwanath Dham via Mohania &amp; Chandauli.</p>
+            <div class="corridor-features">
+              <span>✓ Zero Return Fare</span>
+              <span>✓ UP State Permit Included</span>
+            </div>
+            <button type="button" class="btn-corridor-check" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'varanasi')">
+              <span>Check Fare &amp; Availability</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 38 Districts Directory Banner -->
+        <div class="districts-coverage-box">
+          <div class="coverage-left">
+            <h3>Need a cab to any other district in Bihar?</h3>
+            <p>We serve all 38 districts including Begusarai, Nawada, Madhubani, Motihari, Bettiah, Saharsa, Katihar, Kishanganj, Siwan, Gopalganj, Buxar, Sasaram, and Jamui.</p>
+          </div>
+          <div class="coverage-right">
+            <button type="button" class="btn-check-all-districts" onclick="window.openCityPresenceModal()">
+              Explore All 38 Districts ➔
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         6. WHY US & THE ONEWAY ADVANTAGE
+         ====================================================================== -->
+    <section class="app-section alt-bg" id="why-us-section">
+      <div class="container">
+        
+        <div class="section-header text-center">
+          <span class="section-pill-tag blue">THE ONEWAY ADVANTAGE</span>
+          <h2 class="section-title">Why Commuters Across Bihar Trust OneWayTaxiBihar</h2>
+          <p class="section-subtitle">Engineered for seamless highway trips, peace of mind, and transparent billing</p>
+        </div>
+
+        <div class="why-choose-grid-10" id="why-choose-grid">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- 4 Simple Steps Process -->
+        <div style="margin-top: 56px;">
+          <div class="section-header text-center" style="margin-bottom: 28px;">
+            <span class="section-pill-tag">SIMPLE PROCESS</span>
+            <h2 class="section-title">How It Works in 4 Steps</h2>
+            <p class="section-subtitle">Book your intercity one-way cab across Bihar in just 4 simple steps</p>
+          </div>
+
+          <div class="how-it-works-grid">
+            <div class="step-process-card">
+              <div class="step-badge-circle">1</div>
+              <div class="step-icon-box blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
               </div>
-              <p class="pillar-text">
-                <strong>Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.</strong>
-              </p>
-              <div class="pillar-footer">100% AC, professional chauffeur &amp; sanitized vehicle</div>
+              <h3>Enter Your Route</h3>
+              <p>Choose your pickup and drop locations across all 38 districts of Bihar. Enter your travel date and preferred time.</p>
             </div>
 
-            <!-- Pillar 2: Excluded -->
-            <div class="fare-policy-pillar pillar-excluded">
-              <div class="pillar-top">
-                <span class="pillar-icon">ℹ</span>
-                <span class="pillar-badge badge-amber">What is Excluded</span>
+            <div class="step-process-card">
+              <div class="step-badge-circle">2</div>
+              <div class="step-icon-box emerald">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
               </div>
-              <p class="pillar-text">
-                <strong>Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).</strong>
-              </p>
-              <div class="pillar-footer">Zero unnecessary surcharges added to base fare</div>
+              <h3>Select Your Cab</h3>
+              <p>Browse our diverse fleet (Hatchback, Dzire Sedan, Ertiga SUV, Innova Crysta). Compare transparent fixed rates.</p>
             </div>
 
-            <!-- Pillar 3: Advance / Booking Fee -->
-            <div class="fare-policy-pillar pillar-advance">
-              <div class="pillar-top">
-                <span class="pillar-icon">₹</span>
-                <span class="pillar-badge badge-blue">Advance / Booking Fee</span>
+            <div class="step-process-card">
+              <div class="step-badge-circle">3</div>
+              <div class="step-icon-box purple">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               </div>
-              <p class="pillar-text">
-                <strong>Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop.</strong>
-              </p>
-              <div class="pillar-footer">Flexible payment • Zero cancellation penalties</div>
+              <h3>Book &amp; Confirm</h3>
+              <p>Complete your booking with zero advance payment required. Receive instant captain details &amp; WhatsApp ticket.</p>
+            </div>
+
+            <div class="step-process-card">
+              <div class="step-badge-circle">4</div>
+              <div class="step-icon-box amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <h3>Enjoy Your Ride</h3>
+              <p>Doorstep pickup with 100% AC guaranteed. Pay cash or UPI to driver only upon reaching your destination safely.</p>
             </div>
           </div>
         </div>
@@ -1977,12 +1313,12 @@
     </section>
 
     <!-- ======================================================================
-         4. VERIFIED PASSENGER REVIEWS SECTION (OneWayTaxiBihar)
+         7. PASSENGER REVIEWS & TESTIMONIALS
          ====================================================================== -->
-    <section class="app-section alt-bg" id="friends-review-section">
+    <section class="app-section" id="reviews-section">
       <div class="container">
         
-        <div class="friends-review-hero-card">
+        <div class="friends-review-hero-card" id="friends-review-hero-card">
           <!-- Left Content: Trust Overview & Value Pillars -->
           <div class="fr-hero-left">
             <div class="fr-hero-tag">
@@ -1994,7 +1330,7 @@
               Authentic ratings from passengers traveling between Patna, Gaya, Muzaffarpur, Darbhanga, Bhagalpur, and all 38 districts with guaranteed zero-return pricing.
             </p>
             
-            <!-- 3 Responsive Metric Cards (Proportional, never cut off) -->
+            <!-- 3 Responsive Metric Cards -->
             <div class="fr-metrics-grid">
               <div class="fr-metric-box">
                 <span class="fr-metric-num">100%</span>
@@ -2010,7 +1346,7 @@
               </div>
             </div>
 
-            <!-- Responsive Action Buttons -->
+            <!-- Action Buttons -->
             <div class="fr-actions-row">
               <button type="button" class="btn-check-friends" onclick="window.openFriendsReviewModal()">
                 <span>View All Reviews</span>
@@ -2034,107 +1370,29 @@
           </div>
         </div>
 
-      </div>
-    </section>
+        <!-- Passenger Testimonials Grid -->
+        <div style="margin-top: 56px;">
+          <div class="section-header text-center" style="margin-bottom: 28px;">
+            <span class="section-pill-tag">WHAT TRAVELERS SAY</span>
+            <h2 class="section-title">Commuter Stories Across Bihar</h2>
+            <p class="section-subtitle">Real experiences and feedback from everyday commuters across all 38 districts of Bihar</p>
+          </div>
 
-    <!-- ======================================================================
-         5. HOW ONEWAYTAXIBIHAR WORKS (4 SIMPLE STEPS)
-         ====================================================================== -->
-    <section class="app-section" id="how-it-works-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">SIMPLE PROCESS</span>
-          <h2 class="section-title">How OneWayTaxiBihar Works</h2>
-          <p class="section-subtitle">Book your intercity one-way cab across Bihar in just 4 simple steps</p>
-        </div>
+          <div class="testimonials-grid" id="testimonials-grid">
+            <!-- Injected via JavaScript -->
+          </div>
 
-        <div class="how-it-works-grid">
-          <div class="step-process-card">
-            <div class="step-badge-circle">1</div>
-            <div class="step-icon-box blue">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <!-- Trust Metric Highlight Banner -->
+          <div class="trust-highlight-banner" style="margin-top: 28px;">
+            <div class="trust-banner-rating">
+              <div class="trust-big-num">4.3 <span style="font-size: 16px; font-weight: 600; opacity: 0.85;">/ 5.0</span></div>
+              <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">Average Customer Rating</div>
             </div>
-            <h3>Enter Your Route</h3>
-            <p>Choose your pickup and drop locations across all 38 districts of Bihar. Enter your travel date and preferred time.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">2</div>
-            <div class="step-icon-box emerald">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            <div class="trust-banner-divider"></div>
+            <div class="trust-banner-trips">
+              <div class="trust-trips-num">3,000+</div>
+              <div class="trust-trips-label">Customers Served in Bihar</div>
             </div>
-            <h3>Select Your Cab</h3>
-            <p>Browse our diverse fleet (Hatchback, Dzire Sedan, Ertiga SUV, Innova Crysta). Compare transparent fixed rates.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">3</div>
-            <div class="step-icon-box purple">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <h3>Book & Confirm</h3>
-            <p>Complete your booking with zero advance payment required. Receive instant captain details & WhatsApp ticket.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">4</div>
-            <div class="step-icon-box amber">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h3>Enjoy Your Ride</h3>
-            <p>Doorstep pickup with 100% AC guaranteed. Pay cash or UPI to driver only upon reaching your destination safely.</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         6. THE ONEWAYTAXIBIHAR ADVANTAGE (TOP 10 REASONS)
-         ====================================================================== -->
-    <section class="app-section alt-bg" id="why-choose-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">THE ONEWAY ADVANTAGE</span>
-          <h2 class="section-title">Why Commuters Across Bihar Trust OneWayTaxiBihar</h2>
-          <p class="section-subtitle">Engineered for seamless highway trips, peace of mind, and transparent billing</p>
-        </div>
-
-        <div class="why-choose-grid-10" id="why-choose-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         7. CUSTOMER TESTIMONIALS & TRUST PROOF
-         ====================================================================== -->
-    <section class="app-section" id="testimonials-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">TESTIMONIALS</span>
-          <h2 class="section-title">What Our Passengers Say</h2>
-          <p class="section-subtitle">Real experiences and feedback from everyday commuters across all 38 districts of Bihar</p>
-        </div>
-
-        <div class="testimonials-grid" id="testimonials-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-        <!-- Trust Metric Highlight Banner -->
-        <div class="trust-highlight-banner">
-          <div class="trust-banner-rating">
-            <div class="trust-big-num">4.3 <span style="font-size: 16px; font-weight: 600; opacity: 0.85;">/ 5.0</span></div>
-            <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">Average Customer Rating</div>
-          </div>
-          <div class="trust-banner-divider"></div>
-          <div class="trust-banner-trips">
-            <div class="trust-trips-num">3,000+</div>
-            <div class="trust-trips-label">Customers Served in Bihar</div>
           </div>
         </div>
 
@@ -2232,23 +1490,14 @@
                 Takht Sri Patna Sahib, Bihar Museum, Golghar, Kumhrar Mauryan Ruins, Mahavir Mandir &amp; Marine Drive Ganga Path.
               </p>
               <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">Transparent Package Fares:</div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Prime Sedan (Dzire / Etios):</span>
-                  <strong style="color: var(--owc-primary);">₹2,200</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Family SUV (Ertiga):</span>
-                  <strong style="color: var(--owc-primary);">₹3,400</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
-                  <span>Innova Crysta Luxury:</span>
-                  <strong style="color: var(--owc-primary);">₹4,800</strong>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">All-Inclusive Tour Inclusions:</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Dedicated AC Cab &amp; Verified Chauffeur</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Sightseeing Fuel, Highway Tolls &amp; Parking Included</div>
+                <div style="font-size: 12px; color: var(--owc-text);">✓ Doorstep Hotel / Railway Station Pickup</div>
               </div>
             </div>
             <button type="button" class="btn-select-cab" style="width: 100%; padding: 10px; font-size: 12.5px;" onclick="window.bookTourismTour('TOUR-PATNA-01', 'Patna City Heritage Circuit', 'Patna', 'Patna Heritage')">
-              Book Patna City Tour →
+              Check Tour Fare &amp; Availability →
             </button>
           </div>
 
@@ -2268,23 +1517,14 @@
                 UNESCO Mahabodhi Temple, Sacred Bodhi Tree, 80-Foot Buddha Statue, Royal Thai &amp; Japanese Monasteries, Dungeshwari Cave.
               </p>
               <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">Transparent Package Fares:</div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Prime Sedan (Dzire / Etios):</span>
-                  <strong style="color: var(--owc-primary);">₹3,800</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Family SUV (Ertiga):</span>
-                  <strong style="color: var(--owc-primary);">₹5,400</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
-                  <span>Innova Crysta Luxury:</span>
-                  <strong style="color: var(--owc-primary);">₹7,500</strong>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">All-Inclusive Tour Inclusions:</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Dedicated AC Cab &amp; Verified Chauffeur</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Sightseeing Fuel, Highway Tolls &amp; Parking Included</div>
+                <div style="font-size: 12px; color: var(--owc-text);">✓ Monastery Circuit Visits &amp; Meditation Halts</div>
               </div>
             </div>
             <button type="button" class="btn-select-cab" style="width: 100%; padding: 10px; font-size: 12.5px;" onclick="window.bookTourismTour('TOUR-BODHGAYA-02', 'Bodh Gaya Enlightenment Circuit', 'Patna', 'Bodh Gaya')">
-              Book Bodh Gaya Tour →
+              Check Tour Fare &amp; Availability →
             </button>
           </div>
 
@@ -2304,23 +1544,14 @@
                 Nalanda UNESCO Ruins &amp; Museum, Rajgir Glass Skywalk &amp; Nature Safari, Vishwa Shanti Stupa, Ropeway, Venuvana &amp; Hot Springs.
               </p>
               <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">Transparent Package Fares:</div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Prime Sedan (Dzire / Etios):</span>
-                  <strong style="color: var(--owc-primary);">₹3,600</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Family SUV (Ertiga):</span>
-                  <strong style="color: var(--owc-primary);">₹5,200</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
-                  <span>Innova Crysta Luxury:</span>
-                  <strong style="color: var(--owc-primary);">₹7,200</strong>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">All-Inclusive Tour Inclusions:</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Dedicated AC Cab &amp; Verified Chauffeur</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Sightseeing Fuel, Highway Tolls &amp; Parking Included</div>
+                <div style="font-size: 12px; color: var(--owc-text);">✓ Glass Bridge Safari &amp; Heritage Site Transit</div>
               </div>
             </div>
             <button type="button" class="btn-select-cab" style="width: 100%; padding: 10px; font-size: 12.5px;" onclick="window.bookTourismTour('TOUR-RAJGIR-03', 'Rajgir Nalanda Heritage Circuit', 'Patna', 'Rajgir')">
-              Book Rajgir Nalanda Tour →
+              Check Tour Fare &amp; Availability →
             </button>
           </div>
 
@@ -2340,23 +1571,14 @@
                 Ashokan Lion Pillar, Buddha Relic Stupa, Kundalpur (Mahavira Birthplace), Vishwa Shanti Stupa Vaishali &amp; Coronation Tank.
               </p>
               <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">Transparent Package Fares:</div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Prime Sedan (Dzire / Etios):</span>
-                  <strong style="color: var(--owc-primary);">₹2,600</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Family SUV (Ertiga):</span>
-                  <strong style="color: var(--owc-primary);">₹3,800</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
-                  <span>Innova Crysta Luxury:</span>
-                  <strong style="color: var(--owc-primary);">₹5,200</strong>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">All-Inclusive Tour Inclusions:</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Dedicated AC Cab &amp; Verified Chauffeur</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Sightseeing Fuel, Highway Tolls &amp; Parking Included</div>
+                <div style="font-size: 12px; color: var(--owc-text);">✓ Historical Stupas &amp; Peace Pagoda Tour</div>
               </div>
             </div>
             <button type="button" class="btn-select-cab" style="width: 100%; padding: 10px; font-size: 12.5px;" onclick="window.bookTourismTour('TOUR-VAISHALI-04', 'Vaishali Heritage Circuit', 'Patna', 'Vaishali')">
-              Book Vaishali Tour →
+              Check Tour Fare &amp; Availability →
             </button>
           </div>
 
@@ -2376,23 +1598,14 @@
                 Vishnupad Temple, Falgu Ghats, Akshay Vat Pind Daan, Mangla Gauri Shaktipeeth, Bodh Gaya Mahabodhi Meditation with night halt.
               </p>
               <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">2-Day Complete Package Fares:</div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Prime Sedan (Dzire / Etios):</span>
-                  <strong style="color: var(--owc-primary);">₹6,800</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
-                  <span>Family SUV (Ertiga):</span>
-                  <strong style="color: var(--owc-primary);">₹9,200</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 12.5px;">
-                  <span>Innova Crysta Luxury:</span>
-                  <strong style="color: var(--owc-primary);">₹12,500</strong>
-                </div>
+                <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase; margin-bottom: 6px;">All-Inclusive Tour Inclusions:</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ Dedicated AC Cab &amp; Verified Chauffeur</div>
+                <div style="font-size: 12px; color: var(--owc-text); margin-bottom: 4px;">✓ 2-Day Highway Fuel, Fastag Tolls &amp; Chauffeur Stay Included</div>
+                <div style="font-size: 12px; color: var(--owc-text);">✓ Falgu Ghats &amp; Vishnupad Temple Assistance</div>
               </div>
             </div>
             <button type="button" class="btn-select-cab" style="width: 100%; padding: 10px; font-size: 12.5px;" onclick="window.bookTourismTour('TOUR-GAYA-05', 'Gaya Bodh Gaya 2-Day Pilgrimage', 'Patna', 'Gaya')">
-              Book 2-Day Pilgrimage Tour →
+              Check Tour Fare &amp; Availability →
             </button>
           </div>
 
@@ -2463,11 +1676,11 @@
           <div class="footer-col-header">SERVICES &amp; RIDES</div>
           <ul>
             <li><a href="#booking-hero">Book One-Way Cab</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Intercity &amp; Rental Packages</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">38 Bihar Districts &amp; Fixed Fares</a></li>
+            <li><a href="#services-section">Intercity &amp; Rental Packages</a></li>
+            <li><a href="#routes-section">38 Bihar Districts &amp; Corridors</a></li>
             <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate Travel Desk (GST)</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Verified Passenger Reviews</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openFareChartModal()">Rate Card &amp; Pricing Calculator</a></li>
+            <li><a href="#reviews-section">Verified Passenger Reviews</a></li>
+            <li><a href="#routes-section">Route Fares &amp; Availability</a></li>
           </ul>
         </div>
 
@@ -2475,7 +1688,7 @@
         <div class="footer-col">
           <div class="footer-col-header">TRUST &amp; POLICIES</div>
           <ul>
-            <li><a href="javascript:void(0)" onclick="window.openWhyChooseModal()">Why OneWayTaxiBihar</a></li>
+            <li><a href="#why-us-section">Why OneWayTaxiBihar</a></li>
             <li><a href="javascript:void(0)" onclick="window.openAboutModal()">About Our Network</a></li>
             <li><a href="javascript:void(0)" onclick="window.openContactModal()">Contact 24×7 Helpdesk</a></li>
             <li><a href="javascript:void(0)" onclick="window.openCancellationModal()">Zero Cancellation Fee Policy</a></li>
@@ -2489,11 +1702,11 @@
         <div class="footer-col">
           <div class="footer-col-header">FLEET &amp; PARTNERS</div>
           <ul>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('hatchback')">Go Hatchback (WagonR, Tiago)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('sedan')">Prime Sedan (Dzire, Etios)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('sedan_prime')">Executive Sedan (City, Ciaz)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('suv')">Family SUV (Ertiga 6+1)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('innova_crysta')">Toyota Innova Crysta</a></li>
+            <li><a href="#fleet-section" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('hatchback')">Go Hatchback (WagonR, Tiago)</a></li>
+            <li><a href="#fleet-section" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('sedan')">Prime Sedan (Dzire, Etios)</a></li>
+            <li><a href="#fleet-section" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('sedan_prime')">Executive Sedan (City, Ciaz)</a></li>
+            <li><a href="#fleet-section" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('suv')">Family SUV (Ertiga 6+1)</a></li>
+            <li><a href="#fleet-section" onclick="window.bookingManager && window.bookingManager.setFleetTypeAndScroll('innova_crysta')">Toyota Innova Crysta</a></li>
             <li><a href="driver.html" class="footer-partner-link">Driver Partner Console ↗</a></li>
             <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Official GST Tax Invoice</a></li>
           </ul>
@@ -2504,21 +1717,21 @@
       <div class="footer-routes-block">
         <div class="footer-routes-title">POPULAR ONE-WAY OUTSTATION ROUTES ACROSS BIHAR</div>
         <div class="footer-routes-grid" id="footer-routes-list">
-          <a href="/patna-to-gaya-cab" class="footer-route-pill" title="Patna to Gaya One-Way Cab">
+          <a href="#booking-hero" class="footer-route-pill" title="Patna to Gaya One-Way Cab" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'gaya')">
             <span class="frp-route">Patna ➔ Gaya</span>
-            <span class="frp-price">from ₹1,698</span>
+            <span class="frp-price">Check Fare →</span>
           </a>
-          <a href="/patna-to-muzaffarpur-cab" class="footer-route-pill" title="Patna to Muzaffarpur One-Way Cab">
+          <a href="#booking-hero" class="footer-route-pill" title="Patna to Muzaffarpur One-Way Cab" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'muzaffarpur')">
             <span class="frp-route">Patna ➔ Muzaffarpur</span>
-            <span class="frp-price">from ₹1,698</span>
+            <span class="frp-price">Check Fare →</span>
           </a>
-          <a href="/patna-to-darbhanga-cab" class="footer-route-pill" title="Patna to Darbhanga One-Way Cab">
+          <a href="#booking-hero" class="footer-route-pill" title="Patna to Darbhanga One-Way Cab" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'darbhanga')">
             <span class="frp-route">Patna ➔ Darbhanga</span>
-            <span class="frp-price">from ₹2,998</span>
+            <span class="frp-price">Check Fare →</span>
           </a>
-          <a href="/patna-to-bhagalpur-cab" class="footer-route-pill" title="Patna to Bhagalpur One-Way Cab">
+          <a href="#booking-hero" class="footer-route-pill" title="Patna to Bhagalpur One-Way Cab" onclick="window.bookingManager && window.bookingManager.loadRoutePreset('patna', 'bhagalpur')">
             <span class="frp-route">Patna ➔ Bhagalpur</span>
-            <span class="frp-price">from ₹4,398</span>
+            <span class="frp-price">Check Fare →</span>
           </a>
         </div>
       </div>

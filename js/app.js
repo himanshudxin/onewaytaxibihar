@@ -1213,13 +1213,13 @@ window.openRoutesModal = () => {
       <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
           <h4 style="font-size: 15px; font-weight: 800; color: var(--owc-text);">${r.from} → ${r.to}</h4>
-          <span style="font-size: 16px; font-weight: 900; color: var(--owc-primary);">₹${r.baseFareHatchback}</span>
+          <span style="font-size: 11px; font-weight: 700; color: #059669; background: rgba(5,150,105,0.1); padding: 3px 8px; border-radius: 999px;">Zero Return Fare</span>
         </div>
         <div style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 12px;">
-          ${r.distanceKm} KM • ${r.duration} • Toll ₹${r.toll} included
+          ${r.distanceKm} KM • ${r.duration} • Tolls &amp; GST Included
         </div>
-        <button type="button" class="btn-select-cab" style="padding: 8px 14px; font-size: 12.5px;" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-          Book This Route
+        <button type="button" class="btn-select-cab" style="padding: 8px 14px; font-size: 12.5px;" onclick="window.closeAllModals(); window.bookingManager && window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
+          Check Fare &amp; Availability →
         </button>
       </div>
     `).join("");
@@ -1494,62 +1494,24 @@ window.openFareChartModal = () => {
   if (!modal || !body) return;
 
   body.innerHTML = `
-    <div>
-      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">OneWayTaxiBihar Per-KM Rate Matrix</h3>
-      <p style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 16px;">Transparent pricing across all 38 districts of Bihar with zero dead-mileage return charges.</p>
-
-      <table class="invoice-table">
-        <thead>
-          <tr>
-            <th>Vehicle Category</th>
-            <th>Models</th>
-            <th>Capacity</th>
-            <th>One-Way Rate</th>
-            <th>Night Allowance (10PM-6AM)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Go Hatchback</strong></td>
-            <td>WagonR, Tiago, Celerio</td>
-            <td>4 Pax + 2 Bags</td>
-            <td>₹21.0 / KM</td>
-            <td>₹250</td>
-          </tr>
-          <tr>
-            <td><strong>Prime Sedan</strong></td>
-            <td>Dzire, Etios, Amaze</td>
-            <td>4 Pax + 3-4 Bags</td>
-            <td>₹25.0 / KM</td>
-            <td>₹250</td>
-          </tr>
-          <tr>
-            <td><strong>Executive Sedan</strong></td>
-            <td>Honda City, Ciaz</td>
-            <td>4 Pax + 4 Bags</td>
-            <td>₹29.0 / KM</td>
-            <td>₹250</td>
-          </tr>
-          <tr>
-            <td><strong>Family SUV (6+1)</strong></td>
-            <td>Ertiga, Carens + Carrier</td>
-            <td>6 Pax + 5 Bags</td>
-            <td>₹33.0 / KM</td>
-            <td>₹250</td>
-          </tr>
-          <tr>
-            <td><strong>Toyota Innova Crysta</strong></td>
-            <td>Toyota Innova Crysta</td>
-            <td>7 Pax + 6-7 Bags</td>
-            <td>₹44.0 / KM</td>
-            <td>₹250</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-md); padding: 14px; font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.6;">
-        <strong>Highway Tolls &amp; Taxes:</strong> All one-way route prices include standard fastag toll taxes, state road taxes, and 5% GST. No extra cash demands on bridges and highways.
+    <div style="text-align: center; padding: 12px 6px;">
+      <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(37,99,235,0.1); color: #2563eb; margin-bottom: 14px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
       </div>
+      <h3 style="font-size: 19px; font-weight: 800; margin-bottom: 8px;">Guaranteed One-Way Pricing Engine</h3>
+      <p style="font-size: 13.5px; color: var(--owc-text-muted); line-height: 1.6; max-width: 480px; margin: 0 auto 20px;">
+        To ensure guaranteed cab availability and genuine passenger rates across Bihar's 38 districts, live one-way fares are calculated directly in our booking engine with your 10-digit mobile number.
+      </p>
+
+      <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 22px; text-align: left;">
+        <div style="font-size: 12px; font-weight: 700; color: #059669; margin-bottom: 6px;">✓ Zero Return Fare Guaranteed on All Intercity Drops</div>
+        <div style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 4px;">✓ Fastag Tolls, State Taxes &amp; GST 100% Included</div>
+        <div style="font-size: 12px; color: var(--owc-text-muted);">✓ Commercial Police-Verified Highway Chauffeurs</div>
+      </div>
+
+      <button type="button" class="check-fare-primary-btn" onclick="window.closeAllModals(); const h = document.getElementById('booking-hero'); if(h) h.scrollIntoView({behavior:'smooth'}); const p = document.getElementById('input-fare-phone'); if(p) setTimeout(() => p.focus(), 500);">
+        Check Fares &amp; Availability →
+      </button>
     </div>
   `;
 
@@ -2981,8 +2943,21 @@ window.bookTourismTour = (pkgCode, pkgTitle, origin, dest) => {
     hero.scrollIntoView({ behavior: 'smooth' });
   }
 
-  if (window.showToast) {
-    window.showToast(`Selected "${pkgTitle}". Select your travel date & cab tier above!`, 'success');
+  const phoneInput = document.getElementById('input-fare-phone');
+  if (phoneInput && (!phoneInput.value || !/^[6-9]\d{9}$/.test(phoneInput.value.trim()))) {
+    setTimeout(() => {
+      phoneInput.focus();
+      const wrap = document.getElementById('input-fare-phone-wrap');
+      if (wrap) {
+        wrap.classList.add('phone-input-shake');
+        setTimeout(() => wrap.classList.remove('phone-input-shake'), 800);
+      }
+    }, 400);
+    if (window.showToast) {
+      window.showToast(`Selected "${pkgTitle}". Enter your mobile number to view guaranteed fares!`, 'info');
+    }
+  } else if (window.showToast) {
+    window.showToast(`Selected "${pkgTitle}". Click "Check Fares & Availability" above!`, 'success');
   }
 };
 

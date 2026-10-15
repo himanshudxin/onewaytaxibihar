@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Booking Confirmed - OneWayTaxiBihar</title>
+  <meta name="description" content="Your one-way cab has been confirmed. View booking ID, chauffeur assignment, and trip details.">
+  <link rel="canonical" href="https://onewaytaxibihar.com/booking-confirmed">
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/booking-platform.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="/" class="app-brand">
+          <span>ONEWAYTAXIBIHAR</span>
+        </a>
+      </div>
+      <div class="app-header-actions">
+        <a href="tel:+918002141816" class="btn-header-call" title="Call Dispatch Desk">
+          <span>☎</span>
+          <span style="font-weight: 700;">+91 80021 41816</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    
+    <!-- PROGRESS INDICATOR (Req. 7) -->
+    <div class="flow-progress-bar">
+      <div class="flow-step completed"><span>①</span> TRIP ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step completed"><span>②</span> CAB ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step completed"><span>③</span> DETAILS ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step completed"><span>④</span> CONFIRM ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step active" style="color: #10b981;"><span>⑤</span> DONE ✓</div>
+    </div>
+
+    <!-- CONFIRMATION CARD (Req. 13) -->
+    <div class="confirmed-card">
+      
+      <div class="confirmed-icon-circle">✓</div>
+      
+      <h1 class="confirmed-title">BOOKING CONFIRMED</h1>
+      
+      <div style="font-size: 0.8rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 14px;">
+        BOOKING ID
+      </div>
+      
+      <div class="confirmed-booking-id-tag" id="displayBookingId">
+        OTB-28491
+      </div>
+
+      <div class="confirmed-details-box">
+        
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Route</span>
+          <strong id="displayRoute" style="color:#0f172a;">Patna → Gaya</strong>
+        </div>
+
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Pickup Schedule</span>
+          <strong id="displaySchedule" style="color:#0f172a;">18 Oct • 08:30 AM</strong>
+        </div>
+
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Vehicle Category</span>
+          <strong id="displayVehicle" style="color:#0f172a;">Sedan (Dzire / Etios)</strong>
+        </div>
+
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Total Fare</span>
+          <strong id="displayFare" style="color:#0095f6; font-size:1.05rem;">₹1,999</strong>
+        </div>
+
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Passenger</span>
+          <strong id="displayPassenger" style="color:#0f172a;">Rahul Kumar</strong>
+        </div>
+
+        <div class="confirmed-details-row">
+          <span style="color:#64748b;">Contact Mobile</span>
+          <strong id="displayPhone" style="color:#0f172a;">+91 98XXXXX321</strong>
+        </div>
+
+      </div>
+
+      <!-- DRIVER DETAILS NOTICE (Req. 13) -->
+      <div class="confirmed-driver-note">
+        🛡️ <strong>Driver details</strong> will be shared via SMS & WhatsApp before pickup.
+      </div>
+
+      <!-- ACTION BUTTONS (Req. 13 & 16) -->
+      <div class="confirmed-actions-grid">
+        <a href="/my-bookings" class="btn-view-booking-action" id="btnViewBooking">
+          <span>📄</span> <span>VIEW BOOKING</span>
+        </a>
+
+        <a href="https://wa.me/918002141816?text=Hi%20OneWayTaxiBihar%2C%20I%20have%20confirmed%20my%20booking" target="_blank" rel="noopener" class="btn-whatsapp-action" id="btnWhatsApp">
+          <span>💬</span> <span>WHATSAPP SUPPORT</span>
+        </a>
+
+        <a href="tel:+918002141816" class="btn-secondary-action" style="text-decoration: none; font-size: 0.95rem;">
+          <span>☎</span> <span>CALL SUPPORT (+91 80021 41816)</span>
+        </a>
+
+        <a href="/" style="font-size: 0.85rem; color: #64748b; text-decoration: underline; margin-top: 10px;">
+          Book Another Cab
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services.</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816 • Patna, Bihar</p>
+  </footer>
+
+  <!-- CONTROLLERS -->
+  <script src="/js/booking-flow.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Load confirmed booking from session
+      let booking = null;
+      try {
+        const raw = sessionStorage.getItem('otb_latest_confirmed_booking');
+        if (raw) booking = JSON.parse(raw);
+      } catch (e) {}
+
+      // Fallback sample if loaded directly
+      if (!booking) {
+        booking = {
+          bookingId: `OTB-${Math.floor(10000 + Math.random() * 90000)}`,
+          originCity: 'Patna',
+          destCity: 'Gaya',
+          pickupDate: BookingFlow.getTodayDateString(),
+          pickupTime: '08:30 AM',
+          cabCategory: 'Sedan (Dzire / Etios)',
+          totalFare: 1999,
+          passengerName: 'Valued Passenger',
+          passengerPhone: '+91 80021 41816'
+        };
+      }
+
+      const bId = booking.bookingId || booking.id || 'OTB-28491';
+      document.getElementById('displayBookingId').textContent = bId;
+      document.getElementById('displayRoute').textContent = `${booking.originCity || 'Patna'} → ${booking.destCity || 'Bihar Outstation'}`;
+      document.getElementById('displaySchedule').textContent = `${booking.pickupDate || 'Today'} • ${booking.pickupTime || '08:30 AM'}`;
+      document.getElementById('displayVehicle').textContent = booking.cabCategory || booking.vehicle || 'Executive Sedan';
+      document.getElementById('displayFare').textContent = `₹${Number(booking.totalFare || booking.fare || 1999).toLocaleString('en-IN')}`;
+      document.getElementById('displayPassenger').textContent = booking.passengerName || 'Valued Passenger';
+      document.getElementById('displayPhone').textContent = booking.passengerPhone || '+91 80021 41816';
+
+      // View Booking Link
+      document.getElementById('btnViewBooking').href = `/my-bookings?id=${encodeURIComponent(bId)}`;
+
+      // WhatsApp Dynamic Link with Booking ID
+      const waText = encodeURIComponent(`Hello OneWayTaxiBihar, I have a confirmed booking ID: ${bId} for ${booking.originCity} to ${booking.destCity}. Please assist with my ride.`);
+      document.getElementById('btnWhatsApp').href = `https://wa.me/918002141816?text=${waText}`;
+
+      // Track WhatsApp and Call clicks (Req. 29)
+      document.getElementById('btnWhatsApp').addEventListener('click', () => {
+        BookingFlow.track('WhatsApp clicked', { bookingId: bId });
+      });
+
+    })();
+  </script>
+</body>
+</html>

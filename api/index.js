@@ -3720,6 +3720,101 @@ module.exports = async (req, res) => {
       });
     }
 
+    // -------------------------------------------------------------
+    // MANUAL AGENT BOOKING (Admin Desk)
+    // -------------------------------------------------------------
+    if ((pathname === '/admin/bookings/manual' || pathname === '/admin/bookings/create-manual') && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const customerName = String(body.customerName || body.passengerName || body.name || '').trim();
+      const rawMobile = String(body.mobile || body.passengerPhone || body.phone || '').replace(/\D/g, '').slice(-10);
+      const pickup = String(body.pickup || body.originCity || '').trim();
+      const drop = String(body.drop || body.destCity || '').trim();
+      const date = String(body.date || body.pickupDate || new Date().toISOString().split('T')[0]).trim();
+      const time = String(body.time || body.pickupTime || '10:00 AM').trim();
+      const vehicle = String(body.vehicle || body.cabTier || 'Sedan').trim();
+      const paymentMethod = String(body.paymentMethod || 'Cash to Driver').trim();
+      const notes = String(body.notes || body.instructions || '').trim();
+      let fare = Number(body.fare || body.totalFare || 0);
+
+      if (!customerName || customerName.length < 2) {
+        return sendJson(400, { success: false, message: 'Customer name is required (at least 2 characters).' });
+      }
+      if (!rawMobile || rawMobile.length !== 10 || !/^[6-9]\d{9}$/.test(rawMobile)) {
+        return sendJson(400, { success: false, message: 'Valid 10-digit Indian mobile number required.' });
+      }
+      if (!pickup || !drop) {
+        return sendJson(400, { success: false, message: 'Pickup and Drop locations are required.' });
+      }
+
+      // If fare not manually set, calculate authoritative server fare
+      if (!fare || fare <= 0) {
+        const dist = getRouteDistance(pickup, drop) || 80;
+        const calc = calculateServerFare(dist, vehicle.toLowerCase().includes('suv') ? 'suv' : 'sedan', 'oneway', pickup, drop, { db });
+        fare = calc.totalFare || 1999;
+      }
+
+      const bookingId = `OTB-${Math.floor(10000 + Math.random() * 90000)}`;
+      const manualBooking = {
+        id: bookingId,
+        bookingId: bookingId,
+        passengerName: customerName,
+        passengerPhone: `+91 ${rawMobile}`,
+        cleanPhone: rawMobile,
+        pickupLocation: pickup,
+        dropLocation: drop,
+        originCity: pickup,
+        destCity: drop,
+        pickupDate: date,
+        pickupTime: time,
+        cabTier: vehicle,
+        cabCategory: vehicle,
+        totalFare: fare,
+        fare: fare,
+        paymentMethod: paymentMethod,
+        paymentStatus: 'PENDING',
+        advancePaid: 0,
+        balanceDue: fare,
+        specialNotes: notes,
+        bookingStatus: 'CONFIRMED',
+        source: 'MANUAL_AGENT',
+        otpStatus: 'MANUAL',
+        createdBy: admin.username || 'admin',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!db.bookings) db.bookings = [];
+      db.bookings.unshift(manualBooking);
+
+      // Audit log
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_MANUAL_${Date.now()}`,
+        entity: 'BOOKING',
+        entityId: bookingId,
+        action: 'MANUAL_BOOKING_CREATED',
+        actor: admin.username || 'admin',
+        details: `Agent manual booking for ${customerName} (+91 ${rawMobile}): ${pickup} ➔ ${drop} (₹${fare})`,
+        createdAt: new Date().toISOString()
+      });
+
+      // Notification
+      notificationService.sendBookingConfirmationNotifications(manualBooking).catch(err => {
+        console.warn('[Manual Booking Notification Warning]:', err.message);
+      });
+
+      await saveDb(db);
+
+      return sendJson(201, {
+        success: true,
+        message: `Manual booking ${bookingId} created successfully.`,
+        bookingId,
+        booking: manualBooking
+      });
+    }
+
     if (pathname === '/admin/confirm' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });

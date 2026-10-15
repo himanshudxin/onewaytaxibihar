@@ -1,2382 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OneWayTaxiBihar | Book One Way Cab Online | Intercity Taxi Service Bihar</title>
-  <meta name="description"
-    content="Book one way cab online at lowest fares across all 38 districts of Bihar & Pan-India. OneWayTaxiBihar offers intercity one-way taxi service with zero return fare, transparent pricing, zero cancellation charges, and 24x7 customer support.">
-  <meta name="keywords"
-    content="one way taxi bihar, onewaytaxibihar, patna to gaya cab, patna to muzaffarpur taxi, patna to darbhanga outstation cab, patna to bhagalpur cab, patna to rajgir taxi, patna to varanasi cab, book cab online bihar, onewaytaxibihar.com">
-  <meta name="author" content="OneWayTaxiBihar">
-  <meta name="creator" content="OneWayTaxiBihar Mobility Pvt Ltd">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-
-  <!-- Canonical & PWA Manifest -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>OneWayTaxiBihar - Intercity One-Way Cabs across Bihar & Jharkhand</title>
+  <meta name="description" content="Book verified intercity one-way cabs across Bihar. Pay only for one side travel, zero return fare. Doorstep pickup in Patna, Gaya, Muzaffarpur, Darbhanga, Ranchi.">
   <link rel="canonical" href="https://onewaytaxibihar.com/">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="/images/icon-192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="/images/icon-512.png">
-
-  <!-- Mobile App & PWA Capabilities -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="OneWayTaxi">
-  <meta name="application-name" content="OneWayTaxiBihar">
-
-  <!-- Theme Color for Mobile Browsers -->
-  <meta name="theme-color" content="#059669" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#090d16" media="(prefers-color-scheme: dark)">
-  <meta name="color-scheme" content="light dark">
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="OneWayTaxiBihar - Book One Way Cab Online | Intercity Taxi Service">
-  <meta property="og:description" content="Book one way outstation cabs online at lowest fares across all 38 districts of Bihar with zero return fare, transparent pricing, and 24x7 support.">
+  
+  <!-- Open Graph / Meta -->
   <meta property="og:type" content="website">
+  <meta property="og:title" content="OneWayTaxiBihar - Intercity One-Way Cabs">
+  <meta property="og:description" content="One-way travel, without return fare. Fixed pricing, verified drivers, 24x7 support.">
   <meta property="og:url" content="https://onewaytaxibihar.com/">
-  <meta property="og:site_name" content="OneWayTaxiBihar">
-  <meta property="og:locale" content="en_IN">
-  <meta property="og:image" content="https://onewaytaxibihar.com/favicon.svg">
-
-  <!-- Twitter Cards -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="OneWayTaxiBihar | Book One Way Cab Online">
-  <meta name="twitter:description" content="Fixed one-way cab service across all 38 districts of Bihar with zero return dead mileage fees.">
-  <meta name="twitter:image" content="https://onewaytaxibihar.com/favicon.svg">
-
-  <!-- Schema.org JSON-LD Structured Data for Google Rich Results -->
+  <meta property="og:image" content="https://onewaytaxibihar.com/images/og-banner.png">
+  
+  <!-- Icons & Fonts -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/booking-platform.css">
+  
+  <!-- Schema.org JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "TaxiService",
-        "@id": "https://onewaytaxibihar.com/#service",
-        "name": "OneWayTaxiBihar",
-        "url": "https://onewaytaxibihar.com",
-        "logo": "https://onewaytaxibihar.com/favicon.svg",
-        "telephone": "+918002141816",
-        "priceRange": "₹1,498 - ₹5,998",
-        "areaServed": [
-          { "@type": "AdministrativeArea", "name": "Bihar, India" },
-          { "@type": "City", "name": "Patna" },
-          { "@type": "City", "name": "Gaya" },
-          { "@type": "City", "name": "Muzaffarpur" },
-          { "@type": "City", "name": "Darbhanga" },
-          { "@type": "City", "name": "Bhagalpur" },
-          { "@type": "City", "name": "Purnia" }
-        ],
-        "serviceType": "One-Way Intercity Cab Booking",
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "reviewCount": "3420",
-          "bestRating": "5",
-          "worstRating": "1"
-        }
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://onewaytaxibihar.com/#organization",
-        "name": "OneWayTaxiBihar Mobility Pvt Ltd",
-        "url": "https://onewaytaxibihar.com",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+918002141816",
-          "contactType": "customer service",
-          "areaServed": "IN",
-          "availableLanguage": ["en", "hi"]
-        }
-      }
-    ]
+    "@type": "TaxiService",
+    "name": "OneWayTaxiBihar",
+    "url": "https://onewaytaxibihar.com",
+    "telephone": "+918002141816",
+    "areaServed": ["Bihar", "Jharkhand", "Eastern Uttar Pradesh"],
+    "priceRange": "₹₹",
+    "description": "Enterprise intercity one-way cab booking platform across Bihar."
   }
   </script>
-  <script>
-    (function() {
-      try {
-        const savedTheme = localStorage.getItem('owc_theme_preference');
-        // Default to dark mode on initial visit; respect saved preference if client changed it
-        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
-        document.documentElement.setAttribute('data-theme', activeTheme);
-        document.documentElement.setAttribute('data-theme-mode', activeTheme);
-      } catch (e) {
-        console.warn('Theme init error:', e);
-      }
-    })();
-  </script>
-
-  <!-- Google Fonts: Inter & Montserrat -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@600;700;800&family=Mukta:wght@600;700;800;900&display=swap"
-    rel="stylesheet">
-
-  <!-- Leaflet CSS for Interactive Map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
-  <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/components.css?v=3.0">
-
-  <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 </head>
-
 <body>
 
-  <!-- Sticky Navbar Header -->
-  <header class="navbar">
-    <!-- Top Executive Dispatch & Call Bar (Collapsible) -->
-    <div class="header-top-bar" id="header-top-bar">
-      <div class="container header-top-inner">
-        <div class="top-bar-left-status">
-          <span class="top-status-live-dot"></span>
-          <span class="top-status-text">Bihar State-Wide 24×7 Dispatch Desk • All 38 Districts • Zero Dead Mileage</span>
-        </div>
-        <div class="header-top-actions">
-          <a href="tel:+918002141816" class="top-help-link" id="top-help-link" title="Call 24x7 Priority Desk: +91 80021 41816" aria-label="Call 24x7 Priority Desk: +91 80021 41816">
-            <span class="top-phone-badge" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="lucide-phone-icon">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-            </span>
-            <span class="top-phone-label">24×7 Hotline</span>
-            <span class="top-phone-divider" aria-hidden="true"></span>
-            <span class="top-phone-number">+91 80021 41816</span>
-            <span class="top-phone-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </span>
-          </a>
-          <button type="button" class="call-bar-collapse-btn" id="call-bar-collapse-btn" onclick="window.toggleCallBar(true)" title="Hide top bar" aria-label="Hide top bar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
+  <!-- MOBILE DRAWER -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-content">
+      <button class="mobile-drawer-close" id="drawerCloseBtn" aria-label="Close navigation">&times;</button>
+      <div class="app-brand" style="margin-top: 10px;">
+        <span>ONEWAYTAXIBIHAR</span>
+        <span class="app-brand-badge">CAB</span>
+      </div>
+      <ul class="mobile-drawer-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/routes">Popular Routes</a></li>
+        <li><a href="/cabs">Our Fleet</a></li>
+        <li><a href="/why-us">Why Choose Us</a></li>
+        <li><a href="/how-it-works">How It Works</a></li>
+        <li><a href="/safety">Safety & Standards</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/contact">Contact Support</a></li>
+        <li><a href="/my-bookings">My Bookings</a></li>
+        <li><a href="/admin" style="color: #64748b; font-size: 0.9rem;">Staff Login</a></li>
+      </ul>
+      <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+        <a href="tel:+918002141816" class="btn-primary-action" style="height: 44px; text-decoration: none; font-size: 0.95rem;">
+          ☎ Call Dispatch Desk
+        </a>
       </div>
     </div>
+  </div>
 
-    <div class="container nav-content">
-      <a href="#" class="brand-wrapper" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
-        <div class="brand-badge-icon" aria-label="OneWayTaxiBihar Brand Emblem">
-          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
-        </div>
-        <div class="brand-text-group">
-          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
-        </div>
-      </a>
-
-      <!-- Desktop Nav Links -->
-      <ul class="nav-links">
-        <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Services</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">Routes</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
-      </ul>
-
-      <!-- Nav Actions -->
-      <div class="nav-actions">
-        <!-- Quick Call Pill (Appears when top Call bar is collapsed) -->
-        <a href="tel:+918002141816" class="navbar-call-mini-pill" id="navbar-call-mini-pill" title="Call">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          <span>Call</span>
+  <!-- HEADER (Req. 2 & 20) -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="btn-menu-trigger" id="drawerOpenBtn" aria-label="Open menu">☰</button>
+        <a href="/" class="app-brand">
+          <span>ONEWAYTAXIBIHAR</span>
         </a>
+      </div>
 
-        <!-- Install App Button (PWA) -->
-        <button type="button" class="btn-nav-outline btn-nav-install" id="btn-pwa-install" style="display: none; background: rgba(5, 150, 105, 0.1); border-color: #059669; color: #10b981; font-weight: 750;" title="Install OneWayTaxiBihar App on your phone">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Install App</span>
-        </button>
+      <nav class="app-nav-desktop">
+        <a href="/routes">Routes</a>
+        <a href="/cabs">Cabs</a>
+        <a href="/why-us">Why Us</a>
+        <a href="/how-it-works">How It Works</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Help</a>
+      </nav>
 
-        <!-- Drive With Us Partner Pill -->
-        <a href="driver.html" class="btn-nav-partner" title="Driver Partner Desk & Registration">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          <span>Drive With Us</span>
+      <div class="app-header-actions">
+        <a href="tel:+918002141816" class="btn-header-call" title="24x7 Booking Helpline">
+          <span>☎</span>
+          <span style="font-weight: 700;">+91 80021 41816</span>
         </a>
-
-        <!-- My Trips Button -->
-        <button type="button" class="btn-nav-outline btn-nav-trips" onclick="window.openMyTripsModal()" title="View Active & Past Bookings">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <span>My Trips</span>
-        </button>
-
-        <!-- Auth Button / Profile Slot -->
-        <div id="nav-auth-slot">
-          <button type="button" class="btn-nav-outline btn-nav-auth" onclick="window.openAuthModal()" title="Login with OTP">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Login with OTP</span>
-          </button>
-        </div>
-
-        <!-- Theme Toggle Switch (Desktop) -->
-        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Dark / Light Theme" title="Toggle Light / Dark Mode">
-          <span class="theme-switch-track">
-            <span class="theme-switch-thumb">
-              <span class="theme-switch-icon" id="theme-switch-icon">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-              </span>
-            </span>
-          </span>
-        </button>
-
-        <!-- Mobile Direct WhatsApp Pill -->
-        <a href="https://wa.me/917281851011?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="mobile-nav-wa-pill" title="WhatsApp">
-          WhatsApp
-        </a>
-
-        <!-- Mobile Hamburger Trigger -->
-        <button type="button" class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Menu">
-          ☰
-        </button>
       </div>
     </div>
   </header>
 
-  <!-- Backdrop Overlay for Mobile Drawer -->
-  <div class="drawer-backdrop" id="drawer-backdrop" onclick="window.closeMobileDrawer(true)" aria-hidden="true"></div>
-
-  <!-- Mobile Navigation Drawer (Executive Slide-out Menu) -->
-  <aside class="mobile-nav-drawer" id="mobile-drawer" role="dialog" aria-modal="true" aria-label="OneWayTaxiBihar Navigation Menu">
-    <!-- Drawer Header -->
-    <div class="drawer-header">
-      <div class="drawer-brand">
-        <div class="drawer-brand-badge">
-          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="34" height="34" class="brand-logo-img" style="width: 34px; height: 34px; object-fit: contain; display: block; border-radius: 8px;">
-        </div>
-        <div class="drawer-brand-text">
-          OneWay<span>TaxiBihar</span>
-        </div>
-      </div>
-      <div class="drawer-header-actions">
-        <!-- Theme Toggle Button inside Drawer -->
-        <button type="button" class="drawer-theme-btn" id="mobile-theme-switch-btn" aria-label="Toggle Dark / Light Mode" title="Toggle Theme">
-          <span class="drawer-theme-icon" id="mobile-theme-switch-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </span>
-        </button>
-        <!-- Close Drawer Button -->
-        <button type="button" class="drawer-close-btn" onclick="window.closeMobileDrawer(true)" aria-label="Close navigation menu" title="Close Menu">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    
+    <!-- SHORT HERO HEADER (Req. 2) -->
+    <div class="hero-compact">
+      <h1 class="hero-tagline">One-way travel,<br>without return fare.</h1>
+      <p class="hero-subtitle">Pay only for the distance you travel across Bihar</p>
     </div>
 
-    <!-- Scrollable Drawer Body -->
-    <div class="drawer-body">
-      <!-- User Account Slot (Injected via JS) -->
-      <div class="drawer-user-section" id="mobile-auth-slot">
-        <!-- Injected dynamically via JS: renderNavAuth() -->
-      </div>
-
-      <!-- Quick Booking Action Hero Card -->
-      <a href="#booking-hero" class="drawer-hero-cta" onclick="window.closeMobileDrawer()">
-        <div class="drawer-hero-cta-content">
-          <span class="drawer-hero-cta-title">Book One-Way Cab</span>
-          <span class="drawer-hero-cta-desc">38 Bihar Districts • Zero Return Fare</span>
-        </div>
-        <span class="drawer-hero-cta-arrow">→</span>
-      </a>
-
-      <!-- Navigation Category 1: Ride Services -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">RIDE SERVICES</div>
-        <nav class="drawer-nav-list">
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openMyTripsModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            </span>
-            <span class="drawer-nav-text">My Trips &amp; Bookings</span>
-            <span class="drawer-nav-badge">Active</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openRoutesModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            </span>
-            <span class="drawer-nav-text">38 Districts &amp; Fixed Fares</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openServicesModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            </span>
-            <span class="drawer-nav-text">Services &amp; Rental Packages</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Navigation Category 2: Pricing & Corporate -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">PRICING &amp; BUSINESS</div>
-        <nav class="drawer-nav-list">
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openFareChartModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            </span>
-            <span class="drawer-nav-text">Fare &amp; Rate Chart</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openCorporateModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            </span>
-            <span class="drawer-nav-text">Corporate Travel Desk</span>
-            <span class="drawer-nav-badge">GST Billing</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openInvoiceModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            </span>
-            <span class="drawer-nav-text">Request GST Tax Invoice</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Navigation Category 3: Trust & Rewards -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">REVIEWS &amp; REWARDS</div>
-        <nav class="drawer-nav-list">
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openFriendsReviewModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#facc15" stroke="#facc15"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            </span>
-            <span class="drawer-nav-text">Passenger Reviews</span>
-            <span class="drawer-nav-badge gold">4.9 ★</span>
-          </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openReferModal();">
-            <span class="drawer-nav-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-            </span>
-            <span class="drawer-nav-text">Refer Friends &amp; Earn</span>
-            <span class="drawer-nav-badge green">₹150 Cash</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Navigation Category 4: Operator & Fleet Consoles -->
-      <div class="drawer-section">
-        <div class="drawer-section-title">CREW &amp; FLEET</div>
-        <div class="drawer-portal-grid" style="grid-template-columns: 1fr;">
-          <a href="driver.html" class="drawer-portal-card driver">
-            <span class="drawer-portal-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
-            <div>
-              <div class="drawer-portal-title">Driver Partner ↗</div>
-              <div class="drawer-portal-sub">Chauffeur Desk &amp; Registration</div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sticky Bottom Contact Bar -->
-    <div class="drawer-footer-actions">
-      <a href="https://wa.me/917281851011?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="drawer-btn-wa" aria-label="Chat on WhatsApp" onclick="window.closeMobileDrawer()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
-        <span>WhatsApp Helpdesk</span>
-      </a>
-      <a href="tel:+918002141816" class="drawer-btn-call" aria-label="Call 24x7 Helpdesk" onclick="window.closeMobileDrawer()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>Call: +91 80021 41816</span>
-      </a>
-      <div class="drawer-bottom-credit">Boring Road, Patna, Bihar • 24x7 Direct Dispatch</div>
-    </div>
-  </aside>
-
-  
-  <main class="app-main-viewport">
-
-    <!-- ======================================================================
-         SUB-VIEW 1: HOME / SEARCH LANDING (CLEAN, FOCUSED & HIGH-CONVERTING)
-         ====================================================================== -->
-    <div class="app-view active" id="view-home">
-      <section class="hero-section" id="booking-hero">
-      <div class="container">
-
-        <!-- Emergency Incident / Booking Pause Banner Container -->
-        <div id="emergency-pause-container" style="display:none;" role="alert" aria-live="assertive"></div>
-
-        <!-- Main Booking Widget Card -->
-        <div class="booking-widget-card">
+    <!-- BOOKING CARD (Req. 2, 3, 4) -->
+    <div class="booking-card" id="bookingCard">
+      <form id="heroBookingForm" autocomplete="off">
+        <div class="input-block-container">
           
-          <!-- 4 Trip Type Tabs -->
-          <div class="trip-tabs-header">
-            <button type="button" class="trip-tab-btn active" data-trip="oneway">
-              <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-              </span>
-              <span class="tab-label">One-Way</span>
-            </button>
-            <button type="button" class="trip-tab-btn" data-trip="roundtrip">
-              <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
-              </span>
-              <span class="tab-label">Round-Trip</span>
-            </button>
-            <button type="button" class="trip-tab-btn" data-trip="local">
-              <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </span>
-              <span class="tab-label">Local 8h</span>
-            </button>
-            <button type="button" class="trip-tab-btn" data-trip="airport">
-              <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.5.1-1.8.7l-.5.9c-.3.7 0 1.5.6 1.9l6.5 4.7-3.5 3.5-2.8-.9c-.4-.1-.8 0-1.1.3l-.4.4c-.3.3-.3.8 0 1.1l2.3 2.3c.3.3.8.3 1.1 0l.4-.4c.3-.3.4-.7.3-1.1l-.9-2.8 3.5-3.5 4.7 6.5c.4.6 1.2.9 1.9.6l.9-.5c.6-.3.9-1 .7-1.8z"/></svg>
-              </span>
-              <span class="tab-label">Airport</span>
-            </button>
+          <!-- Swap button -->
+          <button type="button" class="btn-swap-locations" id="btnSwap" title="Swap pickup and drop" aria-label="Swap pickup and drop">⇅</button>
+
+          <!-- FROM LOCATION -->
+          <div class="location-input-group">
+            <label class="input-label-chip" for="inputOrigin">
+              <span>📍</span> FROM (Pickup City / Hub)
+            </label>
+            <div class="input-field-wrapper">
+              <span class="input-icon-left">🚗</span>
+              <input type="text" id="inputOrigin" name="origin" placeholder="Search pickup location (e.g. Patna)" required autocomplete="off">
+              <button type="button" class="btn-input-clear" id="btnClearOrigin">&times;</button>
+            </div>
+            <div class="autocomplete-dropdown" id="dropdownOrigin"></div>
           </div>
 
-          <!-- Route Inputs (Pickup & Drop) -->
-          <div class="route-inputs-grid-2">
-            <!-- Pickup Field -->
-            <div class="autocomplete-wrapper">
-              <div class="input-field-group" id="group-pickup">
-                <span class="route-point-marker pickup-marker" title="Pickup Point"></span>
-                <div class="input-content">
-                  <label id="lbl-pickup" for="input-pickup">PICKUP LOCATION</label>
-                  <input type="text" id="input-pickup" autocomplete="off" placeholder="Enter pickup city or airport">
-                </div>
-                <div class="input-actions-cluster">
-                  <button type="button" id="btn-clear-pickup" class="booking-clear-btn" title="Clear Pickup" aria-label="Clear pickup">✕</button>
-                  <button type="button" id="btn-gps-pickup" class="gps-locate-btn" title="Detect Current GPS Location" aria-label="Detect current location">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <line x1="12" y1="2" x2="12" y2="6"/>
-                      <line x1="12" y1="18" x2="12" y2="22"/>
-                      <line x1="2" y1="12" x2="6" y2="12"/>
-                      <line x1="18" y1="12" x2="22" y2="12"/>
-                      <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div class="location-autocomplete-dropdown" id="pickup-dropdown"></div>
+          <!-- TO LOCATION -->
+          <div class="location-input-group">
+            <label class="input-label-chip" for="inputDest">
+              <span>📍</span> TO (Drop City / Hub)
+            </label>
+            <div class="input-field-wrapper">
+              <span class="input-icon-left">🏁</span>
+              <input type="text" id="inputDest" name="dest" placeholder="Search drop location (e.g. Gaya)" required autocomplete="off">
+              <button type="button" class="btn-input-clear" id="btnClearDest">&times;</button>
             </div>
-
-            <!-- Route Swap Button -->
-            <button type="button" class="route-swap-btn" id="btn-swap-route" title="Swap Pickup & Drop Locations" aria-label="Swap pickup and drop">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
-              </svg>
-            </button>
-
-            <!-- Drop Field -->
-            <div class="autocomplete-wrapper">
-              <div class="input-field-group" id="group-drop">
-                <span class="route-point-marker drop-marker" title="Destination Point"></span>
-                <div class="input-content">
-                  <label id="lbl-drop" for="input-drop">DROP LOCATION</label>
-                  <input type="text" id="input-drop" autocomplete="off" placeholder="Enter destination city or airport">
-                </div>
-                <div class="input-actions-cluster">
-                  <button type="button" id="btn-clear-drop" class="booking-clear-btn" title="Clear Drop" aria-label="Clear drop">✕</button>
-                </div>
-              </div>
-              <div class="location-autocomplete-dropdown" id="drop-dropdown"></div>
-            </div>
+            <div class="autocomplete-dropdown" id="dropdownDest"></div>
           </div>
 
-          <!-- Local Hourly Package Row (Displayed only when Trip Type is Local) -->
-          <div class="input-field-group" id="local-pkg-row" style="display: none; margin-bottom: 16px;">
-            <span class="input-icon-clean">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </span>
-            <div class="input-content">
-              <label>SELECT HOURLY / LOCAL RENTAL PACKAGE</label>
-              <select id="local-package-select">
-                <option value="pkg_4hr_40km">4 Hours / 40 KM (Patna City Tour)</option>
-                <option value="pkg_8hr_80km" selected>8 Hours / 80 KM (Full Day Darshan)</option>
-                <option value="pkg_12hr_120km">12 Hours / 120 KM (Extended Tour)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Airport Transfer Row (Displayed only when Trip Type is Airport) -->
-          <div class="input-field-group" id="airport-details-row" style="display: none; margin-bottom: 16px;">
-            <span class="input-icon-clean">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.5.1-1.8.7l-.5.9c-.3.7 0 1.5.6 1.9l6.5 4.7-3.5 3.5-2.8-.9c-.4-.1-.8 0-1.1.3l-.4.4c-.3.3-.3.8 0 1.1l2.3 2.3c.3.3.8.3 1.1 0l.4-.4c.3-.3.4-.7.3-1.1l-.9-2.8 3.5-3.5 4.7 6.5c.4.6 1.2.9 1.9.6l.9-.5c.6-.3.9-1 .7-1.8z"/></svg>
-            </span>
-            <div class="input-content">
-              <label>FLIGHT / TERMINAL NUMBER (FOR DELAY TRACKING)</label>
-              <input type="text" id="airport-flight-input" placeholder="e.g. 6E-214 / Jay Prakash Narayan Airport (PAT)">
-            </div>
-          </div>
-
-          <!-- Ethical Trip Schedule Header -->
-          <div class="schedule-section-header">
-            <div class="schedule-header-left">
-              <span class="schedule-header-title">TRIP SCHEDULE</span>
-              <span class="schedule-ethical-badge" title="Ethical, Transparent Pricing & Service">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>Free Cancellation • No Surge</span>
-              </span>
-            </div>
-            <div class="schedule-header-right">
-              <span class="schedule-live-dot"></span>
-              <span class="schedule-status-text">24x7 Cabs Available</span>
-            </div>
-          </div>
-
-          <!-- Executive Schedule Row (Date & Time with Tap-Only Calendar & Clock) -->
-          <div class="schedule-row" id="exec-schedule-row">
-            <!-- Executive Pickup Date Card -->
-            <div class="exec-picker-card" id="btn-pickup-date-card" role="button" tabindex="0" aria-label="Select Pickup Date & Month" onclick="if(window.ExecDateTimePicker) window.ExecDateTimePicker.openCalendar('pickup')">
-              <div class="picker-card-header">
-                <div class="picker-card-label-wrap">
-                  <span class="picker-card-label">DEPARTURE DATE</span>
-                  <span class="picker-rel-tag" id="pickup-date-rel-tag">TODAY</span>
-                </div>
-                <span class="picker-icon-badge calendar-badge" title="Calendar & Month Picker">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                  </svg>
-                </span>
+          <!-- DATE + TIME (Req. 2) -->
+          <div class="datetime-grid">
+            <div>
+              <label class="input-label-chip" for="inputDate">
+                <span>📅</span> DATE
+              </label>
+              <div class="input-field-wrapper">
+                <span class="input-icon-left">🗓️</span>
+                <input type="date" id="inputDate" name="pickupDate" required>
               </div>
-              <div class="picker-card-body">
-                <span class="picker-primary-val" id="display-pickup-date">Today</span>
-                <span class="picker-card-hint">
-                  <span>Select date</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </span>
-              </div>
-              <!-- Hidden native input for seamless form synchronization -->
-              <input type="date" id="pickup-date-input" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
             </div>
-
-            <!-- Executive Pickup Time Card -->
-            <div class="exec-picker-card" id="btn-pickup-time-card" role="button" tabindex="0" aria-label="Select Pickup Time Clock" onclick="if(window.ExecDateTimePicker) window.ExecDateTimePicker.openClock()">
-              <div class="picker-card-header">
-                <div class="picker-card-label-wrap">
-                  <span class="picker-card-label">PICKUP TIME</span>
-                  <span class="picker-rel-tag time-tag" id="pickup-time-slot-tag">MORNING</span>
-                </div>
-                <span class="picker-icon-badge clock-badge" title="Clock & Time Picker">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                </span>
-              </div>
-              <div class="picker-card-body">
-                <span class="picker-primary-val" id="display-pickup-time">10:00 AM</span>
-                <span class="picker-card-hint">
-                  <span>Select time</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </span>
-              </div>
-              <!-- Hidden native select for seamless form synchronization -->
-              <select id="pickup-time-select" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
-                <option value="04:00 AM">04:00 AM</option>
-                <option value="06:00 AM">06:00 AM</option>
-                <option value="08:00 AM">08:00 AM</option>
-                <option value="10:00 AM" selected>10:00 AM</option>
-                <option value="12:00 PM">12:00 PM</option>
-                <option value="02:00 PM">02:00 PM</option>
-                <option value="04:00 PM">04:00 PM</option>
-                <option value="06:00 PM">06:00 PM</option>
-                <option value="08:00 PM">08:00 PM</option>
-                <option value="10:00 PM">10:00 PM</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Executive Return Date Card (Round Trip only) -->
-          <div class="exec-picker-card return-date-card" id="return-date-row" style="display: none; margin-bottom: 16px;" role="button" tabindex="0" aria-label="Select Return Date" onclick="if(window.ExecDateTimePicker) window.ExecDateTimePicker.openCalendar('return')">
-            <div class="picker-card-header">
-              <div class="picker-card-label-wrap">
-                <span class="picker-card-label">RETURN DATE (ROUND TRIP)</span>
-                <span class="picker-rel-tag return-tag" id="return-date-rel-tag">SELECT DATE</span>
-              </div>
-              <span class="picker-icon-badge calendar-badge">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
-                  <path d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
-                </svg>
-              </span>
-            </div>
-            <div class="picker-card-body">
-              <span class="picker-primary-val" id="display-return-date">Select Return Date</span>
-              <span class="picker-card-hint">
-                <span>Select return date</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
-            </div>
-            <input type="date" id="return-date-input" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;">
-          </div>
-
-
-          <!-- Contact Mobile Number Field (Ultra-Professional Uber/MakeMyTrip Grade) -->
-          <div class="input-field-group phone-field-group" id="phone-check-group" style="margin-bottom: 16px;">
-            <div class="phone-icon-badge">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-            </div>
-            <div class="input-content phone-input-content">
-              <div class="phone-label-row">
-                <label for="input-fare-phone">MOBILE NUMBER (REQUIRED TO VIEW FARE) *</label>
-                <span class="phone-trust-tag">
-                  <span class="trust-pulse-dot"></span>
-                  <span>Instant Fare on WhatsApp</span>
-                </span>
-              </div>
-              <div class="phone-input-inline-wrap">
-                <div class="phone-country-pill" title="India (+91)">
-                  <svg class="phone-flag-svg" width="18" height="13" viewBox="0 0 30 20" style="border-radius: 2px; overflow: hidden; display: inline-block; vertical-align: middle; box-shadow: 0 0 1px rgba(0,0,0,0.3);">
-                    <rect width="30" height="6.67" fill="#FF9933"/>
-                    <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
-                    <rect y="13.33" width="30" height="6.67" fill="#138808"/>
-                    <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7"/>
-                    <circle cx="15" cy="10" r="0.6" fill="#000080"/>
-                  </svg>
-                  <span class="phone-country-code">+91</span>
-                </div>
-                <input type="tel" id="input-fare-phone" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" class="phone-native-input" spellcheck="false">
-                <span class="phone-valid-badge" id="phone-valid-badge" title="Valid Mobile Number">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </span>
-                <button type="button" class="phone-input-clear-btn" id="phone-input-clear-btn" title="Clear number" aria-label="Clear mobile number">
-                  &times;
-                </button>
+            <div>
+              <label class="input-label-chip" for="selectTime">
+                <span>🕐</span> TIME
+              </label>
+              <div class="input-field-wrapper">
+                <span class="input-icon-left">⏰</span>
+                <select id="selectTime" name="pickupTime" required>
+                  <option value="06:00 AM">06:00 AM</option>
+                  <option value="07:00 AM">07:00 AM</option>
+                  <option value="08:00 AM">08:00 AM</option>
+                  <option value="08:30 AM" selected>08:30 AM</option>
+                  <option value="09:00 AM">09:00 AM</option>
+                  <option value="10:00 AM">10:00 AM</option>
+                  <option value="11:30 AM">11:30 AM</option>
+                  <option value="01:00 PM">01:00 PM</option>
+                  <option value="03:00 PM">03:00 PM</option>
+                  <option value="05:00 PM">05:00 PM</option>
+                  <option value="07:00 PM">07:00 PM</option>
+                  <option value="09:00 PM">09:00 PM</option>
+                  <option value="11:00 PM">11:00 PM</option>
+                </select>
               </div>
             </div>
           </div>
 
-          <!-- Primary "Check Fare" Action Button -->
-          <button type="button" class="check-fare-primary-btn" id="btn-check-fare" onclick="window.bookingManager && window.bookingManager.handleCheckFare()" title="Enter pickup, drop and mobile number to calculate fare">
-            <span>Check Fares &amp; Availability</span>
-            <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+          <!-- MOBILE NUMBER (Req. 4 - Validated before fare, NO OTP required to view fare) -->
+          <div>
+            <label class="input-label-chip" for="inputPhone">
+              <span>📱</span> MOBILE NUMBER (To View Fare)
+            </label>
+            <div class="mobile-input-wrapper">
+              <span class="mobile-prefix-badge">+91</span>
+              <input type="tel" id="inputPhone" name="phone" placeholder="Enter 10-digit mobile" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}" required>
+            </div>
+          </div>
+
+          <!-- SUBMIT CTA -->
+          <button type="submit" class="btn-primary-action" id="btnCheckFare">
+            <span>CHECK FARE</span>
+            <span>→</span>
           </button>
 
-          <!-- BELOW CHECK FARE OPTION: Built in Bihar for BHARAT (Prestigious National Identity Badge) -->
-          <div class="hero-center-header below-check-fare">
-            <div class="hero-pride-badge-wrap">
-              <div class="hero-pride-monumental-badge" title="Built with pride in Bihar, serving all of Bharat">
-                <span class="pride-tricolor-accent"></span>
-                <span class="pride-text-prefix">Built in</span>
-                <span class="pride-bihar-hindi">बिहार</span>
-                <span class="pride-emblem-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </span>
-                <span class="pride-text-mid">for</span>
-                <span class="pride-bharat-bold">BHARAT</span>
-              </div>
-            </div>
-
-            <h1 class="hero-main-title">Bihar's Dedicated &amp; Trusted One-Way Cab Service</h1>
-
-            <!-- Executive Styled Value Proposition Tags -->
-            <div class="hero-value-props">
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Honest Transparent Pricing</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Pay Only For Distance Traveled</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Dedicated 24×7 State-Wide Support</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Genuine Operational Guarantees -->
-          <div class="trust-metrics-strip">
-            <div class="trust-metric-item">
-              <span>Direct Patna Dispatch Desk</span>
-            </div>
-            <span class="trust-divider">|</span>
-            <div class="trust-metric-item">
-              <span>Verified Commercial Fleet</span>
-            </div>
-            <span class="trust-divider">|</span>
-            <div class="trust-metric-item">
-              <span style="color: var(--owc-primary); font-weight: 700;">₹0 Cancellation Fee</span>
-            </div>
-          </div>
-
-          <!-- "Return Fare, Not Fair" Box -->
-          <div class="return-fare-banner">
-            <p class="rf-main-text">Pay only for the distance you travel across Bihar, No return charges.</p>
-            <p class="rf-bold-highlight">Return Fare, Not Fair</p>
-          </div>
-
         </div>
+      </form>
 
-        <!-- Popular Routes Quick Bar -->
-        <div class="popular-routes-quickbar">
-          <div class="quickbar-title">POPULAR OUTSTATION ROUTES FROM PATNA:</div>
-          <div class="quick-routes-chips" id="hero-quick-routes">
-            <!-- Injected via JavaScript -->
-          </div>
-        </div>
-
-      </div>
-    </section>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 2: DEDICATED CAB SELECTION & LIVE FARES
-         ====================================================================== -->
-    <div class="app-view" id="view-cabs">
-      <!-- Sticky Route Summary Bar -->
-      <div class="route-summary-bar" id="route-summary-bar">
-        <div class="container route-summary-inner">
-          <div class="route-summary-path" id="summary-route-path">
-            <span class="route-summary-city"><span class="city-dot pickup"></span>Pickup Location</span>
-            <span class="route-summary-arrow">➔</span>
-            <span class="route-summary-city"><span class="city-dot drop"></span>Drop Destination</span>
-          </div>
-          <div class="route-summary-meta">
-            <span class="route-meta-pill" id="summary-route-date">Today, 10:00 AM</span>
-            <span class="route-meta-pill" id="summary-route-dist">One-Way Outstation</span>
-          </div>
-          <div class="route-summary-actions">
-            <button type="button" class="btn-edit-search" data-view="home" title="Modify Trip Details">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              <span>Modify Search</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <section class="app-section fare-section-open" id="cab-selection-section">
-      <div class="container">
-        
-        <!-- 7-Step Multi-Step Booking Wizard Stepper Bar -->
-        <div class="booking-stepper-bar" id="main-booking-stepper">
-          <div class="stepper-node completed" id="step-node-1"><span class="stepper-num">1</span><span>Trip Config</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node completed" id="step-node-2"><span class="stepper-num">2</span><span>Route Confirm</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node active" id="step-node-3"><span class="stepper-num">3</span><span>Fleet Select</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node" id="step-node-4"><span class="stepper-num">4</span><span>Passenger Info</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node" id="step-node-5"><span class="stepper-num">5</span><span>Fare &amp; Promo</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node" id="step-node-6"><span class="stepper-num">6</span><span>Payment</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node" id="step-node-7"><span class="stepper-num">7</span><span>Confirmed</span></div>
-        </div>
-
-        <div class="section-header">
-          <span class="section-pill-tag blue">FLEET &amp; PRICING</span>
-          <h2 class="section-title">Select Your Outstation Cab Category</h2>
-          <p class="section-subtitle">Guaranteed all-inclusive pricing with Tolls, Fastag, GST, and Driver Allowance included. Zero return fares.</p>
-        </div>
-
-        <!-- Selected Route Info Bar -->
-        <div class="route-fare-bar-container" id="route-fare-bar">
-          <div class="rf-route-title" id="rf-display-route">
-            <span>Patna → Gaya (Bodh Gaya)</span>
-          </div>
-          <div class="rf-meta-badges" id="rf-display-meta">
-            <span class="rf-badge" id="rf-dist-badge">104 KM</span>
-            <span class="rf-badge" id="rf-time-badge">2h 15m</span>
-            <span class="rf-badge" id="rf-toll-badge">Toll Included</span>
-          </div>
-        </div>
-
-        <!-- Cab Cards Grid -->
-        <div class="cab-cards-grid" id="cab-cards-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-      </div>
-    </section>
-      <section class="app-section alt-bg fare-section-open" id="route-map-section">
-      <div class="container">
-        
-        <div class="route-overview-card">
-          <!-- Top Info Bar: Clean, Corporate, Clear -->
-          <div class="route-overview-header">
-            <div class="route-header-main">
-              <div class="route-timeline-strip">
-                <span class="route-dot origin"></span>
-                <span class="route-city-name" id="route-text-origin">Pickup</span>
-                <span class="route-arrow">➔</span>
-                <span class="route-dot dest"></span>
-                <span class="route-city-name" id="route-text-dest">Drop-off</span>
-              </div>
-              <div class="route-corridor-highway" id="route-text-highway">National Highway Express Corridor</div>
-            </div>
-
-            <div class="route-metrics-bar">
-              <div class="route-metric-pill">
-                <span class="metric-title">Distance:</span>
-                <strong id="map-stat-dist">-- km</strong>
-              </div>
-              <div class="route-metric-pill">
-                <span class="metric-title">Est. Duration:</span>
-                <strong id="map-stat-time">-- hrs</strong>
-              </div>
-              <div class="route-metric-pill success">
-                <span class="metric-title">Toll &amp; State Tax:</span>
-                <strong>Zero Return • Included</strong>
-              </div>
-            </div>
-          </div>
-
-          <!-- Map Viewport -->
-          <div class="route-map-frame">
-            <div id="oneway-route-map" style="height: 300px; width: 100%;"></div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 3: DEDICATED PASSENGER CHECKOUT & VERIFICATION
-         ====================================================================== -->
-    <div class="app-view" id="view-checkout">
-      <div class="route-summary-bar">
-        <div class="container route-summary-inner">
-          <div class="route-summary-path" id="checkout-summary-route-path">
-            <span class="route-summary-city"><span class="city-dot pickup"></span>Trip Route</span>
-          </div>
-          <div class="route-summary-actions">
-            <button type="button" class="btn-edit-search" data-view="cabs" title="Select Another Cab">
-              <span>← Change Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="padding-top: 28px;">
-        <!-- 3-Step Multi-Step Stepper Bar -->
-        <div class="booking-stepper-bar" style="margin-bottom: 28px;">
-          <div class="stepper-node completed"><span class="stepper-num">✓</span><span>Route Search</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node completed"><span class="stepper-num">✓</span><span>Fleet Selected</span></div>
-          <span class="stepper-arrow">➔</span>
-          <div class="stepper-node active"><span class="stepper-num">3</span><span>Passenger Details &amp; Payment</span></div>
-        </div>
-
-        <div class="checkout-view-grid">
-          <!-- Left Column: Form -->
-          <div class="checkout-card-box">
-            <div class="checkout-card-header">
-              <h2 class="checkout-card-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>Passenger Contact &amp; Pickup Address</span>
-              </h2>
-              <span class="phone-trust-tag"><span class="trust-pulse-dot"></span><span>100% Confidential</span></span>
-            </div>
-
-            <form id="dedicated-checkout-form" onsubmit="event.preventDefault(); window.bookingManager && window.bookingManager.handleDedicatedCheckoutSubmit();">
-              <div class="input-field-group" style="margin-bottom: 16px;">
-                <div class="input-content">
-                  <label for="co-name">PASSENGER FULL NAME *</label>
-                  <input type="text" id="co-name" placeholder="Enter traveler's full name" required autocomplete="name">
-                </div>
-              </div>
-
-              <div class="input-field-group phone-field-group" style="margin-bottom: 16px;">
-                <div class="input-content phone-input-content">
-                  <label for="co-phone">CONTACT MOBILE NUMBER (FOR DRIVER COORDINATION &amp; OTP) *</label>
-                  <div class="phone-input-inline-wrap">
-                    <span class="phone-country-code">+91</span>
-                    <input type="tel" id="co-phone" maxlength="10" placeholder="10-digit mobile number" required autocomplete="tel" inputmode="numeric">
-                  </div>
-                </div>
-              </div>
-
-              <div class="input-field-group" style="margin-bottom: 16px;">
-                <div class="input-content">
-                  <label for="co-pickup-address">EXACT DOORSTEP PICKUP ADDRESS &amp; LANDMARK *</label>
-                  <input type="text" id="co-pickup-address" placeholder="House/Flat No, Hotel, Road, Landmark in pickup city" required>
-                </div>
-              </div>
-
-              <div class="input-field-group" style="margin-bottom: 16px;">
-                <div class="input-content">
-                  <label for="co-drop-address">DESTINATION DROP LOCALITY / AREA (OPTIONAL)</label>
-                  <input type="text" id="co-drop-address" placeholder="Specific drop address, hotel, or station">
-                </div>
-              </div>
-
-              <div class="input-field-group" style="margin-bottom: 16px;">
-                <div class="input-content">
-                  <label for="co-notes">SPECIAL CHAUFFEUR INSTRUCTIONS (OPTIONAL)</label>
-                  <input type="text" id="co-notes" placeholder="e.g. Flight 6E-214, extra luggage, senior citizen assist">
-                </div>
-              </div>
-
-              <!-- Payment Method Selection -->
-              <div style="margin-top: 24px; border-top: 1px solid var(--owc-border-light); padding-top: 18px;">
-                <h3 style="font-size: 15px; font-weight: 800; color: var(--owc-text); margin-bottom: 12px;">Payment Preference</h3>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                  <label style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1.5px solid var(--owc-primary); border-radius: var(--radius-md); background: var(--owc-primary-subtle); cursor: pointer;">
-                    <input type="radio" name="co_pay_mode" value="advance" checked style="margin-top: 3px;">
-                    <div>
-                      <div style="font-weight: 800; color: var(--owc-text);">Pay 20% Advance Online (UPI / Card / NetBanking)</div>
-                      <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 2px;">Lock your cab immediately. Pay remaining balance directly to chauffeur at destination.</div>
-                    </div>
-                  </label>
-                  <label style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1.5px solid var(--owc-border); border-radius: var(--radius-md); background: var(--owc-surface); cursor: pointer;">
-                    <input type="radio" name="co_pay_mode" value="cash" style="margin-top: 3px;">
-                    <div>
-                      <div style="font-weight: 800; color: var(--owc-text);">Pay Full Amount Cash to Driver</div>
-                      <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 2px;">Pay ₹0 now. Pay full fare in cash or driver UPI after reaching your destination.</div>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <button type="submit" class="checkout-submit-btn" id="btn-co-confirm">
-                <span>Confirm Booking &amp; Dispatch Chauffeur</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
-            </form>
-          </div>
-
-          <!-- Right Column: Trip Recap Sidebar -->
-          <div class="checkout-summary-sidebar">
-            <div class="checkout-card-box">
-              <div class="checkout-card-header">
-                <h3 class="checkout-card-title" style="font-size: 15px;">Trip Fare Summary</h3>
-                <span class="route-meta-pill" id="co-sidebar-tier">Sedan</span>
-              </div>
-              <div style="text-align: center; margin: 12px 0;">
-                <img id="co-sidebar-car-img" src="img/cars/sedan.png" alt="Selected Cab" style="max-height: 80px; object-fit: contain;" onerror="this.src='https://placehold.co/180x90?text=Cab'">
-                <div id="co-sidebar-car-name" style="font-weight: 800; font-size: 16px; color: var(--owc-text); margin-top: 6px;">Maruti Dzire / Etios</div>
-                <div style="font-size: 12px; color: var(--owc-text-muted);">4 Seats • 2 Bags • 100% AC</div>
-              </div>
-              <div class="fare-recap-row">
-                <span>Base Outstation Fare:</span>
-                <span id="co-sidebar-base-fare">₹1,499</span>
-              </div>
-              <div class="fare-recap-row">
-                <span>Tolls &amp; State Permit:</span>
-                <span style="color: #10b981; font-weight: 700;">INCLUDED</span>
-              </div>
-              <div class="fare-recap-row">
-                <span>Chauffeur Allowance:</span>
-                <span style="color: #10b981; font-weight: 700;">INCLUDED</span>
-              </div>
-              <div class="fare-recap-row">
-                <span>GST Tax (5%):</span>
-                <span style="color: #10b981; font-weight: 700;">INCLUDED</span>
-              </div>
-              <div class="fare-recap-row total">
-                <span>Total Amount:</span>
-                <span class="price" id="co-sidebar-total-fare">₹1,499</span>
-              </div>
-              <div style="background: var(--owc-slate-50); border: 1px dashed var(--owc-border); border-radius: var(--radius-md); padding: 12px; margin-top: 14px; font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.4;">
-                <strong style="color: var(--owc-text);">🛡️ Transparent Pricing Assurance:</strong> No surprise fees, no return fare charges, and ₹0 cancellation fee prior to driver dispatch.
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- TRUST POINTS (Req. 2) -->
+      <div class="trust-points-row">
+        <div class="trust-item"><span class="check-icon">✓</span> Fixed pricing</div>
+        <div class="trust-item"><span class="check-icon">✓</span> Verified drivers</div>
+        <div class="trust-item"><span class="check-icon">✓</span> 24×7 support</div>
       </div>
     </div>
 
-
-    <!-- ======================================================================
-         SUB-VIEW 4: DEDICATED BOOKING CONFIRMATION & LIVE DISPATCH
-         ====================================================================== -->
-    <div class="app-view" id="view-confirmation">
-      <div class="container">
-        <div class="confirmation-container">
-          <div class="conf-success-badge">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </div>
-          <h1 style="font-size: 26px; font-weight: 850; color: var(--owc-text); margin: 0 0 8px 0;">Booking Successfully Confirmed!</h1>
-          <p style="font-size: 15px; color: var(--owc-text-muted); margin: 0 0 24px 0;">Your outstation cab has been queued with Bihar Central Dispatch.</p>
-
-          <div class="conf-main-card">
-            <div class="conf-id-strip">
-              <span class="conf-id-label">Booking Reference ID</span>
-              <span class="conf-id-val" id="conf-display-id">OTB-2026-XXXXX</span>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 10px; background: #ecfdf5; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px;">
-              <span class="trust-pulse-dot" style="background: #10b981; width: 10px; height: 10px;"></span>
-              <span style="font-size: 13.5px; font-weight: 700; color: #065f46;" id="conf-dispatch-status">Searching &amp; Assigning Nearest Verified Chauffeur...</span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 14px; margin-bottom: 20px;">
-              <div>
-                <div style="font-size: 12px; color: var(--owc-text-muted); font-weight: 600;">ROUTE</div>
-                <div style="font-weight: 800; color: var(--owc-text); margin-top: 2px;" id="conf-display-route">Patna ➔ Muzaffarpur</div>
-              </div>
-              <div>
-                <div style="font-size: 12px; color: var(--owc-text-muted); font-weight: 600;">VEHICLE CLASS</div>
-                <div style="font-weight: 800; color: var(--owc-text); margin-top: 2px;" id="conf-display-car">Sedan (Dzire / Etios)</div>
-              </div>
-              <div>
-                <div style="font-size: 12px; color: var(--owc-text-muted); font-weight: 600;">DATE &amp; TIME</div>
-                <div style="font-weight: 800; color: var(--owc-text); margin-top: 2px;" id="conf-display-time">Today, 10:00 AM</div>
-              </div>
-              <div>
-                <div style="font-size: 12px; color: var(--owc-text-muted); font-weight: 600;">TOTAL FARE</div>
-                <div style="font-weight: 800; color: var(--owc-primary); margin-top: 2px;" id="conf-display-fare">₹1,499 (All-Inclusive)</div>
-              </div>
-            </div>
-
-            <div class="conf-actions-cluster">
-              <button type="button" class="btn-subview-back" style="justify-content: center; background: var(--owc-primary); color: #fff; border: none;" data-view="track">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                <span>Track Ride Live</span>
-              </button>
-              <button type="button" class="btn-subview-back" style="justify-content: center;" data-view="home">
-                <span>Book Another Cab</span>
-              </button>
-            </div>
-          </div>
-        </div>
+    <!-- POPULAR ROUTES (Req. 2 & 21) -->
+    <div class="section-card">
+      <div class="section-title-row">
+        <h2 class="section-title">Popular Routes</h2>
+        <a href="/routes" class="section-view-all">View all routes →</a>
+      </div>
+      <div class="popular-routes-grid" id="popularRoutesContainer">
+        <!-- Rendered dynamically from backend with authoritative fares -->
+        <a href="/fare?from=Patna&to=Gaya" class="popular-route-row" data-from="Patna" data-to="Gaya">
+          <div class="route-pair">Patna <span class="route-arrow">→</span> Gaya</div>
+          <div class="route-fare-badge">₹1,549</div>
+        </a>
+        <a href="/fare?from=Patna&to=Muzaffarpur" class="popular-route-row" data-from="Patna" data-to="Muzaffarpur">
+          <div class="route-pair">Patna <span class="route-arrow">→</span> Muzaffarpur</div>
+          <div class="route-fare-badge">₹1,199</div>
+        </a>
+        <a href="/fare?from=Patna&to=Darbhanga" class="popular-route-row" data-from="Patna" data-to="Darbhanga">
+          <div class="route-pair">Patna <span class="route-arrow">→</span> Darbhanga</div>
+          <div class="route-fare-badge">₹1,799</div>
+        </a>
+        <a href="/fare?from=Patna&to=Ranchi" class="popular-route-row" data-from="Patna" data-to="Ranchi">
+          <div class="route-pair">Patna <span class="route-arrow">→</span> Ranchi</div>
+          <div class="route-fare-badge">₹3,999</div>
+        </a>
       </div>
     </div>
 
-
-    <!-- ======================================================================
-         SUB-VIEW 5: DEDICATED OUR COMMERCIAL FLEET SHOWCASE
-         ====================================================================== -->
-    <div class="app-view" id="view-fleet">
-      <div class="subview-header-strip">
-        <div class="container subview-header-content">
-          <div class="subview-breadcrumbs">
-            <a href="#home" data-view="home">Home</a>
-            <span>/</span>
-            <span>Commercial Fleet</span>
-          </div>
-          <div class="subview-title-row">
-            <div>
-              <h1 class="subview-main-title">Clean, Well-Maintained Commercial Fleet</h1>
-              <p class="subview-subtitle">Every vehicle is commercial yellow-plate registered, 100% air-conditioned, GPS tracked, and operated by a verified background-checked chauffeur.</p>
-            </div>
-            <button type="button" class="btn-subview-back" data-view="home">
-              <span>← Back to Book Cab</span>
-            </button>
-          </div>
-        </div>
+    <!-- WHY CHOOSE US (Req. 2 & 22) -->
+    <div class="section-card">
+      <div class="section-title-row">
+        <h2 class="section-title">Why choose us?</h2>
+        <a href="/why-us" class="section-view-all">Learn more →</a>
       </div>
-
-      <div class="container" style="padding-bottom: 60px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
-          <!-- Sedan -->
-          <div class="checkout-card-box" style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                <span class="route-meta-pill" style="background: rgba(0, 149, 246, 0.1); color: var(--owc-primary); border: 1px solid rgba(0, 149, 246, 0.2);">MOST POPULAR</span>
-                <span style="font-size: 13px; font-weight: 700; color: var(--owc-text-muted);">From ₹10.5/km</span>
-              </div>
-              <h3 style="font-size: 20px; font-weight: 850; color: var(--owc-text); margin: 0 0 6px 0;">Executive Sedan</h3>
-              <p style="font-size: 13.5px; color: var(--owc-text-muted); margin: 0 0 16px 0;">Maruti Suzuki Dzire, Toyota Etios, Honda Amaze</p>
-              <div style="background: var(--owc-slate-50); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div>👥 4 Passengers</div>
-                <div>🧳 2 Large Bags</div>
-                <div>❄️ 100% Chilled AC</div>
-                <div>📍 Live GPS Tracker</div>
-              </div>
-            </div>
-            <button type="button" class="checkout-submit-btn" style="margin-top: 0; padding: 12px;" onclick="window.bookingManager && window.bookingManager.preselectFleetCategory('sedan')">
-              <span>Book Executive Sedan</span>
-            </button>
-          </div>
-
-          <!-- SUV / Ertiga -->
-          <div class="checkout-card-box" style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                <span class="route-meta-pill" style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.2);">FAMILY &amp; GROUP</span>
-                <span style="font-size: 13px; font-weight: 700; color: var(--owc-text-muted);">From ₹14.5/km</span>
-              </div>
-              <h3 style="font-size: 20px; font-weight: 850; color: var(--owc-text); margin: 0 0 6px 0;">Family SUV</h3>
-              <p style="font-size: 13.5px; color: var(--owc-text-muted); margin: 0 0 16px 0;">Maruti Suzuki Ertiga, Kia Carens, Renault Triber</p>
-              <div style="background: var(--owc-slate-50); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div>👥 6 Passengers</div>
-                <div>🧳 3 Large Bags</div>
-                <div>❄️ Dual AC Vents</div>
-                <div>📍 Live GPS Tracker</div>
-              </div>
-            </div>
-            <button type="button" class="checkout-submit-btn" style="margin-top: 0; padding: 12px;" onclick="window.bookingManager && window.bookingManager.preselectFleetCategory('suv')">
-              <span>Book Family SUV</span>
-            </button>
-          </div>
-
-          <!-- Innova Crysta -->
-          <div class="checkout-card-box" style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                <span class="route-meta-pill" style="background: rgba(245, 158, 11, 0.1); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.2);">PREMIUM LUXURY</span>
-                <span style="font-size: 13px; font-weight: 700; color: var(--owc-text-muted);">From ₹18.5/km</span>
-              </div>
-              <h3 style="font-size: 20px; font-weight: 850; color: var(--owc-text); margin: 0 0 6px 0;">Innova Crysta</h3>
-              <p style="font-size: 13.5px; color: var(--owc-text-muted); margin: 0 0 16px 0;">Toyota Innova Crysta Luxury Captain Seats</p>
-              <div style="background: var(--owc-slate-50); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div>👥 7 Passengers</div>
-                <div>🧳 4 Large Bags</div>
-                <div>❄️ Multi-Zone Climate</div>
-                <div>🛋️ Reclining Lounge</div>
-              </div>
-            </div>
-            <button type="button" class="checkout-submit-btn" style="margin-top: 0; padding: 12px;" onclick="window.bookingManager && window.bookingManager.preselectFleetCategory('innova')">
-              <span>Book Innova Crysta</span>
-            </button>
-          </div>
-
-          <!-- Hatchback -->
-          <div class="checkout-card-box" style="display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                <span class="route-meta-pill" style="background: var(--owc-slate-100); color: var(--owc-text-muted); border: 1px solid var(--owc-border);">ECONOMY</span>
-                <span style="font-size: 13px; font-weight: 700; color: var(--owc-text-muted);">From ₹9.0/km</span>
-              </div>
-              <h3 style="font-size: 20px; font-weight: 850; color: var(--owc-text); margin: 0 0 6px 0;">Compact City Cab</h3>
-              <p style="font-size: 13.5px; color: var(--owc-text-muted); margin: 0 0 16px 0;">Maruti WagonR, Swift, Hyundai Grand i10</p>
-              <div style="background: var(--owc-slate-50); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div>👥 4 Passengers</div>
-                <div>🧳 1 Large Bag</div>
-                <div>❄️ 100% Chilled AC</div>
-                <div>📍 Live GPS Tracker</div>
-              </div>
-            </div>
-            <button type="button" class="checkout-submit-btn" style="margin-top: 0; padding: 12px;" onclick="window.bookingManager && window.bookingManager.preselectFleetCategory('hatchback')">
-              <span>Book Compact Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 6: DEDICATED POPULAR HIGHWAY ROUTES DIRECTORY
-         ====================================================================== -->
-    <div class="app-view" id="view-routes">
-      <div class="subview-header-strip">
-        <div class="container subview-header-content">
-          <div class="subview-breadcrumbs">
-            <a href="#home" data-view="home">Home</a>
-            <span>/</span>
-            <span>Popular Routes</span>
-          </div>
-          <div class="subview-title-row">
-            <div>
-              <h1 class="subview-main-title">Top Intercity Outstation Routes in Bihar</h1>
-              <p class="subview-subtitle">Guaranteed one-way transparent pricing across all 38 districts of Bihar with zero return fare charges.</p>
-            </div>
-            <button type="button" class="btn-subview-back" data-view="home">
-              <span>← Back to Book Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="padding-bottom: 60px;">
-        <section class="app-section alt-bg" id="service-areas-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag blue">COVERAGE IN ALL 38 DISTRICTS</span>
-          <h2 class="section-title">Direct Outstation Cabs from Patna to Every Corner of Bihar</h2>
-          <p class="section-subtitle">Reliable one-way intercity cab services connecting all 9 administrative divisions</p>
-        </div>
-
-        <div class="service-stats-grid">
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-            </div>
-            <div class="service-stat-text">All 38 Districts of Bihar</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div class="service-stat-text">24x7 Cab Availability</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
-            </div>
-            <div class="service-stat-text">One-Way & Round Trip</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-            </div>
-            <div class="service-stat-text">Airport & Outstation Cabs</div>
-          </div>
-        </div>
-
-        <div class="section-header" style="margin-bottom: 24px;">
-          <h3 style="font-size: 22px; font-weight: 800; color: var(--owc-text);">Major Bihar Districts We Serve</h3>
-        </div>
-
-        <div class="popular-cities-cards-grid" id="major-cities-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-        <div style="text-align: center; margin-top: 36px;">
-          <p style="font-size: 15px; color: var(--owc-text-muted); margin-bottom: 16px;">Looking for all 38 districts or outstation connecting cities?</p>
-          <button type="button" class="btn-check-friends" onclick="window.openCityPresenceModal()">
-            Explore All 38 Districts Directory <span>→</span>
-          </button>
-        </div>
-
-      </div>
-    </section>
-      </div>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 7: DEDICATED WHY US, HOW IT WORKS & REVIEWS
-         ====================================================================== -->
-    <div class="app-view" id="view-reviews">
-      <div class="subview-header-strip">
-        <div class="container subview-header-content">
-          <div class="subview-breadcrumbs">
-            <a href="#home" data-view="home">Home</a>
-            <span>/</span>
-            <span>Why Us &amp; Reviews</span>
-          </div>
-          <div class="subview-title-row">
-            <div>
-              <h1 class="subview-main-title">Why Bihar Commuters Trust OneWayTaxiBihar</h1>
-              <p class="subview-subtitle">Over 48,000+ safe intercity trips completed across all highways with 4.9/5 customer rating.</p>
-            </div>
-            <button type="button" class="btn-subview-back" data-view="home">
-              <span>← Back to Book Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="padding-bottom: 60px;">
-        <section class="app-section" id="how-it-works-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">SIMPLE PROCESS</span>
-          <h2 class="section-title">How OneWayTaxiBihar Works</h2>
-          <p class="section-subtitle">Book your intercity one-way cab across Bihar in just 4 simple steps</p>
-        </div>
-
-        <div class="how-it-works-grid">
-          <div class="step-process-card">
-            <div class="step-badge-circle">1</div>
-            <div class="step-icon-box blue">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-            </div>
-            <h3>Enter Your Route</h3>
-            <p>Choose your pickup and drop locations across all 38 districts of Bihar. Enter your travel date and preferred time.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">2</div>
-            <div class="step-icon-box emerald">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-            </div>
-            <h3>Select Your Cab</h3>
-            <p>Browse our diverse fleet (Hatchback, Dzire Sedan, Ertiga SUV, Innova Crysta). Compare transparent fixed rates.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">3</div>
-            <div class="step-icon-box purple">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <h3>Book & Confirm</h3>
-            <p>Complete your booking with zero advance payment required. Receive instant captain details & WhatsApp ticket.</p>
-          </div>
-
-          <div class="step-process-card">
-            <div class="step-badge-circle">4</div>
-            <div class="step-icon-box amber">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h3>Enjoy Your Ride</h3>
-            <p>Doorstep pickup with 100% AC guaranteed. Pay cash or UPI to driver only upon reaching your destination safely.</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-        <section class="app-section alt-bg" id="why-choose-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">THE ONEWAY ADVANTAGE</span>
-          <h2 class="section-title">Why Commuters Across Bihar Trust OneWayTaxiBihar</h2>
-          <p class="section-subtitle">Engineered for seamless highway trips, peace of mind, and transparent billing</p>
-        </div>
-
-        <div class="why-choose-grid-10" id="why-choose-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-      </div>
-    </section>
-        <section class="app-section alt-bg" id="friends-review-section">
-      <div class="container">
-        
-        <div class="friends-review-hero-card">
-          <!-- Left Content: Trust Overview & Value Pillars -->
-          <div class="fr-hero-left">
-            <div class="fr-hero-tag">
-              <span class="fr-live-dot"></span>
-              <span>Verified Passenger Reviews</span>
-            </div>
-            <h2 class="fr-hero-title">Real Feedback from Verified Bihar Travelers</h2>
-            <p class="fr-hero-desc">
-              Authentic ratings from passengers traveling between Patna, Gaya, Muzaffarpur, Darbhanga, Bhagalpur, and all 38 districts with guaranteed zero-return pricing.
-            </p>
-            
-            <!-- 3 Responsive Metric Cards (Proportional, never cut off) -->
-            <div class="fr-metrics-grid">
-              <div class="fr-metric-box">
-                <span class="fr-metric-num">100%</span>
-                <span class="fr-metric-lbl">Fixed One-Way</span>
-              </div>
-              <div class="fr-metric-box">
-                <span class="fr-metric-num">100%</span>
-                <span class="fr-metric-lbl">Commercial Cabs</span>
-              </div>
-              <div class="fr-metric-box">
-                <span class="fr-metric-num">₹0</span>
-                <span class="fr-metric-lbl">Return Penalty</span>
-              </div>
-            </div>
-
-            <!-- Responsive Action Buttons -->
-            <div class="fr-actions-row">
-              <button type="button" class="btn-check-friends" onclick="window.openFriendsReviewModal()">
-                <span>View All Reviews</span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-              </button>
-              <button type="button" class="btn-write-review-outline" onclick="window.openWriteReviewModal()">
-                <span>+ Write a Review</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Right Real-Time Contacts Review Feed -->
-          <div class="fr-hero-right">
-            <div class="fr-feed-header">
-              <span class="fr-live-pulse-dot"></span>
-              <span>RECENT VERIFIED HIGHWAY TRIPS</span>
-            </div>
-            <div class="fr-feed-list" id="fr-hero-feed">
-              <!-- Injected via JavaScript with authentic quotes & route pills -->
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-        <section class="app-section" id="testimonials-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">TESTIMONIALS</span>
-          <h2 class="section-title">What Our Passengers Say</h2>
-          <p class="section-subtitle">Real experiences and feedback from everyday commuters across all 38 districts of Bihar</p>
-        </div>
-
-        <div class="testimonials-grid" id="testimonials-grid">
-          <!-- Injected via JavaScript -->
-        </div>
-
-        <!-- Trust Metric Highlight Banner -->
-        <div class="trust-highlight-banner">
-          <div class="trust-banner-rating">
-            <div class="trust-big-num">4.3 <span style="font-size: 16px; font-weight: 600; opacity: 0.85;">/ 5.0</span></div>
-            <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">Average Customer Rating</div>
-          </div>
-          <div class="trust-banner-divider"></div>
-          <div class="trust-banner-trips">
-            <div class="trust-trips-num">3,000+</div>
-            <div class="trust-trips-label">Customers Served in Bihar</div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-      </div>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 8: DEDICATED FAQS & 24x7 HELP DESK
-         ====================================================================== -->
-    <div class="app-view" id="view-faq">
-      <div class="subview-header-strip">
-        <div class="container subview-header-content">
-          <div class="subview-breadcrumbs">
-            <a href="#home" data-view="home">Home</a>
-            <span>/</span>
-            <span>FAQs &amp; Help Desk</span>
-          </div>
-          <div class="subview-title-row">
-            <div>
-              <h1 class="subview-main-title">Frequently Asked Questions &amp; Support</h1>
-              <p class="subview-subtitle">Clear answers to your pricing, toll, cancellation, driver allowance, and route questions.</p>
-            </div>
-            <button type="button" class="btn-subview-back" data-view="home">
-              <span>← Back to Book Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="padding-bottom: 60px;">
-        <section class="app-section alt-bg" id="faq-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag">FAQS</span>
-          <h2 class="section-title">Frequently Asked Questions</h2>
-          <p class="section-subtitle">Everything you need to know about outstation cab booking with OneWayTaxiBihar</p>
-        </div>
-
-        <div class="faq-accordion-list" id="faq-accordion-container">
-          <!-- Injected via JavaScript -->
-        </div>
-
-      </div>
-    </section>
-
-        <!-- 24x7 Help Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 40px;">
-          <div class="checkout-card-box" style="text-align: center;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(0, 149, 246, 0.1); color: var(--owc-primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-              📞
-            </div>
-            <h3 style="font-size: 16px; font-weight: 800; color: var(--owc-text); margin: 0 0 4px 0;">24x7 Priority Call Desk</h3>
-            <p style="font-size: 13px; color: var(--owc-text-muted); margin: 0 0 14px 0;">Direct connect to Patna Central Operations</p>
-            <a href="tel:+918002141816" style="display: inline-block; padding: 10px 20px; background: var(--owc-primary); color: #fff; text-decoration: none; border-radius: var(--radius-md); font-weight: 800; font-size: 14px;">+91 80021 41816</a>
-          </div>
-
-          <div class="checkout-card-box" style="text-align: center;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(37, 211, 102, 0.1); color: #25d366; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-              💬
-            </div>
-            <h3 style="font-size: 16px; font-weight: 800; color: var(--owc-text); margin: 0 0 4px 0;">WhatsApp Instant Booking</h3>
-            <p style="font-size: 13px; color: var(--owc-text-muted); margin: 0 0 14px 0;">Instant fare quote and booking receipt</p>
-            <a href="https://wa.me/918002141816?text=Hi%2C%20I%20want%20to%20book%20a%20one-way%20cab%20in%20Bihar" target="_blank" style="display: inline-block; padding: 10px 20px; background: #25d366; color: #fff; text-decoration: none; border-radius: var(--radius-md); font-weight: 800; font-size: 14px;">Chat on WhatsApp</a>
-          </div>
-
-          <div class="checkout-card-box" style="text-align: center;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: rgba(245, 158, 11, 0.1); color: #d97706; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-              ✉️
-            </div>
-            <h3 style="font-size: 16px; font-weight: 800; color: var(--owc-text); margin: 0 0 4px 0;">Official Support Email</h3>
-            <p style="font-size: 13px; color: var(--owc-text-muted); margin: 0 0 14px 0;">Corporate tie-ups &amp; GST tax invoice queries</p>
-            <a href="mailto:support@onewaytaxibihar.com" style="display: inline-block; padding: 10px 20px; background: var(--owc-slate-800); color: #fff; text-decoration: none; border-radius: var(--radius-md); font-weight: 800; font-size: 14px;">support@onewaytaxibihar.com</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ======================================================================
-         SUB-VIEW 9: DEDICATED TRACK MY BOOKING LOOKUP
-         ====================================================================== -->
-    <div class="app-view" id="view-track">
-      <div class="subview-header-strip">
-        <div class="container subview-header-content">
-          <div class="subview-breadcrumbs">
-            <a href="#home" data-view="home">Home</a>
-            <span>/</span>
-            <span>Track Trip</span>
-          </div>
-          <div class="subview-title-row">
-            <div>
-              <h1 class="subview-main-title">Track Your Outstation Cab &amp; Chauffeur</h1>
-              <p class="subview-subtitle">Enter your Booking Reference ID and registered mobile number to view real-time ride status and driver details.</p>
-            </div>
-            <button type="button" class="btn-subview-back" data-view="home">
-              <span>← Back to Book Cab</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="container" style="max-width: 680px; padding-bottom: 60px;">
-        <div class="checkout-card-box">
-          <form id="track-lookup-form" onsubmit="event.preventDefault(); window.bookingManager && window.bookingManager.handleTrackLookup();">
-            <div class="input-field-group" style="margin-bottom: 16px;">
-              <div class="input-content">
-                <label for="track-booking-id">BOOKING REFERENCE ID *</label>
-                <input type="text" id="track-booking-id" placeholder="e.g. OTB-2026-10492" required>
-              </div>
-            </div>
-            <div class="input-field-group phone-field-group" style="margin-bottom: 20px;">
-              <div class="input-content phone-input-content">
-                <label for="track-booking-phone">REGISTERED 10-DIGIT MOBILE NUMBER *</label>
-                <div class="phone-input-inline-wrap">
-                  <span class="phone-country-code">+91</span>
-                  <input type="tel" id="track-booking-phone" maxlength="10" placeholder="10-digit mobile number" required inputmode="numeric">
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="checkout-submit-btn" style="margin-top: 0;">
-              <span>Search &amp; Track Booking</span>
-            </button>
-          </form>
-
-          <div id="track-result-container" style="display: none; margin-top: 24px; border-top: 1px solid var(--owc-border-light); padding-top: 20px;">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-      </div>
+      <ul class="why-us-list">
+        <li class="why-us-item"><span class="why-check">✓</span> <strong>No return fare:</strong> Pay only for one side drop</li>
+        <li class="why-us-item"><span class="why-check">✓</span> <strong>Transparent pricing:</strong> Fuel & tolls clear, zero hidden surcharges</li>
+        <li class="why-us-item"><span class="why-check">✓</span> <strong>Verified drivers:</strong> Police verified commercial chauffeurs</li>
+        <li class="why-us-item"><span class="why-check">✓</span> <strong>24×7 support:</strong> Dedicated dispatch desk and active trip monitor</li>
+      </ul>
     </div>
 
   </main>
 
+  <!-- TOAST NOTIFICATION -->
+  <div class="app-toast" id="appToast"></div>
 
-  <!-- ======================================================================
-       11. OFFICIAL SITEMAP FOOTER
-       ====================================================================== -->
-  <!-- ======================================================================
-       11. OFFICIAL SITEMAP FOOTER
-       ====================================================================== -->
-  <footer class="footer-main">
-    <div class="container">
-      
-      <div class="footer-top-grid">
-        <!-- Corporate Brand & Trust Column -->
-        <div class="footer-brand-col">
-          <div class="footer-brand-badge">
-            <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="38" height="38" class="footer-brand-logo">
-            <div class="footer-brand-name">
-              OneWay<span>TaxiBihar</span>
-            </div>
-          </div>
-          <p class="footer-brand-tagline">
-            Bihar's dedicated intercity one-way cab mobility platform. Doorstep pickup across all 38 districts with guaranteed zero return fare, police-verified chauffeurs, and transparent GST billing.
-          </p>
-          <div class="footer-trust-chips">
-            <span class="ft-chip">● 24×7 Central Dispatch Desk</span>
-            <span class="ft-chip">● 1,200+ Verified Highway Captains</span>
-            <span class="ft-chip">● Zero Dead Mileage Guarantee</span>
-          </div>
-          <div class="footer-hotline-card">
-            <div class="fhc-label">24×7 DISPATCH &amp; BOOKING DESK</div>
-            <a href="tel:+918002141816" class="fhc-phone">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <span>+91 80021 41816</span>
-            </a>
-            <div class="fhc-address">Boring Road / Frazer Road, Patna, Bihar 800001</div>
-          </div>
-        </div>
-
-        <!-- Col 2: Services & Rides -->
-        <div class="footer-col">
-          <div class="footer-col-header">SERVICES &amp; RIDES</div>
-          <ul>
-            <li><a href="#booking-hero">Book One-Way Cab</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Intercity &amp; Rental Packages</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">38 Bihar Districts &amp; Fixed Fares</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate Travel Desk (GST)</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Verified Passenger Reviews</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openFareChartModal()">Rate Card &amp; Pricing Calculator</a></li>
-          </ul>
-        </div>
-
-        <!-- Col 3: Trust & Company -->
-        <div class="footer-col">
-          <div class="footer-col-header">TRUST &amp; POLICIES</div>
-          <ul>
-            <li><a href="javascript:void(0)" onclick="window.openWhyChooseModal()">Why OneWayTaxiBihar</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openAboutModal()">About Our Network</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openContactModal()">Contact 24×7 Helpdesk</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openCancellationModal()">Zero Cancellation Fee Policy</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openTermsModal()">Terms &amp; Conditions</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openPrivacyModal()">Privacy Policy</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openReferModal()">Refer Friends &amp; Earn ₹150</a></li>
-          </ul>
-        </div>
-
-        <!-- Col 4: Fleet & Portals -->
-        <div class="footer-col">
-          <div class="footer-col-header">FLEET &amp; PARTNERS</div>
-          <ul>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('hatchback')">Go Hatchback (WagonR, Tiago)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('sedan')">Prime Sedan (Dzire, Etios)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('sedan_prime')">Executive Sedan (City, Ciaz)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('suv')">Family SUV (Ertiga 6+1)</a></li>
-            <li><a href="#cab-selection-section" onclick="window.selectFleetCategory('innova_crysta')">Toyota Innova Crysta</a></li>
-            <li><a href="driver.html" class="footer-partner-link">Driver Partner Console ↗</a></li>
-            <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Official GST Tax Invoice</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Popular Intercity Routes Footer Block -->
-      <div class="footer-routes-block">
-        <div class="footer-routes-title">POPULAR ONE-WAY OUTSTATION ROUTES ACROSS BIHAR</div>
-        <div class="footer-routes-grid" id="footer-routes-list">
-          <a href="/patna-to-gaya-cab" class="footer-route-pill" title="Patna to Gaya One-Way Cab">
-            <span class="frp-route">Patna ➔ Gaya</span>
-            <span class="frp-price">from ₹1,698</span>
-          </a>
-          <a href="/patna-to-muzaffarpur-cab" class="footer-route-pill" title="Patna to Muzaffarpur One-Way Cab">
-            <span class="frp-route">Patna ➔ Muzaffarpur</span>
-            <span class="frp-price">from ₹1,698</span>
-          </a>
-          <a href="/patna-to-darbhanga-cab" class="footer-route-pill" title="Patna to Darbhanga One-Way Cab">
-            <span class="frp-route">Patna ➔ Darbhanga</span>
-            <span class="frp-price">from ₹2,998</span>
-          </a>
-          <a href="/patna-to-bhagalpur-cab" class="footer-route-pill" title="Patna to Bhagalpur One-Way Cab">
-            <span class="frp-route">Patna ➔ Bhagalpur</span>
-            <span class="frp-price">from ₹4,398</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- Bottom Copyright & Social Row -->
-      <div class="footer-bottom-bar">
-        <div class="footer-social-links">
-          <a href="https://wa.me/917281851011" target="_blank" rel="noopener noreferrer" class="social-circle-btn" aria-label="WhatsApp Dispatch" title="WhatsApp Dispatch">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
-          </a>
-          <a href="#" class="social-circle-btn" aria-label="Facebook" title="Facebook">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-          </a>
-          <a href="#" class="social-circle-btn" aria-label="Instagram" title="Instagram">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-          </a>
-          <a href="#" class="social-circle-btn" aria-label="Twitter / X" title="X">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="#" class="social-circle-btn" aria-label="LinkedIn" title="LinkedIn">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          </a>
-        </div>
-        <div class="footer-copy-text">
-          <div>Copyright © 2023–2026 OneWayTaxiBihar Mobility Pvt Ltd. All Rights Reserved.</div>
-          <div class="footer-legal-tag">Registered Office: Boring Road / Frazer Road, Patna, Bihar 800001 • onewaytaxibihar.com™</div>
-        </div>
-      </div>
-
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <div class="app-footer-links">
+      <a href="/routes">All Routes</a>
+      <a href="/cabs">Fleet</a>
+      <a href="/why-us">Why Us</a>
+      <a href="/how-it-works">How It Works</a>
+      <a href="/safety">Safety</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact</a>
+      <a href="/my-bookings">My Bookings</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
     </div>
+    <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services. All rights reserved.</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816 • Patna, Bihar</p>
   </footer>
 
-  <!-- ======================================================================
-       12. MOBILE STICKY EXECUTIVE BOTTOM ACTION BAR (Smart Ergonomics)
-       ====================================================================== -->
-  <div class="mobile-sticky-bottom-bar" id="mobile-sticky-bar">
-    <div class="msb-content">
-      <a href="tel:+918002141816" class="msb-action-circle" title="Call 24x7 Helpdesk" aria-label="Call Dispatch Desk">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      </a>
-      <a href="https://wa.me/917281851011?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="msb-action-circle wa" title="WhatsApp Dispatch" aria-label="Chat on WhatsApp">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
-      </a>
-      <a href="#booking-hero" class="msb-primary-btn" onclick="document.getElementById('input-pickup')?.focus()">
-        <span>Book One-Way Cab</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-    </div>
-  </div>
-
-  <!-- ======================================================================
-       12. INTERACTIVE MODALS & SUB-PAGE DIALOGS
-       ====================================================================== -->
-
-  <!-- Modal 1: Services Explorer Modal -->
-  <div class="modal-overlay" id="modal-services">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">OneWayTaxiBihar Services &amp; Outstation Solutions</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-services-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 2: Popular Routes Directory Modal -->
-  <div class="modal-overlay" id="modal-routes">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Popular Bihar Outstation Routes &amp; Fixed Fares</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div style="margin-bottom: 16px;">
-          <input type="text" id="routes-search-input" class="promo-input" placeholder="Search any Bihar route (e.g. Gaya, Darbhanga, Muzaffarpur, Bhagalpur, Varanasi)..." style="width: 100%;">
-        </div>
-        <div id="modal-routes-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; max-height: 480px; overflow-y: auto;">
-          <!-- Injected via app.js -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 3: Corporate Travel Portal Modal -->
-  <div class="modal-overlay" id="modal-corporate">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">OneWayTaxiBihar Corporate &amp; Government Desk</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-corporate-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 4: Verified Passenger Reviews Explorer Modal -->
-  <div class="modal-overlay" id="modal-friends-review">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Verified Passenger Reviews &amp; Trip Ratings</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-          <input type="text" id="fr-modal-search" class="promo-input" placeholder="Search by passenger name, district, or route..." style="flex: 1; min-width: 220px;">
-          <button type="button" class="btn-nav-book" onclick="window.openWriteReviewModal()">+ Write a Review</button>
-        </div>
-        <div id="fr-modal-reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-height: 500px; overflow-y: auto;">
-          <!-- Injected via app.js -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 5: Fare Chart & Calculator Modal -->
-  <div class="modal-overlay" id="modal-fare-chart">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Transparent Fare &amp; Per-KM Rate Chart</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-fare-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 6: Request Invoice / GST Tax Invoice Generator Modal -->
-  <div class="modal-overlay" id="modal-invoice">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Request Official GST Tax Invoice</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-          <input type="text" id="invoice-lookup-id" class="promo-input" placeholder="Booking ID (e.g. OTB-2026-8942)" style="flex: 1; min-width: 180px;">
-          <input type="tel" id="invoice-lookup-phone" class="promo-input" placeholder="Registered 10-Digit Mobile" style="width: 210px;" maxlength="10">
-          <button type="button" class="btn-nav-book" onclick="window.lookupTaxInvoice()">Verify &amp; Generate Invoice</button>
-        </div>
-        <div id="invoice-render-slot">
-          <!-- Rendered Tax Invoice -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 7: 38 Districts of Bihar Directory Modal -->
-  <div class="modal-overlay" id="modal-cities">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">All 38 Districts of Bihar Directory</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="cities-modal-search" class="promo-input" placeholder="Search any district (e.g. Gaya, Purnia, Bettiah, Sasaram, Begusarai)..." style="width: 100%; margin-bottom: 16px;">
-        <div id="cities-modal-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;">
-          <!-- Injected via app.js -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 8: Live Driver GPS Tracking Simulator Modal -->
-  <div class="modal-overlay" id="modal-tracking">
-    <div class="modal-dialog-box">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Live Highway Captain Tracking</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-tracking-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 9: Passenger SMS OTP Login & ₹100 Welcome Reward Modal -->
-  <div class="modal-overlay" id="modal-auth">
-    <div class="modal-dialog-box small">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title" id="auth-modal-header-title">Passenger Login &amp; ₹100 Reward</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="auth-flow-container">
-          
-          <!-- Booking Context Banner (Shown when user taps a cab to book) -->
-          <div id="auth-booking-context-banner" style="display: none; background: rgba(0, 154, 244, 0.08); border: 1.5px dashed #0284c7; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; text-align: left;">
-            <div style="font-size: 11px; font-weight: 800; color: #0284c7; text-transform: uppercase;">BOOKING RESERVATION</div>
-            <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);" id="auth-booking-cab-title">Prime Sedan Cab</div>
-            <div style="font-size: 12px; color: #059669; font-weight: 700; margin-top: 2px;" id="auth-booking-discount-note">✓ ₹100 Welcome Reward will apply directly to this ride!</div>
-          </div>
-
-          <div class="auth-logo-badge">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-          </div>
-          <h3 id="auth-modal-title" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">SMS OTP Login &amp; ₹100 Wallet Reward</h3>
-          <p id="auth-modal-sub" style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px;">Enter your name &amp; mobile number. We will send a secure 6-digit SMS OTP to your phone.</p>
-
-          <!-- Step 1: Name and Phone Input -->
-          <div id="auth-step-phone">
-            <!-- Full Name Field -->
-            <div class="input-field-group" style="margin-bottom: 14px;">
-              <span class="input-icon-clean">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </span>
-              <div class="input-content">
-                <label style="font-size: 10px; font-weight: 800; color: var(--owc-text-dim); text-transform: uppercase; letter-spacing: 0.5px;">YOUR FULL NAME *</label>
-                <input type="text" id="auth-name-input" placeholder="Enter your full name" value="" autocomplete="name" style="width: 100%; border: none; outline: none; background: transparent; font-weight: 700; font-size: 14px; color: var(--owc-text);">
-              </div>
-            </div>
-
-            <!-- 10-Digit Mobile Number Field -->
-            <div class="input-field-group" id="auth-mobile-group" style="margin-bottom: 18px;">
-              <div class="phone-country-pill" style="padding: 0 8px; border-right: 1px solid var(--owc-border); display: inline-flex; align-items: center; gap: 4px;">
-                <svg width="18" height="13" viewBox="0 0 30 20" style="border-radius: 2px;">
-                  <rect width="30" height="6.67" fill="#FF9933"/>
-                  <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
-                  <rect y="13.33" width="30" height="6.67" fill="#138808"/>
-                  <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7"/>
-                </svg>
-                <span style="font-weight: 700; font-size: 13px; color: var(--owc-text);">+91</span>
-              </div>
-              <div class="input-content">
-                <label style="font-size: 10px; font-weight: 800; color: var(--owc-text-dim); text-transform: uppercase; letter-spacing: 0.5px;">10-DIGIT MOBILE NUMBER *</label>
-                <input type="tel" id="auth-mobile-input" maxlength="10" placeholder="e.g. 8002141816" value="" autocomplete="tel" inputmode="numeric" style="width: 100%; border: none; outline: none; background: transparent; font-weight: 700; font-size: 14px; color: var(--owc-text);">
-              </div>
-            </div>
-
-            <!-- Primary Action: Send SMS OTP -->
-            <button type="button" class="check-fare-primary-btn" id="btn-auth-send-code" onclick="window.handleSendVerificationCode()" style="width: 100%; margin-bottom: 12px; font-size: 15px; font-weight: 800; padding: 13px;">
-              Send SMS OTP to Login →
-            </button>
-
-            <div style="font-size: 11.5px; color: var(--owc-text-dim); text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>Secure 6-digit SMS OTP authentication &bull; ₹100 Welcome Bonus</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 10: My Trips Dashboard Modal -->
-  <div class="modal-overlay" id="modal-my-trips">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">My Trips &amp; Bookings Dashboard</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-my-trips-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 11: Passenger Details & Checkout Modal -->
-  <div class="modal-overlay" id="modal-checkout">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Complete Your Outstation Booking</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-checkout-body">
-        <!-- Injected via booking.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 12: Booking Confirmation & Ticket Modal -->
-  <div class="modal-overlay" id="modal-confirmation">
-    <div class="modal-dialog-box">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Booking Request Status</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-confirmation-body">
-        <!-- Injected via booking.js -->
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Modal 14: Write / Submit Real Passenger Review Modal -->
-  <div class="modal-overlay" id="modal-write-review">
-    <div class="modal-dialog-box small">
-      <div class="modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">Write a Passenger Review</div>
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
-      </div>
-      <div class="modal-body">
-        <form id="form-submit-review" onsubmit="window.handleReviewSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
-          <div class="input-field-group">
-            <div class="input-content" style="width: 100%;">
-              <label>YOUR FULL NAME *</label>
-              <input type="text" id="rev-input-name" placeholder="Enter your full name" required>
-            </div>
-          </div>
-
-          <div class="input-field-group">
-            <div class="input-content" style="width: 100%;">
-              <label>TRIP ROUTE (PICKUP → DROP) *</label>
-              <input type="text" id="rev-input-route" placeholder="e.g. Patna to Gaya" required>
-            </div>
-          </div>
-
-          <div class="input-field-group">
-            <div class="input-content" style="width: 100%;">
-              <label>VEHICLE / CAB TIER</label>
-              <select id="rev-input-car">
-                <option value="Prime Sedan (Dzire / Etios)">Prime Sedan (Dzire / Etios)</option>
-                <option value="Go Hatchback (WagonR)">Go Hatchback (WagonR)</option>
-                <option value="Family SUV (Ertiga)">Family SUV (Ertiga)</option>
-                <option value="Innova Crysta Luxury">Innova Crysta Luxury</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="input-field-group">
-            <div class="input-content" style="width: 100%;">
-              <label>RATING SCORE *</label>
-              <select id="rev-input-rating">
-                <option value="5.0">5.0 / 5.0 — Excellent (Highly Recommended)</option>
-                <option value="4.5">4.5 / 5.0 — Very Good (Smooth Highway Cruise)</option>
-                <option value="4.3" selected>4.3 / 5.0 — Good Overall Experience</option>
-                <option value="4.0">4.0 / 5.0 — Satisfactory One-Way Ride</option>
-                <option value="3.5">3.5 / 5.0 — Above Average (Decent Service)</option>
-                <option value="3.0">3.0 / 5.0 — Average (Scope for Improvement)</option>
-                <option value="2.5">2.5 / 5.0 — Below Expectations</option>
-                <option value="2.0">2.0 / 5.0 — Poor (Needs Improvement)</option>
-                <option value="1.0">1.0 / 5.0 — Critical Feedback</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="input-field-group">
-            <div class="input-content" style="width: 100%;">
-              <label>YOUR HONEST REVIEW & FEEDBACK *</label>
-              <textarea id="rev-input-comment" rows="3" placeholder="Share your experience regarding driver punctuality, AC cooling, transparent toll fare, and ride quality..." style="width: 100%; border: none; background: transparent; font-family: inherit; font-size: 13.5px; color: var(--owc-text); outline: none; resize: none;" required></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="check-fare-primary-btn" style="margin-bottom: 0; margin-top: 6px;">
-            Publish Verified Review →
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 15: 24x7 Help & Support Modal (Matching oneway.cab Experience) -->
-  <div class="modal-overlay" id="modal-help-support">
-    <div class="modal-dialog-box small">
-      <div class="modal-header">
-        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          24x7 Help & Support
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
-      </div>
-      <div class="modal-body" style="text-align: center; padding: 24px 20px;">
-        <div style="width: 54px; height: 54px; margin: 0 auto 16px; border-radius: 50%; background: rgba(0, 154, 244, 0.12); color: var(--owc-primary); display: flex; align-items: center; justify-content: center;">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-          </svg>
-        </div>
-        <h3 style="font-size: 19px; font-weight: 800; margin-bottom: 6px; color: var(--owc-text);">Need Help with Your Ride?</h3>
-        <p style="font-size: 13.5px; color: var(--owc-text-muted); margin-bottom: 22px; line-height: 1.5;">
-          Our 24x7 Patna Central Mobility Desk is ready to assist you with live booking, driver dispatch, quotes, or travel inquiries.
-        </p>
-
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <a href="tel:+918002141816" class="check-fare-primary-btn" style="text-decoration: none; justify-content: center; display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-            Call Helpdesk: +91 80021 41816
-          </a>
-
-          <a href="https://wa.me/917281851011?text=Hi%20OneWayTaxiBihar,%20I%20need%20assistance%20with%20cab%20booking" target="_blank" rel="noopener noreferrer" class="btn-nav-outline" style="text-decoration: none; justify-content: center; display: flex; align-items: center; gap: 8px; padding: 12px; font-weight: 700; border-color: #25d366; color: #15803d;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-            Chat on WhatsApp
-          </a>
-
-          <button type="button" class="btn-nav-outline" onclick="window.openSupportTicketModal()" style="justify-content: center; display: flex; align-items: center; gap: 8px; padding: 12px; font-weight: 700; border-color: var(--owc-primary); color: var(--owc-primary);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            Lodge Support / Complaint Ticket
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 15B: Customer Support Ticket & Complaint Desk -->
-  <div class="modal-overlay" id="modal-support-ticket">
-    <div class="modal-dialog-box small">
-      <div class="modal-header">
-        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-          Customer Support Ticket Desk
-        </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
-      </div>
-      <div class="modal-body" style="padding: 20px;">
-        <form id="form-support-ticket" onsubmit="window.handleSupportTicketSubmit(event)">
-          <div class="input-field-group" style="margin-bottom: 12px;">
-            <div class="input-content" style="width: 100%;">
-              <label for="tck-input-phone">10-DIGIT MOBILE NUMBER *</label>
-              <input type="tel" id="tck-input-phone" maxlength="10" placeholder="e.g. 9876543210" required>
-            </div>
-          </div>
-
-          <div class="input-field-group" style="margin-bottom: 12px;">
-            <div class="input-content" style="width: 100%;">
-              <label for="tck-input-booking">BOOKING ID (OPTIONAL)</label>
-              <input type="text" id="tck-input-booking" placeholder="e.g. OWB-2026-123456">
-            </div>
-          </div>
-
-          <div class="input-field-group" style="margin-bottom: 12px;">
-            <div class="input-content" style="width: 100%;">
-              <label for="tck-input-category">ISSUE CATEGORY *</label>
-              <select id="tck-input-category" style="width: 100%; border: none; background: transparent; font-size: 13.5px; color: var(--owc-text); outline: none;">
-                <option value="GENERAL">General Travel Inquiry</option>
-                <option value="BILLING">Billing / Fare Discrepancy</option>
-                <option value="DRIVER_BEHAVIOR">Driver Conduct / Chauffeur Service</option>
-                <option value="DELAY">Vehicle Arrival Delay</option>
-                <option value="VEHICLE_CONDITION">Vehicle AC / Condition</option>
-                <option value="REFUND">Refund Status / Token Advance</option>
-                <option value="CANCELLATION">Trip Cancellation Assistance</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="input-field-group" style="margin-bottom: 14px;">
-            <div class="input-content" style="width: 100%;">
-              <label for="tck-input-message">COMPLAINT / FEEDBACK DETAILS *</label>
-              <textarea id="tck-input-message" rows="3" placeholder="Please describe your issue so our dispatch team can resolve it immediately..." required style="width: 100%; border: none; background: transparent; font-family: inherit; font-size: 13.5px; color: var(--owc-text); outline: none; resize: none;"></textarea>
-            </div>
-          </div>
-
-          <div id="tck-feedback-msg" style="display:none; font-size:13px; padding:10px; border-radius:8px; margin-bottom:12px;"></div>
-
-          <button type="submit" id="btn-submit-ticket" class="check-fare-primary-btn" style="width: 100%; justify-content: center; margin-bottom: 0;">
-            Submit Support Ticket →
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 16: Refer Friends & Earn ₹150 Wallet Cash -->
-  <div class="modal-overlay" id="modal-refer">
-    <div class="modal-dialog-box small">
-      <div class="modal-header">
-        <div class="modal-title">Refer Friends &amp; Earn ₹150</div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
-      </div>
-      <div class="modal-body" id="modal-refer-body">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 17: Executive Information & Policy Document Modal -->
-  <div class="modal-overlay" id="modal-info-doc">
-    <div class="modal-dialog-box large">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-info-title">Company Information</div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
-      </div>
-      <div class="modal-body" id="modal-info-body" style="padding: 24px; max-height: 72vh; overflow-y: auto;">
-        <!-- Injected via app.js -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 18: Executive Tap-Only Calendar & Month Picker (Zero Typing) -->
-  <div class="modal-overlay exec-picker-modal" id="modal-exec-calendar" role="dialog" aria-modal="true" aria-labelledby="exec-cal-title" onclick="if(event.target === this) window.ExecDateTimePicker.closeCalendar()">
-    <div class="exec-sheet-card">
-      <div class="exec-sheet-header">
-        <div class="exec-sheet-title-group">
-          <div class="exec-sheet-badge">
-            <span class="exec-pulse-dot"></span>
-            <span id="exec-cal-mode-badge">PICKUP DATE</span>
-          </div>
-          <h3 class="exec-sheet-title" id="exec-cal-title">Select Date &amp; Month</h3>
-        </div>
-        <button type="button" class="exec-sheet-close" id="btn-close-exec-calendar" onclick="window.ExecDateTimePicker.closeCalendar()" aria-label="Close Calendar">✕</button>
-      </div>
-
-      <!-- Ethical Transparency Guarantee Strip -->
-      <div class="exec-ethical-strip">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="ethical-svg"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <div class="ethical-text">
-          <strong>100% Transparent Scheduling:</strong> Free cancellation up to 2 hours before trip &bull; Zero advance deposit needed.
-        </div>
-      </div>
-
-      <!-- Quick 1-Tap Date Presets -->
-      <div class="exec-quick-chips" id="cal-quick-chips">
-        <button type="button" class="exec-chip" data-quick="today">Today</button>
-        <button type="button" class="exec-chip" data-quick="tomorrow">Tomorrow</button>
-        <button type="button" class="exec-chip" data-quick="day-after">Day After</button>
-        <button type="button" class="exec-chip" data-quick="weekend">Weekend</button>
-      </div>
-
-      <!-- Month & Year Navigation with Tap-to-expand Month Grid -->
-      <div class="exec-month-nav">
-        <button type="button" class="exec-nav-arrow" id="cal-prev-month" title="Previous Month" aria-label="Previous Month">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        </button>
-        <button type="button" class="exec-month-title-btn" id="cal-month-title" title="Tap to switch month directly">
-          <span id="cal-month-year-label">September 2026</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="chevron-rot"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </button>
-        <button type="button" class="exec-nav-arrow" id="cal-next-month" title="Next Month" aria-label="Next Month">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-        </button>
-      </div>
-
-      <!-- Month Selector Grid (Expands when tapping Month title) -->
-      <div class="exec-month-grid" id="cal-month-grid" style="display: none;">
-        <!-- 12 month buttons: Jan to Dec -->
-      </div>
-
-      <!-- Calendar Days View -->
-      <div class="exec-calendar-view" id="cal-days-view">
-        <div class="exec-weekdays-row">
-          <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
-        </div>
-        <div class="exec-days-grid" id="cal-days-grid">
-          <!-- Dynamically generated days -->
-        </div>
-      </div>
-
-      <!-- Footer Info & Confirmation -->
-      <div class="exec-sheet-footer">
-        <div class="exec-sheet-selection-info">
-          <span class="info-label">Selected Departure</span>
-          <strong class="info-val" id="cal-selected-summary">Thu, 04 Sep 2026</strong>
-        </div>
-        <button type="button" class="exec-confirm-btn" id="btn-confirm-calendar" onclick="window.ExecDateTimePicker.closeCalendar()">
-          <span>Confirm Date</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal 19: Executive Tap-Only Clock & Time Picker (Zero Typing) -->
-  <div class="modal-overlay exec-picker-modal" id="modal-exec-clock" role="dialog" aria-modal="true" aria-labelledby="exec-clock-title" onclick="if(event.target === this) window.ExecDateTimePicker.closeClock()">
-    <div class="exec-sheet-card">
-      <div class="exec-sheet-header">
-        <div class="exec-sheet-title-group">
-          <div class="exec-sheet-badge time">
-            <span class="exec-pulse-dot time"></span>
-            <span>24x7 CABS AVAILABLE</span>
-          </div>
-          <h3 class="exec-sheet-title" id="exec-clock-title">Select Pickup Time</h3>
-        </div>
-        <button type="button" class="exec-sheet-close" id="btn-close-exec-clock" onclick="window.ExecDateTimePicker.closeClock()" aria-label="Close Clock">✕</button>
-      </div>
-
-      <!-- Ethical Transparency Guarantee Strip -->
-      <div class="exec-ethical-strip">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="ethical-svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <div class="ethical-text">
-          <strong>Punctual Chauffeur Guarantee:</strong> Driver contacts you 1 hr prior with live GPS tracking &bull; Zero surge rates.
-        </div>
-      </div>
-
-      <!-- Quick 1-Tap Time Slots -->
-      <div class="exec-quick-chips">
-        <button type="button" class="exec-chip" data-quick-time="06:00 AM">06:00 AM</button>
-        <button type="button" class="exec-chip" data-quick-time="09:00 AM">09:00 AM</button>
-        <button type="button" class="exec-chip" data-quick-time="12:00 PM">12:00 PM</button>
-        <button type="button" class="exec-chip" data-quick-time="04:30 PM">04:30 PM</button>
-        <button type="button" class="exec-chip" data-quick-time="08:00 PM">08:00 PM</button>
-        <button type="button" class="exec-chip" data-quick-time="11:00 PM">11:00 PM</button>
-      </div>
-
-      <!-- Interactive Digital Clock Display & AM/PM Switcher -->
-      <div class="exec-clock-display-bar">
-        <div class="exec-clock-time-readout">
-          <span class="clock-num" id="clock-display-hour">10</span>
-          <span class="clock-colon">:</span>
-          <span class="clock-num" id="clock-display-minute">00</span>
-        </div>
-        <div class="exec-ampm-switch">
-          <button type="button" class="ampm-btn active" id="ampm-am" data-ampm="AM">AM</button>
-          <button type="button" class="ampm-btn" id="ampm-pm" data-ampm="PM">PM</button>
-        </div>
-      </div>
-
-      <!-- Tap Hour Grid (1 to 12) -->
-      <div class="exec-picker-section">
-        <div class="section-label">SELECT HOUR</div>
-        <div class="exec-hours-grid" id="clock-hours-grid">
-          <!-- 01 through 12 -->
-        </div>
-      </div>
-
-      <!-- Tap Minute Grid (00, 15, 30, 45 + common slots) -->
-      <div class="exec-picker-section">
-        <div class="section-label">SELECT MINUTE</div>
-        <div class="exec-minutes-grid" id="clock-minutes-grid">
-          <!-- 00, 15, 30, 45, etc. -->
-        </div>
-      </div>
-
-      <!-- Footer Info & Confirmation -->
-      <div class="exec-sheet-footer">
-        <div class="exec-sheet-selection-info">
-          <span class="info-label">Pickup Time</span>
-          <strong class="info-val" id="clock-selected-summary">10:00 AM (Morning)</strong>
-        </div>
-        <button type="button" class="exec-confirm-btn" id="btn-confirm-clock" onclick="window.ExecDateTimePicker.closeClock()">
-          <span>Set Pickup Time</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-  <!-- Razorpay Official Checkout Gateway SDK -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-  <!-- Application Scripts -->
-  <script src="/js/data.js?v=20261008_0030"></script>
-  <script src="/js/calculator.js?v=20261008_0030"></script>
-  <script src="/js/map.js?v=20261008_0030"></script>
-  <script src="/js/api.js?v=20261008_0030"></script>
-  <script src="/js/datetime-picker.js?v=20261008_0030"></script>
-  <!-- Fast2SMS Telecom OTP & WhatsApp Verification Service (Eliminates ₹5 Firebase Cost -> ₹0.20/SMS) -->
-  <script src="/js/firebase-otp.js?v=20261008_fast2sms"></script>
-  <script src="/js/view-router.js?v=20261015_0001"></script>
-  <script src="/js/booking.js?v=20261015_0001"></script>
-  <script src="/js/app.js?v=20261008_0030"></script>
-
-  <!-- PWA Service Worker Registration & Native App Install Experience -->
+  <!-- CONTROLLERS -->
+  <script src="/js/booking-flow.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then((reg) => {
-          console.log('[PWA] Service worker registered with scope:', reg.scope);
-        }).catch((err) => {
-          console.warn('[PWA] Service worker registration note:', err.message);
+    (function () {
+      'use strict';
+
+      // 1. Mobile Drawer
+      const drawer = document.getElementById('mobileDrawer');
+      const openBtn = document.getElementById('drawerOpenBtn');
+      const closeBtn = document.getElementById('drawerCloseBtn');
+
+      openBtn.addEventListener('click', () => drawer.classList.add('active'));
+      closeBtn.addEventListener('click', () => drawer.classList.remove('active'));
+      drawer.addEventListener('click', (e) => {
+        if (e.target === drawer) drawer.classList.remove('active');
+      });
+
+      // 2. Date Setup (Default Today, Min Today)
+      const dateInput = document.getElementById('inputDate');
+      const todayStr = BookingFlow.getTodayDateString();
+      dateInput.value = todayStr;
+      dateInput.min = todayStr;
+
+      // 3. Autocomplete Setup
+      const POPULAR_LOCATIONS = [
+        { name: "Patna Airport (PAT)", type: "Airport" },
+        { name: "Patna Junction", type: "Railway" },
+        { name: "Patna City", type: "City" },
+        { name: "Danapur Cantt", type: "Hub" },
+        { name: "Gaya", type: "District" },
+        { name: "Bodh Gaya", type: "Hub" },
+        { name: "Muzaffarpur", type: "District" },
+        { name: "Darbhanga", type: "District" },
+        { name: "Bhagalpur", type: "District" },
+        { name: "Purnea", type: "District" },
+        { name: "Ranchi", type: "Capital" },
+        { name: "Varanasi", type: "Hub" },
+        { name: "Deoghar", type: "Hub" },
+        { name: "Bettiah", type: "District" },
+        { name: "Motihari", type: "District" },
+        { name: "Siwan", type: "District" },
+        { name: "Begusarai", type: "District" },
+        { name: "Sasaram", type: "District" },
+        { name: "Samastipur", type: "District" },
+        { name: "Saharsa", type: "District" }
+      ];
+
+      function setupAutocomplete(inputId, dropdownId, clearBtnId) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+        const clearBtn = document.getElementById(clearBtnId);
+
+        function showList(filter = '') {
+          dropdown.innerHTML = '';
+          const clean = filter.toLowerCase().trim();
+
+          // 1. "Use current location" button
+          const currLocItem = document.createElement('div');
+          currLocItem.className = 'autocomplete-item autocomplete-special-item';
+          currLocItem.innerHTML = '<span>📍</span> <span>Use current location</span>';
+          currLocItem.addEventListener('click', () => {
+            if (navigator.geolocation) {
+              input.value = "Locating...";
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  input.value = "Patna (Current Location)";
+                  dropdown.classList.remove('show');
+                  clearBtn.style.display = 'block';
+                },
+                () => {
+                  input.value = "Patna";
+                  dropdown.classList.remove('show');
+                  clearBtn.style.display = 'block';
+                }
+              );
+            } else {
+              input.value = "Patna";
+              dropdown.classList.remove('show');
+            }
+          });
+          dropdown.appendChild(currLocItem);
+
+          // 2. Filtered list
+          const matches = POPULAR_LOCATIONS.filter(loc => 
+            !clean || loc.name.toLowerCase().includes(clean)
+          );
+
+          matches.forEach(loc => {
+            const row = document.createElement('div');
+            row.className = 'autocomplete-item';
+            row.innerHTML = `<span class="autocomplete-item-loc-icon">📍</span> <span><strong>${loc.name}</strong> <small style="color:#64748b;">(${loc.type})</small></span>`;
+            row.addEventListener('click', () => {
+              input.value = loc.name;
+              dropdown.classList.remove('show');
+              clearBtn.style.display = 'block';
+            });
+            dropdown.appendChild(row);
+          });
+
+          dropdown.classList.add('show');
+        }
+
+        input.addEventListener('focus', () => showList(input.value));
+        input.addEventListener('input', () => {
+          showList(input.value);
+          clearBtn.style.display = input.value ? 'block' : 'none';
+        });
+
+        clearBtn.addEventListener('click', () => {
+          input.value = '';
+          clearBtn.style.display = 'none';
+          input.focus();
+          showList('');
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+          }
+        });
+      }
+
+      setupAutocomplete('inputOrigin', 'dropdownOrigin', 'btnClearOrigin');
+      setupAutocomplete('inputDest', 'dropdownDest', 'btnClearDest');
+
+      // 4. Swap Locations
+      const btnSwap = document.getElementById('btnSwap');
+      const inputOrigin = document.getElementById('inputOrigin');
+      const inputDest = document.getElementById('inputDest');
+
+      btnSwap.addEventListener('click', () => {
+        const temp = inputOrigin.value;
+        inputOrigin.value = inputDest.value;
+        inputDest.value = temp;
+      });
+
+      // 5. Restore Saved Progress if any (Req. 15)
+      const saved = BookingFlow.loadState();
+      if (saved) {
+        if (saved.origin) inputOrigin.value = saved.origin.name || saved.origin;
+        if (saved.dest) inputDest.value = saved.dest.name || saved.dest;
+        if (saved.date) dateInput.value = saved.date;
+        if (saved.time) document.getElementById('selectTime').value = saved.time;
+        if (saved.phone) document.getElementById('inputPhone').value = saved.phone;
+      }
+
+      // Default Origin if empty
+      if (!inputOrigin.value) inputOrigin.value = 'Patna';
+
+      // 6. Handle Popular Route Quick Click
+      document.querySelectorAll('.popular-route-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+          e.preventDefault();
+          const from = row.getAttribute('data-from');
+          const to = row.getAttribute('data-to');
+          inputOrigin.value = from;
+          inputDest.value = to;
+          const phoneInput = document.getElementById('inputPhone');
+          if (!phoneInput.value) {
+            phoneInput.focus();
+            showToast('Please enter mobile number to check fare');
+          } else {
+            document.getElementById('heroBookingForm').requestSubmit();
+          }
         });
       });
-    }
 
-    // Capture beforeinstallprompt for instant 1-tap app install
-    let deferredInstallPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      const installBtn = document.getElementById('btn-pwa-install');
-      if (installBtn) {
-        installBtn.style.display = 'inline-flex';
-        installBtn.onclick = async () => {
-          if (!deferredInstallPrompt) return;
-          deferredInstallPrompt.prompt();
-          const { outcome } = await deferredInstallPrompt.userChoice;
-          console.log('[PWA Install Outcome]:', outcome);
-          deferredInstallPrompt = null;
-          installBtn.style.display = 'none';
-        };
+      // 7. Form Submission (Req. 1 & Req. 4)
+      const form = document.getElementById('heroBookingForm');
+      const phoneInput = document.getElementById('inputPhone');
+
+      function showToast(msg) {
+        const toast = document.getElementById('appToast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
       }
-    });
 
-    window.addEventListener('appinstalled', () => {
-      console.log('[PWA] OneWayTaxiBihar app successfully installed!');
-      const installBtn = document.getElementById('btn-pwa-install');
-      if (installBtn) installBtn.style.display = 'none';
-    });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const origin = inputOrigin.value.trim();
+        const dest = inputDest.value.trim();
+        const date = dateInput.value;
+        const time = document.getElementById('selectTime').value;
+        const phone = phoneInput.value.replace(/\D/g, '');
+
+        if (!origin) {
+          showToast('Please specify pickup city or hub');
+          inputOrigin.focus();
+          return;
+        }
+
+        if (!dest) {
+          showToast('Please specify drop destination');
+          inputDest.focus();
+          return;
+        }
+
+        if (origin.toLowerCase() === dest.toLowerCase()) {
+          showToast('Pickup and Drop destinations must be different');
+          return;
+        }
+
+        // Strict 10-digit mobile validation (Req. 4)
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+          showToast('Please enter valid 10-digit mobile number');
+          phoneInput.focus();
+          return;
+        }
+
+        const submitBtn = document.getElementById('btnCheckFare');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>CALCULATING...</span>';
+
+        // Save trip state in BookingFlow
+        BookingFlow.saveTripSearch(origin, dest, date, time, phone);
+
+        // Fetch authoritative server fares
+        await BookingFlow.fetchFares(origin, dest);
+
+        // Seamless transition to dedicated /fare page (NO OTP is requested here!)
+        window.location.href = '/fare';
+      });
+
+    })();
   </script>
-
 </body>
 </html>

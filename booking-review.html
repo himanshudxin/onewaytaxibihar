@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Review Booking - OneWayTaxiBihar</title>
+  <meta name="description" content="Review your intercity cab reservation before confirmation. Transparent pricing, verified chauffeurs.">
+  <link rel="canonical" href="https://onewaytaxibihar.com/booking-review">
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/booking-platform.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="/" class="app-brand">
+          <span>ONEWAYTAXIBIHAR</span>
+        </a>
+      </div>
+      <div class="app-header-actions">
+        <a href="tel:+918002141816" class="btn-header-call" title="Call Dispatch Desk">
+          <span>☎</span>
+          <span style="font-weight: 700;">+91 80021 41816</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    
+    <!-- PROGRESS INDICATOR (Req. 7) -->
+    <div class="flow-progress-bar">
+      <div class="flow-step completed"><span>①</span> TRIP ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step completed"><span>②</span> CAB ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step completed"><span>③</span> DETAILS ✓</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step active"><span>④</span> CONFIRM</div>
+      <span class="flow-step-divider">→</span>
+      <div class="flow-step"><span>⑤</span> DONE</div>
+    </div>
+
+    <!-- PAGE TOP BAR -->
+    <div class="page-top-bar">
+      <a href="/booking-details" class="btn-back-link">
+        <span>←</span> <span>Edit Details</span>
+      </a>
+      <span style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Step 4 of 5</span>
+    </div>
+
+    <!-- REVIEW CARD (Req. 9) -->
+    <div class="review-card">
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 18px;">Review Booking</h2>
+
+      <div class="review-item-row">
+        <span class="review-label">FROM</span>
+        <span class="review-value" id="valOrigin">Patna</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">TO</span>
+        <span class="review-value" id="valDest">Gaya</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">DATE</span>
+        <span class="review-value" id="valDate">18 Oct 2026</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">TIME</span>
+        <span class="review-value" id="valTime">08:30 AM</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">CAB</span>
+        <span class="review-value" id="valCab">Sedan (Dzire/Etios)</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">PASSENGER</span>
+        <span class="review-value" id="valPassenger">Rahul Kumar<br><small style="color:#64748b; font-weight:500;">+91 98XXXXX321</small></span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">PICKUP ADDRESS</span>
+        <span class="review-value" id="valPickup" style="max-width: 60%; word-break: break-word;">Near Saguna More, Patna</span>
+      </div>
+
+      <div class="review-item-row">
+        <span class="review-label">PAYMENT</span>
+        <span class="review-value" id="valPayment">Cash to Driver (Zero Advance)</span>
+      </div>
+
+      <!-- FARE SUMMARY -->
+      <div class="review-fare-row">
+        <div>
+          <div class="review-fare-label">TOTAL FARE</div>
+          <div style="font-size: 0.75rem; color: #10b981; font-weight: 700;">✓ Final fare — no hidden charges</div>
+        </div>
+        <div class="review-fare-value" id="valFare">₹1,999</div>
+      </div>
+
+      <!-- ACTION BUTTONS (Req. 9) -->
+      <div class="review-actions-grid">
+        <a href="/booking-details" class="btn-secondary-action" style="text-decoration: none;">
+          EDIT
+        </a>
+        <button type="button" class="btn-primary-action" id="btnBookNow">
+          <span>BOOK NOW</span>
+          <span>→</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SECURITY GUARANTEE -->
+    <div style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 10px;">
+      🔒 Instant SMS/WhatsApp OTP verification required on next step to confirm your cab.
+    </div>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="app-toast" id="appToast"></div>
+
+  <!-- FOOTER -->
+  <footer class="app-footer">
+    <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services.</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816</p>
+  </footer>
+
+  <!-- CONTROLLERS -->
+  <script src="/js/booking-flow.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const trip = BookingFlow.loadState();
+
+      // Guard: must have selected cab and passenger details
+      if (!trip || !trip.selectedCab || !trip.passenger?.name) {
+        window.location.href = '/booking-details';
+        return;
+      }
+
+      // Populate Review Values
+      const originName = trip.origin.name || trip.origin || 'Patna';
+      const destName = trip.dest.name || trip.dest || 'Gaya';
+      document.getElementById('valOrigin').textContent = originName;
+      document.getElementById('valDest').textContent = destName;
+      document.getElementById('valDate').textContent = trip.date;
+      document.getElementById('valTime').textContent = trip.time;
+      document.getElementById('valCab').textContent = `${trip.selectedCab.category} (${trip.selectedCab.model || 'Commercial AC'})`;
+
+      const pPhone = trip.passenger.phone || trip.phone || '';
+      const maskedPhone = pPhone.length >= 10 
+        ? `+91 ${pPhone.slice(0, 2)}XXXXXX${pPhone.slice(-2)}` 
+        : `+91 ${pPhone}`;
+
+      document.getElementById('valPassenger').innerHTML = `${trip.passenger.name}<br><small style="color:#64748b; font-weight:500;">${maskedPhone}</small>`;
+      document.getElementById('valPickup').textContent = trip.passenger.pickupAddress || `${originName} city limits`;
+
+      const isAdvance = trip.passenger.paymentPreference === 'advance';
+      document.getElementById('valPayment').textContent = isAdvance ? 'Online Token Advance (20%)' : 'Cash to Driver (Zero Advance)';
+
+      document.getElementById('valFare').textContent = `₹${Number(trip.selectedCab.fare || 1999).toLocaleString('en-IN')}`;
+
+      // Toast Helper
+      function showToast(msg) {
+        const toast = document.getElementById('appToast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+
+      // BOOK NOW Click -> Dispatches OTP and redirects to /verify-otp (Req. 1, Req. 10)
+      const bookBtn = document.getElementById('btnBookNow');
+      bookBtn.addEventListener('click', async () => {
+        bookBtn.disabled = true;
+        bookBtn.innerHTML = '<span>DISPATCHING OTP...</span>';
+
+        try {
+          // Trigger OTP Send API
+          await BookingFlow.sendOtp();
+          // Seamless transition to OTP Verification
+          window.location.href = '/verify-otp';
+        } catch (err) {
+          console.error(err);
+          showToast(err.message || 'Unable to send verification code. Please try again or call dispatch.');
+          bookBtn.disabled = false;
+          bookBtn.innerHTML = '<span>BOOK NOW</span> <span>→</span>';
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>

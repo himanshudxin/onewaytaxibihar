@@ -1817,6 +1817,12 @@
           <span class="nav-badge warning" id="badge-bookings-count">0</span>
         </button>
 
+        <button type="button" class="nav-item-btn" id="side-tab-manual" onclick="openManualBookingModal()" style="color: #0284c7;">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          <span class="nav-label" style="font-weight: 700;">Manual Booking</span>
+          <span class="nav-badge" style="background:#0284c7; color:#fff;">+ New</span>
+        </button>
+
         <button type="button" class="nav-item-btn" id="side-tab-customers" onclick="switchMainTab('customers')">
           <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           <span class="nav-label">Customers</span>
@@ -2244,7 +2250,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Export CSV
               </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="openDetailsModal('')">
+              <button type="button" class="btn btn-primary btn-sm" onclick="openManualBookingModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Manual Booking
               </button>
@@ -3659,6 +3665,84 @@
         <div class="ops-modal-footer">
           <button type="button" class="btn btn-secondary" onclick="closeConvertLeadModal()">Cancel</button>
           <button type="submit" class="btn btn-primary" id="btn-convert-submit">Create &amp; Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  <!-- MANUAL AGENT BOOKING MODAL (Req. 12) -->
+  <div class="modal-backdrop" id="modal-manual-booking">
+    <div class="ops-modal" style="max-width: 580px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Manual Dispatch Booking (Agent Desk)</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeManualBookingModal()">✕</button>
+      </div>
+      <form id="form-manual-booking" onsubmit="handleManualBookingSubmit(event)">
+        <div class="ops-modal-body">
+          <div class="form-grid-2" style="margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" class="form-control" id="manual-customer-name" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Mobile *</label>
+              <input type="tel" class="form-control" id="manual-mobile" placeholder="10-digit mobile" required maxlength="10">
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Pickup Location *</label>
+              <input type="text" class="form-control" id="manual-pickup" placeholder="e.g. Patna Airport" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Drop Location *</label>
+              <input type="text" class="form-control" id="manual-drop" placeholder="e.g. Gaya Bodh Gaya" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Pickup Date *</label>
+              <input type="date" class="form-control" id="manual-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pickup Time *</label>
+              <input type="time" class="form-control" id="manual-time" value="08:30" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-bottom:12px;">
+            <div class="form-group">
+              <label class="form-label">Vehicle Tier *</label>
+              <select class="form-control" id="manual-vehicle" required>
+                <option value="Sedan">Prime Sedan (Dzire / Etios)</option>
+                <option value="Hatchback">Go Hatchback (WagonR)</option>
+                <option value="SUV">Family SUV (Ertiga 6+1)</option>
+                <option value="Innova Crysta">Toyota Innova Crysta</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agreed Total Fare (₹)</label>
+              <input type="number" class="form-control" id="manual-fare" placeholder="Leave empty for auto-calc">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">Payment Method *</label>
+            <select class="form-control" id="manual-payment-method">
+              <option value="Cash to Driver">Cash to Driver (Pay at drop destination)</option>
+              <option value="Advance UPI Token (₹200 - ₹500)">Advance UPI Token (₹200 - ₹500)</option>
+              <option value="Full Online Pre-paid">Full Online Pre-paid (Razorpay / QR)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Agent Notes &amp; Special Instructions</label>
+            <textarea class="form-control" id="manual-notes" placeholder="e.g. Flight delay expected, customer requested English speaking driver" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="ops-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeManualBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-manual-booking-submit">Create Booking</button>
         </div>
       </form>
     </div>
@@ -5577,6 +5661,86 @@
         showToast("Error: " + err.message, "error");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Onboard Chauffeur"; }
+      }
+    }
+
+    // =========================================================================
+    // MANUAL AGENT BOOKING CONTROLLER (Req. 12)
+    // =========================================================================
+    function openManualBookingModal() {
+      const modal = document.getElementById("modal-manual-booking");
+      if (modal) {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById("manual-date");
+        if (dateInput && !dateInput.value) dateInput.value = today;
+        modal.classList.add("active");
+      }
+    }
+
+    function closeManualBookingModal() {
+      const modal = document.getElementById("modal-manual-booking");
+      if (modal) modal.classList.remove("active");
+    }
+
+    async function handleManualBookingSubmit(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById("btn-manual-booking-submit");
+      const customerName = document.getElementById("manual-customer-name")?.value?.trim() || "";
+      const mobile = document.getElementById("manual-mobile")?.value?.replace(/\D/g, '')?.slice(-10) || "";
+      const pickup = document.getElementById("manual-pickup")?.value?.trim() || "";
+      const drop = document.getElementById("manual-drop")?.value?.trim() || "";
+      const date = document.getElementById("manual-date")?.value || "";
+      const time = document.getElementById("manual-time")?.value || "08:30";
+      const vehicle = document.getElementById("manual-vehicle")?.value || "Sedan";
+      const fare = Number(document.getElementById("manual-fare")?.value) || 0;
+      const paymentMethod = document.getElementById("manual-payment-method")?.value || "Cash to Driver";
+      const notes = document.getElementById("manual-notes")?.value?.trim() || "";
+
+      if (!customerName || customerName.length < 2) {
+        showToast("Please enter customer name (at least 2 characters)", "error");
+        return;
+      }
+      if (!mobile || mobile.length !== 10 || !/^[6-9]\d{9}$/.test(mobile)) {
+        showToast("Please enter valid 10-digit mobile number", "error");
+        return;
+      }
+      if (!pickup || !drop) {
+        showToast("Pickup and Drop locations are required", "error");
+        return;
+      }
+
+      try {
+        if (btn) { btn.disabled = true; btn.textContent = "Creating Booking..."; }
+        const res = await adminFetch("/api/admin/bookings/manual", {
+          method: "POST",
+          body: JSON.stringify({
+            customerName,
+            mobile,
+            pickup,
+            drop,
+            date,
+            time,
+            vehicle,
+            fare,
+            paymentMethod,
+            notes
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          const createdId = data.booking?.bookingId || data.booking?.id || "Created";
+          showToast(`Manual booking ${createdId} confirmed successfully!`, "success");
+          closeManualBookingModal();
+          document.getElementById("form-manual-booking")?.reset();
+          await fetchDashboardData();
+        } else {
+          showToast(data.message || "Failed to create manual booking", "error");
+        }
+      } catch (err) {
+        showToast("Error creating booking: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = "Create Booking"; }
       }
     }
 

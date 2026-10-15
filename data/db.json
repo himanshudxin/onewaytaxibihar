@@ -1,13 +1,13 @@
 {
   "bookings": [
     {
-      "bookingId": "OTB-2026-1638",
-      "tripOtp": "9552",
+      "bookingId": "OTB-2026-7772",
+      "tripOtp": "2627",
       "tripType": "oneway",
       "rentalMode": null,
       "withDriver": true,
       "customerId": "usr_9988776655",
-      "paymentTxnId": "TXN_1792026360794_3158",
+      "paymentTxnId": "TXN_1792030066487_1313",
       "idempotencyKey": null,
       "passengerName": "QA Production Tester",
       "passengerPhone": "+91 9988776655",
@@ -78,9 +78,185 @@
       "specialInstructions": null,
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
-      "verifiedAt": "2026-10-15T01:06:00.794Z",
+      "verifiedAt": "2026-10-15T02:07:46.487Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
       "driverDetails": null,
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-15T02:07:46.487Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        }
+      ],
+      "createdAt": "2026-10-15T02:07:46.487Z"
+    },
+    {
+      "bookingId": "OTB-2026-1729",
+      "advancePaid": 0,
+      "balanceDue": 1549,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "NEW",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-15T02:06:13.175Z",
+      "customerId": "usr_9876543210",
+      "destCity": "Gaya",
+      "distanceKm": 110,
+      "driverDetails": null,
+      "dropAddress": "Bodh Gaya Temple Road",
+      "duration": "2h 26m",
+      "fare": 1549,
+      "fareBreakdown": {
+        "distanceKm": 110,
+        "duration": "2h 26m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 1549,
+        "perKmRate": 25,
+        "rentalPrice": 2200,
+        "rentalDriverAllowance": 1000,
+        "rentalMode": null,
+        "withDriver": true,
+        "distanceCharge": 1549,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 86,
+        "gst": 74,
+        "totalFare": 1549,
+        "isCalibratedRoute": true,
+        "traditionalMarketRate": "₹2,800 – ₹3,200",
+        "farePolicy": {
+          "included": "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
+          "excluded": "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
+          "advanceFee": "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
+        },
+        "inclusions": [
+          "Fuel Included",
+          "Vehicle Hire Included",
+          "Professional Chauffeur Allowance Included",
+          "Doorstep Pickup & Drop within Municipal City Limits",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Fastag Toll Plaza taxes and state road permits (paid directly by passenger at actuals, maintaining transparent pricing without inflated buffers)",
+          "Multiple city diversions not specified in booking"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": false,
+      "originCity": "Patna",
+      "originalFare": 1549,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Ravi Kumar",
+      "passengerPhone": "+91 9876543210",
+      "paymentMethod": "Cash to Driver",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1792029973175_2623",
+      "phoneVerified": true,
+      "pickupAddress": "Patna Junction Platform 1",
+      "pickupDate": "2026-10-18",
+      "pickupTime": "08:30 AM",
+      "rentalMode": null,
+      "specialInstructions": null,
+      "status": "NEW",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-10-15T02:06:13.175Z",
+          "actor": "Customer",
+          "note": "Booking request placed. Availability verification in progress."
+        }
+      ],
+      "totalFare": 1549,
+      "tripOtp": "4779",
+      "tripType": "oneway",
+      "verifiedAt": "2026-10-15T02:06:13.175Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0,
+      "withDriver": true
+    },
+    {
+      "bookingId": "OTB-2026-1638",
+      "advancePaid": 0,
+      "balanceDue": 1549,
+      "bookerName": null,
+      "bookerPhone": null,
+      "bookingStatus": "NEW",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-15T01:06:00.794Z",
+      "customerId": "usr_9988776655",
+      "destCity": "Gaya",
+      "distanceKm": 110,
+      "driverDetails": null,
+      "dropAddress": "Gaya Junction, Gaya",
+      "duration": "2h 26m",
+      "fare": 1549,
+      "fareBreakdown": {
+        "distanceKm": 110,
+        "duration": "2h 26m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 1549,
+        "perKmRate": 25,
+        "rentalPrice": 2200,
+        "rentalDriverAllowance": 1000,
+        "rentalMode": null,
+        "withDriver": true,
+        "distanceCharge": 1549,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "tollFastag": 86,
+        "gst": 74,
+        "totalFare": 1549,
+        "isCalibratedRoute": true,
+        "traditionalMarketRate": "₹2,800 – ₹3,200",
+        "farePolicy": {
+          "included": "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
+          "excluded": "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
+          "advanceFee": "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
+        },
+        "inclusions": [
+          "Fuel Included",
+          "Vehicle Hire Included",
+          "Professional Chauffeur Allowance Included",
+          "Doorstep Pickup & Drop within Municipal City Limits",
+          "Zero Return Fare Charged"
+        ],
+        "exclusions": [
+          "Fastag Toll Plaza taxes and state road permits (paid directly by passenger at actuals, maintaining transparent pricing without inflated buffers)",
+          "Multiple city diversions not specified in booking"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "idempotencyKey": null,
+      "isForOther": false,
+      "originCity": "Patna",
+      "originalFare": 1549,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "QA Production Tester",
+      "passengerPhone": "+91 9988776655",
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "paymentTxnId": "TXN_1792026360794_3158",
+      "phoneVerified": true,
+      "pickupAddress": "Boring Road, Patna",
+      "pickupDate": "2026-10-10",
+      "pickupTime": "08:00 AM",
+      "rentalMode": null,
+      "specialInstructions": null,
+      "status": "NEW",
       "statusHistory": [
         {
           "status": "NEW",
@@ -89,7 +265,13 @@
           "note": "Booking request placed. Availability verification in progress."
         }
       ],
-      "createdAt": "2026-10-15T01:06:00.794Z"
+      "totalFare": 1549,
+      "tripOtp": "9552",
+      "tripType": "oneway",
+      "verifiedAt": "2026-10-15T01:06:00.794Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0,
+      "withDriver": true
     },
     {
       "bookingId": "OTB-2026-7564",
@@ -181,6 +363,34 @@
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
       "withDriver": true
+    },
+    {
+      "id": "OTB-95672",
+      "bookingId": "OTB-95672",
+      "passengerName": "Sanjay Sharma",
+      "passengerPhone": "+91 9801234567",
+      "cleanPhone": "9801234567",
+      "pickupLocation": "Patna Airport",
+      "dropLocation": "Muzaffarpur",
+      "originCity": "Patna Airport",
+      "destCity": "Muzaffarpur",
+      "pickupDate": "2026-10-19",
+      "pickupTime": "10:00 AM",
+      "cabTier": "SUV",
+      "cabCategory": "SUV",
+      "totalFare": 2499,
+      "fare": 2499,
+      "paymentMethod": "Cash to Driver",
+      "paymentStatus": "PENDING",
+      "advancePaid": 0,
+      "balanceDue": 2499,
+      "specialNotes": "Agent manual dispatch from dispatch desk",
+      "bookingStatus": "CONFIRMED",
+      "source": "MANUAL_AGENT",
+      "otpStatus": "MANUAL",
+      "createdBy": "admin",
+      "createdAt": "2026-10-15T02:07:40.662Z",
+      "updatedAt": "2026-10-15T02:07:40.662Z"
     }
   ],
   "drivers": [
@@ -259,6 +469,14 @@
   ],
   "driver_applications": [],
   "users": [
+    {
+      "id": "usr_9876543210",
+      "createdAt": "2026-10-15T02:06:13.175Z",
+      "email": "",
+      "name": "Ravi Kumar",
+      "phone": "+91 9876543210",
+      "walletBalance": 100
+    },
     {
       "id": "usr_9988776655",
       "createdAt": "2026-10-15T01:04:57.157Z",
@@ -345,8 +563,8 @@
   ],
   "payments": [
     {
-      "id": "TXN_1792026360794_3158",
-      "bookingId": "OTB-2026-1638",
+      "id": "TXN_1792030066487_1313",
+      "bookingId": "OTB-2026-7772",
       "customerId": "usr_9988776655",
       "passengerPhone": "+91 9988776655",
       "amount": 1549,
@@ -361,7 +579,45 @@
       "upiUtr": "",
       "verifiedBy": null,
       "verifiedAt": null,
-      "createdAt": "2026-10-15T01:06:00.794Z"
+      "createdAt": "2026-10-15T02:07:46.487Z"
+    },
+    {
+      "id": "TXN_1792029973175_2623",
+      "advancePaid": 0,
+      "amount": 1549,
+      "balanceDue": 1549,
+      "bookingId": "OTB-2026-1729",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-15T02:06:13.175Z",
+      "customerId": "usr_9876543210",
+      "method": "Cash to Driver",
+      "originalAmount": 1549,
+      "passengerPhone": "+91 9876543210",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
+    },
+    {
+      "id": "TXN_1792026360794_3158",
+      "advancePaid": 0,
+      "amount": 1549,
+      "balanceDue": 1549,
+      "bookingId": "OTB-2026-1638",
+      "couponDiscount": 0,
+      "createdAt": "2026-10-15T01:06:00.794Z",
+      "customerId": "usr_9988776655",
+      "method": "Cash on Ride (Zero Advance)",
+      "originalAmount": 1549,
+      "passengerPhone": "+91 9988776655",
+      "provider": "CASH",
+      "status": "PAYABLE TO DRIVER (Cash on Ride)",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
     },
     {
       "id": "TXN_1792026297157_2570",
@@ -386,8 +642,38 @@
   "wallet_ledger": [],
   "leads": [
     {
+      "id": "LEAD_1792029973176",
+      "bookingId": "OTB-2026-1729",
+      "cleanPhone": "9876543210",
+      "createdAt": "2026-10-15T02:06:13.176Z",
+      "destCity": "Gaya",
+      "distanceKm": 110,
+      "estFareSedan": 1549,
+      "originCity": "Patna",
+      "passengerName": "Ravi Kumar",
+      "phone": "+91 9876543210",
+      "pickupDate": "2026-10-18",
+      "pickupTime": "08:30 AM",
+      "status": "CONVERTED",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-15T02:06:13.176Z"
+    },
+    {
+      "id": "lead_9876543210_2689",
+      "cleanPhone": "9876543210",
+      "createdAt": "2026-10-15T02:06:12.689Z",
+      "destCity": "Bihar Outstation",
+      "originCity": "Patna",
+      "passengerName": "Ravi Kumar",
+      "phone": "+91 9876543210",
+      "rawPhone": "9876543210",
+      "source": "Customer Mobile OTP Request",
+      "status": "NEW",
+      "tripType": "oneway"
+    },
+    {
       "id": "LEAD_1792026297157",
-      "bookingId": "OTB-2026-1638",
+      "bookingId": "OTB-2026-7772",
       "cleanPhone": "9988776655",
       "createdAt": "2026-10-15T01:04:57.157Z",
       "destCity": "Gaya",
@@ -400,17 +686,50 @@
       "pickupTime": "08:00 AM",
       "status": "CONVERTED",
       "tripType": "oneway",
-      "updatedAt": "2026-10-15T01:06:00.794Z"
+      "updatedAt": "2026-10-15T02:07:46.487Z"
+    },
+    {
+      "id": "LEAD_1792026297157",
+      "bookingId": "OTB-2026-7564",
+      "cleanPhone": "9988776655",
+      "createdAt": "2026-10-15T01:04:57.157Z",
+      "destCity": "Gaya",
+      "distanceKm": 110,
+      "estFareSedan": 1549,
+      "originCity": "Patna",
+      "passengerName": "QA Production Tester",
+      "phone": "+91 9988776655",
+      "pickupDate": "2026-10-10",
+      "pickupTime": "08:00 AM",
+      "status": "CONVERTED",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-15T01:04:57.157Z"
     }
   ],
   "notifications": [
     {
-      "id": "NOTIF_BOOK_1792026360794",
+      "id": "NOTIF_BOOK_1792030066487",
       "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-1638",
+      "title": "New Cab Booking: OTB-2026-7772",
       "message": "QA Production Tester (+91 9988776655) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹1549.",
+      "bookingId": "OTB-2026-7772",
+      "createdAt": "2026-10-15T02:07:46.487Z"
+    },
+    {
+      "id": "NOTIF_BOOK_1792029973175",
+      "bookingId": "OTB-2026-1729",
+      "createdAt": "2026-10-15T02:06:13.175Z",
+      "message": "Ravi Kumar (+91 9876543210) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹1549.",
+      "title": "New Cab Booking: OTB-2026-1729",
+      "type": "NEW_BOOKING_REQUEST"
+    },
+    {
+      "id": "NOTIF_BOOK_1792026360794",
       "bookingId": "OTB-2026-1638",
-      "createdAt": "2026-10-15T01:06:00.794Z"
+      "createdAt": "2026-10-15T01:06:00.794Z",
+      "message": "QA Production Tester (+91 9988776655) requested Patna ➔ Gaya (Prime Sedan). Total Fare: ₹1549.",
+      "title": "New Cab Booking: OTB-2026-1638",
+      "type": "NEW_BOOKING_REQUEST"
     },
     {
       "id": "NOTIF_BOOK_1792026297157",
@@ -484,6 +803,19 @@
       "note": "Operator logged out",
       "ip": "103.51.149.111",
       "timestamp": "2026-10-13T09:04:53.790Z"
+    },
+    {
+      "id": "audit_1791889533099_3670",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T11:05:33.099Z"
     },
     {
       "id": "audit_1791889370117_6051",
@@ -629,7 +961,7 @@
       "timestamp": "2026-10-13T09:22:14.916Z"
     },
     {
-      "id": "audit_1791889533099_3670",
+      "id": "audit_1791894952881_7351",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -639,7 +971,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T11:05:33.099Z"
+      "timestamp": "2026-10-13T12:35:52.883Z"
     },
     {
       "id": "audit_1791882287223_4351",
@@ -785,7 +1117,7 @@
       "timestamp": "2026-10-13T07:14:25.602Z"
     },
     {
-      "id": "audit_1791897913920_8857",
+      "id": "audit_1791899748284_9643",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -793,9 +1125,22 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T13:25:13.920Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T13:55:48.284Z"
+    },
+    {
+      "id": "audit_1792029974182_6936",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-15T02:06:14.182Z"
     },
     {
       "id": "audit_1791972652869_6246",
@@ -928,19 +1273,6 @@
       "timestamp": "2026-10-13T16:14:56.251Z"
     },
     {
-      "id": "audit_1791899748284_9643",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T13:55:48.284Z"
-    },
-    {
       "id": "audit_1791875664839_1489",
       "actor": "admin",
       "role": "owner",
@@ -952,6 +1284,19 @@
       "note": "Failed credentials login from IP 127.0.0.1",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-13T07:14:24.840Z"
+    },
+    {
+      "id": "audit_1791897913920_8857",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T13:25:13.920Z"
     },
     {
       "id": "audit_1791897911780_9516",
@@ -1082,19 +1427,6 @@
       "note": "Failed credentials login from IP 127.0.0.1",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-13T12:36:48.911Z"
-    },
-    {
-      "id": "audit_1791894952881_7351",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T12:35:52.883Z"
     },
     {
       "id": "audit_1791861793247_4658",
@@ -1721,13 +2053,13 @@
       "timestamp": "2026-10-13T05:40:45.973Z"
     },
     {
-      "id": "AUD_1792026360794",
+      "id": "AUD_1792030066487",
       "entity": "BOOKING",
-      "entityId": "OTB-2026-1638",
+      "entityId": "OTB-2026-7772",
       "action": "CREATE_REQUEST",
       "actor": "+91 9988776655",
       "details": "Patna → Gaya for ₹1549 (Cash on Ride (Zero Advance))",
-      "createdAt": "2026-10-15T01:06:00.794Z"
+      "createdAt": "2026-10-15T02:07:46.487Z"
     }
   ],
   "sessions": [
@@ -1981,6 +2313,13 @@
       "phone": "+91 6206494214",
       "role": "customer",
       "userId": "usr_6206494214"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlMGUyNDVhMjgxMTJjMzNjZGFmOWVmMjI4NzZlNzBmNyIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5MjAzMDAwNCwiZXhwIjoxNzkyMDU4ODA0fQ.EMncLsm_aLiSU_TZOCKUYNOI5YQojLdTlX7tuEGRaPw",
+      "adminId": "adm_admin",
+      "username": "admin",
+      "role": "owner",
+      "createdAt": "2026-10-15T02:06:44.272Z"
     }
   ],
   "settings": {

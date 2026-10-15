@@ -177,7 +177,7 @@
       <!-- Desktop Nav Links -->
       <ul class="nav-links">
         <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Services</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">Routes</a></li>
+        <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">Fares &amp; Routes</a></li>
         <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
         <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
         <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
@@ -1146,27 +1146,15 @@
         </div>
       </div>
 
-      <!-- Popular Intercity Routes Footer Block -->
-      <div class="footer-routes-block">
-        <div class="footer-routes-title">POPULAR ONE-WAY OUTSTATION ROUTES ACROSS BIHAR</div>
-        <div class="footer-routes-grid" id="footer-routes-list">
-          <a href="/patna-to-gaya-cab" class="footer-route-pill" title="Patna to Gaya One-Way Cab">
-            <span class="frp-route">Patna ➔ Gaya</span>
-            <span class="frp-price">from ₹1,698</span>
-          </a>
-          <a href="/patna-to-muzaffarpur-cab" class="footer-route-pill" title="Patna to Muzaffarpur One-Way Cab">
-            <span class="frp-route">Patna ➔ Muzaffarpur</span>
-            <span class="frp-price">from ₹1,698</span>
-          </a>
-          <a href="/patna-to-darbhanga-cab" class="footer-route-pill" title="Patna to Darbhanga One-Way Cab">
-            <span class="frp-route">Patna ➔ Darbhanga</span>
-            <span class="frp-price">from ₹2,998</span>
-          </a>
-          <a href="/patna-to-bhagalpur-cab" class="footer-route-pill" title="Patna to Bhagalpur One-Way Cab">
-            <span class="frp-route">Patna ➔ Bhagalpur</span>
-            <span class="frp-price">from ₹4,398</span>
-          </a>
-        </div>
+      <!-- Popular Intercity Routes Footer Block (Tap to View) -->
+      <div class="footer-routes-block" style="text-align: center; padding: 24px 0 12px;">
+        <div class="footer-routes-title" style="margin-bottom: 6px;">POPULAR ONE-WAY OUTSTATION ROUTES ACROSS BIHAR</div>
+        <p style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 14px;">Fixed, transparent one-way fares across all 38 districts with zero return charges.</p>
+        <button type="button" class="btn-nav-outline" onclick="window.openRoutesModal()" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; padding: 9px 24px; border-radius: 9999px; font-size: 13.5px;" title="Tap to view outstation routes & fares">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>Tap to View Routes &amp; Fares</span>
+          <span>➔</span>
+        </button>
       </div>
 
       <!-- Bottom Copyright & Social Row -->

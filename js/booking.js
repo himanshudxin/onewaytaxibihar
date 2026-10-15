@@ -1247,15 +1247,26 @@ class BookingManager {
     const btn = document.getElementById("btn-check-fare");
     if (!btn) return;
 
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawVal = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    const isValid = rawVal.length === 10 && /^[6-9]\d{9}$/.test(rawVal);
+
     btn.classList.add("ready");
-    btn.setAttribute("title", "Check live fares & availability across Bihar");
-    btn.innerHTML = `
-      <span>Check Fares &amp; Availability</span>
-      <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
-      </svg>
-    `;
+    if (isValid) {
+      btn.setAttribute("title", "Check live fares & availability across Bihar");
+      btn.innerHTML = `
+        <span>Check Fares &amp; Availability</span>
+        <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      `;
+    } else {
+      btn.setAttribute("title", "Please enter 10-digit mobile number to view fares");
+      btn.innerHTML = `
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Enter Mobile to View Fares</span>
+      `;
+    }
   }
 
   handleCheckFare(silent = false) {
@@ -1301,7 +1312,7 @@ class BookingManager {
       if (dropInput) dropInput.value = "Gaya (Bodh Gaya) (गया), Bihar";
     }
 
-    // 3. Optional Phone capture at fare inquiry (silently captures inquiry if entered)
+    // 3. Mandatory Phone validation to view fares
     let phoneToRecord = "";
     if (phoneInput && phoneInput.value) {
       phoneToRecord = phoneInput.value.trim().replace(/\D/g, "");
@@ -1323,13 +1334,36 @@ class BookingManager {
       phoneToRecord = phoneToRecord.slice(-10);
     }
 
-    if (phoneToRecord && phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord)) {
-      const clean10 = phoneToRecord;
-      this.userPhone = clean10;
-      this.passengerDetails.phone = `+91 ${clean10}`;
-      try { localStorage.setItem("oneway_fare_phone", clean10); } catch (e) {}
-      this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
+    const isValidIndianPhone = Boolean(phoneToRecord && phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord));
+    if (!isValidIndianPhone) {
+      if (!silent) {
+        const phoneGroup = document.getElementById("phone-check-group");
+        if (phoneGroup) {
+          phoneGroup.classList.add("shake-error");
+          phoneGroup.style.borderColor = "#ef4444";
+          phoneGroup.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.25)";
+          phoneGroup.scrollIntoView({ behavior: "smooth", block: "center" });
+          setTimeout(() => {
+            phoneGroup.classList.remove("shake-error");
+          }, 600);
+        }
+        if (phoneInput) {
+          phoneInput.focus();
+        }
+        if (typeof window.showToast === "function") {
+          window.showToast("Please enter your 10-digit mobile number to view fares & cab availability", "warning");
+        } else {
+          alert("Please enter your 10-digit mobile number to view fares & cab availability");
+        }
+      }
+      return false;
     }
+
+    const clean10 = phoneToRecord;
+    this.userPhone = clean10;
+    this.passengerDetails.phone = `+91 ${clean10}`;
+    try { localStorage.setItem("oneway_fare_phone", clean10); } catch (e) {}
+    this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
 
     // 4. Calculate fares & route distance
     try {
@@ -1777,6 +1811,23 @@ class BookingManager {
     if (dInput) dInput.value = `${to.name}${to.district && to.district !== to.name ? ', ' + to.district : ''} (${to.hindiName || ''}), ${to.state}`;
 
     window.closeAllModals();
+
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawVal = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    if (!rawVal || rawVal.length !== 10 || !/^[6-9]\d{9}$/.test(rawVal)) {
+      const phoneGroup = document.getElementById("phone-check-group");
+      if (phoneGroup) {
+        phoneGroup.scrollIntoView({ behavior: "smooth", block: "center" });
+        phoneGroup.classList.add("shake-error");
+        setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
+      }
+      if (phoneInput) phoneInput.focus();
+      if (typeof window.showToast === "function") {
+        window.showToast(`Selected ${from.name} → ${to.name}. Please enter 10-digit mobile number to view fares.`, "info");
+      }
+      return;
+    }
+
     this.handleCheckFare();
   }
 
@@ -1785,8 +1836,8 @@ class BookingManager {
     if (!container) return;
 
     container.innerHTML = OTB_POPULAR_ROUTES.slice(0, 6).map(r => `
-      <button type="button" class="quick-route-chip" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-        ${r.from} → ${r.to} • ₹${r.baseFareHatchback}
+      <button type="button" class="quick-route-chip" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')" title="Click to view fares for ${r.from} to ${r.to}">
+        ${r.from} → ${r.to} • Check Fare
       </button>
     `).join("");
   }

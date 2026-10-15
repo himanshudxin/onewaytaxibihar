@@ -1209,17 +1209,27 @@ window.openRoutesModal = () => {
       r.highway.toLowerCase().includes(q)
     );
 
+    const storedPhone = (localStorage.getItem('oneway_fare_phone') || (window.currentUser ? window.currentUser.phone : '') || '').replace(/\D/g, '');
+    const hasPhone = Boolean(storedPhone.length === 10 && /^[6-9]\d{9}$/.test(storedPhone));
+
     list.innerHTML = matches.map(r => `
       <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
           <h4 style="font-size: 15px; font-weight: 800; color: var(--owc-text);">${r.from} → ${r.to}</h4>
-          <span style="font-size: 16px; font-weight: 900; color: var(--owc-primary);">₹${r.baseFareHatchback}</span>
+          ${hasPhone ? `
+            <span style="font-size: 16px; font-weight: 900; color: var(--owc-primary);">₹${r.baseFareHatchback}</span>
+          ` : `
+            <span style="font-size: 12.5px; font-weight: 800; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px; background: rgba(245, 158, 11, 0.12); padding: 2px 8px; border-radius: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Fare Locked</span>
+            </span>
+          `}
         </div>
         <div style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 12px;">
-          ${r.distanceKm} KM • ${r.duration} • Toll ₹${r.toll} included
+          ${r.distanceKm} KM • ${r.duration} • Toll included • Zero return charges
         </div>
         <button type="button" class="btn-select-cab" style="padding: 8px 14px; font-size: 12.5px;" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-          Book This Route
+          ${hasPhone ? 'Book This Route' : 'Unlock &amp; View Fare'}
         </button>
       </div>
     `).join("");

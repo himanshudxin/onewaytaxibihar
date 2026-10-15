@@ -229,6 +229,56 @@
         box-sizing: border-box !important;
       }
     }
+
+    /* Unlock Modal Overlay & Gate Styling */
+    .unlock-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      animation: unlockFadeIn 0.25s ease-out;
+    }
+    .unlock-modal-dialog {
+      background: var(--owc-card-bg);
+      border: 1px solid var(--owc-border);
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 28px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      box-sizing: border-box;
+      animation: unlockScaleUp 0.25s ease-out;
+    }
+    .unlock-badge-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    @keyframes unlockFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes unlockScaleUp {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 
@@ -316,6 +366,37 @@
     </div>
   </main>
 
+  <!-- Modal Gate to Unlock Fares -->
+  <div class="unlock-modal-overlay" id="unlock-fares-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="unlock-modal-title">
+    <div class="unlock-modal-dialog">
+      <div class="unlock-badge-circle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h2 id="unlock-modal-title" style="font-size: 20px; font-weight: 850; color: var(--owc-text); margin: 10px 0 6px;">Unlock Live Fares &amp; Rates</h2>
+      <p style="font-size: 13px; color: var(--owc-text-muted); line-height: 1.5; margin: 0 auto 18px; max-width: 380px;">
+        Please enter your 10-digit mobile number to view transparent, all-inclusive outstation cab rates with zero return charges.
+      </p>
+
+      <form id="unlock-fare-form" onsubmit="window.submitUnlockPhone(event)">
+        <div class="phone-input-inline-wrap" id="unlock-phone-wrap" style="display: flex; align-items: center; border: 2px solid var(--owc-primary); border-radius: 12px; background: var(--owc-surface); padding: 4px 10px; margin-bottom: 8px;">
+          <span style="font-size: 14px; font-weight: 800; color: var(--owc-text); display: inline-flex; align-items: center; gap: 4px; padding-right: 8px; border-right: 1px solid var(--owc-border);">
+            🇮🇳 +91
+          </span>
+          <input type="tel" id="unlock-modal-phone" maxlength="10" placeholder="Enter 10-digit mobile number" style="width: 100%; border: none; background: transparent; color: var(--owc-text); font-size: 16px; font-weight: 750; padding: 10px 10px; outline: none;" inputmode="numeric" autofocus required>
+        </div>
+        <div id="unlock-phone-error" style="color: #ef4444; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: none;"></div>
+        <button type="submit" class="btn-select-cab" style="width: 100%; height: 48px; font-size: 15px; font-weight: 850; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; margin-top: 8px; background: linear-gradient(135deg, var(--owc-primary) 0%, #0070f3 100%);">
+          <span>Unlock &amp; View All Fares</span>
+          <span>➔</span>
+        </button>
+      </form>
+
+      <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-top: 14px; text-align: center;">
+        🔒 100% Privacy • No Spam Guarantee • 24x7 Patna Dispatch Desk
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer-main" style="margin-top: 40px; padding: 32px 0 24px;">
     <div class="container">
@@ -365,7 +446,18 @@
       const pickupDate = trip?.pickupDate || urlParams.get('date') || new Date().toISOString().split('T')[0];
       const displayDate = trip?.displayDate || pickupDate;
       const pickupTime = trip?.pickupTime || urlParams.get('time') || '10:00 AM';
-      const phone = trip?.phone || urlParams.get('phone') || '';
+
+      // Check phone number existence & validity (Mandatory gate to view fares)
+      let rawPhone = (trip?.phone || urlParams.get('phone') || '').replace(/\D/g, '');
+      if (!rawPhone) {
+        try {
+          rawPhone = (localStorage.getItem('oneway_fare_phone') || '').replace(/\D/g, '');
+        } catch (e) {}
+      }
+      if (rawPhone.length > 10) rawPhone = rawPhone.slice(-10);
+
+      let isUnlocked = Boolean(rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone));
+      let currentPhone = isUnlocked ? rawPhone : '';
 
       // Update UI Header (Clean display names to avoid mobile overflow)
       const cleanOrigin = (originName || 'Patna').split('(')[0].split(',')[0].trim();
@@ -419,11 +511,11 @@
         pickupDate,
         displayDate,
         pickupTime,
-        phone
+        phone: currentPhone
       };
       sessionStorage.setItem('otb_trip', JSON.stringify(cleanTrip));
 
-      // 4. Render Fleet Cards
+      // 4. Render Fleet Cards (Locked if phone not entered)
       const container = document.getElementById('cabs-grid');
       const fleetList = (typeof OTB_FLEET !== 'undefined') ? OTB_FLEET : [
         { id: "hatchback", category: "Go Hatchback", badge: "Budget Outstation", models: "WagonR, Tiago", seats: 4, luggage: "2 Bags", ac: "100% AC", ratePerKm: 21.0, rating: 4.3, description: "Economical AC ride for up to 4 passengers with light luggage." },
@@ -433,53 +525,32 @@
         { id: "innova_crysta", category: "Toyota Innova Crysta", badge: "VIP Luxury", models: "Innova Crysta", seats: 7, luggage: "6-7 Bags", ac: "Triple Row AC", ratePerKm: 44.0, rating: 4.3, description: "Supreme highway stability and VIP recliner seats for long trips." }
       ];
 
-      container.innerHTML = fleetList.map(fleet => {
-        let baseFare = distanceKm * fleet.ratePerKm;
-        baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
-        if (tripType === 'roundtrip') baseFare *= 1.88;
-        const finalPrice = Math.round(baseFare);
-        const savings = Math.round(baseFare * 0.95);
+      let pendingCabId = null;
 
-        let carSvg = '';
-        if (fleet.id === 'suv' || fleet.id === 'innova_crysta') {
-          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-4c0-.9-.7-1.7-1.5-1.9L16 9.5 13 6H5c-.6 0-1.1.4-1.4.9L2.1 11c-.1.3-.1.7-.1 1v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14M10 6v5M14 6v5"/></svg>`;
-        } else if (fleet.id === 'sedan' || fleet.id === 'sedan_prime') {
-          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H6c-.6 0-1.1.4-1.4.9l-1.5 2.8C3.1 11 3 11.5 3 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14"/></svg>`;
-        } else {
-          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3.5c0-.9-.7-1.6-1.5-1.8L16 10l-2-3H6c-.6 0-1.1.4-1.4.9l-2 3.1C2.3 11.4 2 11.9 2 12.5v3.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h13"/></svg>`;
-        }
+      function renderFleetCards() {
+        container.innerHTML = fleetList.map(fleet => {
+          let baseFare = distanceKm * fleet.ratePerKm;
+          baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+          if (tripType === 'roundtrip') baseFare *= 1.88;
+          const finalPrice = Math.round(baseFare);
+          const savings = Math.round(baseFare * 0.95);
 
-        return `
-          <div class="cab-tier-card" style="display:flex; flex-direction:column; justify-content:space-between;">
-            <div>
-              <span class="cab-ribbon-tag">${fleet.badge}</span>
-              <div class="cab-card-top" style="margin-top: 14px;">
-                <div class="cab-header-info">
-                  <h3>${fleet.category}</h3>
-                  <div class="cab-models-sub">${fleet.models}</div>
-                </div>
-                <div class="cab-icon-hero">
-                  ${carSvg}
-                </div>
-              </div>
+          let carSvg = '';
+          if (fleet.id === 'suv' || fleet.id === 'innova_crysta') {
+            carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-4c0-.9-.7-1.7-1.5-1.9L16 9.5 13 6H5c-.6 0-1.1.4-1.4.9L2.1 11c-.1.3-.1.7-.1 1v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14M10 6v5M14 6v5"/></svg>`;
+          } else if (fleet.id === 'sedan' || fleet.id === 'sedan_prime') {
+            carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H6c-.6 0-1.1.4-1.4.9l-1.5 2.8C3.1 11 3 11.5 3 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14"/></svg>`;
+          } else {
+            carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3.5c0-.9-.7-1.6-1.5-1.8L16 10l-2-3H6c-.6 0-1.1.4-1.4.9l-2 3.1C2.3 11.4 2 11.9 2 12.5v3.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h13"/></svg>`;
+          }
 
-              <div class="cab-specs-chips">
-                <span class="cab-spec-chip">${fleet.seats} Seats</span>
-                <span class="cab-spec-chip">${fleet.luggage}</span>
-                <span class="cab-spec-chip">${fleet.ac}</span>
-                <span class="cab-spec-chip">★ ${fleet.rating}</span>
-              </div>
-
-              <p style="font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.45; margin-bottom: 14px;">
-                ${fleet.description}
-              </p>
-            </div>
-
-            <div>
+          let priceContent = '';
+          if (isUnlocked) {
+            priceContent = `
               <div class="cab-price-container">
                 <div class="cab-price-row">
                   <div class="cab-price-main">₹${finalPrice.toLocaleString('en-IN')}</div>
-                  <div class="cab-tax-note">All Inclusive (Tolls, Fastag & GST)</div>
+                  <div class="cab-tax-note">All Inclusive (Tolls, Fastag &amp; GST)</div>
                 </div>
                 <span class="cab-savings-pill">Saved ~₹${savings.toLocaleString('en-IN')} vs Return Taxi</span>
               </div>
@@ -487,12 +558,154 @@
               <button type="button" class="btn-select-cab" onclick="selectCabAndProceed('${fleet.id}', '${fleet.category}', '${fleet.models}', ${finalPrice})">
                 Select &amp; Proceed ➔
               </button>
+            `;
+          } else {
+            priceContent = `
+              <div class="cab-price-container">
+                <div class="cab-price-row">
+                  <div class="cab-price-main locked-price" style="display: flex; align-items: center; gap: 8px; font-size: 19px; color: #f59e0b; font-weight: 850;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span>Fare Locked</span>
+                  </div>
+                  <div class="cab-tax-note">Enter phone number to view price</div>
+                </div>
+                <span class="cab-savings-pill" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">
+                  🔒 Discounted Highway Rate Available
+                </span>
+              </div>
+
+              <button type="button" class="btn-select-cab" onclick="window.openUnlockModal('${fleet.id}')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #000; font-weight: 850; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                Unlock Fare &amp; Select
+              </button>
+            `;
+          }
+
+          return `
+            <div class="cab-tier-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <span class="cab-ribbon-tag">${fleet.badge}</span>
+                <div class="cab-card-top" style="margin-top: 14px;">
+                  <div class="cab-header-info">
+                    <h3>${fleet.category}</h3>
+                    <div class="cab-models-sub">${fleet.models}</div>
+                  </div>
+                  <div class="cab-icon-hero">
+                    ${carSvg}
+                  </div>
+                </div>
+
+                <div class="cab-specs-chips">
+                  <span class="cab-spec-chip">${fleet.seats} Seats</span>
+                  <span class="cab-spec-chip">${fleet.luggage}</span>
+                  <span class="cab-spec-chip">${fleet.ac}</span>
+                  <span class="cab-spec-chip">★ ${fleet.rating}</span>
+                </div>
+
+                <p style="font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.45; margin-bottom: 14px;">
+                  ${fleet.description}
+                </p>
+              </div>
+
+              <div>
+                ${priceContent}
+              </div>
             </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      }
+
+      renderFleetCards();
+
+      // Modal & Gate Controller
+      window.openUnlockModal = function (cabId = null) {
+        pendingCabId = cabId;
+        const modal = document.getElementById('unlock-fares-modal');
+        const phoneInput = document.getElementById('unlock-modal-phone');
+        const errorBox = document.getElementById('unlock-phone-error');
+        if (errorBox) errorBox.style.display = 'none';
+        if (modal) modal.style.display = 'flex';
+        if (phoneInput) {
+          setTimeout(() => phoneInput.focus(), 150);
+        }
+      };
+
+      window.submitUnlockPhone = function (e) {
+        if (e) e.preventDefault();
+        const phoneInput = document.getElementById('unlock-modal-phone');
+        const errorBox = document.getElementById('unlock-phone-error');
+        const phoneWrap = document.getElementById('unlock-phone-wrap');
+
+        const val = (phoneInput?.value || '').replace(/\D/g, '');
+        if (val.length !== 10 || !/^[6-9]\d{9}$/.test(val)) {
+          if (errorBox) {
+            errorBox.textContent = 'Please enter a valid 10-digit Indian mobile number starting with 6-9';
+            errorBox.style.display = 'block';
+          }
+          if (phoneWrap) {
+            phoneWrap.style.borderColor = '#ef4444';
+            setTimeout(() => { phoneWrap.style.borderColor = ''; }, 2000);
+          }
+          if (phoneInput) phoneInput.focus();
+          return false;
+        }
+
+        isUnlocked = true;
+        currentPhone = val;
+        try {
+          localStorage.setItem('oneway_fare_phone', val);
+        } catch (err) {}
+
+        cleanTrip.phone = val;
+        sessionStorage.setItem('otb_trip', JSON.stringify(cleanTrip));
+
+        // Background lead capture
+        fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cleanPhone: val,
+            phone: '+91 ' + val,
+            passengerName: 'Fare Unlock Visitor',
+            originCity: cleanOrigin,
+            destCity: cleanDest,
+            tripType: tripType,
+            pickupDate: pickupDate,
+            pickupTime: pickupTime,
+            distanceKm: distanceKm,
+            source: 'Cabs Page Phone Gate Unlock'
+          })
+        }).catch(() => {});
+
+        const modal = document.getElementById('unlock-fares-modal');
+        if (modal) modal.style.display = 'none';
+
+        renderFleetCards();
+
+        if (pendingCabId) {
+          const matched = fleetList.find(f => f.id === pendingCabId);
+          if (matched) {
+            let baseFare = distanceKm * matched.ratePerKm;
+            baseFare = Math.max(baseFare, matched.id === 'hatchback' ? 1698 : matched.id === 'sedan' ? 2198 : 3398);
+            if (tripType === 'roundtrip') baseFare *= 1.88;
+            selectCabAndProceed(matched.id, matched.category, matched.models, Math.round(baseFare));
+            return;
+          }
+        }
+      };
+
+      // Auto-open phone gate modal if not unlocked
+      if (!isUnlocked) {
+        setTimeout(() => {
+          window.openUnlockModal();
+        }, 400);
+      }
 
       window.selectCabAndProceed = function (cabId, category, models, price) {
+        if (!isUnlocked) {
+          window.openUnlockModal(cabId);
+          return;
+        }
         const selected = {
           cabId,
           category,

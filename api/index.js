@@ -871,26 +871,37 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Valid 10-digit mobile number required.' });
       }
 
-      if (!activeVerificationCodes.has(cleanPhone)) {
-        return sendJson(400, { success: false, message: 'No active verification code found. Please request a new code.' });
-      }
+      // Master Test OTP Override (Req: Fixed OTP 969696)
+      const isMasterTestOtp = (inputCode === '969696');
 
-      const activeRecord = activeVerificationCodes.get(cleanPhone);
-      if (Date.now() > activeRecord.expiresAt) {
-        activeVerificationCodes.delete(cleanPhone);
-        return sendJson(400, { success: false, message: 'Verification code expired. Please request a new code.' });
-      }
-
-      if (activeRecord.code !== inputCode) {
-        activeRecord.attempts++;
-        if (activeRecord.attempts >= 5) {
-          activeVerificationCodes.delete(cleanPhone);
-          return sendJson(400, { success: false, message: 'Too many incorrect attempts. Please request a new code.' });
+      if (!isMasterTestOtp) {
+        if (!activeVerificationCodes.has(cleanPhone)) {
+          return sendJson(400, { success: false, message: 'No active verification code found. Please request a new code.' });
         }
-        return sendJson(400, { success: false, message: 'Invalid verification code. Please check and re-enter.' });
+
+        const activeRecord = activeVerificationCodes.get(cleanPhone);
+        if (Date.now() > activeRecord.expiresAt) {
+          activeVerificationCodes.delete(cleanPhone);
+          return sendJson(400, { success: false, message: 'Verification code expired. Please request a new code.' });
+        }
+
+        if (activeRecord.code !== inputCode) {
+          activeRecord.attempts++;
+          if (activeRecord.attempts >= 5) {
+            activeVerificationCodes.delete(cleanPhone);
+            return sendJson(400, { success: false, message: 'Too many incorrect attempts. Please request a new code.' });
+          }
+          return sendJson(400, { success: false, message: 'Invalid verification code. Please check and re-enter.' });
+        }
+
+        activeVerificationCodes.delete(cleanPhone);
+      } else {
+        if (activeVerificationCodes.has(cleanPhone)) {
+          activeVerificationCodes.delete(cleanPhone);
+        }
       }
 
-      activeVerificationCodes.delete(cleanPhone);
+      const activeRecord = activeVerificationCodes.get(cleanPhone) || {};
       const finalName = name || activeRecord.name || 'Valued Passenger';
 
       let user = (db.users || []).find(u => u.phone.replace(/\D/g, '').slice(-10) === cleanPhone);

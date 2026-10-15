@@ -18,7 +18,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="/css/booking-platform.css">
   
@@ -58,19 +58,22 @@
         <li><a href="/my-bookings">My Bookings</a></li>
         <li><a href="/admin" style="color: #64748b; font-size: 0.9rem;">Staff Login</a></li>
       </ul>
-      <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+      <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--app-border);">
         <a href="tel:+918002141816" class="btn-primary-action" style="height: 44px; text-decoration: none; font-size: 0.95rem;">
-          ☎ Call Dispatch Desk
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Dispatch Desk
         </a>
       </div>
     </div>
   </div>
 
-  <!-- HEADER (Req. 2 & 20) -->
+  <!-- HEADER -->
   <header class="app-header">
     <div class="app-header-inner">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <button class="btn-menu-trigger" id="drawerOpenBtn" aria-label="Open menu">☰</button>
+        <button class="btn-menu-trigger" id="drawerOpenBtn" aria-label="Open menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <a href="/" class="app-brand">
           <span>ONEWAYTAXIBIHAR</span>
         </a>
@@ -86,8 +89,14 @@
       </nav>
 
       <div class="app-header-actions">
+        <!-- DARK MODE TOGGLE (Req. 1) -->
+        <button type="button" class="btn-theme-toggle" id="themeToggleBtn" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <!-- DISPATCH HELPLINE -->
         <a href="tel:+918002141816" class="btn-header-call" title="24x7 Booking Helpline">
-          <span>☎</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span style="font-weight: 700;">+91 80021 41816</span>
         </a>
       </div>
@@ -97,29 +106,57 @@
   <!-- MAIN APP CONTAINER -->
   <main class="app-main">
     
-    <!-- SHORT HERO HEADER (Req. 2) -->
+    <!-- PRESTIGIOUS BUILT IN BIHAR BADGE (Req. 5) -->
+    <div class="hero-pride-badge-wrap">
+      <div class="hero-pride-monumental-badge" title="Built with pride in Bihar, serving all of Bharat">
+        <span class="pride-tricolor-accent"></span>
+        <span class="pride-text-prefix">Built in</span>
+        <span class="pride-bihar-hindi">बिहार</span>
+        <span class="pride-emblem-icon">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
+        <span class="pride-text-mid">for</span>
+        <span class="pride-bharat-bold">BHARAT</span>
+      </div>
+    </div>
+
+    <!-- SHORT HERO HEADER -->
     <div class="hero-compact">
       <h1 class="hero-tagline">One-way travel,<br>without return fare.</h1>
       <p class="hero-subtitle">Pay only for the distance you travel across Bihar</p>
     </div>
 
-    <!-- BOOKING CARD (Req. 2, 3, 4) -->
+    <!-- BOOKING CARD -->
     <div class="booking-card" id="bookingCard">
       <form id="heroBookingForm" autocomplete="off">
         <div class="input-block-container">
           
           <!-- Swap button -->
-          <button type="button" class="btn-swap-locations" id="btnSwap" title="Swap pickup and drop" aria-label="Swap pickup and drop">⇅</button>
+          <button type="button" class="btn-swap-locations" id="btnSwap" title="Swap pickup and drop" aria-label="Swap pickup and drop">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 10 12 5 17 10"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+          </button>
 
           <!-- FROM LOCATION -->
           <div class="location-input-group">
-            <label class="input-label-chip" for="inputOrigin">
-              <span>📍</span> FROM (Pickup City / Hub)
-            </label>
+            <div class="input-label-chip">
+              <span style="display:flex; align-items:center; gap:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                FROM (Pickup Location)
+              </span>
+              <span id="autoLocBadge" class="auto-loc-badge" style="display:none;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                GPS Detected
+              </span>
+            </div>
             <div class="input-field-wrapper">
-              <span class="input-icon-left">🚗</span>
+              <span class="input-icon-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
               <input type="text" id="inputOrigin" name="origin" placeholder="Search pickup location (e.g. Patna)" required autocomplete="off">
               <button type="button" class="btn-input-clear" id="btnClearOrigin">&times;</button>
+              <button type="button" class="btn-detect-gps" id="btnDetectGps" title="Detect Current Location" aria-label="Detect Current Location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg>
+              </button>
             </div>
             <div class="autocomplete-dropdown" id="dropdownOrigin"></div>
           </div>
@@ -127,33 +164,38 @@
           <!-- TO LOCATION -->
           <div class="location-input-group">
             <label class="input-label-chip" for="inputDest">
-              <span>📍</span> TO (Drop City / Hub)
+              <span style="display:flex; align-items:center; gap:4px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                TO (Drop Location)
+              </span>
             </label>
             <div class="input-field-wrapper">
-              <span class="input-icon-left">🏁</span>
+              <span class="input-icon-left">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              </span>
               <input type="text" id="inputDest" name="dest" placeholder="Search drop location (e.g. Gaya)" required autocomplete="off">
               <button type="button" class="btn-input-clear" id="btnClearDest">&times;</button>
             </div>
             <div class="autocomplete-dropdown" id="dropdownDest"></div>
           </div>
 
-          <!-- DATE + TIME (Req. 2) -->
+          <!-- DATE + TIME -->
           <div class="datetime-grid">
             <div>
-              <label class="input-label-chip" for="inputDate">
-                <span>📅</span> DATE
-              </label>
+              <label class="input-label-chip" for="inputDate">DATE</label>
               <div class="input-field-wrapper">
-                <span class="input-icon-left">🗓️</span>
+                <span class="input-icon-left">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </span>
                 <input type="date" id="inputDate" name="pickupDate" required>
               </div>
             </div>
             <div>
-              <label class="input-label-chip" for="selectTime">
-                <span>🕐</span> TIME
-              </label>
+              <label class="input-label-chip" for="selectTime">TIME</label>
               <div class="input-field-wrapper">
-                <span class="input-icon-left">⏰</span>
+                <span class="input-icon-left">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
                 <select id="selectTime" name="pickupTime" required>
                   <option value="06:00 AM">06:00 AM</option>
                   <option value="07:00 AM">07:00 AM</option>
@@ -173,11 +215,9 @@
             </div>
           </div>
 
-          <!-- MOBILE NUMBER (Req. 4 - Validated before fare, NO OTP required to view fare) -->
+          <!-- MOBILE NUMBER (Required before fare, NO OTP required to view fare) -->
           <div>
-            <label class="input-label-chip" for="inputPhone">
-              <span>📱</span> MOBILE NUMBER (To View Fare)
-            </label>
+            <label class="input-label-chip" for="inputPhone">MOBILE NUMBER</label>
             <div class="mobile-input-wrapper">
               <span class="mobile-prefix-badge">+91</span>
               <input type="tel" id="inputPhone" name="phone" placeholder="Enter 10-digit mobile" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}" required>
@@ -187,28 +227,36 @@
           <!-- SUBMIT CTA -->
           <button type="submit" class="btn-primary-action" id="btnCheckFare">
             <span>CHECK FARE</span>
-            <span>→</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
 
         </div>
       </form>
 
-      <!-- TRUST POINTS (Req. 2) -->
+      <!-- TRUST POINTS -->
       <div class="trust-points-row">
-        <div class="trust-item"><span class="check-icon">✓</span> Fixed pricing</div>
-        <div class="trust-item"><span class="check-icon">✓</span> Verified drivers</div>
-        <div class="trust-item"><span class="check-icon">✓</span> 24×7 support</div>
+        <div class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Fixed pricing
+        </div>
+        <div class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Verified drivers
+        </div>
+        <div class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          24×7 support
+        </div>
       </div>
     </div>
 
-    <!-- POPULAR ROUTES (Req. 2 & 21) -->
+    <!-- POPULAR ROUTES -->
     <div class="section-card">
       <div class="section-title-row">
         <h2 class="section-title">Popular Routes</h2>
         <a href="/routes" class="section-view-all">View all routes →</a>
       </div>
       <div class="popular-routes-grid" id="popularRoutesContainer">
-        <!-- Rendered dynamically from backend with authoritative fares -->
         <a href="/fare?from=Patna&to=Gaya" class="popular-route-row" data-from="Patna" data-to="Gaya">
           <div class="route-pair">Patna <span class="route-arrow">→</span> Gaya</div>
           <div class="route-fare-badge">₹1,549</div>
@@ -228,17 +276,29 @@
       </div>
     </div>
 
-    <!-- WHY CHOOSE US (Req. 2 & 22) -->
+    <!-- WHY CHOOSE US -->
     <div class="section-card">
       <div class="section-title-row">
         <h2 class="section-title">Why choose us?</h2>
         <a href="/why-us" class="section-view-all">Learn more →</a>
       </div>
       <ul class="why-us-list">
-        <li class="why-us-item"><span class="why-check">✓</span> <strong>No return fare:</strong> Pay only for one side drop</li>
-        <li class="why-us-item"><span class="why-check">✓</span> <strong>Transparent pricing:</strong> Fuel & tolls clear, zero hidden surcharges</li>
-        <li class="why-us-item"><span class="why-check">✓</span> <strong>Verified drivers:</strong> Police verified commercial chauffeurs</li>
-        <li class="why-us-item"><span class="why-check">✓</span> <strong>24×7 support:</strong> Dedicated dispatch desk and active trip monitor</li>
+        <li class="why-us-item">
+          <svg class="why-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>No return fare:</strong> Pay only for one side drop</div>
+        </li>
+        <li class="why-us-item">
+          <svg class="why-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>Transparent pricing:</strong> Fuel & tolls clear, zero hidden surcharges</div>
+        </li>
+        <li class="why-us-item">
+          <svg class="why-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>Verified drivers:</strong> Police verified commercial chauffeurs</div>
+        </li>
+        <li class="why-us-item">
+          <svg class="why-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>24×7 support:</strong> Dedicated dispatch desk and active trip monitor</div>
+        </li>
       </ul>
     </div>
 
@@ -262,7 +322,7 @@
       <a href="/terms">Terms</a>
     </div>
     <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services. All rights reserved.</p>
-    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816 • Patna, Bihar</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: var(--app-text-muted);">Helpline: +91 80021 41816 • Patna, Bihar</p>
   </footer>
 
   <!-- CONTROLLERS -->
@@ -271,7 +331,15 @@
     (function () {
       'use strict';
 
-      // 1. Mobile Drawer
+      // 1. Dark Mode Toggle
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          BookingFlow.toggleTheme();
+        });
+      }
+
+      // 2. Mobile Drawer
       const drawer = document.getElementById('mobileDrawer');
       const openBtn = document.getElementById('drawerOpenBtn');
       const closeBtn = document.getElementById('drawerCloseBtn');
@@ -282,13 +350,13 @@
         if (e.target === drawer) drawer.classList.remove('active');
       });
 
-      // 2. Date Setup (Default Today, Min Today)
+      // 3. Date Setup
       const dateInput = document.getElementById('inputDate');
       const todayStr = BookingFlow.getTodayDateString();
       dateInput.value = todayStr;
       dateInput.min = todayStr;
 
-      // 3. Autocomplete Setup
+      // 4. Autocomplete Setup
       const POPULAR_LOCATIONS = [
         { name: "Patna Airport (PAT)", type: "Airport" },
         { name: "Patna Junction", type: "Railway" },
@@ -321,33 +389,15 @@
           dropdown.innerHTML = '';
           const clean = filter.toLowerCase().trim();
 
-          // 1. "Use current location" button
           const currLocItem = document.createElement('div');
           currLocItem.className = 'autocomplete-item autocomplete-special-item';
-          currLocItem.innerHTML = '<span>📍</span> <span>Use current location</span>';
+          currLocItem.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="7"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="23"/><line x1="1" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="23" y2="12"/></svg> <span>Use current location</span>`;
           currLocItem.addEventListener('click', () => {
-            if (navigator.geolocation) {
-              input.value = "Locating...";
-              navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                  input.value = "Patna (Current Location)";
-                  dropdown.classList.remove('show');
-                  clearBtn.style.display = 'block';
-                },
-                () => {
-                  input.value = "Patna";
-                  dropdown.classList.remove('show');
-                  clearBtn.style.display = 'block';
-                }
-              );
-            } else {
-              input.value = "Patna";
-              dropdown.classList.remove('show');
-            }
+            triggerGeoLocation(true);
+            dropdown.classList.remove('show');
           });
           dropdown.appendChild(currLocItem);
 
-          // 2. Filtered list
           const matches = POPULAR_LOCATIONS.filter(loc => 
             !clean || loc.name.toLowerCase().includes(clean)
           );
@@ -355,9 +405,10 @@
           matches.forEach(loc => {
             const row = document.createElement('div');
             row.className = 'autocomplete-item';
-            row.innerHTML = `<span class="autocomplete-item-loc-icon">📍</span> <span><strong>${loc.name}</strong> <small style="color:#64748b;">(${loc.type})</small></span>`;
+            row.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--app-text-muted);"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg> <span><strong>${loc.name}</strong> <small style="color:var(--app-text-muted);">(${loc.type})</small></span>`;
             row.addEventListener('click', () => {
               input.value = loc.name;
+              input.dataset.userEdited = 'true';
               dropdown.classList.remove('show');
               clearBtn.style.display = 'block';
             });
@@ -369,6 +420,7 @@
 
         input.addEventListener('focus', () => showList(input.value));
         input.addEventListener('input', () => {
+          input.dataset.userEdited = 'true';
           showList(input.value);
           clearBtn.style.display = input.value ? 'block' : 'none';
         });
@@ -390,7 +442,7 @@
       setupAutocomplete('inputOrigin', 'dropdownOrigin', 'btnClearOrigin');
       setupAutocomplete('inputDest', 'dropdownDest', 'btnClearDest');
 
-      // 4. Swap Locations
+      // 5. Swap Locations
       const btnSwap = document.getElementById('btnSwap');
       const inputOrigin = document.getElementById('inputOrigin');
       const inputDest = document.getElementById('inputDest');
@@ -401,7 +453,36 @@
         inputDest.value = temp;
       });
 
-      // 5. Restore Saved Progress if any (Req. 15)
+      // 6. AUTO-LOCATION DETECTION (Req. 3: "fet location automatic")
+      const gpsBtn = document.getElementById('btnDetectGps');
+      const autoBadge = document.getElementById('autoLocBadge');
+
+      function triggerGeoLocation(manualClick = false) {
+        if (gpsBtn) gpsBtn.classList.add('detecting');
+        BookingFlow.autoDetectLocation((city, isGps) => {
+          if (gpsBtn) gpsBtn.classList.remove('detecting');
+          if (city) {
+            // Update if empty, not user-edited, or manual click requested
+            if (!inputOrigin.value || inputOrigin.dataset.userEdited !== 'true' || manualClick) {
+              inputOrigin.value = city;
+              document.getElementById('btnClearOrigin').style.display = 'block';
+              if (isGps) {
+                autoBadge.style.display = 'inline-flex';
+                showToast(`Auto-detected location: ${city}`);
+              }
+            }
+          }
+        });
+      }
+
+      if (gpsBtn) {
+        gpsBtn.addEventListener('click', () => triggerGeoLocation(true));
+      }
+
+      // Automatically fetch location on initial page load
+      triggerGeoLocation(false);
+
+      // 7. Restore Saved Progress if any
       const saved = BookingFlow.loadState();
       if (saved) {
         if (saved.origin) inputOrigin.value = saved.origin.name || saved.origin;
@@ -411,10 +492,9 @@
         if (saved.phone) document.getElementById('inputPhone').value = saved.phone;
       }
 
-      // Default Origin if empty
       if (!inputOrigin.value) inputOrigin.value = 'Patna';
 
-      // 6. Handle Popular Route Quick Click
+      // 8. Popular Routes Click
       document.querySelectorAll('.popular-route-row').forEach(row => {
         row.addEventListener('click', (e) => {
           e.preventDefault();
@@ -432,16 +512,17 @@
         });
       });
 
-      // 7. Form Submission (Req. 1 & Req. 4)
-      const form = document.getElementById('heroBookingForm');
-      const phoneInput = document.getElementById('inputPhone');
-
+      // 9. Toast Helper
       function showToast(msg) {
         const toast = document.getElementById('appToast');
         toast.textContent = msg;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
       }
+
+      // 10. Form Submission
+      const form = document.getElementById('heroBookingForm');
+      const phoneInput = document.getElementById('inputPhone');
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -469,7 +550,6 @@
           return;
         }
 
-        // Strict 10-digit mobile validation (Req. 4)
         if (!/^[6-9]\d{9}$/.test(phone)) {
           showToast('Please enter valid 10-digit mobile number');
           phoneInput.focus();
@@ -480,13 +560,8 @@
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span>CALCULATING...</span>';
 
-        // Save trip state in BookingFlow
         BookingFlow.saveTripSearch(origin, dest, date, time, phone);
-
-        // Fetch authoritative server fares
         await BookingFlow.fetchFares(origin, dest);
-
-        // Seamless transition to dedicated /fare page (NO OTP is requested here!)
         window.location.href = '/fare';
       });
 

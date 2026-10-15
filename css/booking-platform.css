@@ -1,9 +1,10 @@
 /*
  * OneWayTaxiBihar.com - Enterprise Cab Booking Platform Stylesheet
- * Engineered for mobile-first, sub-second interactions, zero clutter, and high conversion.
+ * Engineered for mobile-first, executive transportation UX, dark mode support, and high conversion.
  */
 
 :root {
+  /* Core Light Theme Palette */
   --app-primary: #0095f6;
   --app-primary-hover: #0084e8;
   --app-primary-dark: #0066b2;
@@ -17,6 +18,7 @@
   --app-text-light: #94a3b8;
   --app-bg: #f8fafc;
   --app-surface: #ffffff;
+  --app-surface-raised: #f1f5f9;
   --app-border: #e2e8f0;
   --app-border-focus: #0095f6;
   --app-success: #10b981;
@@ -36,6 +38,34 @@
   --shadow-btn: 0 4px 14px rgba(0, 149, 246, 0.35);
 }
 
+/* --- EXECUTIVE DARK MODE THEME (Req. 1) --- */
+[data-theme="dark"] {
+  --app-primary: #38bdf8;
+  --app-primary-hover: #60a5fa;
+  --app-primary-dark: #0284c7;
+  --app-primary-subtle: rgba(56, 189, 248, 0.14);
+  --app-accent: #fbbf24;
+  --app-accent-hover: #f59e0b;
+  --app-dark: #f8fafc;
+  --app-dark-soft: #e2e8f0;
+  --app-text: #f1f5f9;
+  --app-text-muted: #94a3b8;
+  --app-text-light: #64748b;
+  --app-bg: #090d16;
+  --app-surface: #111827;
+  --app-surface-raised: #1e293b;
+  --app-border: #1e293b;
+  --app-border-focus: #38bdf8;
+  --app-success: #34d399;
+  --app-success-subtle: rgba(52, 211, 153, 0.14);
+  --app-danger: #f87171;
+  --app-danger-subtle: rgba(239, 68, 68, 0.14);
+  
+  --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-float: 0 16px 36px rgba(0, 0, 0, 0.65);
+  --shadow-btn: 0 4px 16px rgba(56, 189, 248, 0.28);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -52,6 +82,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* --- ACCESSIBILITY & FOCUS --- */
@@ -60,17 +91,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   outline-offset: 2px;
 }
 
-/* --- APP HEADER (Req. 2 & 20) --- */
+/* --- APP HEADER --- */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #ffffff;
+  background: var(--app-surface);
   border-bottom: 1px solid var(--app-border);
   height: 60px;
   display: flex;
   align-items: center;
   padding: 0 16px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .app-header-inner {
@@ -104,6 +136,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: 0.04em;
 }
 
+[data-theme="dark"] .app-brand-badge {
+  color: #090d16;
+}
+
 .app-nav-desktop {
   display: none;
   align-items: center;
@@ -125,7 +161,28 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .app-header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+/* Dark Mode Toggle Button */
+.btn-theme-toggle {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: var(--app-bg);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-theme-toggle:hover {
+  background: var(--app-primary-subtle);
+  border-color: var(--app-primary);
+  color: var(--app-primary);
 }
 
 .btn-header-call {
@@ -139,13 +196,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-size: 0.85rem;
   padding: 8px 12px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(0, 149, 246, 0.2);
+  border: 1px solid rgba(0, 149, 246, 0.25);
   transition: all 0.2s ease;
 }
 
 .btn-header-call:hover {
   background: var(--app-primary);
   color: #ffffff;
+}
+
+[data-theme="dark"] .btn-header-call:hover {
+  color: #090d16;
 }
 
 .btn-menu-trigger {
@@ -176,7 +237,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
   z-index: 999;
   opacity: 0;
   visibility: hidden;
@@ -192,9 +254,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   position: absolute;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 290px;
   height: 100%;
-  background: #ffffff;
+  background: var(--app-surface);
   padding: 24px 20px;
   box-shadow: var(--shadow-float);
   transform: translateX(-100%);
@@ -248,14 +310,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
-/* --- PROGRESS INDICATOR (Req. 7) --- */
+/* --- PROGRESS INDICATOR --- */
 .flow-progress-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
   padding: 10px 14px;
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-sm);
   border: 1px solid var(--app-border);
   font-size: 0.75rem;
@@ -302,9 +364,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
-  background: #ffffff;
+  background: var(--app-surface);
   border: 1px solid var(--app-border);
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: var(--radius-full);
   transition: all 0.15s ease;
 }
@@ -317,7 +379,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 /* --- ROUTE SUMMARY CHIP --- */
 .route-summary-pill {
-  background: #ffffff;
+  background: var(--app-surface);
   border: 1px solid var(--app-border);
   border-radius: var(--radius-md);
   padding: 14px 16px;
@@ -325,12 +387,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-card);
 }
 
 .route-summary-cities {
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--app-dark);
 }
 
@@ -340,7 +402,97 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   margin-top: 2px;
 }
 
-/* --- HOMEPAGE HERO (Req. 2) --- */
+/* --- PRESTIGIOUS BUILT IN BIHAR BADGE (Req. 5) --- */
+.hero-pride-badge-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.hero-pride-monumental-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #090e17;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(255, 158, 44, 0.45);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 
+              0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+              0 0 25px rgba(255, 158, 44, 0.15);
+  transition: all 0.25s ease;
+  user-select: none;
+  cursor: default;
+}
+
+[data-theme="dark"] .hero-pride-monumental-badge {
+  background: #060a12;
+  border-color: rgba(255, 158, 44, 0.55);
+}
+
+.hero-pride-monumental-badge:hover {
+  transform: translateY(-1px);
+  border-color: #ff9e2c;
+  box-shadow: 0 6px 24px rgba(255, 158, 44, 0.3);
+}
+
+.pride-tricolor-accent {
+  width: 3.5px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(
+    180deg, 
+    #ff9933 0%, 
+    #ff9933 33.3%, 
+    #ffffff 33.3%, 
+    #ffffff 66.6%, 
+    #138808 66.6%, 
+    #138808 100%
+  );
+  flex-shrink: 0;
+}
+
+.pride-text-prefix {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1;
+}
+
+.pride-bihar-hindi {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #ff9e2c;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  display: inline-block;
+}
+
+.pride-emblem-icon {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pride-text-mid {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pride-bharat-bold {
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+/* --- HOMEPAGE HERO --- */
 .hero-compact {
   text-align: center;
   margin-bottom: 20px;
@@ -355,20 +507,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 
 .hero-subtitle {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--app-text-muted);
   margin-top: 4px;
 }
 
-/* --- BOOKING CARD (Req. 2 & 3) --- */
+/* --- BOOKING CARD --- */
 .booking-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
   padding: 18px;
   margin-bottom: 24px;
   position: relative;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .input-block-container {
@@ -391,7 +544,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
 }
 
 .input-field-wrapper {
@@ -406,37 +559,73 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   background: var(--app-bg);
   border: 1.5px solid var(--app-border);
   border-radius: var(--radius-sm);
-  padding: 0 14px 0 38px;
+  padding: 0 40px 0 38px;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 500;
-  color: var(--app-dark);
+  color: var(--app-text);
   transition: all 0.15s ease;
 }
 
 .input-field-wrapper input:focus, .input-field-wrapper select:focus {
-  background: #ffffff;
+  background: var(--app-surface);
   border-color: var(--app-primary);
   box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
+}
+
+[data-theme="dark"] .input-field-wrapper input:focus, [data-theme="dark"] .input-field-wrapper select:focus {
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
 .input-icon-left {
   position: absolute;
   left: 12px;
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
   color: var(--app-text-muted);
   pointer-events: none;
 }
 
+/* Auto-location GPS Trigger */
+.btn-detect-gps {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--app-primary);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: all 0.2s ease;
+}
+
+.btn-detect-gps:hover {
+  background: var(--app-primary-subtle);
+}
+
+.btn-detect-gps.detecting {
+  animation: pulse-spin 1s infinite linear;
+}
+
+@keyframes pulse-spin {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
 .btn-input-clear {
   position: absolute;
-  right: 12px;
+  right: 36px;
   background: none;
   border: none;
   color: var(--app-text-light);
   cursor: pointer;
   font-size: 1.1rem;
   display: none;
+  padding: 4px;
 }
 
 .btn-swap-locations {
@@ -446,15 +635,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   z-index: 10;
   width: 36px;
   height: 36px;
-  background: #ffffff;
+  background: var(--app-surface);
   border: 1px solid var(--app-border);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  font-size: 1.1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   color: var(--app-primary);
   transition: transform 0.2s ease, background-color 0.15s ease;
 }
@@ -471,7 +659,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   left: 0;
   right: 0;
   z-index: 110;
-  background: #ffffff;
+  background: var(--app-surface);
   border: 1px solid var(--app-border);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-float);
@@ -492,7 +680,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   align-items: center;
   gap: 10px;
   font-size: 0.9rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-border);
+  color: var(--app-text);
 }
 
 .autocomplete-item:last-child {
@@ -501,20 +690,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .autocomplete-item:hover, .autocomplete-item.selected {
   background: var(--app-primary-subtle);
-  color: var(--app-primary-dark);
-}
-
-.autocomplete-item-loc-icon {
-  font-size: 1.1rem;
+  color: var(--app-primary);
 }
 
 .autocomplete-special-item {
-  background: #f0fdf4;
-  color: #166534;
+  background: var(--app-primary-subtle);
+  color: var(--app-primary);
   font-weight: 600;
 }
 
-/* Date + Time Row */
+/* Auto-detected location chip */
+.auto-loc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: var(--app-success);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Date + Time Grid */
 .datetime-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -563,6 +759,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   margin-top: 8px;
 }
 
+[data-theme="dark"] .btn-primary-action {
+  color: #090d16;
+}
+
 .btn-primary-action:hover {
   background: var(--app-primary-hover);
   transform: translateY(-1px);
@@ -595,21 +795,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .trust-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
-.trust-item span.check-icon {
+.trust-item svg {
   color: var(--app-success);
 }
 
-/* --- POPULAR ROUTES SECTION (Req. 2 & 21) --- */
+/* --- POPULAR ROUTES SECTION --- */
 .section-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
   padding: 18px;
   margin-bottom: 20px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .section-title-row {
@@ -666,12 +867,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 
 .route-fare-badge {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--app-dark);
   font-size: 0.95rem;
 }
 
-/* --- WHY US (Req. 2 & 22) --- */
+/* --- WHY US --- */
 .why-us-list {
   list-style: none;
   display: flex;
@@ -686,16 +887,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   gap: 10px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--app-dark-soft);
+  color: var(--app-text);
 }
 
-.why-check {
+.why-check-icon {
   color: var(--app-success);
-  font-weight: 800;
-  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-/* --- FARE RESULTS PAGE (Req. 5) --- */
+/* --- FARE RESULTS PAGE --- */
 .cabs-list {
   display: flex;
   flex-direction: column;
@@ -703,19 +904,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 
 .cab-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-md);
   border: 1.5px solid var(--app-border);
   padding: 18px;
   position: relative;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-card);
 }
 
 .cab-card.recommended {
   border-color: var(--app-primary);
-  background: #ffffff;
-  box-shadow: 0 6px 20px rgba(0, 149, 246, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 149, 246, 0.18);
+}
+
+[data-theme="dark"] .cab-card.recommended {
+  box-shadow: 0 6px 24px rgba(56, 189, 248, 0.2);
 }
 
 .badge-recommended {
@@ -723,12 +927,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   top: -11px;
   left: 18px;
   background: var(--app-accent);
-  color: #ffffff;
+  color: #0f172a;
   font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 3px 10px;
+  padding: 3px 12px;
   border-radius: var(--radius-full);
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
 }
@@ -788,9 +992,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   gap: 6px;
 }
 
-.cab-inclusions-list li span {
+.cab-inclusions-list li svg {
   color: var(--app-success);
-  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .btn-select-cab {
@@ -812,10 +1016,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: #ffffff;
 }
 
+[data-theme="dark"] .cab-card.recommended .btn-select-cab {
+  color: #090d16;
+}
+
 .btn-select-cab:hover {
   background: var(--app-primary-hover);
   border-color: var(--app-primary-hover);
   color: #ffffff;
+}
+
+[data-theme="dark"] .btn-select-cab:hover {
+  color: #090d16;
 }
 
 .banner-all-inclusive {
@@ -825,14 +1037,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding: 10px 14px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #065f46;
+  color: var(--app-success);
   text-align: center;
   margin-bottom: 16px;
 }
 
-/* --- PASSENGER DETAILS PAGE (Req. 8) --- */
+/* --- PASSENGER DETAILS PAGE --- */
 .form-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
@@ -865,12 +1077,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   padding: 0 14px;
   font-family: inherit;
   font-size: 0.95rem;
-  color: var(--app-dark);
+  color: var(--app-text);
   transition: all 0.15s ease;
 }
 
 .form-input:focus {
-  background: #ffffff;
+  background: var(--app-surface);
   border-color: var(--app-primary);
   box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
 }
@@ -913,9 +1125,9 @@ textarea.form-input {
   color: var(--app-text-muted);
 }
 
-/* --- BOOKING REVIEW (Req. 9) --- */
+/* --- BOOKING REVIEW --- */
 .review-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
@@ -927,7 +1139,7 @@ textarea.form-input {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--app-border);
   font-size: 0.92rem;
 }
 
@@ -967,7 +1179,7 @@ textarea.form-input {
 .review-fare-value {
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--app-primary-dark);
+  color: var(--app-primary);
   letter-spacing: -0.02em;
 }
 
@@ -980,7 +1192,7 @@ textarea.form-input {
 
 .btn-secondary-action {
   height: 52px;
-  background: #ffffff;
+  background: var(--app-surface);
   border: 1.5px solid var(--app-border);
   border-radius: var(--radius-sm);
   color: var(--app-dark);
@@ -995,11 +1207,12 @@ textarea.form-input {
 
 .btn-secondary-action:hover {
   background: var(--app-bg);
+  border-color: var(--app-text-light);
 }
 
-/* --- OTP SCREEN (Req. 10 & 11) --- */
+/* --- OTP SCREEN --- */
 .otp-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
@@ -1041,13 +1254,14 @@ textarea.form-input {
   font-size: 1.4rem;
   font-weight: 800;
   background: var(--app-bg);
+  color: var(--app-text);
   font-family: monospace;
   transition: all 0.15s ease;
 }
 
 .otp-digit-input:focus {
   border-color: var(--app-primary);
-  background: #ffffff;
+  background: var(--app-surface);
   box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.2);
 }
 
@@ -1075,12 +1289,12 @@ textarea.form-input {
   text-decoration: none;
 }
 
-/* Recovery Fallback Box (Req. 11) */
+/* Recovery Fallback Box */
 .otp-recovery-box {
   margin-top: 24px;
   padding: 16px;
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
   border-radius: var(--radius-md);
   text-align: left;
 }
@@ -1088,13 +1302,13 @@ textarea.form-input {
 .otp-recovery-title {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #92400e;
+  color: var(--app-accent);
   margin-bottom: 4px;
 }
 
 .otp-recovery-desc {
   font-size: 0.82rem;
-  color: #78350f;
+  color: var(--app-text-muted);
   margin-bottom: 12px;
 }
 
@@ -1105,9 +1319,9 @@ textarea.form-input {
 }
 
 .btn-agent-call {
-  background: #ffffff;
-  border: 1.5px solid #d97706;
-  color: #b45309;
+  background: var(--app-surface);
+  border: 1.5px solid var(--app-accent);
+  color: var(--app-accent);
   font-weight: 700;
   font-size: 0.88rem;
   padding: 10px 14px;
@@ -1121,12 +1335,12 @@ textarea.form-input {
 }
 
 .btn-agent-call:hover {
-  background: #fef3c7;
+  background: rgba(245, 158, 11, 0.15);
 }
 
-/* --- BOOKING CONFIRMED (Req. 13) --- */
+/* --- BOOKING CONFIRMED --- */
 .confirmed-card {
-  background: #ffffff;
+  background: var(--app-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--app-border);
   box-shadow: var(--shadow-card);
@@ -1143,7 +1357,6 @@ textarea.form-input {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.2rem;
   margin: 0 auto 16px;
 }
 
@@ -1155,8 +1368,8 @@ textarea.form-input {
 
 .confirmed-booking-id-tag {
   background: var(--app-primary-subtle);
-  border: 1px solid rgba(0, 149, 246, 0.2);
-  color: var(--app-primary-dark);
+  border: 1px solid rgba(0, 149, 246, 0.25);
+  color: var(--app-primary);
   font-size: 1.15rem;
   font-weight: 800;
   padding: 6px 16px;
@@ -1179,7 +1392,7 @@ textarea.form-input {
   justify-content: space-between;
   padding: 6px 0;
   font-size: 0.88rem;
-  border-bottom: 1px solid #eef2f6;
+  border-bottom: 1px solid var(--app-border);
 }
 
 .confirmed-details-row:last-child {
@@ -1189,10 +1402,14 @@ textarea.form-input {
 .confirmed-driver-note {
   font-size: 0.85rem;
   color: var(--app-text-muted);
-  background: #f1f5f9;
+  background: var(--app-surface-raised);
   padding: 10px;
   border-radius: var(--radius-sm);
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
 }
 
 .confirmed-actions-grid {
@@ -1230,15 +1447,20 @@ textarea.form-input {
   gap: 8px;
 }
 
+[data-theme="dark"] .btn-view-booking-action {
+  color: #090d16;
+}
+
 /* --- FOOTER --- */
 .app-footer {
-  background: #ffffff;
+  background: var(--app-surface);
   border-top: 1px solid var(--app-border);
   padding: 24px 16px;
   font-size: 0.82rem;
   color: var(--app-text-muted);
   text-align: center;
   margin-top: auto;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .app-footer-links {
@@ -1265,7 +1487,7 @@ textarea.form-input {
   left: 50%;
   transform: translateX(-50%) translateY(100px);
   background: var(--app-dark);
-  color: #ffffff;
+  color: var(--app-bg);
   padding: 12px 20px;
   border-radius: var(--radius-full);
   font-size: 0.88rem;

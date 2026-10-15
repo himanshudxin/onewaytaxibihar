@@ -25,8 +25,12 @@
         </a>
       </div>
       <div class="app-header-actions">
+        <!-- DARK MODE TOGGLE (Req. 1) -->
+        <button type="button" class="btn-theme-toggle" onclick="BookingFlow.toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
         <a href="tel:+918002141816" class="btn-header-call" title="Call Dispatch Desk">
-          <span>☎</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span style="font-weight: 700;">+91 80021 41816</span>
         </a>
       </div>
@@ -36,25 +40,26 @@
   <!-- MAIN APP CONTAINER -->
   <main class="app-main">
     
-    <!-- PROGRESS INDICATOR (Req. 7) -->
+    <!-- PROGRESS INDICATOR -->
     <div class="flow-progress-bar">
-      <div class="flow-step completed"><span>①</span> TRIP ✓</div>
+      <div class="flow-step completed"><span>1</span> TRIP</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step completed"><span>②</span> CAB ✓</div>
+      <div class="flow-step completed"><span>2</span> CAB</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step active"><span>③</span> DETAILS</div>
+      <div class="flow-step active"><span>3</span> DETAILS</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step"><span>④</span> CONFIRM</div>
+      <div class="flow-step"><span>4</span> CONFIRM</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step"><span>⑤</span> DONE</div>
+      <div class="flow-step"><span>5</span> DONE</div>
     </div>
 
     <!-- PAGE TOP BAR -->
     <div class="page-top-bar">
       <a href="/fare" class="btn-back-link">
-        <span>←</span> <span>Back</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Back</span>
       </a>
-      <span style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Step 3 of 5</span>
+      <span style="font-size: 0.8rem; font-weight: 700; color: var(--app-text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Step 3 of 5</span>
     </div>
 
     <!-- SELECTED CAB CHIP -->
@@ -63,12 +68,12 @@
         <div class="route-summary-cities" id="cabSummaryTitle">Sedan • ₹1,999</div>
         <div class="route-summary-meta" id="tripSummaryMeta">Patna → Gaya • 18 Oct • 08:30 AM</div>
       </div>
-      <a href="/fare" style="font-size: 0.82rem; font-weight: 700; color: #0095f6; text-decoration: none;">Change</a>
+      <a href="/fare" style="font-size: 0.82rem; font-weight: 700; color: var(--app-primary); text-decoration: none;">Change</a>
     </div>
 
-    <!-- PASSENGER DETAILS FORM (Req. 8) -->
+    <!-- PASSENGER DETAILS FORM -->
     <div class="form-card">
-      <h2 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 16px;">Passenger Details</h2>
+      <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--app-dark); margin-bottom: 16px;">Passenger Details</h2>
       
       <form id="passengerDetailsForm" autocomplete="on">
         
@@ -85,7 +90,7 @@
             <span class="mobile-prefix-badge">+91</span>
             <input type="tel" id="inputPhone" name="phone" class="form-input" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" pattern="[6-9][0-9]{9}" required autocomplete="tel">
           </div>
-          <span style="font-size: 0.72rem; color: #64748b; margin-top: 4px; display: block;">Driver & booking updates will be sent to this WhatsApp/SMS</span>
+          <span style="font-size: 0.72rem; color: var(--app-text-muted); margin-top: 4px; display: block;">Driver & booking updates will be sent to this WhatsApp/SMS</span>
         </div>
 
         <!-- ALTERNATE MOBILE -->
@@ -114,11 +119,17 @@
           <label class="form-label">Payment Preference</label>
           <div class="payment-preference-grid">
             <div class="payment-pref-card selected" id="prefCash" data-pref="cash">
-              <strong>💵 Cash to Driver</strong>
+              <strong style="display:flex; align-items:center; gap:6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                Cash to Driver
+              </strong>
               <span>Zero advance, pay driver at drop destination</span>
             </div>
             <div class="payment-pref-card" id="prefAdvance" data-pref="advance">
-              <strong>💳 Online Advance</strong>
+              <strong style="display:flex; align-items:center; gap:6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Online Advance
+              </strong>
               <span>Pay 20% commitment token via UPI/Card</span>
             </div>
           </div>
@@ -127,7 +138,7 @@
         <!-- SUBMIT CTA -->
         <button type="submit" class="btn-primary-action" id="btnContinueReview">
           <span>CONTINUE TO REVIEW</span>
-          <span>→</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
 
       </form>
@@ -141,7 +152,7 @@
   <!-- FOOTER -->
   <footer class="app-footer">
     <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services.</p>
-    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: var(--app-text-muted);">Helpline: +91 80021 41816</p>
   </footer>
 
   <!-- CONTROLLERS -->
@@ -152,19 +163,16 @@
 
       const trip = BookingFlow.loadState();
 
-      // Guard: must have selected cab
       if (!trip || !trip.selectedCab) {
         window.location.href = '/fare';
         return;
       }
 
-      // Populate Summary
       const originName = trip.origin.name || trip.origin;
       const destName = trip.dest.name || trip.dest;
       document.getElementById('cabSummaryTitle').textContent = `${trip.selectedCab.category} • ₹${Number(trip.selectedCab.fare).toLocaleString('en-IN')}`;
       document.getElementById('tripSummaryMeta').textContent = `${originName} → ${destName} • ${trip.date} • ${trip.time}`;
 
-      // Pre-fill form fields
       const inputName = document.getElementById('inputName');
       const inputPhone = document.getElementById('inputPhone');
       const inputAltPhone = document.getElementById('inputAltPhone');
@@ -180,7 +188,6 @@
         if (trip.passenger.notes) inputNotes.value = trip.passenger.notes;
       }
 
-      // Payment Preference Selection
       let selectedPref = trip.passenger?.paymentPreference || 'cash';
       const prefCash = document.getElementById('prefCash');
       const prefAdvance = document.getElementById('prefAdvance');
@@ -200,7 +207,6 @@
       prefAdvance.addEventListener('click', () => updatePrefUI('advance'));
       updatePrefUI(selectedPref);
 
-      // Toast Helper
       function showToast(msg) {
         const toast = document.getElementById('appToast');
         toast.textContent = msg;
@@ -208,7 +214,6 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
       }
 
-      // Form Submit
       const form = document.getElementById('passengerDetailsForm');
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -243,7 +248,6 @@
           return;
         }
 
-        // Save to controller
         BookingFlow.savePassengerDetails({
           name,
           phone,
@@ -253,7 +257,6 @@
           paymentPreference: selectedPref
         });
 
-        // Navigate to Step 4: Booking Review
         window.location.href = '/booking-review';
       });
 

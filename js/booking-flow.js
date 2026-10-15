@@ -262,7 +262,133 @@
       sessionStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(STORAGE_KEY);
     }
+
+    // --- THEME MANAGER (Req. 1: Dark Mode) ---
+    initTheme() {
+      const saved = localStorage.getItem('otb_theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      const bindButtons = () => {
+        const cur = document.documentElement.getAttribute('data-theme') || theme;
+        this.updateThemeIcons(cur);
+        document.querySelectorAll('.btn-theme-toggle').forEach(btn => {
+          if (!btn.dataset.themeBound) {
+            btn.dataset.themeBound = 'true';
+            btn.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.toggleTheme();
+            });
+          }
+        });
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindButtons);
+      } else {
+        bindButtons();
+      }
+
+      return theme;
+    }
+
+    toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('otb_theme', next);
+      this.updateThemeIcons(next);
+      return next;
+    }
+
+    updateThemeIcons(theme) {
+      document.querySelectorAll('.btn-theme-toggle').forEach(btn => {
+        btn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
+        btn.setAttribute('title', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
+        btn.innerHTML = theme === 'dark' 
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+      });
+    }
+
+    // --- AUTO LOCATION DETECTION (Req. 3) ---
+    calcHaversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    autoDetectLocation(callback) {
+      const BIHAR_HUBS = [
+        { name: 'Patna Airport (PAT)', lat: 25.5913, lng: 85.0877, radius: 5 },
+        { name: 'Patna Junction', lat: 25.6025, lng: 85.1376, radius: 8 },
+        { name: 'Danapur', lat: 25.6333, lng: 85.0500, radius: 10 },
+        { name: 'Patna', lat: 25.5941, lng: 85.1376, radius: 30 },
+        { name: 'Gaya', lat: 24.7914, lng: 85.0002, radius: 30 },
+        { name: 'Bodh Gaya', lat: 24.6961, lng: 84.9870, radius: 15 },
+        { name: 'Muzaffarpur', lat: 26.1209, lng: 85.3647, radius: 30 },
+        { name: 'Darbhanga', lat: 26.1542, lng: 85.8918, radius: 30 },
+        { name: 'Bhagalpur', lat: 25.2425, lng: 86.9842, radius: 30 },
+        { name: 'Purnea', lat: 25.7771, lng: 87.4753, radius: 30 },
+        { name: 'Begusarai', lat: 25.4182, lng: 86.1272, radius: 30 },
+        { name: 'Arrah', lat: 25.5541, lng: 84.6644, radius: 25 },
+        { name: 'Chapra', lat: 25.7848, lng: 84.7274, radius: 25 },
+        { name: 'Motihari', lat: 26.6469, lng: 84.9089, radius: 30 },
+        { name: 'Bettiah', lat: 26.8028, lng: 84.5028, radius: 30 },
+        { name: 'Siwan', lat: 26.2196, lng: 84.3567, radius: 25 },
+        { name: 'Saharsa', lat: 25.8835, lng: 86.6006, radius: 30 },
+        { name: 'Samastipur', lat: 25.8628, lng: 85.7811, radius: 25 },
+        { name: 'Sasaram', lat: 24.9528, lng: 84.0317, radius: 30 },
+        { name: 'Ranchi', lat: 23.3441, lng: 85.3096, radius: 40 },
+        { name: 'Varanasi', lat: 25.3176, lng: 82.9739, radius: 40 },
+        { name: 'Deoghar', lat: 24.4826, lng: 86.7000, radius: 35 }
+      ];
+
+      // Check session cache first
+      const cached = sessionStorage.getItem('otb_user_geo_location');
+      if (cached && callback) {
+        callback(cached, true);
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        if (callback) callback('Patna', false);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const uLat = pos.coords.latitude;
+        const uLng = pos.coords.longitude;
+        let matched = null;
+        let minDistance = 999999;
+
+        for (const hub of BIHAR_HUBS) {
+          const dist = this.calcHaversine(uLat, uLng, hub.lat, hub.lng);
+          if (dist < minDistance) {
+            minDistance = dist;
+            matched = hub;
+          }
+        }
+
+        if (matched && minDistance <= 65) {
+          sessionStorage.setItem('otb_user_geo_location', matched.name);
+          if (callback) callback(matched.name, true);
+        } else {
+          if (callback) callback('Patna', false);
+        }
+      }, (err) => {
+        if (callback) callback('Patna', false);
+      }, { timeout: 6000, maximumAge: 300000 });
+    }
   }
 
   window.BookingFlow = new BookingFlowController();
+  // Auto-initialize theme on load
+  window.BookingFlow.initTheme();
 })();

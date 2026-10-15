@@ -25,8 +25,12 @@
         </a>
       </div>
       <div class="app-header-actions">
+        <!-- DARK MODE TOGGLE (Req. 1) -->
+        <button type="button" class="btn-theme-toggle" onclick="BookingFlow.toggleTheme()" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
         <a href="tel:+918002141816" class="btn-header-call" title="Call Dispatch Desk">
-          <span>☎</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           <span style="font-weight: 700;">+91 80021 41816</span>
         </a>
       </div>
@@ -36,30 +40,31 @@
   <!-- MAIN APP CONTAINER -->
   <main class="app-main">
     
-    <!-- PROGRESS INDICATOR (Req. 7) -->
+    <!-- PROGRESS INDICATOR -->
     <div class="flow-progress-bar">
-      <div class="flow-step completed"><span>①</span> TRIP ✓</div>
+      <div class="flow-step completed"><span>1</span> TRIP</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step completed"><span>②</span> CAB ✓</div>
+      <div class="flow-step completed"><span>2</span> CAB</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step completed"><span>③</span> DETAILS ✓</div>
+      <div class="flow-step completed"><span>3</span> DETAILS</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step active"><span>④</span> CONFIRM</div>
+      <div class="flow-step active"><span>4</span> CONFIRM</div>
       <span class="flow-step-divider">→</span>
-      <div class="flow-step"><span>⑤</span> DONE</div>
+      <div class="flow-step"><span>5</span> DONE</div>
     </div>
 
     <!-- PAGE TOP BAR -->
     <div class="page-top-bar">
       <a href="/booking-details" class="btn-back-link">
-        <span>←</span> <span>Edit Details</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Edit Details</span>
       </a>
-      <span style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Step 4 of 5</span>
+      <span style="font-size: 0.8rem; font-weight: 700; color: var(--app-text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Step 4 of 5</span>
     </div>
 
-    <!-- REVIEW CARD (Req. 9) -->
+    <!-- REVIEW CARD -->
     <div class="review-card">
-      <h2 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 18px;">Review Booking</h2>
+      <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--app-dark); margin-bottom: 18px;">Review Booking</h2>
 
       <div class="review-item-row">
         <span class="review-label">FROM</span>
@@ -88,7 +93,7 @@
 
       <div class="review-item-row">
         <span class="review-label">PASSENGER</span>
-        <span class="review-value" id="valPassenger">Rahul Kumar<br><small style="color:#64748b; font-weight:500;">+91 98XXXXX321</small></span>
+        <span class="review-value" id="valPassenger">Rahul Kumar<br><small style="color:var(--app-text-muted); font-weight:500;">+91 98XXXXX321</small></span>
       </div>
 
       <div class="review-item-row">
@@ -105,27 +110,31 @@
       <div class="review-fare-row">
         <div>
           <div class="review-fare-label">TOTAL FARE</div>
-          <div style="font-size: 0.75rem; color: #10b981; font-weight: 700;">✓ Final fare — no hidden charges</div>
+          <div style="font-size: 0.75rem; color: var(--app-success); font-weight: 700; display:flex; align-items:center; gap:4px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Final fare — no hidden charges
+          </div>
         </div>
         <div class="review-fare-value" id="valFare">₹1,999</div>
       </div>
 
-      <!-- ACTION BUTTONS (Req. 9) -->
+      <!-- ACTION BUTTONS -->
       <div class="review-actions-grid">
         <a href="/booking-details" class="btn-secondary-action" style="text-decoration: none;">
           EDIT
         </a>
         <button type="button" class="btn-primary-action" id="btnBookNow">
           <span>BOOK NOW</span>
-          <span>→</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
 
     </div>
 
     <!-- SECURITY GUARANTEE -->
-    <div style="text-align: center; font-size: 0.8rem; color: #64748b; margin-top: 10px;">
-      🔒 Instant SMS/WhatsApp OTP verification required on next step to confirm your cab.
+    <div style="text-align: center; font-size: 0.8rem; color: var(--app-text-muted); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Instant SMS/WhatsApp OTP verification required on next step to confirm your cab.
     </div>
 
   </main>
@@ -136,7 +145,7 @@
   <!-- FOOTER -->
   <footer class="app-footer">
     <p>&copy; 2026 OneWayTaxiBihar.com Mobility Services.</p>
-    <p style="margin-top: 4px; font-size: 0.75rem; color: #94a3b8;">Helpline: +91 80021 41816</p>
+    <p style="margin-top: 4px; font-size: 0.75rem; color: var(--app-text-muted);">Helpline: +91 80021 41816</p>
   </footer>
 
   <!-- CONTROLLERS -->
@@ -147,13 +156,11 @@
 
       const trip = BookingFlow.loadState();
 
-      // Guard: must have selected cab and passenger details
       if (!trip || !trip.selectedCab || !trip.passenger?.name) {
         window.location.href = '/booking-details';
         return;
       }
 
-      // Populate Review Values
       const originName = trip.origin.name || trip.origin || 'Patna';
       const destName = trip.dest.name || trip.dest || 'Gaya';
       document.getElementById('valOrigin').textContent = originName;
@@ -167,7 +174,7 @@
         ? `+91 ${pPhone.slice(0, 2)}XXXXXX${pPhone.slice(-2)}` 
         : `+91 ${pPhone}`;
 
-      document.getElementById('valPassenger').innerHTML = `${trip.passenger.name}<br><small style="color:#64748b; font-weight:500;">${maskedPhone}</small>`;
+      document.getElementById('valPassenger').innerHTML = `${trip.passenger.name}<br><small style="color:var(--app-text-muted); font-weight:500;">${maskedPhone}</small>`;
       document.getElementById('valPickup').textContent = trip.passenger.pickupAddress || `${originName} city limits`;
 
       const isAdvance = trip.passenger.paymentPreference === 'advance';
@@ -175,7 +182,6 @@
 
       document.getElementById('valFare').textContent = `₹${Number(trip.selectedCab.fare || 1999).toLocaleString('en-IN')}`;
 
-      // Toast Helper
       function showToast(msg) {
         const toast = document.getElementById('appToast');
         toast.textContent = msg;
@@ -183,22 +189,19 @@
         setTimeout(() => toast.classList.remove('show'), 3500);
       }
 
-      // BOOK NOW Click -> Dispatches OTP and redirects to /verify-otp (Req. 1, Req. 10)
       const bookBtn = document.getElementById('btnBookNow');
       bookBtn.addEventListener('click', async () => {
         bookBtn.disabled = true;
         bookBtn.innerHTML = '<span>DISPATCHING OTP...</span>';
 
         try {
-          // Trigger OTP Send API
           await BookingFlow.sendOtp();
-          // Seamless transition to OTP Verification
           window.location.href = '/verify-otp';
         } catch (err) {
           console.error(err);
           showToast(err.message || 'Unable to send verification code. Please try again or call dispatch.');
           bookBtn.disabled = false;
-          bookBtn.innerHTML = '<span>BOOK NOW</span> <span>→</span>';
+          bookBtn.innerHTML = '<span>BOOK NOW</span> <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
         }
       });
 

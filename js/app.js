@@ -1293,19 +1293,29 @@ window.submitCorporateInquiry = () => {
   window.closeAllModals();
 };
 
-// Review Storage Loader & Helpers
+// Review Storage Loader & Helpers (Sorted with Latest First by Date)
 function getActiveReviews() {
   const base = window.OTB_PASSENGER_REVIEWS || window.OTB_FRIENDS_REVIEWS || [];
+  let combined = [];
   try {
     const saved = localStorage.getItem("otb_custom_reviews");
     if (saved) {
       const custom = JSON.parse(saved);
-      return [...custom, ...base];
+      combined = [...custom, ...base];
+    } else {
+      combined = [...base];
     }
   } catch (e) {
     console.warn("Could not load custom reviews", e);
+    combined = [...base];
   }
-  return base;
+
+  // Sort: Latest one at top and further descending by date / timestamp
+  return combined.sort((a, b) => {
+    const timeA = a.timestamp || (a.date ? new Date(a.date).getTime() : 0);
+    const timeB = b.timestamp || (b.date ? new Date(b.date).getTime() : 0);
+    return timeB - timeA;
+  });
 }
 
 window.openFriendsReviewModal = () => {
@@ -1322,23 +1332,28 @@ window.openFriendsReviewModal = () => {
       r.name.toLowerCase().includes(q) || 
       (r.city && r.city.toLowerCase().includes(q)) ||
       r.route.toLowerCase().includes(q) ||
+      (r.dateFormatted && r.dateFormatted.toLowerCase().includes(q)) ||
       r.comment.toLowerCase().includes(q)
     );
 
     grid.innerHTML = matches.map(rev => `
-      <div style="background: var(--owc-card-bg); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: ${rev.avatarBg || '#0095f6'}; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: ${rev.avatarBg || '#0095f6'}; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0;">
                 ${rev.initials || rev.name.charAt(0)}
               </div>
               <div>
-                <strong style="font-size: 14px; color: var(--owc-text);">${rev.name}</strong>
-                <div style="font-size: 11px; color: var(--owc-text-muted);">${rev.city || 'Bihar'}</div>
+                <strong style="font-size: 14.5px; color: var(--owc-text);">${rev.name}</strong>
+                <div style="font-size: 11.5px; color: var(--owc-text-muted); display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                  <span>${rev.city || 'Bihar'}</span>
+                  <span>•</span>
+                  <span style="color: var(--owc-primary); font-weight: 700;">${rev.dateFormatted || rev.date || 'Recent'}</span>
+                </div>
               </div>
             </div>
-            <span style="background: rgba(0, 149, 246, 0.1); color: var(--owc-primary); font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: var(--radius-full);">
+            <span style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: var(--radius-full);">
               ${rev.badge || 'Verified Review'}
             </span>
           </div>
@@ -1398,6 +1413,14 @@ window.handleReviewSubmit = (e) => {
     return;
   }
 
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, '0');
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const month = monthNames[now.getMonth()];
+  const year = now.getFullYear();
+  const dateFormatted = `${day} ${month} ${year}`;
+  const dateIso = now.toISOString().split("T")[0];
+
   const initials = name.split(" ").map(w => w.charAt(0).toUpperCase()).slice(0, 2).join("");
   const newReview = {
     id: "user_rev_" + Date.now(),
@@ -1410,6 +1433,9 @@ window.handleReviewSubmit = (e) => {
     rating: rating,
     badge: "Verified Passenger Review",
     verified: true,
+    date: dateIso,
+    dateFormatted: dateFormatted,
+    timestamp: Date.now(),
     comment: comment
   };
 

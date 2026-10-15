@@ -619,6 +619,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.5,
     badge: "Verified Outstation Trip",
     verified: true,
+    date: "2026-10-14",
+    dateFormatted: "14 Oct 2026",
+    timestamp: 1791936000000,
     comment: "Booked Dzire from Patna Junction to Bodh Gaya for family pilgrimage. Clean AC cab, driver reached 15 mins before time. Charged exactly ₹2,998 with toll included. Zero return fare!"
   },
   {
@@ -632,6 +635,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.8,
     badge: "Verified Airport Transfer",
     verified: true,
+    date: "2026-10-12",
+    dateFormatted: "12 Oct 2026",
+    timestamp: 1791763200000,
     comment: "Flight landed late at Patna Airport. OneWayTaxiBihar captain was waiting outside with AC already on. Smooth driving over Gandhi Setu and reached safely."
   },
   {
@@ -645,6 +651,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.3,
     badge: "Verified Family Booking",
     verified: true,
+    date: "2026-10-10",
+    dateFormatted: "10 Oct 2026",
+    timestamp: 1791590400000,
     comment: "Travelled with 5 family members and heavy luggage for festival. Ertiga had roof carrier and the driver knew the newly widened expressway route. Saved ₹3,800!"
   },
   {
@@ -658,6 +667,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.6,
     badge: "Verified Intercity Ride",
     verified: true,
+    date: "2026-10-07",
+    dateFormatted: "07 Oct 2026",
+    timestamp: 1791331200000,
     comment: "Excellent highway cruise via Mokama. Transparent fixed pricing with zero hidden charges. OneWayTaxiBihar is our first choice for monthly district travel."
   },
   {
@@ -671,6 +683,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 3.5,
     badge: "Verified Highway Trip",
     verified: true,
+    date: "2026-10-04",
+    dateFormatted: "04 Oct 2026",
+    timestamp: 1791072000000,
     comment: "Punctual pickup from Kankarbagh and honest pricing with toll included. However AC cooling was moderate during peak afternoon heat. Overall decent service."
   },
   {
@@ -684,6 +699,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.7,
     badge: "Verified Outstation Booking",
     verified: true,
+    date: "2026-09-29",
+    dateFormatted: "29 Sep 2026",
+    timestamp: 1790640000000,
     comment: "Booked Innova Crysta for wedding travel. Super comfortable captain seats and peaceful driving. 24x7 helpdesk +91 72818 51011 is very responsive."
   },
   {
@@ -697,6 +715,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 3.0,
     badge: "Verified Outstation Ride",
     verified: true,
+    date: "2026-09-24",
+    dateFormatted: "24 Sep 2026",
+    timestamp: 1790208000000,
     comment: "Driver was delayed by 10 mins due to traffic jam near Digha, but informed beforehand. Highway driving was safe and fixed fare policy was honored without extra charges."
   },
   {
@@ -710,6 +731,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.4,
     badge: "Verified Pilgrimage Trip",
     verified: true,
+    date: "2026-09-18",
+    dateFormatted: "18 Sep 2026",
+    timestamp: 1789689600000,
     comment: "Weekend tour to Rajgir Nature Safari and Vishwa Shanti Stupa. Driver guided us through scenic Bakhtiyarpur-Rajgir 4-lane. Seamless experience!"
   },
   {
@@ -723,6 +747,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.3,
     badge: "Verified Outstation Trip",
     verified: true,
+    date: "2026-09-12",
+    dateFormatted: "12 Sep 2026",
+    timestamp: 1789171200000,
     comment: "Fast, reliable and very economical. Paid only ₹3,198 for a one-way trip to Sasaram. No need to negotiate with offline taxi stands."
   },
   {
@@ -736,6 +763,9 @@ const OTB_PASSENGER_REVIEWS = [
     rating: 4.8,
     badge: "Verified Intercity Ride",
     verified: true,
+    date: "2026-09-05",
+    dateFormatted: "05 Sep 2026",
+    timestamp: 1788566400000,
     comment: "Took early morning 5 AM outstation cab from Boring Road Patna to Kashi Vishwanath Temple. Smooth driving and reached in 4.5 hours."
   }
 ];

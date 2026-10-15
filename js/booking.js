@@ -1798,6 +1798,7 @@ class BookingManager {
     const list = typeof getActiveReviews === "function" ? getActiveReviews() : (window.OTB_PASSENGER_REVIEWS || []);
     container.innerHTML = list.slice(0, 3).map(rev => {
       const quote = rev.comment ? (rev.comment.length > 82 ? rev.comment.substring(0, 79) + '...' : rev.comment) : 'Punctual driver, clean AC car and zero return fare.';
+      const dateTag = rev.dateFormatted || rev.date || 'Verified';
       return `
         <div class="fr-feed-item" onclick="window.openFriendsReviewModal()" title="Click to view all verified passenger reviews">
           <div class="fr-feed-top">
@@ -1806,9 +1807,9 @@ class BookingManager {
               <div class="fr-feed-user-meta">
                 <div class="fr-feed-name">
                   <span class="fr-author-name">${rev.name}</span>
-                  <span class="fr-verified-badge">
+                  <span class="fr-verified-badge" style="font-size: 10px; font-weight: 700; color: var(--owc-primary);">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align: -1px; margin-right: 2px;"><polyline points="20 6 9 17 4 12"/></svg>
-                    Verified Trip
+                    ${dateTag}
                   </span>
                 </div>
                 <div class="fr-feed-route-tag">${rev.route} &bull; ${rev.car}</div>
@@ -1845,13 +1846,18 @@ class BookingManager {
     if (!container) return;
 
     const list = typeof getActiveReviews === "function" ? getActiveReviews() : (window.OTB_PASSENGER_REVIEWS || []);
-    container.innerHTML = list.slice(0, 3).map(t => `
+    container.innerHTML = list.slice(0, 3).map(t => {
+      const dateTag = t.dateFormatted || t.date || '';
+      return `
       <div class="testimonial-card">
         <div class="quote-icon-decor">“</div>
         <div>
-          <div class="test-stars-row" style="color: #f59e0b; font-weight: 800; font-size: 13.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>${t.rating} / 5.0 Rating</span>
+          <div class="test-stars-row" style="color: #f59e0b; font-weight: 800; font-size: 13.5px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>${t.rating} / 5.0 Rating</span>
+            </div>
+            ${dateTag ? `<span style="font-size: 11px; font-weight: 700; color: var(--owc-primary);">${dateTag}</span>` : ''}
           </div>
           <p class="test-quote-text">"${t.comment}"</p>
         </div>
@@ -1860,7 +1866,8 @@ class BookingManager {
           <div class="test-author-route" style="color: var(--owc-primary); font-weight: 600; font-size: 12px; margin-top: 2px;">Verified Route: ${t.route}</div>
         </div>
       </div>
-    `).join("");
+    `;
+    }).join("");
   }
 
   renderMajorCities() {

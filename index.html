@@ -1243,9 +1243,16 @@
         <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
       </div>
       <div class="modal-body">
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
           <input type="text" id="fr-modal-search" class="promo-input" placeholder="Search by passenger name, district, or route..." style="flex: 1; min-width: 220px;">
           <button type="button" class="btn-nav-book" onclick="window.openWriteReviewModal()">+ Write a Review</button>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: var(--owc-text-muted); margin-bottom: 14px; padding: 0 4px; flex-wrap: wrap; gap: 6px;">
+          <span>Showing authentic ratings from verified riders</span>
+          <span style="display: inline-flex; align-items: center; gap: 4px; color: var(--owc-primary); font-weight: 700;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            Sorted: Latest First by Date
+          </span>
         </div>
         <div id="fr-modal-reviews-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; max-height: 500px; overflow-y: auto;">
           <!-- Injected via app.js -->

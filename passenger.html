@@ -892,8 +892,20 @@
         });
       };
 
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+      function cleanPhone(p) {
+        return (p || '').replace(/\D/g, '').slice(-10);
+      }
+
       // Load Bookings & Passenger Details
-      function loadPassengerData() {
+      async function loadPassengerData() {
         let bookings = [];
         try {
           const saved = localStorage.getItem('otb_recent_bookings');
@@ -920,6 +932,33 @@
         if (nameEl) nameEl.textContent = passengerName;
         if (phoneEl) phoneEl.textContent = `+91 ${passengerPhone}`;
         if (avatarEl) avatarEl.textContent = passengerName.charAt(0) || 'P';
+
+        // Background sync each booking status from live backend
+        if (bookings && bookings.length > 0) {
+          try {
+            await Promise.all(bookings.map(async (b) => {
+              if (!b.bookingId) return;
+              try {
+                const res = await fetch(`/api/booking-status?bookingId=${encodeURIComponent(b.bookingId)}`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data && data.booking) {
+                    b.bookingStatus = data.booking.bookingStatus;
+                    b.status = data.booking.status;
+                    if (data.booking.assignedDriverId) b.assignedDriverId = data.booking.assignedDriverId;
+                    if (data.booking.assignedDriverName) b.assignedDriverName = data.booking.assignedDriverName;
+                    if (data.booking.assignedDriverCarNo) b.assignedDriverCarNo = data.booking.assignedDriverCarNo;
+                    if (data.booking.assignedDriverPhone) b.assignedDriverPhone = data.booking.assignedDriverPhone;
+                    if (data.booking.driverDetails) b.driverDetails = data.booking.driverDetails;
+                  }
+                }
+              } catch (err) {
+                // Ignore network errors, fallback to local cache
+              }
+            }));
+            localStorage.setItem('otb_recent_bookings', JSON.stringify(bookings));
+          } catch (e) {}
+        }
 
         const ridesCount = bookings.length;
         const countBadge = document.getElementById('badge-trips-count');
@@ -958,9 +997,65 @@
           const time = b.pickupTime || b.time || '10:00 AM';
           const cabName = b.cabType || b.vehicle || 'Prime Sedan';
           const bookingId = b.bookingId || `OTB-2026-${1000 + index}`;
-          const isCancelled = b.status === 'cancelled';
-          const statusClass = isCancelled ? 'status-cancelled' : 'status-confirmed';
-          const statusText = isCancelled ? 'Cancelled' : 'Confirmed &amp; Scheduled';
+          
+          const rawStatus = (b.bookingStatus || b.status || 'CONFIRMED').toUpperCase();
+          const isCancelled = rawStatus === 'CANCELLED' || rawStatus === 'REJECTED';
+          const isDriverAssigned = Boolean(b.assignedDriverId || b.driverDetails?.id || b.assignedDriverName || rawStatus === 'DRIVER ASSIGNED');
+          const isDriverAccepted = rawStatus === 'ACCEPTED' || rawStatus === 'ON THE WAY' || rawStatus === 'ARRIVED' || rawStatus === 'TRIP STARTED' || rawStatus === 'COMPLETED';
+
+          let statusBadge = '';
+          let chauffeurCardHtml = '';
+
+          if (isCancelled) {
+            statusBadge = `<span class="booking-status-pill status-cancelled">🔴 CANCELLED</span>`;
+            chauffeurCardHtml = `
+              <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:#ef4444; font-weight:700;">
+                ✕ This booking was cancelled. Zero cancellation charges have been billed.
+              </div>
+            `;
+          } else if (isDriverAccepted) {
+            statusBadge = `<span class="booking-status-pill status-confirmed">🟢 Chauffeur Accepted &amp; Confirmed</span>`;
+            const drvName = b.assignedDriverName || b.driverDetails?.name || 'Assigned Driver';
+            const drvCar = b.assignedDriverCarNo || b.driverDetails?.vehicleNumber || 'Cab';
+            const drvPhone = b.assignedDriverPhone || b.driverDetails?.phone || '8002141816';
+            chauffeurCardHtml = `
+              <div style="background:rgba(16, 185, 129, 0.08); border:1.5px solid rgba(16, 185, 129, 0.25); border-radius:12px; padding:14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <span style="font-size:11px; font-weight:800; color:#10b981; text-transform:uppercase; letter-spacing:0.5px;">✓ CHAUFFEUR ACCEPTED &amp; ALLOCATED</span>
+                  <span style="font-size:11px; font-weight:800; background:#10b981; color:#fff; padding:2px 8px; border-radius:9999px;">Confirmed</span>
+                </div>
+                <div style="font-size:16px; font-weight:900; color:var(--owc-text);">${escapeHtml(drvName)}</div>
+                <div style="font-size:13px; color:var(--owc-text-muted); margin-top:3px;">Vehicle: <strong>${escapeHtml(drvCar)}</strong></div>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                  <a href="tel:${drvPhone}" class="btn-act btn-act-primary" style="font-size:12px; padding:6px 12px;">📞 Call Driver (${drvPhone})</a>
+                  <a href="https://wa.me/91${cleanPhone(drvPhone)}" target="_blank" class="btn-act" style="font-size:12px; padding:6px 12px;">💬 WhatsApp</a>
+                </div>
+              </div>
+            `;
+          } else if (isDriverAssigned) {
+            statusBadge = `<span class="booking-status-pill" style="background:rgba(245, 158, 11, 0.15); color:#d97706; border:1px solid rgba(245, 158, 11, 0.35); font-weight:800;">🟡 Assigned (Not Accepted Yet)</span>`;
+            const drvName = b.assignedDriverName || b.driverDetails?.name || 'Driver Partner';
+            const drvCar = b.assignedDriverCarNo || b.driverDetails?.vehicleNumber || 'Commercial Taxi';
+            chauffeurCardHtml = `
+              <div style="background:rgba(245, 158, 11, 0.08); border:1.5px solid rgba(245, 158, 11, 0.25); border-radius:12px; padding:14px; margin-bottom:14px;">
+                <div style="font-size:11px; font-weight:800; color:#d97706; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">🟡 CHAUFFEUR ALLOCATION IN PROGRESS</div>
+                <div style="font-size:14.5px; font-weight:800; color:var(--owc-text);">Chauffeur: ${escapeHtml(drvName)} (${escapeHtml(drvCar)})</div>
+                <div style="font-size:12px; color:var(--owc-text-muted); margin-top:4px; line-height:1.45;">
+                  Our dispatch desk has allocated this chauffeur. Waiting for driver to accept and confirm trip on the driver partner app.
+                </div>
+              </div>
+            `;
+          } else {
+            statusBadge = `<span class="booking-status-pill status-confirmed">Confirmed &amp; Scheduled</span>`;
+            chauffeurCardHtml = `
+              <div class="chauffeur-dispatch-notice">
+                <span style="font-size:16px;">ℹ️</span>
+                <div>
+                  <strong>Chauffeur Assignment:</strong> Chauffeur name, phone, and vehicle registration number will be dispatched automatically via WhatsApp &amp; SMS 2-4 hours before scheduled pickup.
+                </div>
+              </div>
+            `;
+          }
 
           tripsHtml += `
             <div class="booking-card" id="card-${bookingId}">
@@ -969,9 +1064,7 @@
                   <span class="booking-id-text">${bookingId}</span>
                   <div style="font-size: 11px; color: var(--owc-text-muted);">Booked on ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                 </div>
-                <span class="booking-status-pill ${statusClass}">
-                  ${statusText}
-                </span>
+                ${statusBadge}
               </div>
 
               <div class="booking-route-row">
@@ -999,14 +1092,7 @@
                 </div>
               </div>
 
-              ${!isCancelled ? `
-                <div class="chauffeur-dispatch-notice">
-                  <span style="font-size: 16px;">ℹ️</span>
-                  <div>
-                    <strong>Chauffeur Assignment:</strong> Chauffeur name, phone, and vehicle registration number will be dispatched automatically via WhatsApp &amp; SMS 2-4 hours before scheduled pickup.
-                  </div>
-                </div>
-              ` : ''}
+              ${chauffeurCardHtml}
 
               <div class="booking-actions-row">
                 <a href="tel:+918002141816" class="btn-act" title="Call 24x7 Helpline">
@@ -1128,19 +1214,37 @@
       };
 
       // Cancel Booking
-      window.cancelBooking = function (bookingId) {
+      window.cancelBooking = async function (bookingId) {
         if (!confirm(`Are you sure you want to cancel booking ${bookingId}? There are zero cancellation charges.`)) {
           return;
         }
         try {
           let bookings = JSON.parse(localStorage.getItem('otb_recent_bookings') || '[]');
+          let targetPhone = '';
           bookings = bookings.map(b => {
             if (b.bookingId === bookingId) {
-              b.status = 'cancelled';
+              b.status = 'CANCELLED';
+              b.bookingStatus = 'CANCELLED';
+              targetPhone = b.passengerPhone || '';
             }
             return b;
           });
           localStorage.setItem('otb_recent_bookings', JSON.stringify(bookings));
+          loadPassengerData();
+
+          // Sync cancellation to backend
+          try {
+            await fetch('/api/bookings/cancel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                bookingId: bookingId,
+                phone: targetPhone,
+                reason: 'Cancelled by Passenger'
+              })
+            });
+          } catch (e) {}
+
           loadPassengerData();
         } catch (e) {
           console.warn('Cancel error:', e);

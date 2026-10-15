@@ -1535,6 +1535,36 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
+    // 6b. PASSENGER LIVE TRIP & BOOKING STATUS INQUIRY
+    // -------------------------------------------------------------
+    if ((pathname === '/booking-status' || pathname === '/bookings/status') && method === 'GET') {
+      const bId = (url.searchParams.get('bookingId') || url.searchParams.get('id') || '').trim().toUpperCase();
+      if (!bId) {
+        return sendJson(400, { success: false, message: 'bookingId query parameter is required' });
+      }
+      const booking = (db.bookings || []).find(b => 
+        (b.bookingId || '').toUpperCase() === bId || 
+        (b.id || '').toUpperCase() === bId
+      );
+      if (!booking) {
+        return sendJson(404, { success: false, message: `Booking ${bId} not found` });
+      }
+      return sendJson(200, {
+        success: true,
+        booking: {
+          bookingId: booking.bookingId || booking.id,
+          bookingStatus: booking.bookingStatus || booking.status || 'CONFIRMED',
+          status: booking.status || booking.bookingStatus || 'CONFIRMED',
+          assignedDriverId: booking.assignedDriverId || null,
+          assignedDriverName: booking.assignedDriverName || booking.driverDetails?.name || null,
+          assignedDriverCarNo: booking.assignedDriverCarNo || booking.driverDetails?.vehicleNumber || null,
+          assignedDriverPhone: booking.assignedDriverPhone || booking.driverDetails?.phone || null,
+          driverDetails: booking.driverDetails || null
+        }
+      });
+    }
+
+    // -------------------------------------------------------------
     // 7. CUSTOMER CANCEL BOOKING / RIDE (Zero Cancellation Fee)
     // -------------------------------------------------------------
     if ((pathname === '/bookings/cancel' || pathname === '/rides/cancel') && method === 'POST') {
@@ -3068,12 +3098,15 @@ module.exports = async (req, res) => {
       }
 
       booking.assignedDriverId = driver.id;
+      booking.assignedDriverName = driver.name || driver.driverName || '';
+      booking.assignedDriverCarNo = driver.vehicleNumber || driver.carNo || '';
+      booking.assignedDriverPhone = driver.phone || '';
       booking.driverDetails = {
         id: driver.id,
-        name: driver.name,
-        phone: driver.phone,
-        vehicleNumber: driver.vehicleNumber,
-        vehicleModel: driver.vehicleModel,
+        name: driver.name || driver.driverName || '',
+        phone: driver.phone || '',
+        vehicleNumber: driver.vehicleNumber || driver.carNo || '',
+        vehicleModel: driver.vehicleModel || driver.carModel || '',
         rating: driver.rating || 4.9
       };
       booking.bookingStatus = 'DRIVER ASSIGNED';
@@ -3249,6 +3282,8 @@ module.exports = async (req, res) => {
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
       booking.bookingStatus = 'CANCELLED';
+      booking.status = 'CANCELLED';
+      if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: 'CANCELLED',
         timestamp: new Date().toISOString(),
@@ -3381,6 +3416,7 @@ module.exports = async (req, res) => {
 
       const statusUpper = (newStatus || status || '').toUpperCase();
       booking.bookingStatus = statusUpper;
+      booking.status = statusUpper;
       if (statusUpper === 'COMPLETED') {
         booking.completedAt = new Date().toISOString();
         if (!booking.paymentStatus || booking.paymentStatus.includes('PAYABLE') || booking.paymentStatus.includes('PENDING') || booking.paymentStatus.includes('AWAITING') || booking.paymentStatus.includes('PARTIALLY')) {

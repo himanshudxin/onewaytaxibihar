@@ -2287,12 +2287,13 @@
                     <th>Pickup Date &amp; Time</th>
                     <th>Vehicle</th>
                     <th>Fare &amp; Payment</th>
+                    <th>Ride Status</th>
                     <th>Assigned Chauffeur</th>
                     <th style="text-align: right;">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="bookings-table-body">
-                  <tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading bookings database...</td></tr>
+                  <tr><td colspan="9" style="text-align:center; padding:32px; color:#94a3b8;">Loading bookings database...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -4625,8 +4626,44 @@
       }
 
       tbody.innerHTML = filtered.map(b => {
-        const pillClass = getStatusPillClass(b.bookingStatus);
-        const drvInfo = b.assignedDriverName ? `${b.assignedDriverName} (${b.assignedDriverCarNo || ''})` : `<span style="color:#ef4444; font-weight:600;">Unassigned</span>`;
+        const rawStatus = (b.bookingStatus || b.status || 'CONFIRMED').toUpperCase();
+        const isCancelled = rawStatus === 'CANCELLED' || rawStatus === 'REJECTED';
+        const isDriverAssigned = Boolean(b.assignedDriverId || b.driverDetails?.id || b.assignedDriverName || rawStatus === 'DRIVER ASSIGNED');
+        const isDriverAccepted = rawStatus === 'ACCEPTED' || rawStatus === 'ON THE WAY' || rawStatus === 'ARRIVED' || rawStatus === 'TRIP STARTED' || rawStatus === 'COMPLETED';
+
+        let statusBadge = '';
+        if (isCancelled) {
+          statusBadge = `<span class="pill cancelled" style="background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; font-weight:800; padding:4px 9px; border-radius:9999px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">🔴 CANCELLED</span>`;
+        } else if (isDriverAccepted) {
+          statusBadge = `<span class="pill confirmed" style="background:#d1fae5; color:#059669; border:1px solid #6ee7b7; font-weight:800; padding:4px 9px; border-radius:9999px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">🟢 Accepted by Driver</span>`;
+        } else if (isDriverAssigned) {
+          statusBadge = `<span class="pill assigned" style="background:#fef3c7; color:#d97706; border:1px solid #fcd34d; font-weight:800; padding:4px 9px; border-radius:9999px; font-size:11px; display:inline-flex; align-items:center; gap:4px;">🟡 Assigned (Not Accepted Yet)</span>`;
+        } else if (rawStatus === 'COMPLETED') {
+          statusBadge = `<span class="pill confirmed" style="background:#dbeafe; color:#2563eb; border:1px solid #93c5fd; font-weight:800; padding:4px 9px; border-radius:9999px; font-size:11px;">✓ Completed</span>`;
+        } else {
+          statusBadge = `<span class="pill new" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; padding:4px 9px; border-radius:9999px; font-size:11px;">⏳ Pending Driver</span>`;
+        }
+
+        const driverName = b.assignedDriverName || b.driverDetails?.name || (b.assignedDriverId ? (_allDrivers.find(d => d.id === b.assignedDriverId)?.name) : '');
+        const carNo = b.assignedDriverCarNo || b.driverDetails?.vehicleNumber || (b.assignedDriverId ? (_allDrivers.find(d => d.id === b.assignedDriverId)?.vehicleNumber) : '');
+
+        let drvInfo = '';
+        if (isCancelled) {
+          drvInfo = `<span style="color:#94a3b8; font-size:11px;">Trip Cancelled</span>`;
+        } else if (driverName) {
+          drvInfo = `
+            <div>
+              <div style="font-weight:700; color:var(--navy-900); font-size:12.5px;">${escapeHtml(driverName)}</div>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(carNo || 'Vehicle')}</div>
+              <div style="font-size:10.5px; font-weight:750; margin-top:2px; color:${isDriverAccepted ? '#059669' : '#d97706'};">
+                ${isDriverAccepted ? '✓ Driver Accepted' : '⏳ Assigned (Not accepted yet)'}
+              </div>
+            </div>
+          `;
+        } else {
+          drvInfo = `<span style="color:#ef4444; font-weight:600; font-size:11.5px;">Unassigned</span>`;
+        }
+
         const phone = cleanPhone(b.passengerPhone);
 
         return `
@@ -4642,7 +4679,7 @@
               </div>
             </td>
             <td>
-              <div style="font-weight:600;">${escapeHtml(b.originCity)} ➔ ${escapeHtml(b.destCity)}</div>
+              <div style="font-weight:600;">${escapeHtml(b.originCity || b.origin || '')} ➔ ${escapeHtml(b.destCity || b.dest || '')}</div>
               <div style="font-size:11px; color:#64748b;">${b.tripType || 'One-Way'} • ${b.distanceKm ? b.distanceKm + ' KM' : ''}</div>
             </td>
             <td>
@@ -4656,11 +4693,12 @@
               <div style="font-weight:700; font-family:var(--font-mono);">₹${(b.totalFare || b.fare || 0).toLocaleString('en-IN')}</div>
               <div style="font-size:10.5px; color:#059669;">${b.paymentStatus || 'Pay on Ride'}</div>
             </td>
+            <td>${statusBadge}</td>
             <td>${drvInfo}</td>
             <td style="text-align:right;">
               <div style="display:inline-flex; gap:4px;">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="openBookingDrawer('${b.bookingId}')">View</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Assign</button>
+                ${!isCancelled ? `<button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">${isDriverAssigned ? 'Reassign' : 'Assign'}</button>` : ''}
               </div>
             </td>
           </tr>
@@ -4683,12 +4721,43 @@
       if (dateEl) dateEl.textContent = `Created: ${new Date(booking.createdAt || Date.now()).toLocaleString('en-IN')}`;
 
       const phone = cleanPhone(booking.passengerPhone);
-      const pillClass = getStatusPillClass(booking.bookingStatus);
+      const rawStatus = (booking.bookingStatus || booking.status || 'CONFIRMED').toUpperCase();
+      const isCancelled = rawStatus === 'CANCELLED' || rawStatus === 'REJECTED';
+      const isDriverAssigned = Boolean(booking.assignedDriverId || booking.driverDetails?.id || booking.assignedDriverName || rawStatus === 'DRIVER ASSIGNED');
+      const isDriverAccepted = rawStatus === 'ACCEPTED' || rawStatus === 'ON THE WAY' || rawStatus === 'ARRIVED' || rawStatus === 'TRIP STARTED' || rawStatus === 'COMPLETED';
+
+      let statusBadge = '';
+      if (isCancelled) {
+        statusBadge = `<span class="pill cancelled" style="background:#fee2e2; color:#ef4444; border:1px solid #fca5a5; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🔴 CANCELLED</span>`;
+      } else if (isDriverAccepted) {
+        statusBadge = `<span class="pill confirmed" style="background:#d1fae5; color:#059669; border:1px solid #6ee7b7; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🟢 Accepted by Driver</span>`;
+      } else if (isDriverAssigned) {
+        statusBadge = `<span class="pill assigned" style="background:#fef3c7; color:#d97706; border:1px solid #fcd34d; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🟡 Assigned (Not Accepted Yet)</span>`;
+      } else {
+        statusBadge = `<span class="pill new" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">⏳ Pending Driver</span>`;
+      }
+
+      const drvName = booking.assignedDriverName || booking.driverDetails?.name || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.name) : '');
+      const drvCar = booking.assignedDriverCarNo || booking.driverDetails?.vehicleNumber || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.vehicleNumber) : '');
+      const drvPhone = booking.assignedDriverPhone || booking.driverDetails?.phone || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.phone) : '');
+
+      let chauffeurStatusHtml = '';
+      if (isCancelled) {
+        chauffeurStatusHtml = `<div style="font-size:12px; color:#ef4444; font-weight:700; margin-top:4px;">Trip was cancelled</div>`;
+      } else if (drvName) {
+        chauffeurStatusHtml = `
+          <div style="font-size:12px; font-weight:800; margin-top:6px; color:${isDriverAccepted ? '#059669' : '#d97706'}; display:flex; align-items:center; gap:6px;">
+            <span>${isDriverAccepted ? '🟢 Driver Status: Accepted & Confirmed' : '🟡 Driver Status: Assigned (Not Accepted Yet)'}</span>
+          </div>
+        `;
+      } else {
+        chauffeurStatusHtml = `<div style="font-size:12px; color:#ef4444; font-weight:700; margin-top:4px;">Chauffeur not assigned yet</div>`;
+      }
 
       content.innerHTML = `
         <div style="margin-bottom:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <span class="pill ${pillClass}" style="font-size:12px;">${booking.bookingStatus}</span>
+            ${statusBadge}
             <span style="font-size:12px; font-weight:600; color:#64748b;">Trip OTP: <strong style="color:var(--navy-900); font-family:var(--font-mono); font-size:14px;">${booking.tripOtp || '----'}</strong></span>
           </div>
 
@@ -4718,11 +4787,12 @@
           <div class="ops-card" style="margin-bottom:16px;">
             <div class="ops-card-header"><strong style="font-size:13px;">Assigned Chauffeur</strong></div>
             <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
-              <div>Driver: <strong>${escapeHtml(booking.assignedDriverName || 'Not Assigned')}</strong></div>
-              <div>Vehicle: <strong>${escapeHtml(booking.assignedDriverCarNo || 'N/A')} (${escapeHtml(booking.assignedDriverCarModel || '')})</strong></div>
-              <div>Phone: <strong>${escapeHtml(booking.assignedDriverPhone || 'N/A')}</strong></div>
+              <div>Driver: <strong>${escapeHtml(drvName || 'Not Assigned')}</strong></div>
+              <div>Vehicle: <strong>${escapeHtml(drvCar || 'N/A')}</strong></div>
+              <div>Phone: <strong>${escapeHtml(drvPhone || 'N/A')}</strong></div>
+              ${chauffeurStatusHtml}
               <div style="margin-top:10px;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${booking.bookingId}')">Reassign Driver</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${booking.bookingId}')">${drvName ? 'Reassign Driver' : 'Assign Driver'}</button>
               </div>
             </div>
           </div>

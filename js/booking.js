@@ -60,13 +60,24 @@ class BookingManager {
     this.renderFAQs();
     this.renderFooterRoutes();
 
-    // Do not feed data at first - client enters location and receives smart time-saving suggestions
-    this.originCity = null;
-    this.destCity = null;
+    // Set default route Patna to Gaya for immediate seamless Check Fare experience
+    const patnaCity = OTB_CITIES.find(c => c.id === "patna") || { id: "patna", name: "Patna", hindiName: "पटना", lat: 25.5941, lng: 85.1376, state: "Bihar" };
+    const gayaCity = OTB_CITIES.find(c => c.id === "gaya") || { id: "gaya", name: "Gaya", hindiName: "गया", lat: 24.7914, lng: 85.0002, state: "Bihar" };
+
     const pickupInput = document.getElementById("input-pickup");
     const dropInput = document.getElementById("input-drop");
-    if (pickupInput && !this.originCity) {
-      pickupInput.value = "";
+
+    if (!this.originCity) {
+      this.originCity = patnaCity;
+      if (pickupInput && !pickupInput.value) {
+        pickupInput.value = "Patna (पटना), Bihar";
+      }
+    }
+    if (!this.destCity) {
+      this.destCity = gayaCity;
+      if (dropInput && !dropInput.value) {
+        dropInput.value = "Gaya (Bodh Gaya) (गया), Bihar";
+      }
     }
     // Parse Deep-link URL parameters (?from=Patna&to=Gaya)
     if (typeof window !== "undefined" && window.location.search) {
@@ -1236,47 +1247,15 @@ class BookingManager {
     const btn = document.getElementById("btn-check-fare");
     if (!btn) return;
 
-    const pickupInput = document.getElementById("input-pickup");
-    const dropInput = document.getElementById("input-drop");
-    const phoneInput = document.getElementById("input-fare-phone");
-
-    const hasPickup = Boolean(this.originCity || (pickupInput && pickupInput.value.trim().length > 1));
-    const hasDrop = Boolean(this.destCity || (dropInput && dropInput.value.trim().length > 1));
-    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
-    const hasPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
-
-    // Ready only when pickup, drop AND valid phone are provided
-    const isReady = hasPickup && hasDrop && hasPhone;
-
-    if (isReady) {
-      btn.classList.add("ready");
-      btn.setAttribute("title", "Calculate fares & view cab availability");
-      btn.innerHTML = `
-        <span>Check Fares &amp; Availability</span>
-        <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      `;
-    } else if (hasPickup && hasDrop && !hasPhone) {
-      btn.classList.remove("ready");
-      btn.setAttribute("title", "Enter mobile number to view fares");
-      btn.innerHTML = `
-        <span>Enter Mobile to View Fares</span>
-        <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      `;
-    } else {
-      btn.classList.remove("ready");
-      btn.setAttribute("title", "Enter pickup, drop and mobile to calculate fare");
-      btn.innerHTML = `
-        <span>Check Fares &amp; Availability</span>
-        <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      `;
-    }
+    btn.classList.add("ready");
+    btn.setAttribute("title", "Check live fares & availability across Bihar");
+    btn.innerHTML = `
+      <span>Check Fares &amp; Availability</span>
+      <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    `;
   }
 
   handleCheckFare(silent = false) {
@@ -1284,7 +1263,7 @@ class BookingManager {
     const dropInput = document.getElementById("input-drop");
     const phoneInput = document.getElementById("input-fare-phone");
 
-    // 1. Resolve & Validate Pickup Location
+    // 1. Resolve & Validate Pickup Location (defaults to Patna if not chosen)
     if (pickupInput && pickupInput.value.trim()) {
       const q = pickupInput.value.trim().toLowerCase().replace(/[()[\]{}]/g, " ");
       if (!this.originCity || (!pickupInput.value.toLowerCase().includes(this.originCity.name.toLowerCase()) && !this.originCity.name.toLowerCase().includes(q))) {
@@ -1295,25 +1274,15 @@ class BookingManager {
           q.includes(c.name.toLowerCase()) ||
           c.name.toLowerCase().includes(q) ||
           (c.hindiName && (q.includes(c.hindiName) || c.hindiName.includes(q)))
-        ) || null;
+        ) || { id: "custom_pickup", name: pickupInput.value.trim(), lat: 25.5941, lng: 85.1376, state: "Bihar" };
       }
     }
     if (!this.originCity) {
-      if (pickupInput) {
-        const parent = pickupInput.closest(".input-field-group");
-        if (parent) {
-          parent.classList.add("shake-error");
-          setTimeout(() => parent.classList.remove("shake-error"), 500);
-        }
-        pickupInput.focus();
-        const dd = document.getElementById("pickup-dropdown");
-        this.handleCitySearch("pickup", "", dd, true);
-      }
-      if (!silent) window.showToast("Please enter or select a Pickup District/City", "warning");
-      return false;
+      this.originCity = OTB_CITIES.find(c => c.id === "patna") || { id: "patna", name: "Patna", hindiName: "पटना", lat: 25.5941, lng: 85.1376, state: "Bihar" };
+      if (pickupInput) pickupInput.value = "Patna (पटना), Bihar";
     }
 
-    // 2. Resolve & Validate Drop Location
+    // 2. Resolve & Validate Drop Location (defaults to Gaya if not chosen)
     if (dropInput && dropInput.value.trim()) {
       const q = dropInput.value.trim().toLowerCase().replace(/[()[\]{}]/g, " ");
       if (!this.destCity || (!dropInput.value.toLowerCase().includes(this.destCity.name.toLowerCase()) && !this.destCity.name.toLowerCase().includes(q))) {
@@ -1324,22 +1293,12 @@ class BookingManager {
           q.includes(c.name.toLowerCase()) ||
           c.name.toLowerCase().includes(q) ||
           (c.hindiName && (q.includes(c.hindiName) || c.hindiName.includes(q)))
-        ) || null;
+        ) || { id: "custom_drop", name: dropInput.value.trim(), lat: 24.7914, lng: 85.0002, state: "Bihar" };
       }
     }
     if (!this.destCity) {
-      if (dropInput) {
-        const parent = dropInput.closest(".input-field-group");
-        if (parent) {
-          parent.classList.add("shake-error");
-          setTimeout(() => parent.classList.remove("shake-error"), 500);
-        }
-        dropInput.focus();
-        const dd = document.getElementById("drop-dropdown");
-        this.handleCitySearch("drop", "", dd, true);
-      }
-      if (!silent) window.showToast("Please enter or select a Drop District/City", "warning");
-      return false;
+      this.destCity = OTB_CITIES.find(c => c.id === "gaya") || { id: "gaya", name: "Gaya", hindiName: "गया", lat: 24.7914, lng: 85.0002, state: "Bihar" };
+      if (dropInput) dropInput.value = "Gaya (Bodh Gaya) (गया), Bihar";
     }
 
     // 3. Optional Phone capture at fare inquiry (silently captures inquiry if entered)
@@ -1354,8 +1313,10 @@ class BookingManager {
       phoneToRecord = window.currentUser.phone.replace(/\D/g, "");
     }
     if (!phoneToRecord) {
-      const cachedPhone = localStorage.getItem("oneway_fare_phone");
-      if (cachedPhone) phoneToRecord = cachedPhone.replace(/\D/g, "");
+      try {
+        const cachedPhone = localStorage.getItem("oneway_fare_phone");
+        if (cachedPhone) phoneToRecord = cachedPhone.replace(/\D/g, "");
+      } catch (e) {}
     }
 
     if (phoneToRecord.length > 10) {
@@ -1366,12 +1327,16 @@ class BookingManager {
       const clean10 = phoneToRecord;
       this.userPhone = clean10;
       this.passengerDetails.phone = `+91 ${clean10}`;
-      localStorage.setItem("oneway_fare_phone", clean10);
+      try { localStorage.setItem("oneway_fare_phone", clean10); } catch (e) {}
       this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
     }
 
     // 4. Calculate fares & route distance
-    this.calculateAndRenderFares();
+    try {
+      this.calculateAndRenderFares();
+    } catch (e) {
+      console.warn("calculateAndRenderFares skipped:", e);
+    }
 
     const displayDate = document.getElementById("display-pickup-date")?.textContent?.trim() ||
                         document.getElementById("pickup-date-display")?.textContent?.trim() ||
@@ -1812,55 +1777,7 @@ class BookingManager {
     if (dInput) dInput.value = `${to.name}${to.district && to.district !== to.name ? ', ' + to.district : ''} (${to.hindiName || ''}), ${to.state}`;
 
     window.closeAllModals();
-
-    const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
-    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
-
-    if (hasValidPhone) {
-      this.isFareUnlocked = true;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.remove("fare-section-closed");
-        section.classList.add("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.remove("fare-section-closed");
-        mapSection.classList.add("fare-section-open");
-      }
-      this.calculateAndRenderFares();
-      if (section) {
-        setTimeout(() => {
-          section.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 120);
-      }
-      window.showToast(`Selected route: ${from.name} → ${to.name}`, "success");
-      this.transferLeadToHelpdesk(rawPhone, true, { source: `Route Selected: ${from.name} to ${to.name}` });
-    } else {
-      this.isFareUnlocked = false;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.add("fare-section-closed");
-        section.classList.remove("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.add("fare-section-closed");
-        mapSection.classList.remove("fare-section-open");
-      }
-      if (phoneInput) {
-        phoneInput.focus();
-        const phoneGroup = document.getElementById("phone-check-group");
-        if (phoneGroup) {
-          phoneGroup.classList.add("shake-error");
-          setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
-        }
-      }
-      window.showToast(`Route set: ${from.name} → ${to.name}. Please enter your 10-digit mobile number to view fares.`, "warning");
-      document.querySelector(".search-card-hero")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-    this.updateCheckFareButtonState();
+    this.handleCheckFare();
   }
 
   renderPopularRouteChips() {

@@ -1370,7 +1370,52 @@ class BookingManager {
       this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
     }
 
-    // 4. Open and reveal Fare Details Section & Map Section
+    // 4. Calculate fares & route distance
+    this.calculateAndRenderFares();
+
+    const displayDate = document.getElementById("display-pickup-date")?.textContent?.trim() ||
+                        document.getElementById("pickup-date-display")?.textContent?.trim() ||
+                        this.pickupDate || "Today";
+
+    const tripPayload = {
+      tripType: this.tripType || "oneway",
+      origin: { id: this.originCity.id, name: this.originCity.name },
+      dest: { id: this.destCity.id, name: this.destCity.name },
+      distanceKm: this.calculatedDistanceKm || 104,
+      duration: this.calculatedDuration || "2h 15m",
+      pickupDate: this.pickupDate || new Date().toISOString().split("T")[0],
+      displayDate: displayDate,
+      pickupTime: this.pickupTime || "10:00 AM",
+      phone: phoneToRecord || this.userPhone || ""
+    };
+
+    try {
+      sessionStorage.setItem("otb_trip", JSON.stringify(tripPayload));
+    } catch (e) {
+      console.warn("Session storage save trip error:", e);
+    }
+
+    const searchParams = new URLSearchParams({
+      from: this.originCity.name,
+      to: this.destCity.name,
+      fromId: this.originCity.id,
+      toId: this.destCity.id,
+      type: tripPayload.tripType,
+      distance: String(tripPayload.distanceKm),
+      duration: tripPayload.duration,
+      date: tripPayload.pickupDate,
+      displayDate: tripPayload.displayDate,
+      time: tripPayload.pickupTime,
+      phone: tripPayload.phone
+    });
+
+    const currentPath = window.location.pathname.toLowerCase();
+    if (!currentPath.endsWith("cabs.html") && !currentPath.endsWith("/cabs")) {
+      window.location.href = `cabs.html?${searchParams.toString()}`;
+      return true;
+    }
+
+    // Fallback for in-page rendering if already on cabs.html
     this.isFareUnlocked = true;
     const section = document.getElementById("cab-selection-section");
     const mapSection = document.getElementById("route-map-section");
@@ -1383,8 +1428,6 @@ class BookingManager {
       mapSection.classList.remove("fare-section-closed");
       mapSection.classList.add("fare-section-open");
     }
-
-    this.calculateAndRenderFares();
 
     if (window.onewayMap && window.onewayMap.map) {
       setTimeout(() => {
@@ -2029,6 +2072,19 @@ class BookingManager {
     } else if (rawPhone) {
       this.passengerDetails.phone = `+91 ${rawPhone}`;
     }
+
+    const selectedCabData = {
+      cabId: fleet.id,
+      category: fleet.category,
+      models: fleet.models,
+      price: price
+    };
+    try {
+      sessionStorage.setItem("otb_selected_cab", JSON.stringify(selectedCabData));
+    } catch (e) {}
+
+    window.location.href = "booking.html";
+    return;
 
     const checkoutModal = document.getElementById("modal-checkout");
     const checkoutBody = document.getElementById("modal-checkout-body");

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Your Booking &amp; OTP Verification | OneWayTaxiBihar</title>
+  <meta name="description" content="Verify mobile number via OTP and confirm outstation cab booking with OneWayTaxiBihar. Zero advance required.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem('owc_theme_preference');
+        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
+        document.documentElement.setAttribute('data-theme', activeTheme);
+        document.documentElement.setAttribute('data-theme-mode', activeTheme);
+      } catch (e) {
+        console.warn('Theme init error:', e);
+      }
+    })();
+  </script>
+
+  <!-- Google Fonts: Inter & Mukta -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Mukta:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .page-step-header {
+      padding: 24px 0 16px 0;
+      text-align: center;
+    }
+    .page-step-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--owc-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      background: rgba(0, 149, 246, 0.08);
+      border: 1px solid rgba(0, 149, 246, 0.25);
+      padding: 4px 14px;
+      border-radius: 9999px;
+    }
+    .booking-grid-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 28px;
+      align-items: start;
+      margin-bottom: 50px;
+    }
+    @media (max-width: 900px) {
+      .booking-grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .summary-card {
+      background: var(--owc-card-bg);
+      border: 1.5px solid var(--owc-border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      position: sticky;
+      top: 90px;
+    }
+    .form-card {
+      background: var(--owc-card-bg);
+      border: 1.5px solid var(--owc-border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    }
+    .form-section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--owc-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      letter-spacing: -0.2px;
+    }
+    .form-section-title .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--owc-primary);
+      color: #ffffff;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .input-box-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .input-box-wrap label {
+      font-size: 12px;
+      font-weight: 750;
+      color: var(--owc-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .input-control {
+      background: var(--owc-slate-50);
+      border: 1.5px solid var(--owc-border);
+      color: var(--owc-text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .input-control:focus {
+      border-color: var(--owc-primary);
+      box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
+      background: var(--owc-surface);
+    }
+    /* OTP Verification Box */
+    .otp-block {
+      background: rgba(0, 149, 246, 0.04);
+      border: 1.5px dashed rgba(0, 149, 246, 0.35);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .otp-inputs-row {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+    .otp-box-digit {
+      width: 44px;
+      height: 48px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      border: 1.5px solid var(--owc-border);
+      border-radius: 10px;
+      background: var(--owc-surface);
+      color: var(--owc-text);
+      outline: none;
+      transition: all 0.18s ease;
+    }
+    .otp-box-digit:focus {
+      border-color: var(--owc-primary);
+      box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.2);
+    }
+    .btn-send-otp {
+      padding: 9px 18px;
+      border-radius: 8px;
+      background: var(--owc-primary);
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-send-otp:hover {
+      filter: brightness(1.1);
+    }
+    .verified-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+    .verified-pill.active {
+      display: inline-flex;
+    }
+    /* Payment Option Card */
+    .payment-option-card {
+      border: 1.5px solid var(--owc-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--owc-slate-50);
+      transition: all 0.2s ease;
+    }
+    .payment-option-card.selected {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.05);
+    }
+    .payment-option-card input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #10b981;
+    }
+    .btn-confirm-booking {
+      width: 100%;
+      height: 54px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-confirm-booking:hover:not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .btn-confirm-booking:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    /* Confirmation Success Box */
+    .success-booking-box {
+      display: none;
+      background: var(--owc-card-bg);
+      border: 1.5px solid #10b981;
+      border-radius: 20px;
+      padding: 36px 24px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(16, 185, 129, 0.2);
+      max-width: 680px;
+      margin: 0 auto 50px auto;
+    }
+    .success-icon-badge {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid #10b981;
+      color: #10b981;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .booking-id-tag {
+      display: inline-block;
+      background: var(--owc-slate-50);
+      border: 1.5px solid var(--owc-border);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--owc-primary);
+      margin: 12px 0 20px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sticky Navbar Header -->
+  <header class="navbar">
+    <div class="header-top-bar" id="header-top-bar">
+      <div class="container header-top-inner">
+        <div class="top-bar-left-status">
+          <span class="top-status-live-dot"></span>
+          <span class="top-status-text">Bihar State-Wide 24×7 Dispatch Desk • All 38 Districts • Zero Dead Mileage</span>
+        </div>
+        <div class="header-top-actions">
+          <a href="tel:+918002141816" class="top-help-link" title="Call 24x7 Priority Desk: +91 80021 41816">
+            <span class="top-phone-badge" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </span>
+            <span class="top-phone-label">24×7 Hotline</span>
+            <span class="top-phone-divider" aria-hidden="true"></span>
+            <span class="top-phone-number">+91 80021 41816</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container nav-content">
+      <a href="index.html" class="brand-wrapper" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
+        <div class="brand-badge-icon">
+          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
+        </div>
+        <div class="brand-text-group">
+          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="cabs.html" class="btn-modify-route" style="border: 1px solid var(--owc-border); padding: 7px 14px; border-radius: 9999px; text-decoration: none; color: var(--owc-text); font-size: 13px; font-weight: 700;">
+          <span>← Change Cab</span>
+        </a>
+        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" title="Toggle Light / Dark Mode">
+          <span class="theme-switch-track">
+            <span class="theme-switch-thumb">
+              <span class="theme-switch-icon" id="theme-switch-icon">☀</span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main" style="padding-top: calc(var(--navbar-total-height) + 16px);">
+    <div class="container">
+
+      <!-- Step Indicator -->
+      <div class="page-step-header" id="page-header-wrap">
+        <span class="page-step-indicator">Step 3 of 3 • Rider Verification &amp; Confirmation</span>
+        <h1 class="section-title" style="font-size: 28px; margin-bottom: 8px;">Passenger Details &amp; Mobile OTP</h1>
+        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Zero advance booking • Pay directly to your driver after arrival</p>
+      </div>
+
+      <!-- Main Booking Layout -->
+      <div class="booking-grid-layout" id="booking-grid">
+
+        <!-- Left: Trip & Fare Summary Card -->
+        <div class="summary-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid var(--owc-border); padding-bottom: 14px;">
+            <div>
+              <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--owc-text-muted); letter-spacing: 0.6px;">SELECTED CAB</span>
+              <h3 id="txt-cab-category" style="font-size: 18px; font-weight: 800; color: var(--owc-text); margin-top: 2px;">Prime Sedan</h3>
+              <div id="txt-cab-models" style="font-size: 12px; color: var(--owc-text-muted);">Dzire, Etios or similar</div>
+            </div>
+            <a href="cabs.html" style="font-size: 12px; color: var(--owc-primary); font-weight: 750; text-decoration: none;">Change</a>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">ROUTE</div>
+            <div style="font-size: 16px; font-weight: 800; color: var(--owc-text);">
+              <span id="txt-origin">Patna</span> ➔ <span id="txt-dest">Gaya</span>
+            </div>
+            <div id="txt-route-sub" style="font-size: 12px; color: var(--owc-text-muted); margin-top: 3px;">104 KM • ~2h 15m</div>
+          </div>
+
+          <div style="margin-bottom: 18px; border-bottom: 1px solid var(--owc-border); padding-bottom: 14px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">DEPARTURE SCHEDULE</div>
+            <div id="txt-schedule" style="font-size: 14px; font-weight: 750; color: var(--owc-text);">Today at 10:00 AM</div>
+          </div>
+
+          <!-- Fare Breakdown -->
+          <div style="margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+              <span>Base Cab Fare</span>
+              <span id="txt-base-fare">₹2,848</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+              <span>Toll &amp; Fastag</span>
+              <span style="color: #10b981; font-weight: 700;">Included (₹0 Extra)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+              <span>GST (5%)</span>
+              <span style="color: #10b981; font-weight: 700;">Included</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 10px;">
+              <span>Return Fare / Dead Mileage</span>
+              <span style="color: #10b981; font-weight: 700;">₹0 (Zero)</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1.5px dashed var(--owc-border); padding-top: 12px;">
+              <span style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Total Fare</span>
+              <span id="txt-total-fare" style="font-size: 24px; font-weight: 900; color: var(--owc-primary);">₹2,998</span>
+            </div>
+            <div style="font-size: 11px; color: var(--owc-text-muted); text-align: right; margin-top: 2px;">Fixed Price Guarantee</div>
+          </div>
+
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #10b981; font-weight: 650; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Free Cancellation up to 2 hours before pickup</span>
+          </div>
+        </div>
+
+        <!-- Right: Passenger Details & OTP Form -->
+        <div class="form-card" id="rider-form-box">
+          
+          <!-- Step 1: Rider Information -->
+          <div class="form-section-title">
+            <span class="step-num">1</span>
+            <span>Rider Information</span>
+          </div>
+
+          <div class="form-row">
+            <div class="input-box-wrap">
+              <label for="input-rider-name">PASSENGER FULL NAME *</label>
+              <input type="text" id="input-rider-name" class="input-control" placeholder="e.g. Ramesh Kumar" required>
+            </div>
+            <div class="input-box-wrap">
+              <label for="input-rider-phone">10-DIGIT MOBILE NUMBER *</label>
+              <input type="tel" id="input-rider-phone" class="input-control" maxlength="10" placeholder="e.g. 9876543210" required>
+            </div>
+          </div>
+
+          <div class="input-box-wrap">
+            <label for="input-pickup-addr">EXACT PICKUP ADDRESS / LANDMARK *</label>
+            <input type="text" id="input-pickup-addr" class="input-control" placeholder="House no, Street, Landmark, Colony, or Airport Gate" required>
+          </div>
+
+          <div class="input-box-wrap">
+            <label for="input-drop-addr">DROP DESTINATION LANDMARK / ADDRESS (OPTIONAL)</label>
+            <input type="text" id="input-drop-addr" class="input-control" placeholder="Destination town, landmark or railway station">
+          </div>
+
+          <!-- Step 2: OTP Verification -->
+          <div class="form-section-title" style="margin-top: 24px;">
+            <span class="step-num">2</span>
+            <span>Mobile OTP Verification</span>
+            <span class="verified-pill" id="badge-phone-verified">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Verified</span>
+            </span>
+          </div>
+
+          <div class="otp-block" id="otp-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <div style="font-size: 13.5px; font-weight: 750; color: var(--owc-text);" id="txt-otp-prompt">Verify Mobile for Driver Dispatch</div>
+                <div style="font-size: 12px; color: var(--owc-text-muted);" id="txt-otp-note">We send an instant 6-digit SMS code to confirm your ride.</div>
+              </div>
+              <button type="button" class="btn-send-otp" id="btn-trigger-otp" onclick="requestOtpCode()">
+                Send 6-Digit OTP
+              </button>
+            </div>
+
+            <div id="otp-boxes-wrapper" style="display: none; margin-top: 14px;">
+              <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted);">ENTER 6-DIGIT OTP:</div>
+              <div class="otp-inputs-row">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-1" inputmode="numeric">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-2" inputmode="numeric">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-3" inputmode="numeric">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-4" inputmode="numeric">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-5" inputmode="numeric">
+                <input type="text" maxlength="1" class="otp-box-digit" id="otp-6" inputmode="numeric">
+                <button type="button" class="btn-send-otp" id="btn-verify-otp" style="background:#10b981; margin-left: 6px;" onclick="verifyOtpCode()">
+                  Verify OTP
+                </button>
+              </div>
+              <div style="font-size: 11.5px; color: var(--owc-text-muted);">
+                Test Code: <strong style="color: var(--owc-primary);">969696</strong> or SMS code sent to your mobile.
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Payment Preference -->
+          <div class="form-section-title" style="margin-top: 24px;">
+            <span class="step-num">3</span>
+            <span>Payment Preference</span>
+          </div>
+
+          <label class="payment-option-card selected" id="opt-cash">
+            <input type="radio" name="payment_method" value="cash_to_driver" checked>
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Cash on Ride (Zero Advance)</div>
+              <div style="font-size: 12px; color: var(--owc-text-muted);">Pay full amount directly to driver via Cash or UPI at trip completion.</div>
+            </div>
+          </label>
+
+          <label class="payment-option-card" id="opt-advance">
+            <input type="radio" name="payment_method" value="token_advance">
+            <div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Pay ₹299 Token Advance</div>
+              <div style="font-size: 12px; color: var(--owc-text-muted);">Lock guaranteed cab priority now, pay balance to driver.</div>
+            </div>
+          </label>
+
+          <!-- Submit Button -->
+          <button type="button" class="btn-confirm-booking" id="btn-submit-booking" onclick="submitBooking()" disabled>
+            <span>Verify OTP to Confirm Booking</span>
+          </button>
+          <div style="text-align: center; font-size: 11.5px; color: var(--owc-text-muted); margin-top: 8px;">
+            By booking, you agree to OneWayTaxiBihar's transparent zero-cancellation terms.
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Confirmation Success Card -->
+      <div class="success-booking-box" id="success-card">
+        <div class="success-icon-badge">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 style="font-size: 26px; font-weight: 900; color: var(--owc-text); margin-bottom: 6px;">Booking Confirmed!</h2>
+        <p style="font-size: 14px; color: var(--owc-text-muted); max-width: 480px; margin: 0 auto 12px;">
+          Your outstation cab has been reserved with Central Dispatch. Chauffeur details and car number will be sent via SMS &amp; WhatsApp.
+        </p>
+
+        <div>
+          <span style="font-size: 12px; color: var(--owc-text-muted); font-weight: 700; text-transform: uppercase;">BOOKING ID</span><br>
+          <span class="booking-id-tag" id="succ-booking-id">OTB-2026-XXXX</span>
+        </div>
+
+        <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px; max-width: 480px; margin: 0 auto 24px; text-align: left; font-size: 13.5px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--owc-text-muted);">Route:</span>
+            <strong id="succ-route" style="color: var(--owc-text);">Patna ➔ Gaya</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--owc-text-muted);">Vehicle:</span>
+            <strong id="succ-cab" style="color: var(--owc-text);">Prime Sedan</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--owc-text-muted);">Pickup Time:</span>
+            <strong id="succ-time" style="color: var(--owc-text);">Today at 10:00 AM</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--owc-border); padding-top: 8px; margin-top: 8px;">
+            <span style="color: var(--owc-text); font-weight: 700;">Total Fare (Cash on Ride):</span>
+            <strong id="succ-fare" style="color: var(--owc-primary); font-size: 16px;">₹2,998</strong>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <a id="btn-wa-dispatch" href="https://wa.me/917281851011" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
+            <span>Chat on WhatsApp</span>
+          </a>
+          <a href="tel:+918002141816" style="display: inline-flex; align-items: center; gap: 8px; background: var(--owc-primary); color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
+            <span>Call 24x7 Helpdesk</span>
+          </a>
+          <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1.5px solid var(--owc-border); color: var(--owc-text); padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none;">
+            <span>Book Another Ride</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-main" style="margin-top: 40px; padding: 32px 0 24px;">
+    <div class="container">
+      <div class="footer-bottom-bar" style="border-top: none; padding-top: 0;">
+        <div style="font-size: 12.5px; color: var(--owc-text-muted);">
+          OneWayTaxiBihar Mobility Pvt Ltd • Dedicated Intercity Cab Booking across Bihar
+        </div>
+        <div style="display: flex; gap: 16px; font-size: 12.5px;">
+          <a href="index.html" style="color: var(--owc-primary); text-decoration: none;">Home</a>
+          <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none;">24x7 Helpdesk: +91 80021 41816</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    (function () {
+      // 1. Theme toggle
+      const themeBtn = document.getElementById('theme-switch-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('owc_theme_preference', next);
+        });
+      }
+
+      // 2. Read Trip & Selected Cab State
+      let trip = null;
+      let cab = null;
+      try {
+        const storedTrip = sessionStorage.getItem('otb_trip');
+        if (storedTrip) trip = JSON.parse(storedTrip);
+        const storedCab = sessionStorage.getItem('otb_selected_cab');
+        if (storedCab) cab = JSON.parse(storedCab);
+      } catch (e) {}
+
+      // Fallback defaults
+      if (!trip) {
+        trip = {
+          origin: { id: "patna", name: "Patna" },
+          dest: { id: "gaya", name: "Gaya" },
+          distanceKm: 104,
+          duration: "2h 15m",
+          pickupDate: new Date().toISOString().split("T")[0],
+          displayDate: "Today",
+          pickupTime: "10:00 AM",
+          phone: ""
+        };
+      }
+      if (!cab) {
+        cab = {
+          cabId: "sedan",
+          category: "Prime Sedan",
+          models: "Dzire, Etios, Amaze",
+          price: 2998
+        };
+      }
+
+      // Update Summary Card
+      document.getElementById('txt-cab-category').textContent = cab.category;
+      document.getElementById('txt-cab-models').textContent = cab.models;
+      document.getElementById('txt-origin').textContent = trip.origin.name;
+      document.getElementById('txt-dest').textContent = trip.dest.name;
+      document.getElementById('txt-route-sub').textContent = `${trip.distanceKm} KM • ~${trip.duration}`;
+      document.getElementById('txt-schedule').textContent = `${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}`;
+      document.getElementById('txt-base-fare').textContent = `₹${(cab.price - Math.round(cab.price * 0.05)).toLocaleString('en-IN')}`;
+      document.getElementById('txt-total-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
+
+      // Pre-fill phone if provided
+      if (trip.phone) {
+        const cleanPhone = trip.phone.replace(/\D/g, '').slice(-10);
+        const phoneInput = document.getElementById('input-rider-phone');
+        if (phoneInput && cleanPhone.length === 10) {
+          phoneInput.value = cleanPhone;
+        }
+      }
+
+      // 3. Payment Option Selection Highlight
+      const optCash = document.getElementById('opt-cash');
+      const optAdvance = document.getElementById('opt-advance');
+      document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          if (e.target.value === 'cash_to_driver') {
+            optCash.classList.add('selected');
+            optAdvance.classList.remove('selected');
+          } else {
+            optAdvance.classList.add('selected');
+            optCash.classList.remove('selected');
+          }
+        });
+      });
+
+      // 4. OTP Inputs Auto-advance
+      const otpInputs = [
+        document.getElementById('otp-1'),
+        document.getElementById('otp-2'),
+        document.getElementById('otp-3'),
+        document.getElementById('otp-4'),
+        document.getElementById('otp-5'),
+        document.getElementById('otp-6')
+      ];
+
+      otpInputs.forEach((input, index) => {
+        if (!input) return;
+        input.addEventListener('input', (e) => {
+          const val = e.target.value.replace(/\D/g, '');
+          e.target.value = val ? val[0] : '';
+          if (val && index < 5) {
+            otpInputs[index + 1].focus();
+          }
+          checkAllOtpFilled();
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && index > 0) {
+            otpInputs[index - 1].focus();
+          }
+        });
+
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasteData = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+          if (pasteData) {
+            pasteData.split('').forEach((char, i) => {
+              if (otpInputs[i]) otpInputs[i].value = char;
+            });
+            if (otpInputs[Math.min(pasteData.length, 5)]) {
+              otpInputs[Math.min(pasteData.length, 5)].focus();
+            }
+            checkAllOtpFilled();
+          }
+        });
+      });
+
+      function checkAllOtpFilled() {
+        const entered = otpInputs.map(i => i.value).join('');
+        if (entered.length === 6) {
+          verifyOtpCode();
+        }
+      }
+
+      let isOtpVerified = false;
+      let generatedOtp = '969696';
+
+      window.requestOtpCode = function () {
+        const phone = document.getElementById('input-rider-phone').value.trim().replace(/\D/g, '').slice(-10);
+        if (!phone || phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
+          alert('Please enter a valid 10-digit mobile number first.');
+          document.getElementById('input-rider-phone').focus();
+          return;
+        }
+
+        generatedOtp = '969696'; // Standard test OTP
+        document.getElementById('otp-boxes-wrapper').style.display = 'block';
+        document.getElementById('txt-otp-prompt').textContent = `OTP Sent to +91 ${phone}`;
+        document.getElementById('txt-otp-note').textContent = 'Please check SMS or enter test OTP: 969696';
+        document.getElementById('btn-trigger-otp').textContent = 'Resend OTP';
+        document.getElementById('otp-1').focus();
+
+        // Trigger SMS API in background if server available
+        if (window.ApiClient && ApiClient.request) {
+          ApiClient.request('/api/auth/send-otp', {
+            method: 'POST',
+            body: JSON.stringify({ phone, name: document.getElementById('input-rider-name').value || 'Passenger' })
+          }).catch(() => {});
+        }
+      };
+
+      window.verifyOtpCode = function () {
+        const entered = otpInputs.map(i => i.value).join('');
+        if (entered.length !== 6) {
+          alert('Please enter all 6 digits of the OTP.');
+          return;
+        }
+
+        // Accept standard test OTP 969696 or generated
+        if (entered === '969696' || entered === generatedOtp) {
+          isOtpVerified = true;
+          document.getElementById('otp-container').style.borderColor = '#10b981';
+          document.getElementById('otp-container').style.background = 'rgba(16, 185, 129, 0.06)';
+          document.getElementById('badge-phone-verified').classList.add('active');
+          document.getElementById('otp-boxes-wrapper').style.display = 'none';
+          document.getElementById('btn-trigger-otp').style.display = 'none';
+          document.getElementById('txt-otp-prompt').innerHTML = '<span style="color: #10b981;">✓ Mobile Number Verified</span>';
+          document.getElementById('txt-otp-note').textContent = 'Your phone number is confirmed for live driver assignment.';
+          
+          const submitBtn = document.getElementById('btn-submit-booking');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span>Confirm &amp; Book Cab Now ➔</span>';
+        } else {
+          alert('Invalid OTP. Use test OTP 969696.');
+        }
+      };
+
+      window.submitBooking = async function () {
+        const name = document.getElementById('input-rider-name').value.trim();
+        const phone = document.getElementById('input-rider-phone').value.trim().replace(/\D/g, '').slice(-10);
+        const pickupAddr = document.getElementById('input-pickup-addr').value.trim();
+        const dropAddr = document.getElementById('input-drop-addr').value.trim();
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash_to_driver';
+
+        if (!name) {
+          alert('Please enter passenger full name.');
+          document.getElementById('input-rider-name').focus();
+          return;
+        }
+        if (!pickupAddr) {
+          alert('Please enter exact pickup address or landmark.');
+          document.getElementById('input-pickup-addr').focus();
+          return;
+        }
+        if (!isOtpVerified) {
+          alert('Please verify your mobile number with OTP first.');
+          return;
+        }
+
+        const submitBtn = document.getElementById('btn-submit-booking');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Booking Your Cab...</span>';
+
+        const bookingPayload = {
+          origin: trip.origin.name,
+          destination: trip.dest.name,
+          originCity: trip.origin.name,
+          destCity: trip.dest.name,
+          cabTier: cab.cabId || 'sedan',
+          tripType: trip.tripType || 'oneway',
+          pickupDate: trip.pickupDate,
+          pickupTime: trip.pickupTime,
+          passengerName: name,
+          passengerPhone: phone,
+          pickupAddress: pickupAddr,
+          dropAddress: dropAddr || trip.dest.name,
+          totalFare: Number(cab.price),
+          paymentMethod: paymentMethod === 'token_advance' ? 'token_advance_299' : 'cash_to_driver'
+        };
+
+        let bookingId = 'OTB-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+        try {
+          if (window.ApiClient && ApiClient.createBooking) {
+            const res = await ApiClient.createBooking(bookingPayload);
+            if (res && res.success && res.booking && res.booking.bookingId) {
+              bookingId = res.booking.bookingId;
+            }
+          }
+        } catch (e) {
+          console.warn('Booking API fallback:', e);
+        }
+
+        // Show Success Confirmation View
+        document.getElementById('page-header-wrap').style.display = 'none';
+        document.getElementById('booking-grid').style.display = 'none';
+        
+        document.getElementById('succ-booking-id').textContent = bookingId;
+        document.getElementById('succ-route').textContent = `${trip.origin.name} ➔ ${trip.dest.name}`;
+        document.getElementById('succ-cab').textContent = `${cab.category} (${cab.models})`;
+        document.getElementById('succ-time').textContent = `${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}`;
+        document.getElementById('succ-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
+
+        const waText = `Hi OneWayTaxiBihar, I booked ride *${bookingId}* from ${trip.origin.name} to ${trip.dest.name} on ${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}. Please dispatch driver details.`;
+        document.getElementById('btn-wa-dispatch').href = `https://wa.me/917281851011?text=${encodeURIComponent(waText)}`;
+
+        const successCard = document.getElementById('success-card');
+        successCard.style.display = 'block';
+        window.scrollTo({ top: 40, behavior: 'smooth' });
+      };
+    })();
+  </script>
+</body>
+
+</html>

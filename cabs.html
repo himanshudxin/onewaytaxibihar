@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Cab | OneWayTaxiBihar</title>
+  <meta name="description" content="Select your outstation cab category with guaranteed AC, verified chauffeurs, transparent pricing, and zero return charges across Bihar.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem('owc_theme_preference');
+        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
+        document.documentElement.setAttribute('data-theme', activeTheme);
+        document.documentElement.setAttribute('data-theme-mode', activeTheme);
+      } catch (e) {
+        console.warn('Theme init error:', e);
+      }
+    })();
+  </script>
+
+  <!-- Google Fonts: Inter & Mukta -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Mukta:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <style>
+    .page-step-header {
+      padding: 24px 0 16px 0;
+      text-align: center;
+    }
+    .page-step-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--owc-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      background: rgba(0, 149, 246, 0.08);
+      border: 1px solid rgba(0, 149, 246, 0.25);
+      padding: 4px 14px;
+      border-radius: 9999px;
+    }
+    .route-highlight-strip {
+      background: var(--owc-card-bg);
+      border: 1px solid var(--owc-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .route-path-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--owc-text);
+    }
+    .route-arrow {
+      color: var(--owc-primary);
+      font-size: 20px;
+    }
+    .route-chips-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .route-badge {
+      background: var(--owc-slate-50);
+      border: 1px solid var(--owc-border);
+      color: var(--owc-text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+    }
+    .btn-modify-route {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid var(--owc-border);
+      color: var(--owc-text);
+      padding: 7px 14px;
+      border-radius: 9999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-modify-route:hover {
+      background: var(--owc-primary);
+      color: #ffffff;
+      border-color: var(--owc-primary);
+    }
+    .cabs-list-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 640px) {
+      .cabs-list-container {
+        grid-template-columns: 1fr;
+      }
+      .route-path-main {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sticky Navbar Header -->
+  <header class="navbar">
+    <div class="header-top-bar" id="header-top-bar">
+      <div class="container header-top-inner">
+        <div class="top-bar-left-status">
+          <span class="top-status-live-dot"></span>
+          <span class="top-status-text">Bihar State-Wide 24×7 Dispatch Desk • All 38 Districts • Zero Dead Mileage</span>
+        </div>
+        <div class="header-top-actions">
+          <a href="tel:+918002141816" class="top-help-link" title="Call 24x7 Priority Desk: +91 80021 41816">
+            <span class="top-phone-badge" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </span>
+            <span class="top-phone-label">24×7 Hotline</span>
+            <span class="top-phone-divider" aria-hidden="true"></span>
+            <span class="top-phone-number">+91 80021 41816</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container nav-content">
+      <a href="index.html" class="brand-wrapper" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
+        <div class="brand-badge-icon">
+          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
+        </div>
+        <div class="brand-text-group">
+          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="index.html" class="btn-modify-route">
+          <span>← Change Search</span>
+        </a>
+        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" title="Toggle Light / Dark Mode">
+          <span class="theme-switch-track">
+            <span class="theme-switch-thumb">
+              <span class="theme-switch-icon" id="theme-switch-icon">☀</span>
+            </span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main" style="padding-top: calc(var(--navbar-total-height) + 16px);">
+    <div class="container">
+
+      <!-- Step Indicator & Heading -->
+      <div class="page-step-header">
+        <span class="page-step-indicator">Step 2 of 3 • Cab Selection</span>
+        <h1 class="section-title" style="font-size: 28px; margin-bottom: 8px;">Select Your Outstation Cab</h1>
+        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Transparent fixed rates • Toll, Fastag &amp; GST included • Zero return charges</p>
+      </div>
+
+      <!-- Route Summary Strip -->
+      <div class="route-highlight-strip" id="route-highlight-strip">
+        <div class="route-path-main">
+          <span id="txt-origin">Patna</span>
+          <span class="route-arrow">➔</span>
+          <span id="txt-dest">Gaya</span>
+        </div>
+        <div class="route-chips-wrap">
+          <span class="route-badge" id="badge-distance">104 KM</span>
+          <span class="route-badge" id="badge-duration">~2h 15m</span>
+          <span class="route-badge" id="badge-date">Today, 10:00 AM</span>
+          <span class="route-badge" id="badge-trip-type" style="color: #10b981; font-weight: 700;">One-Way</span>
+          <a href="index.html" class="btn-modify-route" style="margin-left: 4px;">Edit Route</a>
+        </div>
+      </div>
+
+      <!-- Cabs Grid -->
+      <div class="cabs-list-container" id="cabs-grid">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-main" style="margin-top: 40px; padding: 32px 0 24px;">
+    <div class="container">
+      <div class="footer-bottom-bar" style="border-top: none; padding-top: 0;">
+        <div style="font-size: 12.5px; color: var(--owc-text-muted);">
+          OneWayTaxiBihar Mobility Pvt Ltd • Dedicated Intercity Cab Booking across Bihar
+        </div>
+        <div style="display: flex; gap: 16px; font-size: 12.5px;">
+          <a href="index.html" style="color: var(--owc-primary); text-decoration: none;">Home</a>
+          <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none;">24x7 Helpdesk: +91 80021 41816</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/calculator.js"></script>
+  <script>
+    (function () {
+      // 1. Theme toggle initialization
+      const themeBtn = document.getElementById('theme-switch-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          localStorage.setItem('owc_theme_preference', next);
+        });
+      }
+
+      // 2. Read Trip Parameters from SessionStorage or URL Params
+      const urlParams = new URLSearchParams(window.location.search);
+      let trip = null;
+      try {
+        const stored = sessionStorage.getItem('otb_trip');
+        if (stored) trip = JSON.parse(stored);
+      } catch (e) {}
+
+      const originName = trip?.origin?.name || urlParams.get('from') || 'Patna';
+      const destName = trip?.dest?.name || urlParams.get('to') || 'Gaya';
+      const originId = trip?.origin?.id || urlParams.get('fromId') || 'patna';
+      const destId = trip?.dest?.id || urlParams.get('toId') || 'gaya';
+      const tripType = trip?.tripType || urlParams.get('type') || 'oneway';
+      const pickupDate = trip?.pickupDate || urlParams.get('date') || new Date().toISOString().split('T')[0];
+      const displayDate = trip?.displayDate || pickupDate;
+      const pickupTime = trip?.pickupTime || urlParams.get('time') || '10:00 AM';
+      const phone = trip?.phone || urlParams.get('phone') || '';
+
+      // Update UI Header
+      document.getElementById('txt-origin').textContent = originName;
+      document.getElementById('txt-dest').textContent = destName;
+      document.getElementById('badge-date').textContent = `${displayDate} at ${pickupTime}`;
+      document.getElementById('badge-trip-type').textContent = tripType === 'roundtrip' ? 'Round-Trip' : (tripType === 'local' ? 'Local Package' : 'One-Way');
+
+      // 3. Compute Distance
+      let distanceKm = Number(trip?.distanceKm || urlParams.get('distance')) || 0;
+      let duration = trip?.duration || urlParams.get('duration') || '';
+
+      if (!distanceKm) {
+        const originObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === originId || c.name.toLowerCase() === originName.toLowerCase());
+        const destObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === destId || c.name.toLowerCase() === destName.toLowerCase());
+
+        const knownRoute = (typeof OTB_POPULAR_ROUTES !== 'undefined' ? OTB_POPULAR_ROUTES : []).find(r => 
+          (r.fromId === originId && r.toId === destId) || (r.fromId === destId && r.toId === originId)
+        );
+
+        if (knownRoute) {
+          distanceKm = knownRoute.distanceKm;
+          duration = knownRoute.duration;
+        } else if (originObj && destObj && originObj.lat && destObj.lat) {
+          const dLat = (destObj.lat - originObj.lat) * Math.PI / 180;
+          const dLng = (destObj.lng - originObj.lng) * Math.PI / 180;
+          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(originObj.lat * Math.PI / 180) * Math.cos(destObj.lat * Math.PI / 180) *
+                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          distanceKm = Math.max(40, Math.round(6371 * c * 1.30));
+          const totalMin = Math.round((distanceKm / 48) * 60);
+          duration = `${Math.floor(totalMin / 60)}h ${totalMin % 60}m`;
+        } else {
+          distanceKm = 104;
+          duration = '2h 15m';
+        }
+      }
+
+      document.getElementById('badge-distance').textContent = `${distanceKm} KM Highway`;
+      document.getElementById('badge-duration').textContent = `~${duration}`;
+
+      // Synchronize in session
+      const cleanTrip = {
+        tripType,
+        origin: { id: originId, name: originName },
+        dest: { id: destId, name: destName },
+        distanceKm,
+        duration,
+        pickupDate,
+        displayDate,
+        pickupTime,
+        phone
+      };
+      sessionStorage.setItem('otb_trip', JSON.stringify(cleanTrip));
+
+      // 4. Render Fleet Cards
+      const container = document.getElementById('cabs-grid');
+      const fleetList = (typeof OTB_FLEET !== 'undefined') ? OTB_FLEET : [
+        { id: "hatchback", category: "Go Hatchback", badge: "Budget Outstation", models: "WagonR, Tiago", seats: 4, luggage: "2 Bags", ac: "100% AC", ratePerKm: 21.0, rating: 4.3, description: "Economical AC ride for up to 4 passengers with light luggage." },
+        { id: "sedan", category: "Prime Sedan", badge: "Most Popular in Bihar", models: "Dzire, Etios, Amaze", seats: 4, luggage: "3-4 Bags", ac: "Chilled AC", ratePerKm: 25.0, rating: 4.3, description: "Comfortable sedan with ample boot space for family & luggage." },
+        { id: "sedan_prime", category: "Executive Sedan", badge: "Executive Comfort", models: "Honda City, Ciaz", seats: 4, luggage: "4 Bags", ac: "Climate AC", ratePerKm: 29.0, rating: 4.3, description: "Premium executive sedan with extra legroom and luxury comfort." },
+        { id: "suv", category: "Family SUV (6+1)", badge: "Best for Family & Pilgrimage", models: "Maruti Ertiga, Carens", seats: 6, luggage: "5-6 Bags + Roof Carrier", ac: "Dual AC", ratePerKm: 33.0, rating: 4.3, description: "Spacious multi-seater ideal for large families & heavy luggage." },
+        { id: "innova_crysta", category: "Toyota Innova Crysta", badge: "VIP Luxury", models: "Innova Crysta", seats: 7, luggage: "6-7 Bags", ac: "Triple Row AC", ratePerKm: 44.0, rating: 4.3, description: "Supreme highway stability and VIP recliner seats for long trips." }
+      ];
+
+      container.innerHTML = fleetList.map(fleet => {
+        let baseFare = distanceKm * fleet.ratePerKm;
+        baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+        if (tripType === 'roundtrip') baseFare *= 1.88;
+        const finalPrice = Math.round(baseFare);
+        const savings = Math.round(baseFare * 0.95);
+
+        let carSvg = '';
+        if (fleet.id === 'suv' || fleet.id === 'innova_crysta') {
+          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-4c0-.9-.7-1.7-1.5-1.9L16 9.5 13 6H5c-.6 0-1.1.4-1.4.9L2.1 11c-.1.3-.1.7-.1 1v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14M10 6v5M14 6v5"/></svg>`;
+        } else if (fleet.id === 'sedan' || fleet.id === 'sedan_prime') {
+          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H6c-.6 0-1.1.4-1.4.9l-1.5 2.8C3.1 11 3 11.5 3 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h14"/></svg>`;
+        } else {
+          carSvg = `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="1.8"><path d="M19 17h2c.6 0 1-.4 1-1v-3.5c0-.9-.7-1.6-1.5-1.8L16 10l-2-3H6c-.6 0-1.1.4-1.4.9l-2 3.1C2.3 11.4 2 11.9 2 12.5v3.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="17" r="2.5"/><path d="M5 11h13"/></svg>`;
+        }
+
+        return `
+          <div class="cab-tier-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <span class="cab-ribbon-tag">${fleet.badge}</span>
+              <div class="cab-card-top" style="margin-top: 14px;">
+                <div class="cab-header-info">
+                  <h3>${fleet.category}</h3>
+                  <div class="cab-models-sub">${fleet.models}</div>
+                </div>
+                <div class="cab-icon-hero">
+                  ${carSvg}
+                </div>
+              </div>
+
+              <div class="cab-specs-chips">
+                <span class="cab-spec-chip">${fleet.seats} Seats</span>
+                <span class="cab-spec-chip">${fleet.luggage}</span>
+                <span class="cab-spec-chip">${fleet.ac}</span>
+                <span class="cab-spec-chip">★ ${fleet.rating}</span>
+              </div>
+
+              <p style="font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.45; margin-bottom: 14px;">
+                ${fleet.description}
+              </p>
+            </div>
+
+            <div>
+              <div class="cab-price-container">
+                <div class="cab-price-row">
+                  <div class="cab-price-main">₹${finalPrice.toLocaleString('en-IN')}</div>
+                  <div class="cab-tax-note">All Inclusive (Tolls, Fastag & GST)</div>
+                </div>
+                <span class="cab-savings-pill">Saved ~₹${savings.toLocaleString('en-IN')} vs Return Taxi</span>
+              </div>
+
+              <button type="button" class="btn-select-cab" onclick="selectCabAndProceed('${fleet.id}', '${fleet.category}', '${fleet.models}', ${finalPrice})">
+                Select &amp; Proceed ➔
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      window.selectCabAndProceed = function (cabId, category, models, price) {
+        const selected = {
+          cabId,
+          category,
+          models,
+          price
+        };
+        sessionStorage.setItem('otb_selected_cab', JSON.stringify(selected));
+        window.location.href = 'booking.html';
+      };
+    })();
+  </script>
+</body>
+
+</html>

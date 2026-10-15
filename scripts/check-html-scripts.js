@@ -3,6 +3,8 @@ const { execSync } = require('child_process');
 
 const htmlFiles = [
   'index.html',
+  'cabs.html',
+  'booking.html',
   'admin.html',
   'driver.html',
   'patna-to-gaya-cab.html',

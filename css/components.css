@@ -128,7 +128,7 @@
 
 /* "Made in" Prefix */
 .pride-text-prefix {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans, 'Inter', sans-serif);
   font-size: 13.5px;
   font-weight: 600;
   text-transform: uppercase;
@@ -139,7 +139,7 @@
 
 /* "बिहार" in authentic Devanagari */
 .pride-bihar-hindi {
-  font-family: 'Mukta', 'Noto Sans Devanagari', -apple-system, sans-serif;
+  font-family: 'Mukta', 'Noto Sans Devanagari', var(--font-sans, sans-serif);
   font-size: 21px;
   font-weight: 900;
   color: #ff9e2c;
@@ -168,17 +168,17 @@
 
 /* "for" separator */
 .pride-text-mid {
-  font-family: 'Inter', Georgia, serif;
+  font-family: var(--font-sans, 'Inter', sans-serif);
   font-size: 13.5px;
-  font-style: italic;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 500;
   color: rgba(255, 255, 255, 0.65);
   line-height: 1;
 }
 
 /* "BHARAT" with prestigious typography */
 .pride-bharat-bold {
-  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-family: var(--font-sans, 'Inter', sans-serif);
   font-size: 15.5px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -1236,8 +1236,9 @@
 .exec-picker-modal {
   position: fixed !important;
   inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
   background: rgba(15, 23, 42, 0.72) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
@@ -3308,7 +3309,7 @@
   font-size: 32px;
   color: var(--owc-primary);
   opacity: 0.15;
-  font-family: serif;
+  font-family: var(--font-sans);
 }
 
 .test-stars-row {
@@ -5578,7 +5579,8 @@
 
 /* 4. Popular Routes Quickbar */
 .popular-routes-quickbar {
-  margin-top: 28px;
+  max-width: 960px;
+  margin: 24px auto 0;
   text-align: center;
 }
 
@@ -6415,7 +6417,7 @@ body.modal-open .mobile-call-bar {
   bottom: 24px;
   right: 24px;
   z-index: 9999;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .ai-copilot-trigger {

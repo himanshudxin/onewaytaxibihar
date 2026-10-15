@@ -1645,7 +1645,7 @@ main.site-main {
 
 .footer-top-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1fr 1fr;
   gap: 40px;
   margin-bottom: 48px;
 }

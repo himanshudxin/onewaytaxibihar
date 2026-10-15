@@ -4621,7 +4621,7 @@
       }
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No matching bookings found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:#94a3b8;">No matching bookings found.</td></tr>`;
         return;
       }
 
@@ -4649,7 +4649,7 @@
 
         let drvInfo = '';
         if (isCancelled) {
-          drvInfo = `<span style="color:#94a3b8; font-size:11px;">Trip Cancelled</span>`;
+          drvInfo = `<span style="color:#ef4444; font-weight:700; font-size:11.5px; display:inline-flex; align-items:center; gap:4px;">🔴 Cancelled (Driver Released)</span>`;
         } else if (driverName) {
           drvInfo = `
             <div>
@@ -4696,9 +4696,13 @@
             <td>${statusBadge}</td>
             <td>${drvInfo}</td>
             <td style="text-align:right;">
-              <div style="display:inline-flex; gap:4px;">
+              <div style="display:inline-flex; gap:4px; align-items:center; justify-content:flex-end;">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="openBookingDrawer('${b.bookingId}')">View</button>
-                ${!isCancelled ? `<button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">${isDriverAssigned ? 'Reassign' : 'Assign'}</button>` : ''}
+                ${!isCancelled ? `
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">${isDriverAssigned ? 'Reassign' : 'Assign'}</button>
+                  <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:11px;" onclick="cancelRideAdmin('${b.bookingId}')" title="Cancel this ride">Cancel</button>
+                ` : ''}
+                <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b; padding:4px 8px; font-size:11px;" onclick="deleteBookingAdmin('${b.bookingId}')" title="Permanently delete booking">Delete</button>
               </div>
             </td>
           </tr>
@@ -4787,22 +4791,32 @@
           <div class="ops-card" style="margin-bottom:16px;">
             <div class="ops-card-header"><strong style="font-size:13px;">Assigned Chauffeur</strong></div>
             <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
-              <div>Driver: <strong>${escapeHtml(drvName || 'Not Assigned')}</strong></div>
-              <div>Vehicle: <strong>${escapeHtml(drvCar || 'N/A')}</strong></div>
-              <div>Phone: <strong>${escapeHtml(drvPhone || 'N/A')}</strong></div>
-              ${chauffeurStatusHtml}
-              <div style="margin-top:10px;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${booking.bookingId}')">${drvName ? 'Reassign Driver' : 'Assign Driver'}</button>
-              </div>
+              ${isCancelled ? `
+                <div style="background:#fee2e2; border:1px solid #fca5a5; border-radius:8px; padding:10px 12px; color:#ef4444; font-weight:700;">
+                  🔴 Ride Cancelled — Dispatch aborted and chauffeur released back to available fleet pool.
+                </div>
+              ` : `
+                <div>Driver: <strong>${escapeHtml(drvName || 'Not Assigned')}</strong></div>
+                <div>Vehicle: <strong>${escapeHtml(drvCar || 'N/A')}</strong></div>
+                <div>Phone: <strong>${escapeHtml(drvPhone || 'N/A')}</strong></div>
+                ${chauffeurStatusHtml}
+                <div style="margin-top:10px;">
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${booking.bookingId}')">${drvName ? 'Reassign Driver' : 'Assign Driver'}</button>
+                </div>
+              `}
             </div>
           </div>
 
           <!-- Status Action Buttons -->
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;">
-            <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'CONFIRMED')">Confirm Ride</button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'COMPLETED')">Mark Completed</button>
-            <button type="button" class="btn btn-danger btn-sm" onclick="cancelRideAdmin('${booking.bookingId}')">Cancel Ride</button>
-            <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c;" onclick="deleteBookingAdmin('${booking.bookingId}')">Delete</button>
+            ${isCancelled ? `
+              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'CONFIRMED')">Re-Open / Confirm Ride</button>
+            ` : `
+              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'CONFIRMED')">Confirm Ride</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'COMPLETED')">Mark Completed</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="cancelRideAdmin('${booking.bookingId}')">Cancel Ride</button>
+            `}
+            <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b;" onclick="deleteBookingAdmin('${booking.bookingId}')" title="Permanently delete from database">Delete Ride</button>
           </div>
         </div>
       `;

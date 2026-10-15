@@ -945,11 +945,11 @@
                   if (data && data.booking) {
                     b.bookingStatus = data.booking.bookingStatus;
                     b.status = data.booking.status;
-                    if (data.booking.assignedDriverId) b.assignedDriverId = data.booking.assignedDriverId;
-                    if (data.booking.assignedDriverName) b.assignedDriverName = data.booking.assignedDriverName;
-                    if (data.booking.assignedDriverCarNo) b.assignedDriverCarNo = data.booking.assignedDriverCarNo;
-                    if (data.booking.assignedDriverPhone) b.assignedDriverPhone = data.booking.assignedDriverPhone;
-                    if (data.booking.driverDetails) b.driverDetails = data.booking.driverDetails;
+                    b.assignedDriverId = data.booking.assignedDriverId || null;
+                    b.assignedDriverName = data.booking.assignedDriverName || null;
+                    b.assignedDriverCarNo = data.booking.assignedDriverCarNo || null;
+                    b.assignedDriverPhone = data.booking.assignedDriverPhone || null;
+                    b.driverDetails = data.booking.driverDetails || null;
                   }
                 }
               } catch (err) {
@@ -1010,7 +1010,7 @@
             statusBadge = `<span class="booking-status-pill status-cancelled">🔴 CANCELLED</span>`;
             chauffeurCardHtml = `
               <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:#ef4444; font-weight:700;">
-                ✕ This booking was cancelled. Zero cancellation charges have been billed.
+                ✕ This ride was cancelled. Chauffeur dispatch was aborted, driver released, and zero cancellation charges billed.
               </div>
             `;
           } else if (isDriverAccepted) {
@@ -1225,10 +1225,18 @@
             if (b.bookingId === bookingId) {
               b.status = 'CANCELLED';
               b.bookingStatus = 'CANCELLED';
-              targetPhone = b.passengerPhone || '';
+              b.assignedDriverId = null;
+              b.assignedDriverName = null;
+              b.assignedDriverCarNo = null;
+              b.assignedDriverPhone = null;
+              b.driverDetails = null;
+              targetPhone = b.passengerPhone || targetPhone;
             }
             return b;
           });
+          if (!targetPhone) {
+            targetPhone = localStorage.getItem('otb_last_passenger_phone') || '';
+          }
           localStorage.setItem('otb_recent_bookings', JSON.stringify(bookings));
           loadPassengerData();
 

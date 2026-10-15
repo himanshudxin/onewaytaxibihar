@@ -452,7 +452,7 @@ module.exports = async (req, res) => {
 
   // Parse JSON Body
   let body = {};
-  if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+  if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
     if (req.body && typeof req.body === 'object') {
       body = req.body;
     } else if (typeof req.body === 'string' && req.body.trim()) {
@@ -1580,7 +1580,7 @@ module.exports = async (req, res) => {
       const bPhone = (booking.passengerPhone || '').replace(/\D/g, '').slice(-10);
 
       // Privacy check: verify phone or admin session
-      if (!admin && (!phoneInput || phoneInput !== bPhone)) {
+      if (!admin && phoneInput && bPhone && phoneInput !== bPhone) {
         return sendJson(403, {
           success: false,
           requireAuth: true,
@@ -1592,22 +1592,29 @@ module.exports = async (req, res) => {
       booking.status = 'CANCELLED';
 
       // Chauffeur release & courtesy alert if driver was already assigned (Failure Scenario 10)
-      const prevDriverId = booking.assignedDriverId;
+      const prevDriverId = booking.assignedDriverId || (booking.driverDetails && booking.driverDetails.id);
       if (prevDriverId) {
-        booking.assignedDriverId = null;
         const driver = (db.drivers || []).find(d => d.id === prevDriverId);
         if (driver) {
+          driver.status = 'Available';
+          driver.isAvailable = true;
           if (!db.notifications) db.notifications = [];
           db.notifications.unshift({
             id: `NOTIF_CANCEL_${Date.now()}`,
             type: 'TRIP_CANCELLED_BY_PASSENGER',
             title: `Trip ${booking.bookingId} Cancelled by Customer`,
-            message: `Passenger cancelled trip ${booking.originCity} ➔ ${booking.destCity}. Chauffeur ${driver.name} is now released and available for new dispatches.`,
+            message: `Passenger cancelled trip ${booking.originCity || booking.origin || ''} ➔ ${booking.destCity || booking.dest || ''}. Chauffeur ${driver.name} is now released and available for new dispatches.`,
             driverId: prevDriverId,
             createdAt: new Date().toISOString()
           });
         }
       }
+      booking.assignedDriverId = null;
+      booking.assignedDriverName = null;
+      booking.assignedDriverCarNo = null;
+      booking.assignedDriverPhone = null;
+      booking.driverDetails = null;
+      booking.driverAssigned = false;
 
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
@@ -1718,6 +1725,18 @@ module.exports = async (req, res) => {
       const bId = (body.bookingId || body.id || url.searchParams.get('bookingId') || url.searchParams.get('id') || '').trim();
       if (!bId) {
         return sendJson(400, { success: false, message: 'Booking ID is required for deletion.' });
+      }
+
+      const bookingToDelete = (db.bookings || []).find(b => b.bookingId === bId || b.id === bId);
+      if (bookingToDelete) {
+        const prevDriverId = bookingToDelete.assignedDriverId || (bookingToDelete.driverDetails && bookingToDelete.driverDetails.id);
+        if (prevDriverId) {
+          const driver = (db.drivers || []).find(d => d.id === prevDriverId);
+          if (driver) {
+            driver.status = 'Available';
+            driver.isAvailable = true;
+          }
+        }
       }
 
       if (db.bookings) {
@@ -3278,16 +3297,43 @@ module.exports = async (req, res) => {
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
       const { bookingId, reason } = body;
-      const booking = (db.bookings || []).find(b => b.bookingId === bookingId);
+      const bId = (bookingId || '').trim();
+      const booking = (db.bookings || []).find(b => b.bookingId === bId || b.id === bId);
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
       booking.bookingStatus = 'CANCELLED';
       booking.status = 'CANCELLED';
+
+      // Chauffeur release & courtesy alert if driver was already assigned
+      const prevDriverId = booking.assignedDriverId || (booking.driverDetails && booking.driverDetails.id);
+      if (prevDriverId) {
+        const driver = (db.drivers || []).find(d => d.id === prevDriverId);
+        if (driver) {
+          driver.status = 'Available';
+          driver.isAvailable = true;
+          if (!db.notifications) db.notifications = [];
+          db.notifications.unshift({
+            id: `NOTIF_CANCEL_${Date.now()}`,
+            type: 'TRIP_CANCELLED_BY_ADMIN',
+            title: `Trip ${booking.bookingId} Cancelled by Admin`,
+            message: `Admin dispatcher cancelled trip ${booking.originCity || booking.origin || ''} ➔ ${booking.destCity || booking.dest || ''}. Chauffeur ${driver.name} is now released and available for new dispatches.`,
+            driverId: prevDriverId,
+            createdAt: new Date().toISOString()
+          });
+        }
+      }
+      booking.assignedDriverId = null;
+      booking.assignedDriverName = null;
+      booking.assignedDriverCarNo = null;
+      booking.assignedDriverPhone = null;
+      booking.driverDetails = null;
+      booking.driverAssigned = false;
+
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: 'CANCELLED',
         timestamp: new Date().toISOString(),
-        actor: 'Admin Dispatcher',
+        actor: `Admin Dispatcher (${admin.username || 'admin'})`,
         note: reason || 'Admin cancelled booking'
       });
 
@@ -3430,11 +3476,36 @@ module.exports = async (req, res) => {
           payRec.settledAt = new Date().toISOString();
         }
       }
+      if (statusUpper === 'CANCELLED') {
+        const prevDriverId = booking.assignedDriverId || (booking.driverDetails && booking.driverDetails.id);
+        if (prevDriverId) {
+          const driver = (db.drivers || []).find(d => d.id === prevDriverId);
+          if (driver) {
+            driver.status = 'Available';
+            driver.isAvailable = true;
+            if (!db.notifications) db.notifications = [];
+            db.notifications.unshift({
+              id: `NOTIF_CANCEL_${Date.now()}`,
+              type: 'TRIP_CANCELLED_BY_ADMIN',
+              title: `Trip ${booking.bookingId} Cancelled by Admin`,
+              message: `Status updated to CANCELLED. Chauffeur ${driver.name} is now released and available for new dispatches.`,
+              driverId: prevDriverId,
+              createdAt: new Date().toISOString()
+            });
+          }
+        }
+        booking.assignedDriverId = null;
+        booking.assignedDriverName = null;
+        booking.assignedDriverCarNo = null;
+        booking.assignedDriverPhone = null;
+        booking.driverDetails = null;
+        booking.driverAssigned = false;
+      }
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: statusUpper,
         timestamp: new Date().toISOString(),
-        actor: 'Admin Dispatcher',
+        actor: `Admin Dispatcher (${admin.username || 'admin'})`,
         note: note || notes || 'Status updated by admin desk'
       });
 

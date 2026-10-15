@@ -3,9 +3,9 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Passenger Portal &amp; Trip Dispatch Hub | OneWayTaxiBihar</title>
-  <meta name="description" content="OneWayTaxiBihar Passenger Portal - Live Chauffeur Tracking, Trip Management, GST Tax Invoices, Wallet Ledger, and 24x7 Support.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>My Bookings &amp; Passenger Portal | OneWayTaxiBihar</title>
+  <meta name="description" content="View your intercity cab bookings, download GST invoices, access wallet credits, and get 24x7 support with OneWayTaxiBihar.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
   <script>
@@ -21,333 +21,631 @@
     })();
   </script>
 
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/components.css">
 
   <style>
-    :root {
-      --portal-sidebar-w: 240px;
+    /* Reset & Base Containment */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
     html, body {
       overflow-x: hidden !important;
       width: 100%;
       min-height: 100vh;
-      box-sizing: border-box;
       background: var(--owc-bg);
       color: var(--owc-text);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
-    *, *:before, *:after {
+
+    /* Container */
+    .portal-container {
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 16px;
       box-sizing: border-box;
     }
 
-    /* Portal App Shell */
-    .portal-shell {
-      display: flex;
-      min-height: calc(100vh - 64px);
-    }
-
-    /* Sidebar Navigation */
-    .portal-sidebar {
-      width: var(--portal-sidebar-w);
-      background: var(--owc-card-bg);
-      border-right: 1.5px solid var(--owc-border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
+    /* Top Sticky Header */
+    .portal-nav-bar {
       position: sticky;
-      top: 64px;
-      height: calc(100vh - 64px);
-      overflow-y: auto;
-      padding: 18px 12px;
-      transition: all 0.25s ease;
+      top: 0;
+      z-index: 100;
+      background: var(--owc-card-bg);
+      border-bottom: 1px solid var(--owc-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .portal-nav-section-title {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--owc-text-muted);
-      margin: 14px 10px 6px 10px;
+    .portal-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      gap: 12px;
     }
-    .portal-nav-btn {
-      width: 100%;
+    .portal-brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      background: transparent;
-      border: none;
+      text-decoration: none;
       color: var(--owc-text);
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.18s ease;
-      margin-bottom: 3px;
     }
-    .portal-nav-btn:hover {
-      background: var(--owc-slate-100);
-      color: var(--owc-primary);
+    .portal-logo-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: contain;
     }
-    .portal-nav-btn.active {
-      background: rgba(0, 149, 246, 0.12);
-      color: var(--owc-primary);
-      border-left: 3px solid var(--owc-primary);
-    }
-    .portal-nav-badge {
-      margin-left: auto;
-      background: var(--owc-slate-200);
-      color: var(--owc-text);
-      font-size: 10.5px;
+    .portal-brand-title {
+      font-size: 17px;
       font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 9999px;
+      letter-spacing: -0.3px;
     }
-    .portal-nav-btn.active .portal-nav-badge {
+    .portal-brand-highlight {
+      color: var(--owc-primary);
+    }
+    .portal-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-new-ride {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: var(--owc-primary);
       color: #ffffff;
-    }
-
-    /* Main Workspace */
-    .portal-main {
-      flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-      max-width: 1160px;
-    }
-
-    /* Top KPI Grid */
-    .portal-kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-    .portal-kpi-card {
-      background: var(--owc-card-bg);
-      border: 1.5px solid var(--owc-border);
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .portal-kpi-title {
-      font-size: 11.5px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      font-size: 12.5px;
       font-weight: 750;
-      color: var(--owc-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
-    .portal-kpi-val {
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--owc-text);
-    }
-    .portal-kpi-sub {
-      font-size: 11.5px;
-      color: var(--owc-text-muted);
-      margin-top: 4px;
+    .btn-new-ride:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
     }
 
-    /* Tab Content Section */
-    .portal-tab-pane {
-      display: none;
-    }
-    .portal-tab-pane.active {
-      display: block;
-      animation: fadeIn 0.2s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Card Panels */
-    .portal-panel {
+    /* Passenger Profile Bar */
+    .passenger-profile-card {
       background: var(--owc-card-bg);
       border: 1.5px solid var(--owc-border);
       border-radius: 16px;
-      padding: 22px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-    }
-    .portal-panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--owc-border);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .portal-panel-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--owc-text);
-    }
-
-    /* Status Timeline */
-    .dispatch-timeline {
-      display: flex;
-      justify-content: space-between;
-      position: relative;
-      margin: 20px 0 26px 0;
-    }
-    .dispatch-timeline::before {
-      content: '';
-      position: absolute;
-      top: 14px;
-      left: 20px;
-      right: 20px;
-      height: 3px;
-      background: var(--owc-border);
-      z-index: 1;
-    }
-    .dispatch-step {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      width: 18%;
-    }
-    .dispatch-step-dot {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--owc-surface);
-      border: 2px solid var(--owc-border);
-      color: var(--owc-text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      transition: all 0.2s ease;
-    }
-    .dispatch-step.active .dispatch-step-dot {
-      background: var(--owc-primary);
-      border-color: var(--owc-primary);
-      color: #ffffff;
-      box-shadow: 0 0 0 4px rgba(0, 149, 246, 0.2);
-    }
-    .dispatch-step.completed .dispatch-step-dot {
-      background: #10b981;
-      border-color: #10b981;
-      color: #ffffff;
-    }
-    .dispatch-step-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--owc-text-muted);
-    }
-    .dispatch-step.active .dispatch-step-label {
-      color: var(--owc-text);
-    }
-
-    /* Driver Partner Card */
-    .chauffeur-partner-card {
-      background: var(--owc-slate-50);
-      border: 1.5px solid var(--owc-border);
-      border-radius: 14px;
-      padding: 16px;
+      padding: 20px;
+      margin: 20px 0 16px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 14px;
-      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
     }
-    .chauffeur-info-wrap {
+    .profile-info-group {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
-    .chauffeur-avatar {
+    .profile-avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #0284c7, #0095f6);
+      background: linear-gradient(135deg, var(--owc-primary), #0284c7);
       color: #ffffff;
-      font-weight: 900;
       font-size: 18px;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(0, 149, 246, 0.3);
+    }
+    .profile-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--owc-text);
+      line-height: 1.2;
+    }
+    .profile-phone-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--owc-text-muted);
+    }
+    .badge-verified {
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .profile-stats-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .profile-stat-box {
+      background: var(--owc-slate-50);
+      border: 1px solid var(--owc-border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      text-align: center;
+    }
+    .profile-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--owc-primary);
+    }
+    .profile-stat-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--owc-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
-    /* Ride Cards */
-    .ride-card {
+    /* Tabs Bar */
+    .portal-tabs-wrapper {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0 16px 0;
+      margin-bottom: 8px;
+    }
+    .portal-tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+    .portal-tab-btn {
+      padding: 9px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 750;
+      border: 1.5px solid var(--owc-border);
+      background: var(--owc-card-bg);
+      color: var(--owc-text);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .portal-tab-btn:hover {
+      border-color: var(--owc-primary);
+      color: var(--owc-primary);
+    }
+    .portal-tab-btn.active {
+      background: var(--owc-primary);
+      border-color: var(--owc-primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0, 149, 246, 0.3);
+    }
+    .tab-badge-num {
+      background: rgba(255, 255, 255, 0.25);
+      font-size: 10.5px;
+      padding: 1px 6px;
+      border-radius: 9999px;
+    }
+    .portal-tab-btn:not(.active) .tab-badge-num {
+      background: var(--owc-slate-200);
+      color: var(--owc-text);
+    }
+
+    /* Tab Panels */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Booking Cards */
+    .booking-card {
+      background: var(--owc-card-bg);
+      border: 1.5px solid var(--owc-border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+    .booking-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--owc-border);
+      margin-bottom: 14px;
+    }
+    .booking-id-text {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--owc-primary);
+      letter-spacing: 0.5px;
+    }
+    .booking-status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-confirmed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-completed {
+      background: rgba(0, 149, 246, 0.15);
+      color: var(--owc-primary);
+      border: 1px solid rgba(0, 149, 246, 0.3);
+    }
+    .status-cancelled {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Route Visual Row */
+    .booking-route-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--owc-text);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .route-arrow {
+      color: var(--owc-primary);
+      font-size: 16px;
+    }
+
+    /* Details Grid */
+    .booking-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      background: var(--owc-slate-50);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 12px 0 16px 0;
+      border: 1px solid var(--owc-border);
+    }
+    .meta-item-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--owc-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+    .meta-item-val {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--owc-text);
+    }
+
+    /* Chauffeur Dispatch Notice */
+    .chauffeur-dispatch-notice {
+      background: rgba(0, 149, 246, 0.08);
+      border: 1px solid rgba(0, 149, 246, 0.2);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--owc-text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    /* Booking Action Buttons */
+    .booking-actions-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-act {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 750;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--owc-border);
+      background: var(--owc-card-bg);
+      color: var(--owc-text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-act:hover {
+      background: var(--owc-slate-100);
+      border-color: var(--owc-primary);
+      color: var(--owc-primary);
+    }
+    .btn-act-primary {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .btn-act-primary:hover {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+    .btn-act-danger {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.3);
+      margin-left: auto;
+    }
+    .btn-act-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+    }
+
+    /* Empty State */
+    .empty-state-box {
+      background: var(--owc-card-bg);
+      border: 1.5px dashed var(--owc-border);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .empty-icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .empty-desc {
+      font-size: 13px;
+      color: var(--owc-text-muted);
+      max-width: 400px;
+      margin: 0 auto 20px auto;
+      line-height: 1.5;
+    }
+
+    /* Wallet Card */
+    .wallet-hero-card {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+    .wallet-hero-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+    .wallet-hero-amount {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    .wallet-hero-sub {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    /* Coupon Box */
+    .coupon-card {
       background: var(--owc-card-bg);
       border: 1.5px solid var(--owc-border);
       border-radius: 14px;
       padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .coupon-code-tag {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--owc-primary);
+      letter-spacing: 1px;
+      font-family: monospace;
+      background: rgba(0, 149, 246, 0.1);
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .coupon-desc {
+      font-size: 12px;
+      color: var(--owc-text-muted);
+    }
+    .btn-copy-code {
+      padding: 8px 16px;
+      background: var(--owc-slate-100);
+      border: 1px solid var(--owc-border);
+      border-radius: 8px;
+      color: var(--owc-text);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
       transition: all 0.2s ease;
     }
-    .ride-card:hover {
+    .btn-copy-code:hover {
+      background: var(--owc-primary);
+      color: #ffffff;
       border-color: var(--owc-primary);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
     }
-    .ride-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+
+    /* Support Desk Cards */
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .support-card {
+      background: var(--owc-card-bg);
+      border: 1.5px solid var(--owc-border);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+    .support-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--owc-slate-100);
+      color: var(--owc-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 10px;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    /* Mobile Drawer */
-    .portal-mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      color: var(--owc-text);
       font-size: 20px;
-      cursor: pointer;
-      padding: 4px;
+    }
+    .support-card h4 {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .support-card p {
+      font-size: 12px;
+      color: var(--owc-text-muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
-    @media (max-width: 860px) {
-      .portal-sidebar {
-        position: fixed;
-        left: -260px;
-        top: 64px;
-        bottom: 0;
-        z-index: 999;
-        box-shadow: 4px 0 20px rgba(0,0,0,0.25);
+    /* Printable Tax Receipt Modal */
+    .invoice-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .invoice-modal.active {
+      display: flex;
+    }
+    .invoice-modal-content {
+      background: var(--owc-card-bg);
+      border: 1.5px solid var(--owc-border);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* Mobile Fine-Tuning */
+    @media (max-width: 600px) {
+      .portal-container {
+        padding: 0 12px !important;
       }
-      .portal-sidebar.open {
-        left: 0;
+      .passenger-profile-card {
+        padding: 14px !important;
+        margin: 14px 0 12px 0 !important;
       }
-      .portal-mobile-menu-btn {
-        display: block;
+      .profile-info-group {
+        gap: 10px !important;
       }
-      .portal-main {
-        padding: 16px 12px;
+      .profile-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 15px !important;
       }
-      .dispatch-timeline {
-        overflow-x: auto;
-        padding-bottom: 8px;
+      .profile-name {
+        font-size: 15px !important;
       }
-      .dispatch-step {
-        min-width: 70px;
+      .profile-stats-row {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .profile-stat-box {
+        flex: 1;
+        padding: 6px 10px !important;
+      }
+      .booking-card {
+        padding: 14px !important;
+        border-radius: 14px !important;
+      }
+      .booking-route-row {
+        font-size: 16px !important;
+      }
+      .booking-actions-row {
+        gap: 6px !important;
+      }
+      .btn-act {
+        font-size: 11.5px !important;
+        padding: 7px 10px !important;
+      }
+      .btn-act-danger {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        margin-top: 4px;
+      }
+      .portal-brand-title {
+        font-size: 15px !important;
+      }
+      .btn-new-ride {
+        font-size: 11.5px !important;
+        padding: 6px 10px !important;
       }
     }
   </style>
@@ -355,491 +653,503 @@
 
 <body>
 
-  <!-- Sticky Navbar Header -->
-  <header class="navbar" style="position: sticky; top: 0; z-index: 1000;">
-    <div class="container nav-content" style="height: 64px;">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <button type="button" class="portal-mobile-menu-btn" onclick="togglePortalSidebar()" aria-label="Toggle Portal Menu">
-          ☰
-        </button>
-        <a href="index.html" class="brand-wrapper" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
-          <div class="brand-badge-icon">
-            <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="38" height="38" class="brand-logo-img">
-          </div>
-          <div class="brand-text-group">
-            <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
-          </div>
+  <!-- Sticky Top Navbar -->
+  <header class="portal-nav-bar">
+    <div class="portal-container">
+      <div class="portal-nav-inner">
+        <a href="index.html" class="portal-brand" title="OneWayTaxiBihar - Home">
+          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" class="portal-logo-img">
+          <span class="portal-brand-title">OneWay<span class="portal-brand-highlight">TaxiBihar</span></span>
         </a>
-      </div>
-
-      <div class="nav-actions">
-        <!-- Passenger Wallet Balance Badge -->
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; padding: 4px 12px; border-radius: 9999px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 6px;">
-          <span>Wallet:</span>
-          <strong id="top-wallet-val">₹100</strong>
+        <div class="portal-nav-actions">
+          <a href="index.html" class="btn-new-ride">
+            <span>+ Book a Cab</span>
+          </a>
+          <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" title="Toggle Light / Dark Mode" style="border: 1px solid var(--owc-border); background: var(--owc-slate-50); border-radius: 9999px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+            <span id="theme-switch-icon" style="font-size: 14px;">☀</span>
+          </button>
         </div>
-
-        <!-- Book Cab CTA -->
-        <a href="index.html" class="btn-modify-route" style="background: var(--owc-primary); color: #ffffff; border-color: var(--owc-primary); padding: 6px 14px; border-radius: 9999px; font-size: 12.5px; font-weight: 750; text-decoration: none;">
-          <span>+ Book Cab</span>
-        </a>
-
-        <!-- Theme Toggle -->
-        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" title="Toggle Light / Dark Mode">
-          <span class="theme-switch-track">
-            <span class="theme-switch-thumb">
-              <span class="theme-switch-icon" id="theme-switch-icon">☀</span>
-            </span>
-          </span>
-        </button>
       </div>
     </div>
   </header>
 
-  <div class="portal-shell">
+  <!-- Main Content Container -->
+  <main class="portal-container" style="padding-bottom: 50px;">
 
-    <!-- Sidebar Navigation -->
-    <aside class="portal-sidebar" id="portal-sidebar">
-      <div style="padding: 6px 10px 14px 10px; border-bottom: 1px solid var(--owc-border); margin-bottom: 6px;">
-        <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);" id="sidebar-rider-name">Rider Account</div>
-        <div style="font-size: 11.5px; color: var(--owc-text-muted);" id="sidebar-rider-phone">+91 Verified Rider</div>
+    <!-- Passenger Profile Card -->
+    <div class="passenger-profile-card">
+      <div class="profile-info-group">
+        <div class="profile-avatar" id="avatar-initial">P</div>
+        <div>
+          <div class="profile-name" id="display-passenger-name">Valued Passenger</div>
+          <div class="profile-phone-row">
+            <span id="display-passenger-phone">+91 98000 00000</span>
+            <span class="badge-verified">✓ Verified</span>
+          </div>
+        </div>
       </div>
 
-      <div class="portal-nav-section-title">RIDE OPERATIONS</div>
-      <button type="button" class="portal-nav-btn active" id="btn-tab-live" onclick="switchPortalTab('live')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-        <span>Live Dispatch &amp; GPS</span>
-        <span class="portal-nav-badge" id="badge-live-count">1</span>
+      <div class="profile-stats-row">
+        <div class="profile-stat-box">
+          <div class="profile-stat-val" id="stat-total-rides">0</div>
+          <div class="profile-stat-label">Total Rides</div>
+        </div>
+        <div class="profile-stat-box">
+          <div class="profile-stat-val">₹100</div>
+          <div class="profile-stat-label">Ride Credits</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tab Buttons -->
+    <div class="portal-tabs-wrapper" role="tablist">
+      <button class="portal-tab-btn active" id="tab-btn-trips" onclick="switchPortalTab('trips')">
+        <span>🚖 My Bookings</span>
+        <span class="tab-badge-num" id="badge-trips-count">0</span>
       </button>
-
-      <button type="button" class="portal-nav-btn" id="btn-tab-bookings" onclick="switchPortalTab('bookings')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-        <span>My Bookings</span>
-        <span class="portal-nav-badge" id="badge-bookings-count">0</span>
+      <button class="portal-tab-btn" id="tab-btn-wallet" onclick="switchPortalTab('wallet')">
+        <span>🎁 Wallet &amp; Offers</span>
       </button>
-
-      <div class="portal-nav-section-title">BILLING &amp; CREDITS</div>
-      <button type="button" class="portal-nav-btn" id="btn-tab-wallet" onclick="switchPortalTab('wallet')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        <span>Wallet &amp; Credits</span>
+      <button class="portal-tab-btn" id="tab-btn-invoices" onclick="switchPortalTab('invoices')">
+        <span>🧾 Tax Invoices</span>
       </button>
-
-      <button type="button" class="portal-nav-btn" id="btn-tab-invoices" onclick="switchPortalTab('invoices')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span>GST Tax Invoices</span>
+      <button class="portal-tab-btn" id="tab-btn-support" onclick="switchPortalTab('support')">
+        <span>📞 24×7 Help</span>
       </button>
+    </div>
 
-      <button type="button" class="portal-nav-btn" id="btn-tab-coupons" onclick="switchPortalTab('coupons')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-        <span>Promo Coupons</span>
-      </button>
+    <!-- TAB 1: MY TRIPS / BOOKINGS -->
+    <section class="tab-panel active" id="panel-trips">
+      <div id="trips-list-container">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </section>
 
-      <div class="portal-nav-section-title">SUPPORT &amp; SOS</div>
-      <button type="button" class="portal-nav-btn" id="btn-tab-support" onclick="switchPortalTab('support')">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        <span>24×7 Help &amp; Lost Item</span>
-      </button>
-    </aside>
+    <!-- TAB 2: WALLET & PROMO OFFERS -->
+    <section class="tab-panel" id="panel-wallet">
+      <div class="wallet-hero-card">
+        <div class="wallet-hero-title">OneWay Bihar Wallet Balance</div>
+        <div class="wallet-hero-amount">₹100</div>
+        <div class="wallet-hero-sub">Welcome reward credits automatically applied on eligible rides.</div>
+      </div>
 
-    <!-- Main Content Workspace -->
-    <main class="portal-main">
-
-      <!-- Executive Metric KPI Cards -->
-      <div class="portal-kpi-grid">
-        <div class="portal-kpi-card">
-          <div class="portal-kpi-title">Active Dispatches</div>
-          <div class="portal-kpi-val" id="kpi-active-trips" style="color: var(--owc-primary);">1</div>
-          <div class="portal-kpi-sub">Real-time outstation cab</div>
+      <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">Active Bihar Promo Offers</h3>
+      
+      <div class="coupon-card">
+        <div>
+          <span class="coupon-code-tag">BIHAR100</span>
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);">Flat ₹100 Off on Any Outstation Ride</div>
+          <div class="coupon-desc">Valid on Sedan and SUV routes across all 38 districts of Bihar.</div>
         </div>
-        <div class="portal-kpi-card">
-          <div class="portal-kpi-title">Wallet Credits</div>
-          <div class="portal-kpi-val" style="color: #10b981;">₹100</div>
-          <div class="portal-kpi-sub">Instant booking discount</div>
+        <button class="btn-copy-code" onclick="copyCode('BIHAR100', this)">Copy Code</button>
+      </div>
+
+      <div class="coupon-card">
+        <div>
+          <span class="coupon-code-tag">FIRST50</span>
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);">₹50 Instant Discount for First-Time Riders</div>
+          <div class="coupon-desc">Applicable once per registered mobile number on intercity bookings.</div>
         </div>
-        <div class="portal-kpi-card">
-          <div class="portal-kpi-title">Completed Rides</div>
-          <div class="portal-kpi-val" id="kpi-completed-trips">0</div>
-          <div class="portal-kpi-sub">38 Bihar districts served</div>
+        <button class="btn-copy-code" onclick="copyCode('FIRST50', this)">Copy Code</button>
+      </div>
+    </section>
+
+    <!-- TAB 3: TAX INVOICES & GST RECEIPTS -->
+    <section class="tab-panel" id="panel-invoices">
+      <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+        <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">GST Compliant Passenger Invoices</h3>
+        <p style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 16px;">
+          All receipts are issued under SAC Code 996412 (Passenger Transport by Road) including 5% GST and applicable tolls.
+        </p>
+
+        <div id="invoices-list-container">
+          <!-- Rendered dynamically -->
         </div>
-        <div class="portal-kpi-card">
-          <div class="portal-kpi-title">Cancellation Penalty</div>
-          <div class="portal-kpi-val" style="color: #10b981;">₹0</div>
-          <div class="portal-kpi-sub">Zero cancellation fee policy</div>
+      </div>
+    </section>
+
+    <!-- TAB 4: 24x7 HELPDESK -->
+    <section class="tab-panel" id="panel-support">
+      <div class="support-grid">
+        <div class="support-card">
+          <div class="support-icon">📞</div>
+          <h4>24×7 Priority Call Hotline</h4>
+          <p>Instant phone support for pickup adjustments, flight delays, or vehicle coordination.</p>
+          <a href="tel:+918002141816" class="btn-act btn-act-primary" style="width: 100%; justify-content: center;">
+            Call +91 80021 41816
+          </a>
+        </div>
+
+        <div class="support-card">
+          <div class="support-icon">💬</div>
+          <h4>WhatsApp Priority Desk</h4>
+          <p>Chat directly with our Patna operations team for quick live updates and ride receipts.</p>
+          <a href="https://wa.me/918002141816?text=Hi%20OneWayTaxiBihar,%20I%20need%20assistance%20with%20my%20passenger%20booking" target="_blank" class="btn-act btn-act-primary" style="width: 100%; justify-content: center;">
+            Chat on WhatsApp
+          </a>
         </div>
       </div>
 
-      <!-- ====================================================================
-           TAB 1: LIVE TRIP & CHAUFFEUR TRACKING
-           ==================================================================== -->
-      <div class="portal-tab-pane active" id="pane-live">
-        <div class="portal-panel">
-          <div class="portal-panel-header">
-            <div>
-              <div class="portal-panel-title">Active Outstation Ride Dispatch</div>
-              <div style="font-size: 12px; color: var(--owc-text-muted); margin-top: 2px;">
-                Booking ID: <strong id="live-trip-id" style="color: var(--owc-primary); font-family: monospace;">OTB-2026-ACTIVE</strong>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 11.5px; font-weight: 800;" id="live-trip-status">
-                CHAUFFEUR ASSIGNED
-              </span>
-            </div>
+      <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 14px; padding: 20px;">
+        <h4 style="font-size: 15px; font-weight: 800; margin-bottom: 10px;">Frequently Asked Questions</h4>
+        
+        <div style="margin-bottom: 12px; border-bottom: 1px solid var(--owc-border); padding-bottom: 10px;">
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);">When do I receive chauffeur &amp; vehicle details?</div>
+          <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 3px;">
+            Chauffeur name, mobile number, vehicle model, and registration plate number are dispatched automatically 2 to 4 hours prior to scheduled pickup time via SMS and WhatsApp.
           </div>
+        </div>
 
-          <!-- Dispatch Progress Timeline -->
-          <div class="dispatch-timeline">
-            <div class="dispatch-step completed">
-              <div class="dispatch-step-dot">✓</div>
-              <span class="dispatch-step-label">Booked</span>
-            </div>
-            <div class="dispatch-step completed">
-              <div class="dispatch-step-dot">✓</div>
-              <span class="dispatch-step-label">Driver Assigned</span>
-            </div>
-            <div class="dispatch-step active">
-              <div class="dispatch-step-dot">3</div>
-              <span class="dispatch-step-label">En Route</span>
-            </div>
-            <div class="dispatch-step">
-              <div class="dispatch-step-dot">4</div>
-              <span class="dispatch-step-label">Arrived</span>
-            </div>
-            <div class="dispatch-step">
-              <div class="dispatch-step-dot">5</div>
-              <span class="dispatch-step-label">Trip Completed</span>
-            </div>
+        <div style="margin-bottom: 12px; border-bottom: 1px solid var(--owc-border); padding-bottom: 10px;">
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);">What is the cancellation policy?</div>
+          <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 3px;">
+            100% Free Cancellation! We do not charge any cancellation fee if cancelled up to 2 hours before pickup.
           </div>
+        </div>
 
-          <!-- Chauffeur Partner Allocation Card (Direct from Admin) -->
-          <div class="chauffeur-partner-card">
-            <div class="chauffeur-info-wrap">
-              <div class="chauffeur-avatar">MK</div>
-              <div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <strong style="font-size: 15px; color: var(--owc-text);" id="driver-name">Manoj Kumar</strong>
-                  <span style="background: rgba(0, 149, 246, 0.12); color: var(--owc-primary); font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">4.9 ★ (1,240 Trips)</span>
-                </div>
-                <div style="font-size: 12px; color: var(--owc-text-muted); margin-top: 2px;">
-                  Vehicle: <strong id="driver-vehicle" style="color: var(--owc-text);">Maruti Dzire Sedan (Commercial AC)</strong>
-                </div>
-                <div style="font-size: 12px; font-family: monospace; color: var(--owc-primary); font-weight: 800; margin-top: 2px;">
-                  Plate: <span id="driver-plate">BR 01 PA 4821</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <a href="tel:+918002141816" class="btn-send-otp" style="text-decoration: none; padding: 8px 14px; font-size: 12px;">
-                <span>Call Chauffeur</span>
-              </a>
-              <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 8px; padding: 6px 12px; text-align: center;">
-                <div style="font-size: 10px; font-weight: 800; color: var(--owc-text-muted);">BOARDING PIN</div>
-                <div style="font-size: 16px; font-weight: 900; color: #10b981; letter-spacing: 2px;" id="live-ride-pin">4821</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Route & Pickup Landmark Box -->
-          <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13.5px;">
-              <span style="color: var(--owc-text-muted);">Route Corridor:</span>
-              <strong style="color: var(--owc-text);" id="live-route-title">Patna ➔ Bodh Gaya (104 KM)</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
-              <span style="color: var(--owc-text-muted);">Pickup Landmark:</span>
-              <span id="live-pickup-loc" style="font-weight: 600; color: var(--owc-text);">Patna Central Gate, Patna</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px;">
-              <span style="color: var(--owc-text-muted);">Total Fare Payable:</span>
-              <strong style="color: var(--owc-primary); font-size: 16px;" id="live-fare-val">₹2,998 (Cash/UPI to Driver)</strong>
-            </div>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="https://wa.me/917281851011" target="_blank" class="btn-apply-coupon" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-              <span>WhatsApp Dispatch Desk</span>
-            </a>
-            <button type="button" class="btn-apply-coupon" onclick="cancelRideZeroFee()" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
-              Cancel Ride (₹0 Fee)
-            </button>
+        <div>
+          <div style="font-size: 13.5px; font-weight: 800; color: var(--owc-text);">Are tolls and taxes included in the fare?</div>
+          <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 3px;">
+            Yes, our outstation fares include toll taxes, GST, and fuel. There are zero return-trip charges or hidden dead-mileage costs.
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- ====================================================================
-           TAB 2: BOOKINGS & TRIP HISTORY
-           ==================================================================== -->
-      <div class="portal-tab-pane" id="pane-bookings">
-        <div class="portal-panel">
-          <div class="portal-panel-header">
-            <div class="portal-panel-title">My Bookings &amp; History</div>
-            <div style="display: flex; gap: 6px;">
-              <button type="button" class="btn-apply-coupon" onclick="filterBookingsTab('all')" style="padding: 6px 12px; font-size: 12px;">All</button>
-              <button type="button" class="btn-apply-coupon" onclick="filterBookingsTab('upcoming')" style="padding: 6px 12px; font-size: 12px;">Upcoming</button>
-              <button type="button" class="btn-apply-coupon" onclick="filterBookingsTab('completed')" style="padding: 6px 12px; font-size: 12px;">Completed</button>
-            </div>
-          </div>
+  </main>
 
-          <div id="bookings-list-container">
-            <!-- Injected via JavaScript -->
-          </div>
+  <!-- Printable Invoice Receipt Modal -->
+  <div class="invoice-modal" id="invoice-modal" onclick="closeInvoiceModal(event)">
+    <div class="invoice-modal-content" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--owc-border); padding-bottom: 14px; margin-bottom: 16px;">
+        <div>
+          <h3 style="font-size: 18px; font-weight: 900; color: var(--owc-text);">Tax Invoice / Trip Receipt</h3>
+          <div style="font-size: 11px; color: var(--owc-text-muted);">SAC Code: 996412 (Passenger Transport)</div>
         </div>
+        <button onclick="document.getElementById('invoice-modal').classList.remove('active')" style="background: none; border: none; font-size: 20px; color: var(--owc-text-muted); cursor: pointer;">✕</button>
       </div>
 
-      <!-- ====================================================================
-           TAB 3: CUSTOMER WALLET & CREDITS
-           ==================================================================== -->
-      <div class="portal-tab-pane" id="pane-wallet">
-        <div class="portal-panel">
-          <div style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: white; border-radius: 14px; padding: 22px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
-            <div>
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; opacity: 0.9;">AVAILABLE WALLET BALANCE</div>
-              <div style="font-size: 32px; font-weight: 900; margin: 4px 0;">₹100</div>
-              <div style="font-size: 12px; opacity: 0.95;">Applicable automatically for instant discount on Bihar outstation rides</div>
-            </div>
-            <a href="index.html" style="background: #ffffff; color: #047857; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; text-decoration: none;">
-              Redeem on Next Ride
-            </a>
-          </div>
-
-          <div class="portal-panel-title" style="margin-bottom: 12px;">Wallet Transaction Audit Trail</div>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <strong style="font-size: 13.5px; color: var(--owc-text);">New Member Welcome Bonus</strong>
-                <div style="font-size: 11px; color: var(--owc-text-muted);">Verified Mobile Onboarding • Ref: WLT-INIT-100</div>
-              </div>
-              <strong style="color: #10b981; font-size: 15px;">+₹100</strong>
-            </div>
-          </div>
-        </div>
+      <div id="invoice-modal-body">
+        <!-- Injected dynamically -->
       </div>
 
-      <!-- ====================================================================
-           TAB 4: GST TAX INVOICES
-           ==================================================================== -->
-      <div class="portal-tab-pane" id="pane-invoices">
-        <div class="portal-panel">
-          <div class="portal-panel-header">
-            <div class="portal-panel-title">GST Compliant Tax Invoices</div>
-            <span style="font-size: 11.5px; color: var(--owc-text-muted);">SAC Code: 996412 (Passenger Transport)</span>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 10px;" id="invoices-list-container">
-            <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <div>
-                <strong style="font-size: 14px; color: var(--owc-text);">Invoice #INV-2026-0819</strong>
-                <div style="font-size: 12px; color: var(--owc-text-muted); margin-top: 2px;">
-                  Patna ➔ Bodh Gaya • Prime Sedan • ₹2,998 (GST 5% Included)
-                </div>
-              </div>
-              <button type="button" class="btn-send-otp" onclick="window.print()" style="font-size: 12px; padding: 7px 14px;">
-                Download / Print PDF
-              </button>
-            </div>
-          </div>
-        </div>
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; border-top: 1px solid var(--owc-border); padding-top: 14px;">
+        <button class="btn-act" onclick="document.getElementById('invoice-modal').classList.remove('active')">Close</button>
+        <button class="btn-act btn-act-primary" onclick="window.print()">🖨 Print Invoice</button>
       </div>
-
-      <!-- ====================================================================
-           TAB 5: PROMO COUPONS
-           ==================================================================== -->
-      <div class="portal-tab-pane" id="pane-coupons">
-        <div class="portal-panel">
-          <div class="portal-panel-title" style="margin-bottom: 14px;">Available Promo Coupons &amp; Discounts</div>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
-            <div style="background: var(--owc-slate-50); border: 1.5px dashed var(--owc-border); border-radius: 12px; padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="background: rgba(0, 149, 246, 0.12); color: var(--owc-primary); font-family: monospace; font-size: 14px; font-weight: 800; padding: 4px 10px; border-radius: 6px;">BIHAR100</span>
-                <span style="color: #10b981; font-weight: 800; font-size: 12px;">Flat ₹100 OFF</span>
-              </div>
-              <p style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 10px;">Applicable on all outstation cab routes between any of the 38 Bihar districts.</p>
-              <button type="button" class="btn-apply-coupon" onclick="navigator.clipboard.writeText('BIHAR100'); alert('Coupon BIHAR100 copied!');" style="width: 100%; justify-content: center; display: flex;">Copy Code</button>
-            </div>
-
-            <div style="background: var(--owc-slate-50); border: 1.5px dashed var(--owc-border); border-radius: 12px; padding: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="background: rgba(0, 149, 246, 0.12); color: var(--owc-primary); font-family: monospace; font-size: 14px; font-weight: 800; padding: 4px 10px; border-radius: 6px;">FIRST50</span>
-                <span style="color: #10b981; font-weight: 800; font-size: 12px;">Flat ₹50 OFF</span>
-              </div>
-              <p style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 10px;">Instant ₹50 discount for first-time intercity cab riders across Bihar.</p>
-              <button type="button" class="btn-apply-coupon" onclick="navigator.clipboard.writeText('FIRST50'); alert('Coupon FIRST50 copied!');" style="width: 100%; justify-content: center; display: flex;">Copy Code</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ====================================================================
-           TAB 6: 24×7 SUPPORT & LOST ITEM DESK
-           ==================================================================== -->
-      <div class="portal-tab-pane" id="pane-support">
-        <div class="portal-panel">
-          <div class="portal-panel-title" style="margin-bottom: 14px;">Bihar 24×7 Central Dispatch Helpdesk</div>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-bottom: 20px;">
-            <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px;">
-              <div style="font-size: 12px; font-weight: 750; color: var(--owc-text-muted); margin-bottom: 4px;">PRIORITY OPERATIONS HOTLINE</div>
-              <div style="font-size: 18px; font-weight: 900; color: var(--owc-primary); margin-bottom: 8px;">+91 80021 41816</div>
-              <a href="tel:+918002141816" class="btn-send-otp" style="text-decoration: none; padding: 7px 14px; font-size: 12px;">Call Support</a>
-            </div>
-
-            <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px;">
-              <div style="font-size: 12px; font-weight: 750; color: var(--owc-text-muted); margin-bottom: 4px;">OFFICIAL WHATSAPP DISPATCH</div>
-              <div style="font-size: 18px; font-weight: 900; color: #25d366; margin-bottom: 8px;">+91 72818 51011</div>
-              <a href="https://wa.me/917281851011" target="_blank" class="btn-send-otp" style="background: #25d366; text-decoration: none; padding: 7px 14px; font-size: 12px;">Chat on WhatsApp</a>
-            </div>
-          </div>
-
-          <!-- Report Lost Item / Feedback Form -->
-          <div style="background: var(--owc-slate-50); border: 1.5px solid var(--owc-border); border-radius: 12px; padding: 18px;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--owc-text); margin-bottom: 6px;">Report Lost Property or Trip Inquiry</div>
-            <p style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 12px;">Left an item in the cab or need invoice corrections? Submit details below for instant ticket creation.</p>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-              <input type="text" id="ticket-booking-id" class="input-control" placeholder="Booking ID (e.g. OTB-2026-4821)">
-              <select id="ticket-category" class="input-control">
-                <option value="lost_item">Lost Item in Cab</option>
-                <option value="driver_feedback">Chauffeur / Driving Feedback</option>
-                <option value="billing">Fare &amp; Billing Inquiry</option>
-                <option value="other">General Support</option>
-              </select>
-            </div>
-            <textarea id="ticket-details" class="input-control" rows="3" placeholder="Describe the item or issue in detail..." style="margin-bottom: 12px;"></textarea>
-            <button type="button" class="btn-send-otp" onclick="submitSupportTicket()">Submit Support Ticket</button>
-          </div>
-        </div>
-      </div>
-
-    </main>
+    </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="js/data.js?v=20261015_multipage_v4"></script>
-  <script src="js/api.js?v=20261015_multipage_v4"></script>
+  <!-- JavaScript Logic -->
   <script>
     (function () {
-      // 1. Theme Toggle
+      // Theme Switch Logic
       const themeBtn = document.getElementById('theme-switch-btn');
+      const themeIcon = document.getElementById('theme-switch-icon');
+      
+      function updateThemeIcon(t) {
+        if (themeIcon) themeIcon.textContent = (t === 'light') ? '🌙' : '☀';
+      }
+      const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      updateThemeIcon(initialTheme);
+
       if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
+        themeBtn.addEventListener('click', function () {
           const current = document.documentElement.getAttribute('data-theme') || 'dark';
-          const next = current === 'dark' ? 'light' : 'dark';
+          const next = (current === 'light') ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', next);
+          document.documentElement.setAttribute('data-theme-mode', next);
           localStorage.setItem('owc_theme_preference', next);
+          updateThemeIcon(next);
         });
       }
 
-      // 2. Load Stored Rider Profile & Bookings
-      let rider = null;
-      try {
-        const stored = sessionStorage.getItem('otb_rider_details');
-        if (stored) rider = JSON.parse(stored);
-      } catch (e) {}
+      // Switch Tab Function
+      window.switchPortalTab = function (tabKey) {
+        document.querySelectorAll('.portal-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
 
-      if (rider && rider.passengerName) {
-        document.getElementById('sidebar-rider-name').textContent = rider.passengerName;
-        document.getElementById('sidebar-rider-phone').textContent = `+91 ${rider.passengerPhone || 'Verified'}`;
+        const targetBtn = document.getElementById(`tab-btn-${tabKey}`);
+        const targetPanel = document.getElementById(`panel-${tabKey}`);
+        if (targetBtn) targetBtn.classList.add('active');
+        if (targetPanel) targetPanel.classList.add('active');
+      };
+
+      // Copy Promo Code
+      window.copyCode = function (code, el) {
+        navigator.clipboard.writeText(code).then(() => {
+          const orig = el.textContent;
+          el.textContent = '✓ Copied!';
+          el.style.background = '#10b981';
+          el.style.color = '#ffffff';
+          setTimeout(() => {
+            el.textContent = orig;
+            el.style.background = '';
+            el.style.color = '';
+          }, 2000);
+        }).catch(() => {
+          prompt('Copy promo code:', code);
+        });
+      };
+
+      // Load Bookings & Passenger Details
+      function loadPassengerData() {
+        let bookings = [];
+        try {
+          const saved = localStorage.getItem('otb_recent_bookings');
+          if (saved) bookings = JSON.parse(saved);
+        } catch (e) {
+          console.warn('Error reading bookings:', e);
+        }
+
+        // Also check last rider details
+        let rider = null;
+        try {
+          const r = sessionStorage.getItem('otb_rider_details') || localStorage.getItem('otb_rider_details');
+          if (r) rider = JSON.parse(r);
+        } catch (e) {}
+
+        const latestBooking = bookings && bookings.length > 0 ? bookings[0] : null;
+        const passengerName = (rider && rider.passengerName) || (latestBooking && latestBooking.passengerName) || 'Valued Passenger';
+        const passengerPhone = (rider && rider.passengerPhone) || (latestBooking && latestBooking.passengerPhone) || localStorage.getItem('otb_last_passenger_phone') || '8002141816';
+
+        // Update Profile
+        const nameEl = document.getElementById('display-passenger-name');
+        const phoneEl = document.getElementById('display-passenger-phone');
+        const avatarEl = document.getElementById('avatar-initial');
+        if (nameEl) nameEl.textContent = passengerName;
+        if (phoneEl) phoneEl.textContent = `+91 ${passengerPhone}`;
+        if (avatarEl) avatarEl.textContent = passengerName.charAt(0) || 'P';
+
+        const ridesCount = bookings.length;
+        const countBadge = document.getElementById('badge-trips-count');
+        const statRides = document.getElementById('stat-total-rides');
+        if (countBadge) countBadge.textContent = ridesCount;
+        if (statRides) statRides.textContent = ridesCount;
+
+        // Render Bookings List
+        const tripsContainer = document.getElementById('trips-list-container');
+        const invoicesContainer = document.getElementById('invoices-list-container');
+
+        if (!bookings || bookings.length === 0) {
+          tripsContainer.innerHTML = `
+            <div class="empty-state-box">
+              <div class="empty-icon">🚖</div>
+              <h3 class="empty-title">No Active Bookings Found</h3>
+              <p class="empty-desc">You don't have any pending or scheduled trips. Book your next intercity journey across Bihar with guaranteed one-way zero return fares.</p>
+              <a href="index.html" class="btn-new-ride" style="padding: 10px 22px; font-size: 14px; display: inline-flex;">
+                Book a Cab Now ➔
+              </a>
+            </div>
+          `;
+          invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 20px 0;">No tax invoices generated yet. Invoices appear here after booking.</div>`;
+          return;
+        }
+
+        // Render Trips Cards
+        let tripsHtml = '';
+        let invoicesHtml = '';
+
+        bookings.forEach((b, index) => {
+          const origin = b.origin || 'Patna';
+          const dest = b.dest || 'Gaya';
+          const fare = Number(b.fare || 2998);
+          const date = b.pickupDate || b.date || 'Today';
+          const time = b.pickupTime || b.time || '10:00 AM';
+          const cabName = b.cabType || b.vehicle || 'Prime Sedan';
+          const bookingId = b.bookingId || `OTB-2026-${1000 + index}`;
+          const isCancelled = b.status === 'cancelled';
+          const statusClass = isCancelled ? 'status-cancelled' : 'status-confirmed';
+          const statusText = isCancelled ? 'Cancelled' : 'Confirmed &amp; Scheduled';
+
+          tripsHtml += `
+            <div class="booking-card" id="card-${bookingId}">
+              <div class="booking-card-header">
+                <div>
+                  <span class="booking-id-text">${bookingId}</span>
+                  <div style="font-size: 11px; color: var(--owc-text-muted);">Booked on ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                </div>
+                <span class="booking-status-pill ${statusClass}">
+                  ${statusText}
+                </span>
+              </div>
+
+              <div class="booking-route-row">
+                <span>${origin}</span>
+                <span class="route-arrow">➔</span>
+                <span>${dest}</span>
+              </div>
+
+              <div class="booking-meta-grid">
+                <div>
+                  <div class="meta-item-title">Pickup Schedule</div>
+                  <div class="meta-item-val">${date} at ${time}</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Selected Vehicle</div>
+                  <div class="meta-item-val">${cabName}</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Total Fare</div>
+                  <div class="meta-item-val" style="color: var(--owc-primary);">₹${fare.toLocaleString('en-IN')}</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Payment Mode</div>
+                  <div class="meta-item-val">Cash on Ride</div>
+                </div>
+              </div>
+
+              ${!isCancelled ? `
+                <div class="chauffeur-dispatch-notice">
+                  <span style="font-size: 16px;">ℹ️</span>
+                  <div>
+                    <strong>Chauffeur Assignment:</strong> Chauffeur name, phone, and vehicle registration number will be dispatched automatically via WhatsApp &amp; SMS 2-4 hours before scheduled pickup.
+                  </div>
+                </div>
+              ` : ''}
+
+              <div class="booking-actions-row">
+                <a href="tel:+918002141816" class="btn-act" title="Call 24x7 Helpline">
+                  <span>📞 Call Desk</span>
+                </a>
+                <a href="https://wa.me/918002141816?text=Hi%20OneWayTaxiBihar,%20query%20for%20Booking%20ID:%20${bookingId}" target="_blank" class="btn-act" title="Chat on WhatsApp">
+                  <span>💬 WhatsApp</span>
+                </a>
+                <button class="btn-act btn-act-primary" onclick="openInvoiceModal('${bookingId}')">
+                  <span>🧾 Tax Invoice</span>
+                </button>
+                ${!isCancelled ? `
+                  <button class="btn-act btn-act-danger" onclick="cancelBooking('${bookingId}')">
+                    <span>Cancel Ride (Free)</span>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+
+          invoicesHtml += `
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--owc-border);">
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--owc-text);">${origin} ➔ ${dest}</div>
+                <div style="font-size: 12px; color: var(--owc-text-muted);">${bookingId} • ${date} • ₹${fare.toLocaleString('en-IN')}</div>
+              </div>
+              <button class="btn-act btn-act-primary" onclick="openInvoiceModal('${bookingId}')">
+                View &amp; Print Receipt ➔
+              </button>
+            </div>
+          `;
+        });
+
+        tripsContainer.innerHTML = tripsHtml;
+        invoicesContainer.innerHTML = invoicesHtml;
       }
 
-      // 3. Tab Switching
-      window.switchPortalTab = function (tabId) {
-        document.querySelectorAll('.portal-nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.portal-tab-pane').forEach(pane => pane.classList.remove('active'));
-
-        const targetBtn = document.getElementById(`btn-tab-${tabId}`);
-        const targetPane = document.getElementById(`pane-${tabId}`);
-        if (targetBtn) targetBtn.classList.add('active');
-        if (targetPane) targetPane.classList.add('active');
-
-        // Close mobile drawer if open
-        const sidebar = document.getElementById('portal-sidebar');
-        if (sidebar) sidebar.classList.remove('open');
-      };
-
-      // 4. Mobile Sidebar Toggle
-      window.togglePortalSidebar = function () {
-        const sidebar = document.getElementById('portal-sidebar');
-        if (sidebar) sidebar.classList.toggle('open');
-      };
-
-      // 5. Populate Bookings List
-      function renderBookingsList() {
-        const container = document.getElementById('bookings-list-container');
-        if (!container) return;
-
+      // Open Invoice Modal
+      window.openInvoiceModal = function (bookingId) {
         let bookings = [];
         try {
           bookings = JSON.parse(localStorage.getItem('otb_recent_bookings') || '[]');
         } catch (e) {}
 
-        if (!bookings.length) {
-          bookings = [
-            {
-              bookingId: "OTB-2026-8419",
-              originCity: "Patna",
-              destCity: "Gaya",
-              pickupDate: "15 Oct 2026",
-              pickupTime: "10:00 AM",
-              fleetClass: "Prime Sedan",
-              totalFare: 2998,
-              bookingStatus: "CONFIRMED",
-              paymentStatus: "PENDING (CASH ON RIDE)"
-            }
-          ];
-        }
+        const b = bookings.find(item => item.bookingId === bookingId) || bookings[0] || {
+          bookingId: bookingId,
+          origin: 'Patna',
+          dest: 'Gaya',
+          fare: 2998,
+          pickupDate: 'Today',
+          pickupTime: '10:00 AM',
+          cabType: 'Prime Sedan',
+          passengerName: 'Valued Passenger',
+          passengerPhone: '8002141816'
+        };
 
-        document.getElementById('badge-bookings-count').textContent = bookings.length;
-        document.getElementById('kpi-active-trips').textContent = bookings.filter(b => b.bookingStatus !== 'CANCELLED').length;
-        document.getElementById('kpi-completed-trips').textContent = bookings.filter(b => b.bookingStatus === 'COMPLETED').length;
+        const fare = Number(b.fare || 2998);
+        const base = Math.round(fare / 1.05);
+        const gst = fare - base;
 
-        container.innerHTML = bookings.map(b => `
-          <div class="ride-card">
-            <div class="ride-card-top">
+        const body = document.getElementById('invoice-modal-body');
+        body.innerHTML = `
+          <div style="border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; color: var(--owc-text-muted);">
               <div>
-                <span style="font-family: monospace; font-size: 11px; font-weight: 800; background: var(--owc-primary-subtle); color: var(--owc-primary); padding: 2px 8px; border-radius: 4px;">${b.bookingId}</span>
-                <span style="font-size: 11px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 2px 8px; border-radius: 4px; margin-left: 6px;">${b.bookingStatus || 'CONFIRMED'}</span>
-                <h4 style="font-size: 15px; font-weight: 800; margin: 6px 0 2px 0; color: var(--owc-text);">${b.originCity || 'Patna'} ➔ ${b.destCity || 'Gaya'}</h4>
-                <div style="font-size: 12px; color: var(--owc-text-muted);">${b.pickupDate || 'Today'} at ${b.pickupTime || '10:00 AM'} • ${b.fleetClass || 'Prime Sedan'}</div>
+                <strong style="color: var(--owc-text); font-size: 14px;">OneWayTaxiBihar</strong><br>
+                Patna Junction Road, Patna, Bihar 800001<br>
+                GSTIN: Applied (Registration In Progress)<br>
+                Helpline: +91 80021 41816
               </div>
               <div style="text-align: right;">
-                <div style="font-size: 18px; font-weight: 900; color: var(--owc-primary);">₹${Number(b.totalFare || 2998).toLocaleString('en-IN')}</div>
-                <div style="font-size: 11px; color: var(--owc-text-muted); font-weight: 700;">${b.paymentStatus || 'Cash on Ride'}</div>
+                <strong>Receipt #:</strong> ${b.bookingId}<br>
+                <strong>Date:</strong> ${new Date().toLocaleDateString('en-IN')}<br>
+                <strong>SAC Code:</strong> 996412
               </div>
             </div>
-            <div style="display: flex; gap: 8px; border-top: 1px dashed var(--owc-border); padding-top: 10px; margin-top: 8px;">
-              <button type="button" class="btn-send-otp" onclick="switchPortalTab('live')" style="padding: 6px 12px; font-size: 11.5px;">Track Live Dispatch</button>
-              <button type="button" class="btn-apply-coupon" onclick="window.print()" style="padding: 6px 12px; font-size: 11.5px;">GST Tax Invoice</button>
-            </div>
-          </div>
-        `).join('');
-      }
 
-      window.cancelRideZeroFee = function () {
-        if (confirm("Are you sure you want to cancel this booking? Cancellation is 100% free with ₹0 penalty.")) {
-          document.getElementById('live-trip-status').textContent = 'CANCELLED (₹0 FEE)';
-          document.getElementById('live-trip-status').style.color = '#ef4444';
-          document.getElementById('live-trip-status').style.borderColor = 'rgba(239, 68, 68, 0.3)';
-          document.getElementById('live-trip-status').style.background = 'rgba(239, 68, 68, 0.1)';
-          alert("Your booking has been cancelled with zero cancellation charges.");
+            <div style="background: var(--owc-slate-50); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 14px;">
+              <strong>Passenger:</strong> ${b.passengerName || 'Valued Passenger'} (+91 ${b.passengerPhone || '8002141816'})<br>
+              <strong>Trip:</strong> ${b.origin} ➔ ${b.dest} (${b.cabType || 'Sedan'})<br>
+              <strong>Schedule:</strong> ${b.pickupDate} at ${b.pickupTime}
+            </div>
+
+            <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid var(--owc-border); color: var(--owc-text-muted);">
+                <th style="text-align: left; padding: 6px 0;">Description</th>
+                <th style="text-align: right; padding: 6px 0;">Amount</th>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0;">One-Way Intercity Cab Fare (No return charge)</td>
+                <td style="text-align: right; padding: 6px 0;">₹${base.toLocaleString('en-IN')}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0;">Tolls &amp; State Highway Fastag</td>
+                <td style="text-align: right; padding: 6px 0; color: #10b981;">Included</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0;">GST (5% Road Transport)</td>
+                <td style="text-align: right; padding: 6px 0;">₹${gst.toLocaleString('en-IN')}</td>
+              </tr>
+              <tr style="border-top: 1.5px dashed var(--owc-border); font-weight: 900; font-size: 15px;">
+                <td style="padding: 10px 0;">Total Payable (Cash on Ride)</td>
+                <td style="text-align: right; padding: 10px 0; color: var(--owc-primary);">₹${fare.toLocaleString('en-IN')}</td>
+              </tr>
+            </table>
+          </div>
+          <div style="font-size: 11px; color: var(--owc-text-muted); text-align: center;">
+            Thank you for riding with OneWayTaxiBihar • 100% Zero Dead-Mileage Guaranteed
+          </div>
+        `;
+
+        document.getElementById('invoice-modal').classList.add('active');
+      };
+
+      window.closeInvoiceModal = function (e) {
+        if (e.target.id === 'invoice-modal') {
+          document.getElementById('invoice-modal').classList.remove('active');
         }
       };
 
-      window.submitSupportTicket = function () {
-        const id = document.getElementById('ticket-booking-id').value.trim();
-        const details = document.getElementById('ticket-details').value.trim();
-        if (!details) {
-          alert('Please provide details for your support request.');
+      // Cancel Booking
+      window.cancelBooking = function (bookingId) {
+        if (!confirm(`Are you sure you want to cancel booking ${bookingId}? There are zero cancellation charges.`)) {
           return;
         }
-        const ticketNum = 'TKT-' + Math.floor(10000 + Math.random() * 90000);
-        alert(`Support ticket ${ticketNum} generated successfully! Bihar Central Dispatch desk will contact you within 15 minutes.`);
-        document.getElementById('ticket-details').value = '';
+        try {
+          let bookings = JSON.parse(localStorage.getItem('otb_recent_bookings') || '[]');
+          bookings = bookings.map(b => {
+            if (b.bookingId === bookingId) {
+              b.status = 'cancelled';
+            }
+            return b;
+          });
+          localStorage.setItem('otb_recent_bookings', JSON.stringify(bookings));
+          loadPassengerData();
+        } catch (e) {
+          console.warn('Cancel error:', e);
+        }
       };
 
-      renderBookingsList();
+      // Initialize
+      document.addEventListener('DOMContentLoaded', loadPassengerData);
+      loadPassengerData();
     })();
   </script>
 </body>

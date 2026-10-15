@@ -183,10 +183,10 @@
     }
 
     const today = new Date();
-    const isCurrentMonth = (state.viewYear === today.getFullYear() && state.viewMonth === today.getMonth());
+    const isPastOrCurrentMonth = (state.viewYear < today.getFullYear() || (state.viewYear === today.getFullYear() && state.viewMonth <= today.getMonth()));
     if (prevBtn) {
-      prevBtn.disabled = isCurrentMonth;
-      prevBtn.classList.toggle('disabled', isCurrentMonth);
+      prevBtn.disabled = isPastOrCurrentMonth;
+      prevBtn.classList.toggle('disabled', isPastOrCurrentMonth);
     }
 
     daysGrid.innerHTML = '';
@@ -278,7 +278,7 @@
       btn.className = 'cal-month-pill';
       btn.textContent = mShort;
 
-      if (state.viewYear === currentYear && idx < currentMonth) {
+      if (state.viewYear < currentYear || (state.viewYear === currentYear && idx < currentMonth)) {
         btn.classList.add('disabled');
         btn.disabled = true;
       }
@@ -365,7 +365,14 @@
       title.textContent = mode === 'return' ? 'Select Return Date' : 'Select Pickup Date';
     }
 
-    const refDate = (mode === 'return' ? state.returnDate : state.pickupDate) || state.pickupDate || new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let refDate = (mode === 'return' ? state.returnDate : state.pickupDate) || new Date();
+    if (refDate < today) {
+      refDate = new Date();
+      if (mode === 'return') state.returnDate = null;
+      else state.pickupDate = refDate;
+    }
     state.viewYear = refDate.getFullYear();
     state.viewMonth = refDate.getMonth();
 
@@ -550,6 +557,10 @@
     if (prevMonthBtn) {
       prevMonthBtn.onclick = (e) => {
         e.preventDefault();
+        const today = new Date();
+        if (state.viewYear < today.getFullYear() || (state.viewYear === today.getFullYear() && state.viewMonth <= today.getMonth())) {
+          return;
+        }
         if (state.viewMonth === 0) {
           state.viewMonth = 11;
           state.viewYear--;
@@ -679,9 +690,18 @@
     // Sync if hidden inputs change from outside scripts
     const pickupDateInput = document.getElementById('pickup-date-input');
     if (pickupDateInput) {
+      pickupDateInput.min = toYMD(new Date());
       pickupDateInput.addEventListener('change', () => {
         if (pickupDateInput.value) {
-          state.pickupDate = fromYMD(pickupDateInput.value);
+          const parsed = fromYMD(pickupDateInput.value);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (parsed < today) {
+            pickupDateInput.value = toYMD(new Date());
+            state.pickupDate = new Date();
+          } else {
+            state.pickupDate = parsed;
+          }
           const displayPickupDate = document.getElementById('display-pickup-date');
           const pickupDateRelTag = document.getElementById('pickup-date-rel-tag');
           if (displayPickupDate) displayPickupDate.textContent = formatDisplayDate(state.pickupDate);
@@ -711,8 +731,19 @@
     state.viewYear = today.getFullYear();
     state.viewMonth = today.getMonth();
 
+    const todayStr = toYMD(today);
+    const pickupDateInput = document.getElementById('pickup-date-input');
+    if (pickupDateInput) {
+      pickupDateInput.min = todayStr;
+      if (!pickupDateInput.value) {
+        pickupDateInput.value = todayStr;
+      }
+    }
+
     initEventListeners();
     updateScheduleCards();
+    updateCalendarSummary();
+    renderCalendarDays();
   }
 
   if (document.readyState === 'loading') {

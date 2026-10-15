@@ -639,7 +639,7 @@ const OTB_WHY_CHOOSE_US = [
   {
     num: "04",
     title: "Zero Cancellation Fee Policy",
-    desc: "Plans changed due to train/flight delay or emergency? Cancel your ride anytime with zero cancellation charges and 100% instant refund."
+    desc: "Free cancellation up to 2 hours before departure • Zero cancellation fee & zero advance deposit required. 100% instant refund."
   },
   {
     num: "05",
@@ -693,7 +693,7 @@ const OTB_FAQS = [
   },
   {
     q: "I need to cancel my booking. Will I be charged a cancellation penalty?",
-    a: "No. OneWayTaxiBihar follows a strict Zero Cancellation Fee policy. We understand that travel schedules can change, so you will never be penalized for cancelling a ride."
+    a: "No. Free cancellation up to 2 hours before departure with zero cancellation fee & zero advance deposit required. If travel plans change, your ride is cancelled with ₹0 fee and any advance is 100% refunded."
   },
   {
     q: "Can I book a multi-day round trip or hourly rental in Patna?",

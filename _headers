@@ -5,14 +5,23 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(self), camera=()
 
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /css/*
-  Cache-Control: no-cache, must-revalidate
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
 /js/*
-  Cache-Control: no-cache, must-revalidate
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
 /*.svg
-  Cache-Control: public, max-age=2592000
+  Cache-Control: public, max-age=31536000, immutable
 
 /manifest.json
   Content-Type: application/manifest+json; charset=utf-8

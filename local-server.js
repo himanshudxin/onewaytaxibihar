@@ -24,6 +24,7 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
+  '.avif': 'image/avif',
   '.svg': 'image/svg+xml; charset=utf-8',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
@@ -90,9 +91,9 @@ const server = http.createServer(async (req, res) => {
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     } else if (ext === '.css' || ext === '.js') {
-      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
-    } else if (['.svg', '.png', '.jpg', '.webp', '.ico', '.woff2'].includes(ext)) {
-      res.setHeader('Cache-Control', 'public, max-age=2592000');
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+    } else if (['.svg', '.png', '.jpg', '.jpeg', '.webp', '.avif', '.ico', '.woff2', '.woff', '.ttf'].includes(ext)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     } else {
       res.setHeader('Cache-Control', 'no-cache, must-revalidate');
     }

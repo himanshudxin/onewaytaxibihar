@@ -1112,13 +1112,6 @@ class ApiClient {
   }
 
   // Enterprise Admin Methods
-  static async adminLogin(username, password) {
-    return await this.request("/api/admin/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password })
-    });
-  }
-
   static async adminLogout() {
     return await this.request("/api/admin/logout", {
       method: "POST"

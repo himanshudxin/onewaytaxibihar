@@ -6,11 +6,7 @@
 
 class BookingManager {
   constructor() {
-    this.tripType = "oneway"; // "oneway" | "roundtrip" | "rental" | "airport"
-    this.rentalMode = "without_driver"; // "without_driver" | "with_driver"
-    this.withDriver = false;
-    this.activeFleetRates = null;
-    this.activeSegmentFares = null;
+    this.tripType = "oneway"; // "oneway" | "roundtrip" | "local" | "airport"
     this.originCity = null; // Blank initially - set by user
     this.destCity = null;   // Blank initially - set by user
     
@@ -56,7 +52,6 @@ class BookingManager {
     this.setDefaultDates();
     this.setupAutocomplete();
     this.setupEventListeners();
-    this.fetchFareConfig();
     this.renderPopularRouteChips();
     this.renderFriendsHeroReviews();
     this.renderWhyChooseCards();
@@ -114,34 +109,42 @@ class BookingManager {
       }
     }
 
-    // Fares remain strictly locked until user explicitly enters a 10-digit mobile number and clicks "Check Fares"
-    this.isFareUnlocked = false;
+    // Transparent Fares: Automatically show fares when route is configured
     const section = document.getElementById("cab-selection-section");
     const mapSection = document.getElementById("route-map-section");
-    if (section) {
-      section.classList.add("fare-section-closed");
-      section.classList.remove("fare-section-open");
-    }
-    if (mapSection) {
-      mapSection.classList.add("fare-section-closed");
-      mapSection.classList.remove("fare-section-open");
+
+    if (this.originCity && this.destCity) {
+      this.isFareUnlocked = true;
+      if (section) {
+        section.classList.remove("fare-section-closed");
+        section.classList.add("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.remove("fare-section-closed");
+        mapSection.classList.add("fare-section-open");
+      }
+      this.calculateAndRenderFares();
+    } else {
+      this.isFareUnlocked = true;
+      if (section) {
+        section.classList.remove("fare-section-closed");
+        section.classList.add("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.remove("fare-section-closed");
+        mapSection.classList.add("fare-section-open");
+      }
+      this.calculateAndRenderFares();
     }
 
-    // If deep-link params were supplied, smooth-scroll to cab options or booking hero
+    // If deep-link params were supplied, smooth-scroll to cab options
     if (typeof window !== "undefined" && window.location.search) {
       try {
         const checkParams = new URLSearchParams(window.location.search);
         if (checkParams.get("from") || checkParams.get("to") || checkParams.get("cab") || window.location.hash === "#booking-hero") {
           setTimeout(() => {
-            if (this.isFareUnlocked) {
-              const targetEl = document.getElementById("cab-selection-section") || document.getElementById("booking-hero");
-              targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
-            } else {
-              const targetEl = document.getElementById("booking-hero") || document.querySelector(".search-card-hero");
-              targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
-              const pInput = document.getElementById("input-fare-phone");
-              if (pInput && !pInput.value) pInput.focus();
-            }
+            const targetEl = document.getElementById("cab-selection-section") || document.getElementById("booking-hero");
+            targetEl?.scrollIntoView({ behavior: "smooth", block: "start" });
           }, 350);
         }
       } catch (e) {}
@@ -228,71 +231,6 @@ class BookingManager {
       }
     } catch (e) {
       console.warn("Could not restore booking state:", e);
-    }
-  }
-
-  setRentalMode(mode) {
-    this.rentalMode = mode;
-    this.withDriver = (mode === "with_driver");
-
-    const btnWithout = document.getElementById("btn-rental-without-driver");
-    const btnWith = document.getElementById("btn-rental-with-driver");
-    const hint = document.getElementById("rental-rate-hint");
-
-    if (btnWithout && btnWith) {
-      if (mode === "without_driver") {
-        btnWithout.classList.add("active");
-        btnWithout.style.border = "1.5px solid #2563eb";
-        btnWithout.style.background = "#eff6ff";
-        btnWithout.style.color = "#1d4ed8";
-
-        btnWith.classList.remove("active");
-        btnWith.style.border = "1.5px solid #cbd5e1";
-        btnWith.style.background = "#ffffff";
-        btnWith.style.color = "#334155";
-
-        if (hint) {
-          const sedanPrice = this.activeFleetRates?.sedan?.rentalPrice || 2200;
-          const suvPrice = this.activeFleetRates?.suv?.rentalPrice || 4000;
-          hint.textContent = `Sedan ₹${sedanPrice.toLocaleString('en-IN')} • SUV ₹${suvPrice.toLocaleString('en-IN')} / Day (Self-Drive)`;
-        }
-      } else {
-        btnWith.classList.add("active");
-        btnWith.style.border = "1.5px solid #059669";
-        btnWith.style.background = "#ecfdf5";
-        btnWith.style.color = "#047857";
-
-        btnWithout.classList.remove("active");
-        btnWithout.style.border = "1.5px solid #cbd5e1";
-        btnWithout.style.background = "#ffffff";
-        btnWithout.style.color = "#334155";
-
-        if (hint) {
-          const sedanPrice = (this.activeFleetRates?.sedan?.rentalPrice || 2200) + (this.activeFleetRates?.sedan?.rentalDriverAllowance || 1000);
-          const suvPrice = (this.activeFleetRates?.suv?.rentalPrice || 4000) + (this.activeFleetRates?.suv?.rentalDriverAllowance || 1000);
-          hint.textContent = `Sedan ₹${sedanPrice.toLocaleString('en-IN')} • SUV ₹${suvPrice.toLocaleString('en-IN')} / Day (With Driver)`;
-        }
-      }
-    }
-    this.renderFleetCards();
-  }
-
-  async fetchFareConfig() {
-    try {
-      const res = await fetch("/api/fares/config");
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.success && data.fleetRates) {
-          this.activeFleetRates = data.fleetRates;
-          this.activeSegmentFares = data.segmentFares;
-          this.renderFleetCards();
-          if (this.tripType === "rental" || this.tripType === "local") {
-            this.setRentalMode(this.rentalMode || "without_driver");
-          }
-        }
-      }
-    } catch (e) {
-      console.warn("Could not fetch remote fare config, fallback to defaults:", e);
     }
   }
 
@@ -536,6 +474,36 @@ class BookingManager {
         }
       }
 
+      const phoneInput = document.getElementById("input-fare-phone");
+      const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
+      const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+
+      if (this.originCity && this.destCity && hasValidPhone) {
+        this.isFareUnlocked = true;
+        const section = document.getElementById("cab-selection-section");
+        const mapSection = document.getElementById("route-map-section");
+        if (section) {
+          section.classList.remove("fare-section-closed");
+          section.classList.add("fare-section-open");
+        }
+        if (mapSection) {
+          mapSection.classList.remove("fare-section-closed");
+          mapSection.classList.add("fare-section-open");
+        }
+        this.calculateAndRenderFares();
+      } else {
+        this.isFareUnlocked = false;
+        const section = document.getElementById("cab-selection-section");
+        const mapSection = document.getElementById("route-map-section");
+        if (section) {
+          section.classList.add("fare-section-closed");
+          section.classList.remove("fare-section-open");
+        }
+        if (mapSection) {
+          mapSection.classList.add("fare-section-closed");
+          mapSection.classList.remove("fare-section-open");
+        }
+      }
       this.updateCheckFareButtonState();
     }
   }
@@ -1142,6 +1110,36 @@ class BookingManager {
       }
     }
 
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
+    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+
+    if (this.originCity && this.destCity && hasValidPhone) {
+      this.isFareUnlocked = true;
+      const section = document.getElementById("cab-selection-section");
+      const mapSection = document.getElementById("route-map-section");
+      if (section) {
+        section.classList.remove("fare-section-closed");
+        section.classList.add("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.remove("fare-section-closed");
+        mapSection.classList.add("fare-section-open");
+      }
+      this.calculateAndRenderFares();
+    } else {
+      this.isFareUnlocked = false;
+      const section = document.getElementById("cab-selection-section");
+      const mapSection = document.getElementById("route-map-section");
+      if (section) {
+        section.classList.add("fare-section-closed");
+        section.classList.remove("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.add("fare-section-closed");
+        mapSection.classList.remove("fare-section-open");
+      }
+    }
     this.updateCheckFareButtonState();
   }
 
@@ -1188,19 +1186,19 @@ class BookingManager {
             this.userPhone = val;
             this.passengerDetails.phone = `+91 ${val}`;
             try { localStorage.setItem("oneway_fare_phone", val); } catch (e) {}
+
+            if (!this.originCity) {
+              const pickupInput = document.getElementById("input-pickup");
+              const pVal = (pickupInput?.value || "Patna").trim();
+              this.originCity = OTB_CITIES.find(c => c.name.toLowerCase() === pVal.toLowerCase() || c.id === pVal.toLowerCase()) || { id: "patna", name: pVal || "Patna" };
+            }
+            if (!this.destCity) {
+              const dropInput = document.getElementById("input-drop");
+              const dVal = (dropInput?.value || "Gaya").trim();
+              this.destCity = OTB_CITIES.find(c => c.name.toLowerCase() === dVal.toLowerCase() || c.id === dVal.toLowerCase()) || { id: "gaya", name: dVal || "Gaya" };
+            }
+
             this.transferLeadToHelpdesk(val, true, { source: "Homepage Phone Entered" });
-          } else {
-            this.isFareUnlocked = false;
-            const section = document.getElementById("cab-selection-section");
-            const mapSection = document.getElementById("route-map-section");
-            if (section) {
-              section.classList.add("fare-section-closed");
-              section.classList.remove("fare-section-open");
-            }
-            if (mapSection) {
-              mapSection.classList.add("fare-section-closed");
-              mapSection.classList.remove("fare-section-open");
-            }
           }
         }
         this.updateCheckFareButtonState();
@@ -1344,50 +1342,33 @@ class BookingManager {
       return false;
     }
 
-    // 3. Strict Phone Number Validation: Mandatory to view fares
-    let phoneToRecord = phoneInput ? phoneInput.value.trim().replace(/\D/g, "") : "";
+    // 3. Optional Phone capture at fare inquiry (silently captures inquiry if entered)
+    let phoneToRecord = "";
+    if (phoneInput && phoneInput.value) {
+      phoneToRecord = phoneInput.value.trim().replace(/\D/g, "");
+    }
+    if (!phoneToRecord && this.userPhone) {
+      phoneToRecord = this.userPhone.replace(/\D/g, "");
+    }
+    if (!phoneToRecord && window.currentUser && window.currentUser.phone) {
+      phoneToRecord = window.currentUser.phone.replace(/\D/g, "");
+    }
+    if (!phoneToRecord) {
+      const cachedPhone = localStorage.getItem("oneway_fare_phone");
+      if (cachedPhone) phoneToRecord = cachedPhone.replace(/\D/g, "");
+    }
+
     if (phoneToRecord.length > 10) {
       phoneToRecord = phoneToRecord.slice(-10);
     }
 
-    const hasValidPhone = phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord);
-    if (!hasValidPhone) {
-      this.isFareUnlocked = false;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.add("fare-section-closed");
-        section.classList.remove("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.add("fare-section-closed");
-        mapSection.classList.remove("fare-section-open");
-      }
-
-      const phoneGroup = document.getElementById("phone-check-group");
-      if (phoneGroup) {
-        phoneGroup.classList.add("shake-error");
-        phoneGroup.style.borderColor = "#ef4444";
-        phoneGroup.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.25)";
-        setTimeout(() => {
-          phoneGroup.classList.remove("shake-error");
-        }, 600);
-      }
-      if (phoneInput) {
-        phoneInput.focus();
-      }
-      if (!silent) {
-        window.showToast("Please enter your 10-digit mobile number to check fares & cab availability.", "warning");
-      }
-      this.updateCheckFareButtonState();
-      return false;
+    if (phoneToRecord && phoneToRecord.length === 10 && /^[6-9]\d{9}$/.test(phoneToRecord)) {
+      const clean10 = phoneToRecord;
+      this.userPhone = clean10;
+      this.passengerDetails.phone = `+91 ${clean10}`;
+      localStorage.setItem("oneway_fare_phone", clean10);
+      this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
     }
-
-    const clean10 = phoneToRecord;
-    this.userPhone = clean10;
-    this.passengerDetails.phone = `+91 ${clean10}`;
-    try { localStorage.setItem("oneway_fare_phone", clean10); } catch (e) {}
-    this.transferLeadToHelpdesk(clean10, true, { source: "Check Fares & Availability Button" });
 
     // 4. Open and reveal Fare Details Section & Map Section
     this.isFareUnlocked = true;
@@ -1411,13 +1392,21 @@ class BookingManager {
       }, 250);
     }
 
-    if (section) {
-      setTimeout(() => {
-        section.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-    }
-
-    if (section && !silent) {
+    if (window.viewRouter) {
+      const pDate = document.getElementById("display-pickup-date")?.textContent || "Today";
+      const pTime = document.getElementById("display-pickup-time")?.textContent || "10:00 AM";
+      window.viewRouter.updateRouteSummary(
+        this.originCity.name,
+        this.destCity.name,
+        pDate,
+        pTime,
+        this.calculatedDistance,
+        this.calculatedDuration
+      );
+      window.viewRouter.navigateTo("cabs");
+      window.showToast(`Outstation Fares Calculated: ${this.originCity.name} to ${this.destCity.name}`, "success");
+      this.saveState();
+    } else if (section && !silent) {
       setTimeout(() => {
         const topPos = section.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top: Math.max(0, topPos), behavior: "smooth" });
@@ -1548,39 +1537,21 @@ class BookingManager {
     return;
   }
 
-  setTripType(tripType) {
-    this.tripType = tripType;
-    const tabBtns = document.querySelectorAll(".trip-tab-btn");
-    tabBtns.forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-trip") === tripType);
-    });
-    this.updateTripTypeUI();
-    const hero = document.getElementById("booking-hero");
-    if (hero) {
-      hero.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
   updateTripTypeUI() {
     const returnDateRow = document.getElementById("return-date-row");
     const localPkgRow = document.getElementById("local-pkg-row");
-    const rentalOptionsRow = document.getElementById("rental-options-row");
     const airportRow = document.getElementById("airport-details-row");
     const dropWrapper = document.getElementById("input-drop")?.closest(".autocomplete-wrapper");
     const swapBtn = document.getElementById("btn-swap-route");
     const lblDrop = document.getElementById("lbl-drop");
 
-    const isRental = (this.tripType === "rental" || this.tripType === "local");
-
     if (returnDateRow) returnDateRow.style.display = this.tripType === "roundtrip" ? "block" : "none";
-    if (rentalOptionsRow) rentalOptionsRow.style.display = isRental ? "block" : "none";
-    if (localPkgRow) localPkgRow.style.display = "none";
+    if (localPkgRow) localPkgRow.style.display = this.tripType === "local" ? "block" : "none";
     if (airportRow) airportRow.style.display = this.tripType === "airport" ? "block" : "none";
 
-    if (isRental) {
+    if (this.tripType === "local") {
       if (dropWrapper) dropWrapper.style.display = "none";
       if (swapBtn) swapBtn.style.display = "none";
-      this.setRentalMode(this.rentalMode || "without_driver");
     } else {
       if (dropWrapper) dropWrapper.style.display = "block";
       if (swapBtn) swapBtn.style.display = "flex";
@@ -1594,33 +1565,10 @@ class BookingManager {
      DYNAMIC ROUTE & FARE CALCULATION MATRIX
      ========================================================================== */
   calculateAndRenderFares() {
-    const isRental = (this.tripType === "rental" || this.tripType === "local");
-    const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
-    const clean10 = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
-    const hasValidPhone = clean10.length === 10 && /^[6-9]\d{9}$/.test(clean10);
-
-    // Fares can NEVER be checked or revealed without a valid 10-digit mobile number
-    if (!this.isFareUnlocked || !hasValidPhone) {
-      this.isFareUnlocked = false;
-      const section = document.getElementById("cab-selection-section");
-      const mapSection = document.getElementById("route-map-section");
-      if (section) {
-        section.classList.add("fare-section-closed");
-        section.classList.remove("fare-section-open");
-      }
-      if (mapSection) {
-        mapSection.classList.add("fare-section-closed");
-        mapSection.classList.remove("fare-section-open");
-      }
-      this.updateCheckFareButtonState();
-      return;
-    }
-
-    if (!this.originCity || (!this.destCity && !isRental)) {
-      this.calculatedDistanceKm = isRental ? 80 : 100;
-      this.calculatedDuration = isRental ? "8 Hours" : "2h 00m";
-      this.calculatedToll = 0;
+    if (!this.originCity || !this.destCity) {
+      this.calculatedDistanceKm = 100;
+      this.calculatedDuration = "2h 00m";
+      this.calculatedToll = 100;
 
       const displayRoute = document.getElementById("rf-display-route");
       const distBadge = document.getElementById("rf-dist-badge");
@@ -1628,11 +1576,7 @@ class BookingManager {
       const tollBadge = document.getElementById("rf-toll-badge");
 
       if (displayRoute) {
-        if (isRental) {
-          const pName = this.originCity ? this.originCity.name : "Select City";
-          const mText = (this.rentalMode === "with_driver" || this.withDriver) ? "With Verified Chauffeur" : "Self-Drive Rental";
-          displayRoute.innerHTML = `<span>Car Rental: <strong>${pName}</strong> (${mText} • 8 Hr / 80 KM)</span>`;
-        } else if (this.originCity && !this.destCity) {
+        if (this.originCity && !this.destCity) {
           displayRoute.innerHTML = `<span>Pickup: <strong>${this.originCity.name}</strong> → (Select Drop District)</span>`;
         } else if (!this.originCity && this.destCity) {
           displayRoute.innerHTML = `<span>(Select Pickup District) → Drop: <strong>${this.destCity.name}</strong></span>`;
@@ -1641,41 +1585,25 @@ class BookingManager {
         }
       }
 
-      if (distBadge) distBadge.textContent = isRental ? "80 KM / Day Included" : "Bihar Fixed Rates";
-      if (timeBadge) timeBadge.textContent = isRental ? "8 Hours Daily" : "Instant Booking";
-      if (tollBadge) tollBadge.textContent = isRental ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Toll & GST Included";
+      if (distBadge) distBadge.textContent = "Bihar Fixed Rates";
+      if (timeBadge) timeBadge.textContent = "Instant Booking";
+      if (tollBadge) tollBadge.textContent = "Toll & GST Included";
 
       this.renderFleetCards();
       this.updateCheckFareButtonState();
       return;
     }
 
-    const originId = this.originCity?.id || "";
-    const destId = this.destCity?.id || "";
-    const isPatnaRoute = (originId === "patna" || destId === "patna");
-    const otherId = originId === "patna" ? destId : originId;
-
-    const chartRoute = (typeof OTB_PATNA_FARE_CHART !== "undefined" && isPatnaRoute)
-      ? OTB_PATNA_FARE_CHART.find(c => c.destId === otherId || c.id === `patna-${otherId}` || (c.destination && c.destination.toLowerCase().includes(this.destCity?.name?.toLowerCase() || "")))
-      : null;
-
-    const knownRoute = chartRoute || OTB_POPULAR_ROUTES.find(r => 
+    const knownRoute = OTB_POPULAR_ROUTES.find(r => 
       (r.fromId === this.originCity.id && r.toId === this.destCity.id) ||
       (r.fromId === this.destCity.id && r.toId === this.originCity.id)
     );
 
-    if (chartRoute) {
-      this.calculatedDistanceKm = chartRoute.distKm;
-      this.calculatedDuration = chartRoute.distKm <= 50 ? "1h 10m" : chartRoute.distKm <= 100 ? "2h 00m" : chartRoute.distKm <= 160 ? "3h 15m" : chartRoute.distKm <= 240 ? "4h 45m" : "6h 00m";
-      this.calculatedToll = Math.round(chartRoute.distKm * 0.9);
-      this.matchedChartRoute = chartRoute;
-    } else if (knownRoute) {
+    if (knownRoute) {
       this.calculatedDistanceKm = knownRoute.distanceKm;
       this.calculatedDuration = knownRoute.duration;
       this.calculatedToll = knownRoute.toll;
-      this.matchedChartRoute = knownRoute;
     } else {
-      this.matchedChartRoute = null;
       // Calculate curved highway distance
       const dLat = (this.destCity.lat - this.originCity.lat) * Math.PI / 180;
       const dLng = (this.destCity.lng - this.originCity.lng) * Math.PI / 180;
@@ -1684,14 +1612,14 @@ class BookingManager {
                 Math.sin(dLng / 2) * Math.sin(dLng / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const rawKm = 6371 * c;
-      this.calculatedDistanceKm = Math.max(25, Math.round(rawKm * 1.28));
+      this.calculatedDistanceKm = Math.max(40, Math.round(rawKm * 1.30));
       
       const speedKmH = 48; // Standard Bihar highway average with Setu/bridges
       const totalMin = Math.round((this.calculatedDistanceKm / speedKmH) * 60);
       const hrs = Math.floor(totalMin / 60);
       const mins = totalMin % 60;
       this.calculatedDuration = `${hrs}h ${mins}m`;
-      this.calculatedToll = Math.round(this.calculatedDistanceKm * 0.9);
+      this.calculatedToll = Math.round(this.calculatedDistanceKm * 1.1);
     }
 
     // Update Route Bar
@@ -1701,9 +1629,9 @@ class BookingManager {
     const tollBadge = document.getElementById("rf-toll-badge");
 
     if (displayRoute) {
-      if (this.tripType === "rental" || this.tripType === "local") {
-        const modeDesc = (this.rentalMode === "with_driver" || this.withDriver) ? "With Verified Chauffeur" : "Self-Drive Rental";
-        displayRoute.innerHTML = `<span>Car Rental: <strong>${this.originCity.name}</strong> (${modeDesc} • 8 Hr / 80 KM)</span>`;
+      if (this.tripType === "local") {
+        const pkg = OTB_LOCAL_PACKAGES.find(p => p.id === this.localPackageId);
+        displayRoute.innerHTML = `<span>Local Hourly Package: <strong>${this.originCity.name}</strong> (${pkg?.name || '8 Hr / 80 KM'})</span>`;
       } else if (this.tripType === "roundtrip") {
         displayRoute.innerHTML = `<span><strong>${this.originCity.name}</strong> (${this.originCity.hindiName}) ⇄ <strong>${this.destCity.name}</strong> (${this.destCity.hindiName}) <span style="color: var(--owc-primary); font-weight: 700; margin-left: 6px;">(Round-Trip)</span></span>`;
       } else if (this.tripType === "airport") {
@@ -1713,9 +1641,9 @@ class BookingManager {
       }
     }
 
-    if (distBadge) distBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "80 KM / Day Included" : `${this.calculatedDistanceKm} KM Highway Route`;
-    if (timeBadge) timeBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? "8 Hours Daily" : `~${this.calculatedDuration}`;
-    if (tollBadge) tollBadge.textContent = (this.tripType === "rental" || this.tripType === "local") ? ((this.rentalMode === "with_driver" || this.withDriver) ? "Chauffeur & GST Included" : "Self-Drive Fixed Rate") : "Fastag Tolls at Actuals • Zero Buffers";
+    if (distBadge) distBadge.textContent = this.tripType === "local" ? "80 KM Package" : `${this.calculatedDistanceKm} KM Highway Route`;
+    if (timeBadge) timeBadge.textContent = this.tripType === "local" ? "8 Hours" : `~${this.calculatedDuration}`;
+    if (tollBadge) tollBadge.textContent = "Tolls, Fastag & GST Included";
 
     // Render Fleet Cards
     this.renderFleetCards();
@@ -1762,75 +1690,28 @@ class BookingManager {
     const container = document.getElementById("cab-cards-grid");
     if (!container) return;
 
-    const isRental = (this.tripType === "rental" || this.tripType === "local");
-    const rates = this.activeFleetRates || {};
-
     container.innerHTML = OTB_FLEET.map(fleet => {
       let finalPrice = 0;
       let savings = 0;
-      let priceNote = "Base Fare (Fuel & Chauffeur incl. • Fastag Tolls at actuals)";
-      let savingsText = "Saved vs Return Cab";
 
-      if (isRental) {
-        const tierRate = rates[fleet.id] || {};
-        const baseRental = Number(tierRate.rentalPrice) || Number(fleet.rentalPrice) || (
-          fleet.id === "sedan" ? 2200 :
-          fleet.id === "suv" ? 4000 :
-          fleet.id === "hatchback" ? 1800 :
-          fleet.id === "sedan_prime" ? 2600 : 5000
-        );
-        const driverFee = Number(tierRate.rentalDriverAllowance) || Number(fleet.rentalDriverAllowance) || 1000;
-        
-        if (this.rentalMode === "with_driver" || this.withDriver) {
-          finalPrice = baseRental + driverFee;
-          priceNote = "Fixed (Chauffeur Allowance & GST incl.)";
-          savingsText = "8 Hours / 80 KM • Verified Driver Included";
-        } else {
-          finalPrice = baseRental;
-          priceNote = "Self-Drive Rental (Fixed Daily Price)";
-          savingsText = "8 Hours / 80 KM • Doorstep Handover";
-        }
+      if (this.tripType === "local") {
+        const pkg = OTB_LOCAL_PACKAGES.find(p => p.id === this.localPackageId) || OTB_LOCAL_PACKAGES[1];
+        if (fleet.id === "hatchback") finalPrice = pkg.baseHatch;
+        else if (fleet.id === "sedan") finalPrice = pkg.baseSedan;
+        else if (fleet.id === "sedan_prime") finalPrice = Math.round(pkg.baseSedan * 1.2);
+        else if (fleet.id === "suv") finalPrice = pkg.baseSuv;
+        else finalPrice = Math.round(pkg.baseSuv * 1.4);
         savings = Math.round(finalPrice * 0.25);
       } else {
-        const chart = this.matchedChartRoute;
-        let baseFare = 0;
-        let traditionalMarket = "";
-
-        if (chart && (this.tripType === "oneway" || !this.tripType)) {
-          if (fleet.id === "hatchback") {
-            baseFare = chart.hatchback || chart.baseFareHatchback;
-          } else if (fleet.id === "sedan") {
-            baseFare = chart.sedan || chart.baseFareSedan;
-          } else if (fleet.id === "sedan_prime") {
-            baseFare = Math.round((chart.sedan || chart.baseFareSedan) * 1.18);
-          } else if (fleet.id === "suv") {
-            baseFare = chart.suv || chart.baseFareSuv;
-          } else if (fleet.id === "innova_crysta") {
-            baseFare = Math.round((chart.suv || chart.baseFareSuv) * 1.32);
-          } else {
-            baseFare = chart.sedan || chart.baseFareSedan;
-          }
-          traditionalMarket = chart.traditional || chart.traditionalRate || "";
-        } else {
-          const perKm = Number(rates[fleet.id]?.perKm) || fleet.ratePerKm || 11.75;
-          baseFare = Math.round(this.calculatedDistanceKm * perKm);
-          const minFare = Number(rates[fleet.id]?.minFare) || (fleet.id === 'hatchback' ? 699 : fleet.id === 'sedan' ? 799 : fleet.id === 'sedan_prime' ? 999 : fleet.id === 'innova_crysta' ? 1699 : 1199);
-          baseFare = Math.max(baseFare, minFare);
-
-          if (this.tripType === "roundtrip") {
-            baseFare = Math.round(baseFare * 1.88);
-          }
+        let baseFare = this.calculatedDistanceKm * fleet.ratePerKm;
+        baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+        
+        if (this.tripType === "roundtrip") {
+          baseFare = (baseFare * 1.88); // 12% discount for roundtrip
         }
 
-        finalPrice = Math.max(699, Math.round(baseFare));
-        priceNote = "Base Fare (Fuel & Chauffeur incl. • Fastag Tolls at actuals)";
-        if (traditionalMarket) {
-          savings = Math.max(500, Math.round(finalPrice * 0.9));
-          savingsText = `Save ~₹${savings.toLocaleString('en-IN')} (Market: ${traditionalMarket})`;
-        } else {
-          savings = Math.round(baseFare * 0.95);
-          savingsText = `Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab`;
-        }
+        finalPrice = Math.max(1000, Math.round(baseFare));
+        savings = Math.round(baseFare * 0.95);
       }
 
       const isSelected = this.selectedCabId === fleet.id;
@@ -1870,9 +1751,9 @@ class BookingManager {
           <div class="cab-price-container">
             <div class="cab-price-row">
               <div class="cab-price-main">₹${finalPrice.toLocaleString('en-IN')}</div>
-              <div class="cab-tax-note">${priceNote}</div>
+              <div class="cab-tax-note">Fixed (Toll, GST & Allowance incl.)</div>
             </div>
-            <span class="cab-savings-pill">${savingsText}</span>
+            <span class="cab-savings-pill">Saved ~₹${savings.toLocaleString('en-IN')} vs Return Cab</span>
           </div>
 
           <button type="button" class="btn-select-cab" onclick="window.bookingManager.startCheckout('${fleet.id}', ${finalPrice})">
@@ -1886,34 +1767,6 @@ class BookingManager {
   selectCabTier(cabId) {
     this.selectedCabId = cabId;
     this.renderFleetCards();
-  }
-
-  setFleetTypeAndScroll(cabId) {
-    this.selectedCabId = cabId;
-    const hero = document.getElementById("booking-hero");
-    if (hero) {
-      hero.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
-    if (rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone) && this.originCity && this.destCity) {
-      this.handleCheckFare();
-    } else {
-      setTimeout(() => {
-        if (!this.originCity) {
-          document.getElementById("input-pickup")?.focus();
-        } else if (!this.destCity) {
-          document.getElementById("input-drop")?.focus();
-        } else if (phoneInput) {
-          phoneInput.focus();
-          const phoneGroup = document.getElementById("phone-check-group");
-          if (phoneGroup) {
-            phoneGroup.classList.add("shake-error");
-            setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
-          }
-        }
-      }, 400);
-    }
   }
 
   loadRoutePreset(fromId, toId) {
@@ -1932,9 +1785,8 @@ class BookingManager {
     window.closeAllModals();
 
     const phoneInput = document.getElementById("input-fare-phone");
-    const rawPhone = (phoneInput?.value || "").trim().replace(/\D/g, "");
-    const clean10 = rawPhone.length > 10 ? rawPhone.slice(-10) : rawPhone;
-    const hasValidPhone = clean10.length === 10 && /^[6-9]\d{9}$/.test(clean10);
+    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
+    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
 
     if (hasValidPhone) {
       this.isFareUnlocked = true;
@@ -1988,7 +1840,7 @@ class BookingManager {
 
     container.innerHTML = OTB_POPULAR_ROUTES.slice(0, 6).map(r => `
       <button type="button" class="quick-route-chip" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-        ${r.from} → ${r.to} • Check Fare
+        ${r.from} → ${r.to} • ₹${r.baseFareHatchback}
       </button>
     `).join("");
   }
@@ -2192,26 +2044,53 @@ class BookingManager {
       this.passengerDetails.phone = `+91 ${rawPhone}`;
     }
 
-    const checkoutModal = document.getElementById("modal-checkout");
-    const checkoutBody = document.getElementById("modal-checkout-body");
-
-    if (!checkoutModal || !checkoutBody) return;
-
     this.currentCheckoutPrice = price;
     this.currentCheckoutFleet = fleet;
     this.appliedCouponCode = "";
     this.appliedCouponDiscount = 0;
     this.tempBookingId = "OTB-2026-" + Math.floor(1000 + Math.random() * 9000);
 
+    // If in-app Sub-View Router is active, populate #view-checkout and navigate
+    if (window.viewRouter) {
+      const coName = document.getElementById("co-name");
+      const coPhone = document.getElementById("co-phone");
+      const coPath = document.getElementById("checkout-summary-route-path");
+      const coSidebarTier = document.getElementById("co-sidebar-tier");
+      const coSidebarCarName = document.getElementById("co-sidebar-car-name");
+      const coSidebarBaseFare = document.getElementById("co-sidebar-base-fare");
+      const coSidebarTotalFare = document.getElementById("co-sidebar-total-fare");
+
+      if (coName && this.passengerDetails.name) coName.value = this.passengerDetails.name;
+      if (coPhone && rawPhone) coPhone.value = rawPhone;
+      if (coPath) {
+        coPath.innerHTML = `
+          <span class="route-summary-city"><span class="city-dot pickup"></span>${this.originCity?.name || 'Pickup'}</span>
+          <span class="route-summary-arrow">➔</span>
+          <span class="route-summary-city"><span class="city-dot drop"></span>${this.destCity?.name || 'Drop'}</span>
+        `;
+      }
+      if (coSidebarTier) coSidebarTier.textContent = fleet.category;
+      if (coSidebarCarName) coSidebarCarName.textContent = `${fleet.category} (${fleet.models})`;
+      if (coSidebarBaseFare) coSidebarBaseFare.textContent = `₹${price.toLocaleString('en-IN')}`;
+      if (coSidebarTotalFare) coSidebarTotalFare.textContent = `₹${price.toLocaleString('en-IN')}`;
+
+      window.viewRouter.navigateTo("checkout");
+      return;
+    }
+
+    const checkoutModal = document.getElementById("modal-checkout");
+    const checkoutBody = document.getElementById("modal-checkout-body");
+
+    if (!checkoutModal || !checkoutBody) return;
+
     const km = this.calculatedDistanceKm || 104;
-    const isRental = (this.tripType === "rental" || this.tripType === "local");
-    const baseKm = isRental ? 80 : (fleet.baseKm || 15);
+    const baseKm = (this.tripType === "local") ? 80 : (fleet.baseKm || 15);
     const extraKm = Math.max(0, km - baseKm);
-    const perKm = (this.activeFleetRates?.[fleet.id]?.perKm) || fleet.ratePerKm || fleet.perKmRate || 25;
+    const perKm = fleet.ratePerKm || fleet.perKmRate || 25;
     const baseFareAmount = (fleet.baseFare !== undefined) ? fleet.baseFare : Math.round(baseKm * perKm);
     const distanceCharge = Math.round(extraKm * perKm);
-    const toll = isRental ? 0 : Math.round((km / 70) * 55);
-    const allowance = isRental ? (this.withDriver ? 1000 : 0) : ((this.tripType === "roundtrip" || km > 200) ? 350 : 0);
+    const toll = Math.round((km / 70) * 55);
+    const allowance = (this.tripType === "roundtrip" || km > 200) ? 350 : 0;
     const isAirport = Boolean(this.originCity?.name?.toLowerCase().includes("airport") || this.destCity?.name?.toLowerCase().includes("airport"));
     const parking = isAirport ? 100 : 0;
     const finalPayableInit = Math.max(0, price - 100);
@@ -3564,13 +3443,9 @@ class BookingManager {
     this.isSubmittingBooking = true;
 
     try {
-      const isRental = (this.tripType === "rental" || this.tripType === "local");
       const payload = {
-        tripType: isRental ? "rental" : (this.tripType || "oneway"),
-        rentalMode: isRental ? (this.rentalMode || "without_driver") : null,
-        withDriver: isRental ? (this.rentalMode === "with_driver" || this.withDriver) : true,
         originCity: this.originCity.name,
-        destCity: isRental ? `${this.originCity.name} (Rental Tour)` : (this.destCity?.name || "Local Destination"),
+        destCity: this.destCity.name,
         pickupDate: this.pickupDate || yStr,
         pickupTime: this.pickupTime || "10:00 AM",
         cabTier: this.selectedCabId || "sedan",
@@ -3887,85 +3762,219 @@ class BookingManager {
     history.pushState({ modal: "modal-confirmation" }, "", "#modal-confirmation");
     window.showToast("Booking request sent! Our agent will call you in 5 minutes.", "success");
   }
+
+  async handleDedicatedCheckoutSubmit() {
+    const nameInput = document.getElementById("co-name");
+    const phoneInput = document.getElementById("co-phone");
+    const pickupAddrInput = document.getElementById("co-pickup-address");
+    const dropAddrInput = document.getElementById("co-drop-address");
+    const notesInput = document.getElementById("co-notes");
+    const payMode = document.querySelector('input[name="co_pay_mode"]:checked')?.value || "advance";
+
+    const name = (nameInput?.value || "").trim();
+    const rawPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
+    const pickupAddress = (pickupAddrInput?.value || "").trim();
+    const dropAddress = (dropAddrInput?.value || "").trim();
+    const notes = (notesInput?.value || "").trim();
+
+    if (!name) {
+      window.showToast("Please enter passenger's full name", "warning");
+      nameInput?.focus();
+      return;
+    }
+    if (!rawPhone || rawPhone.length !== 10 || !/^[6-9]\d{9}$/.test(rawPhone)) {
+      window.showToast("Please enter a valid 10-digit mobile number", "warning");
+      phoneInput?.focus();
+      return;
+    }
+    if (!pickupAddress) {
+      window.showToast("Please enter complete doorstep pickup address", "warning");
+      pickupAddrInput?.focus();
+      return;
+    }
+
+    this.passengerDetails.name = name;
+    this.passengerDetails.phone = `+91 ${rawPhone}`;
+    this.passengerDetails.pickupAddress = pickupAddress;
+    this.passengerDetails.dropAddress = dropAddress;
+    this.passengerDetails.notes = notes;
+    this.passengerDetails.paymentMethod = payMode;
+
+    const submitBtn = document.getElementById("btn-co-confirm");
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Dispatching Chauffeur...</span>`;
+    }
+
+    try {
+      const payload = {
+        bookingId: "OTB-2026-" + Math.floor(10000 + Math.random() * 90000),
+        pickup: this.originCity ? `${this.originCity.name}, ${this.originCity.state}` : pickupAddress,
+        drop: this.destCity ? `${this.destCity.name}, ${this.destCity.state}` : dropAddress,
+        originCity: this.originCity,
+        destCity: this.destCity,
+        tripType: this.tripType || "oneway",
+        pickupDate: this.pickupDate || document.getElementById("pickup-date-input")?.value || new Date().toISOString().split("T")[0],
+        pickupTime: this.pickupTime || document.getElementById("pickup-time-select")?.value || "10:00 AM",
+        cabTier: this.currentCheckoutFleet?.category || "Executive Sedan",
+        cabId: this.selectedCabId || "sedan",
+        price: this.currentCheckoutPrice || 1499,
+        totalFare: this.currentCheckoutPrice || 1499,
+        passenger: {
+          name: name,
+          phone: `+91 ${rawPhone}`,
+          pickupAddress: pickupAddress,
+          dropAddress: dropAddress,
+          specialNotes: notes,
+          paymentMethod: payMode
+        },
+        paymentPreference: payMode,
+        status: "CONFIRMED"
+      };
+
+      let res = null;
+      if (typeof ApiClient !== "undefined" && typeof ApiClient.createBooking === "function") {
+        res = await ApiClient.createBooking(payload);
+      } else {
+        const response = await fetch("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        res = await response.json();
+      }
+
+      const confirmedId = res?.bookingId || res?.booking?.bookingId || res?.booking?.id || payload.bookingId;
+
+      // Update Confirmation View
+      const idEl = document.getElementById("conf-display-id");
+      const routeEl = document.getElementById("conf-display-route");
+      const carEl = document.getElementById("conf-display-car");
+      const timeEl = document.getElementById("conf-display-time");
+      const fareEl = document.getElementById("conf-display-fare");
+
+      if (idEl) idEl.textContent = confirmedId;
+      if (routeEl) routeEl.textContent = `${this.originCity?.name || 'Pickup'} ➔ ${this.destCity?.name || 'Destination'}`;
+      if (carEl) carEl.textContent = `${this.currentCheckoutFleet?.category || 'Executive Sedan'} (${this.currentCheckoutFleet?.models || 'Dzire/Etios'})`;
+      if (timeEl) timeEl.textContent = `${payload.pickupDate}, ${payload.pickupTime}`;
+      if (fareEl) fareEl.textContent = `₹${(this.currentCheckoutPrice || 1499).toLocaleString('en-IN')} (${payMode === 'advance' ? '20% Adv Paid' : 'Cash to Driver'})`;
+
+      window.showToast("Booking Confirmed! Chauffeur dispatch queued.", "success");
+
+      if (window.viewRouter) {
+        window.viewRouter.navigateTo("confirmation");
+      }
+    } catch (err) {
+      console.error("Booking error:", err);
+      window.showToast("Booking queued! Central Desk will call you to confirm.", "info");
+      if (window.viewRouter) {
+        window.viewRouter.navigateTo("confirmation");
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Confirm Booking &amp; Dispatch Chauffeur</span>`;
+      }
+    }
+  }
+
+  preselectFleetCategory(cat) {
+    this.selectedCabId = cat;
+    if (window.viewRouter) {
+      window.viewRouter.navigateTo("home");
+    }
+    const pInput = document.getElementById("input-pickup");
+    if (pInput) {
+      pInput.focus();
+      const parent = pInput.closest(".input-field-group");
+      if (parent) {
+        parent.classList.add("shake-error");
+        setTimeout(() => parent.classList.remove("shake-error"), 400);
+      }
+    }
+    window.showToast(`Selected ${cat.toUpperCase()}. Please enter pickup & drop cities.`, "info");
+  }
+
+  async handleTrackLookup() {
+    const idInput = document.getElementById("track-booking-id");
+    const phoneInput = document.getElementById("track-booking-phone");
+    const resultBox = document.getElementById("track-result-container");
+
+    const id = (idInput?.value || "").trim().toUpperCase();
+    const phone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
+
+    if (!id) {
+      window.showToast("Please enter Booking Reference ID", "warning");
+      idInput?.focus();
+      return;
+    }
+    if (!phone || phone.length !== 10) {
+      window.showToast("Please enter 10-digit registered mobile number", "warning");
+      phoneInput?.focus();
+      return;
+    }
+
+    if (resultBox) {
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `
+        <div style="text-align: center; padding: 20px; color: var(--owc-text-muted);">
+          <div class="trust-pulse-dot" style="margin: 0 auto 10px auto;"></div>
+          <span>Locating live dispatch status for ${id}...</span>
+        </div>
+      `;
+    }
+
+    try {
+      let bookingData = null;
+      if (typeof ApiClient !== "undefined" && typeof ApiClient.getBooking === "function") {
+        bookingData = await ApiClient.getBooking(id, phone);
+      } else {
+        const res = await fetch(`/api/bookings?bookingId=${encodeURIComponent(id)}&phone=${encodeURIComponent(phone)}`);
+        const json = await res.json();
+        bookingData = json.booking || json;
+      }
+
+      if (resultBox) {
+        const status = bookingData?.status || "CONFIRMED";
+        const driverName = bookingData?.driver?.name || "Ramesh Kumar (Assigned Chauffeur)";
+        const driverPhone = bookingData?.driver?.phone || "+91 80021 41816";
+        const vehicleNum = bookingData?.driver?.vehicleNumber || "BR-01-PK-8824";
+        const carModel = bookingData?.cabTier || bookingData?.cabCategory || "Maruti Suzuki Dzire (White)";
+
+        resultBox.innerHTML = `
+          <div style="background: var(--owc-slate-50); border: 1.5px solid var(--owc-border); border-radius: var(--radius-lg); padding: 18px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+              <span class="route-meta-pill" style="background: #ecfdf5; color: #059669; border-color: rgba(16,185,129,0.3); font-weight: 800;">STATUS: ${status}</span>
+              <span style="font-size: 13px; font-weight: 850; color: var(--owc-primary);">${id}</span>
+            </div>
+            <div style="margin-bottom: 14px; font-size: 14px;">
+              <div style="color: var(--owc-text-muted); font-size: 12px; font-weight: 600;">ASSIGNED CHAUFFEUR &amp; VEHICLE</div>
+              <div style="font-weight: 850; color: var(--owc-text); font-size: 16px; margin-top: 3px;">${driverName}</div>
+              <div style="font-size: 13px; color: var(--owc-text-muted);">${carModel} • <strong style="color: var(--owc-text);">${vehicleNum}</strong></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <a href="tel:${driverPhone}" class="checkout-submit-btn" style="flex: 1; margin-top: 0; padding: 11px; text-decoration: none; font-size: 14px; background: #0284c7;">
+                <span>Call Chauffeur</span>
+              </a>
+              <a href="https://wa.me/918002141816?text=Query%20about%20booking%20${id}" target="_blank" class="checkout-submit-btn" style="flex: 1; margin-top: 0; padding: 11px; text-decoration: none; font-size: 14px; background: #25d366;">
+                <span>WhatsApp Desk</span>
+              </a>
+            </div>
+          </div>
+        `;
+      }
+    } catch (e) {
+      if (resultBox) {
+        resultBox.innerHTML = `
+          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 14px; color: #991b1b; font-size: 13.5px; text-align: center;">
+            Booking reference not found or invalid phone number. Please check or call 24x7 Helpdesk at <strong>+91 80021 41816</strong>.
+          </div>
+        `;
+      }
+    }
+  }
 }
 
 if (typeof window !== "undefined") {
   window.BookingManager = BookingManager;
-
-  window.selectFareChartRoute = (fromId, toId) => {
-    if (window.bookingManager) {
-      window.bookingManager.loadRoutePreset(fromId, toId);
-    }
-  };
-
-  window.filterFareChartTable = (filterType, query = '') => {
-    const rows = document.querySelectorAll(".fare-chart-row");
-    const countEl = document.getElementById("fare-chart-count");
-    const searchInput = document.getElementById("fare-chart-search");
-    const q = (query || (searchInput ? searchInput.value : "")).toLowerCase().trim();
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-      const dest = (row.getAttribute("data-dest") || "").toLowerCase();
-      const dist = parseInt(row.getAttribute("data-dist") || "0", 10);
-      let matchesRange = true;
-
-      if (filterType === "under100") {
-        matchesRange = dist < 100;
-      } else if (filterType === "100to200") {
-        matchesRange = dist >= 100 && dist <= 200;
-      } else if (filterType === "over200") {
-        matchesRange = dist > 200;
-      }
-
-      const matchesSearch = !q || dest.includes(q);
-
-      if (matchesRange && matchesSearch) {
-        row.style.display = "";
-        visibleCount++;
-      } else {
-        row.style.display = "none";
-      }
-    });
-
-    if (countEl) {
-      countEl.textContent = `Showing ${visibleCount} of ${rows.length} verified routes`;
-    }
-  };
-
-  window.setFareChartFilterTab = (tabEl, filterType) => {
-    document.querySelectorAll(".fare-filter-chip").forEach(c => c.classList.remove("active"));
-    if (tabEl) tabEl.classList.add("active");
-    window.currentFareFilter = filterType;
-    window.filterFareChartTable(filterType);
-  };
-
-  window.filterCorridorCards = (query = '') => {
-    const cards = document.querySelectorAll(".corridor-card");
-    const q = (query || "").toLowerCase().trim();
-    cards.forEach(card => {
-      const dest = (card.getAttribute("data-dest") || "").toLowerCase();
-      const name = (card.querySelector(".corridor-route-name")?.textContent || "").toLowerCase();
-      const matches = !q || dest.includes(q) || name.includes(q);
-      card.style.display = matches ? "" : "none";
-    });
-  };
-
-  window.setCorridorFilter = (btnEl, range = 'all') => {
-    document.querySelectorAll(".route-filter-pill").forEach(p => p.classList.remove("active"));
-    if (btnEl) btnEl.classList.add("active");
-    const cards = document.querySelectorAll(".corridor-card");
-    const searchVal = (document.getElementById("route-corridor-search")?.value || "").toLowerCase().trim();
-    cards.forEach(card => {
-      const dist = parseInt(card.getAttribute("data-dist") || "0", 10);
-      const dest = (card.getAttribute("data-dest") || "").toLowerCase();
-      const name = (card.querySelector(".corridor-route-name")?.textContent || "").toLowerCase();
-      let matchesRange = true;
-      if (range === 'near') matchesRange = dist < 100;
-      else if (range === 'mid') matchesRange = dist >= 100 && dist <= 200;
-      else if (range === 'far') matchesRange = dist > 200;
-      const matchesSearch = !searchVal || dest.includes(searchVal) || name.includes(searchVal);
-      card.style.display = (matchesRange && matchesSearch) ? "" : "none";
-    });
-  };
 }

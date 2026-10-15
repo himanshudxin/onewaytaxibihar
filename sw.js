@@ -4,10 +4,14 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v1.4';
+const CACHE_NAME = 'onewaytaxibihar-v2.0';
 const CORE_ASSETS = [
   '/',
   '/index.html',
+  '/cabs',
+  '/cabs.html',
+  '/booking',
+  '/booking.html',
   '/driver',
   '/driver.html',
   '/patna-to-gaya-cab',
@@ -22,14 +26,14 @@ const CORE_ASSETS = [
   '/500.html',
   '/css/style.css',
   '/css/components.css?v=3.0',
-  '/js/data.js?v=20261008_0030',
-  '/js/calculator.js?v=20261008_0030',
-  '/js/map.js?v=20261008_0030',
-  '/js/api.js?v=20261008_0030',
-  '/js/datetime-picker.js?v=20261008_0030',
+  '/js/data.js?v=20261015_multipage_v3',
+  '/js/calculator.js?v=20261015_multipage_v3',
+  '/js/map.js?v=20261015_multipage_v3',
+  '/js/api.js?v=20261015_multipage_v3',
+  '/js/datetime-picker.js?v=20261015_multipage_v3',
   '/js/firebase-otp.js?v=20261008_fast2sms',
-  '/js/booking.js?v=20261008_0030',
-  '/js/app.js?v=20261008_0030',
+  '/js/booking.js?v=20261015_multipage_v3',
+  '/js/app.js?v=20261015_multipage_v3',
   '/favicon.svg',
   '/img/logo-reframed.png',
   '/images/icon-192.png',

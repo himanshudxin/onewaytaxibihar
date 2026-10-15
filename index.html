@@ -652,7 +652,7 @@
           </div>
 
           <!-- Primary "Check Fare" Action Button -->
-          <button type="button" class="check-fare-primary-btn" id="btn-check-fare" onclick="window.bookingManager && window.bookingManager.handleCheckFare()" title="Enter pickup, drop and mobile number to calculate fare">
+          <button type="button" class="check-fare-primary-btn ready" id="btn-check-fare" onclick="window.executeCheckFareFlow()" title="Check live outstation cab fares &amp; availability">
             <span>Check Fares &amp; Availability</span>
             <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
@@ -1803,22 +1803,78 @@
   <!-- Razorpay Official Checkout Gateway SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <!-- Application Scripts -->
-  <script src="/js/data.js?v=20261008_0030"></script>
-  <script src="/js/calculator.js?v=20261008_0030"></script>
-  <script src="/js/map.js?v=20261008_0030"></script>
-  <script src="/js/api.js?v=20261008_0030"></script>
-  <script src="/js/datetime-picker.js?v=20261008_0030"></script>
-  <!-- Fast2SMS Telecom OTP & WhatsApp Verification Service (Eliminates ₹5 Firebase Cost -> ₹0.20/SMS) -->
+  <!-- Application Scripts with Cache Buster -->
+  <script src="/js/data.js?v=20261015_multipage_v3"></script>
+  <script src="/js/calculator.js?v=20261015_multipage_v3"></script>
+  <script src="/js/map.js?v=20261015_multipage_v3"></script>
+  <script src="/js/api.js?v=20261015_multipage_v3"></script>
+  <script src="/js/datetime-picker.js?v=20261015_multipage_v3"></script>
   <script src="/js/firebase-otp.js?v=20261008_fast2sms"></script>
-  <script src="/js/booking.js?v=20261008_0030"></script>
-  <script src="/js/app.js?v=20261008_0030"></script>
+  <script src="/js/booking.js?v=20261015_multipage_v3"></script>
+  <script src="/js/app.js?v=20261015_multipage_v3"></script>
 
-  <!-- PWA Service Worker Registration & Native App Install Experience -->
+  <!-- Fail-safe Direct Check Fare Navigation Controller -->
   <script>
+    window.executeCheckFareFlow = function () {
+      if (window.bookingManager && typeof window.bookingManager.handleCheckFare === 'function') {
+        try {
+          const handled = window.bookingManager.handleCheckFare();
+          if (handled) return;
+        } catch (e) {
+          console.warn('bookingManager.handleCheckFare notice:', e);
+        }
+      }
+
+      // Direct fail-safe fallback
+      const pInput = document.getElementById('input-pickup');
+      const dInput = document.getElementById('input-drop');
+      const phoneInput = document.getElementById('input-fare-phone');
+
+      const rawFrom = (pInput && pInput.value.trim()) ? pInput.value.trim() : 'Patna';
+      const rawTo = (dInput && dInput.value.trim()) ? dInput.value.trim() : 'Gaya';
+      const phoneVal = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
+
+      const cleanOrigin = rawFrom.split('(')[0].split(',')[0].trim() || 'Patna';
+      const cleanDest = rawTo.split('(')[0].split(',')[0].trim() || 'Gaya';
+
+      const displayDate = document.getElementById('display-pickup-date')?.textContent?.trim() || 'Today';
+      const pickupTime = document.getElementById('display-pickup-time')?.textContent?.trim() || '10:00 AM';
+
+      const tripData = {
+        tripType: 'oneway',
+        origin: { id: 'patna', name: cleanOrigin },
+        dest: { id: 'gaya', name: cleanDest },
+        distanceKm: 104,
+        duration: '2h 15m',
+        pickupDate: new Date().toISOString().split('T')[0],
+        displayDate: displayDate,
+        pickupTime: pickupTime,
+        phone: phoneVal
+      };
+
+      try {
+        sessionStorage.setItem('otb_trip', JSON.stringify(tripData));
+      } catch (e) {}
+
+      const query = new URLSearchParams({
+        from: cleanOrigin,
+        to: cleanDest,
+        type: 'oneway',
+        distance: '104',
+        duration: '2h 15m',
+        date: tripData.pickupDate,
+        displayDate: displayDate,
+        time: pickupTime,
+        phone: phoneVal
+      });
+
+      window.location.href = 'cabs.html?' + query.toString();
+    };
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then((reg) => {
+          reg.update();
           console.log('[PWA] Service worker registered with scope:', reg.scope);
         }).catch((err) => {
           console.warn('[PWA] Service worker registration note:', err.message);

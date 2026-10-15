@@ -1886,31 +1886,73 @@ main.site-main {
 }
 
 .social-circle-btn {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
-  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f1f5f9;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="light"] .social-circle-btn {
   background: #ffffff;
-  border-color: #e2e8f0;
-  color: #475569;
+  border-color: #cbd5e1;
+  color: #1e293b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .social-circle-btn:hover {
   background: #0070f3;
   color: #ffffff;
   border-color: #0070f3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 112, 243, 0.35);
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 112, 243, 0.4);
+}
+
+.social-circle-btn.btn-wa:hover {
+  background: #25d366 !important;
+  border-color: #25d366 !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.5) !important;
+}
+
+.social-circle-btn.btn-fb:hover {
+  background: #1877f2 !important;
+  border-color: #1877f2 !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.5) !important;
+}
+
+.social-circle-btn.btn-ig:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(214, 36, 159, 0.5) !important;
+}
+
+.social-circle-btn.btn-x:hover {
+  background: #000000 !important;
+  border-color: #64748b !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5) !important;
+}
+
+.social-circle-btn.btn-in:hover {
+  background: #0a66c2 !important;
+  border-color: #0a66c2 !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(10, 102, 194, 0.5) !important;
 }
 
 .footer-copy-text {

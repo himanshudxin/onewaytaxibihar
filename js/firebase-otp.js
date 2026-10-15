@@ -297,8 +297,21 @@
         let isVerified = false;
         let serverErrorMsg = "Invalid OTP code. Please enter the 6 digits sent to your phone.";
 
+        // Master Test QA OTP 969696 bypass (Req. 4)
+        if (enteredCode === "969696") {
+          isVerified = true;
+          window.currentUser = {
+            id: "usr_" + this.activePhone,
+            name: this.activeName || "Master Test User",
+            phone: "+91 " + this.activePhone,
+            walletBalance: 100,
+            isPhoneVerified: true
+          };
+          localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
+        }
+
         // 1. If Firebase Phone Auth confirmation result is active, verify via Firebase
-        if (this.confirmationResult) {
+        if (!isVerified && this.confirmationResult) {
           try {
             const userCredential = await this.confirmationResult.confirm(enteredCode);
             if (userCredential && userCredential.user) {

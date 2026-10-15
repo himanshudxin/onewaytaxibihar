@@ -152,6 +152,15 @@ class BookingManager {
 
     this.restoreState();
     this.syncPaymentConfig();
+
+    // Auto-detect user's location via GPS/Haversine on load (Req. 3)
+    if (!this.originCity) {
+      setTimeout(() => {
+        if (!this.originCity) {
+          this.detectCurrentLocation(false);
+        }
+      }, 350);
+    }
   }
 
   saveState() {

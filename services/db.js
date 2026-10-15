@@ -9,7 +9,6 @@ try { require('dotenv').config(); } catch (e) {}
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
 const DB_LOCAL_PATH = path.join(process.cwd(), 'data', 'db.json');
 const DB_TMP_PATH = '/tmp/db.json';
 
@@ -29,10 +28,7 @@ const ALL_COLLECTIONS = [
   'support_tickets',
   'error_logs',
   'settings',
-  'admins',
-  'corporate_inquiries',
-  'corporate_accounts',
-  'passenger_reviews'
+  'admins'
 ];
 
 function getLocalDbPath() {
@@ -97,9 +93,6 @@ function loadLocalDb() {
       coupons: [],
       support_tickets: [],
       error_logs: [],
-      corporate_inquiries: [],
-      corporate_accounts: [],
-      passenger_reviews: [],
       settings: {}
     };
   }
@@ -107,6 +100,8 @@ function loadLocalDb() {
 }
 
 // High-Throughput MongoDB Atlas Connection
+const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+
 async function initMongo() {
   const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
   if (!mongoUri) return false;
@@ -271,14 +266,14 @@ async function pullFromRemoteCloud(targetCollection = null) {
             const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(300).toArray();
             if (Array.isArray(docs)) {
               const sanitized = docs.map(({ _id, ...rest }) => rest);
-              if (colName === 'bookings' || colName === 'leads' || colName === 'sessions') {
+              if (colName === 'bookings' || colName === 'leads') {
                 const map = new Map();
                 for (const item of sanitized) {
-                  const k = item.bookingId || item.token || item.id || item.cleanPhone;
+                  const k = item.bookingId || item.id || item.cleanPhone;
                   if (k) map.set(k, item);
                 }
                 for (const memItem of (memoryDb[colName] || [])) {
-                  const k = memItem.bookingId || memItem.token || memItem.id || memItem.cleanPhone;
+                  const k = memItem.bookingId || memItem.id || memItem.cleanPhone;
                   if (k && !map.has(k)) map.set(k, memItem);
                 }
                 memoryDb[colName] = Array.from(map.values());
@@ -344,15 +339,12 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('bookings', db.bookings),
         syncCollectionToCloud('leads', db.leads),
         syncCollectionToCloud('users', db.users),
-        syncCollectionToCloud('sessions', db.sessions),
         syncCollectionToCloud('payments', db.payments),
         syncCollectionToCloud('drivers', db.drivers),
         syncCollectionToCloud('vehicles', db.vehicles),
         syncCollectionToCloud('coupons', db.coupons),
         syncCollectionToCloud('admins', db.admins),
-        syncCollectionToCloud('notifications', db.notifications),
-        syncCollectionToCloud('corporate_inquiries', db.corporate_inquiries),
-        syncCollectionToCloud('passenger_reviews', db.passenger_reviews)
+        syncCollectionToCloud('notifications', db.notifications)
       ];
       if (db.settings) {
         tasks.push(mongoDbInstance.collection('settings').updateOne(

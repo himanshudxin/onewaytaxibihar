@@ -15,8 +15,6 @@ const dbService = require('../services/db.js');
 const paymentService = require('../services/payment.js');
 const notificationService = require('../services/notification.js');
 const securityService = require('../services/security.js');
-const bookingStateService = require('../services/booking-state.js');
-const dispatchService = require('../services/dispatch.js');
 
 // Auto-initialize Enterprise DB (MongoDB Atlas / PostgreSQL / Local Cache)
 dbService.initDatabase().catch(err => {
@@ -147,92 +145,26 @@ const BIHAR_COORDS = {
 };
 
 // Verified Highway Distance Matrix for Major Routes
-// Complete One-Way Market-Calibrated Price List (From Patna)
-// Benchmarked against RodBez's fair one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12/km Sedan, ~₹15.50–₹16/km SUV)
-const PATNA_MARKET_FARE_CHART = [
-  { id: "patna-hajipur", destination: "Hajipur (Vaishali)", destKey: "hajipur", distKm: 25, hatchback: 699, sedan: 799, suv: 1199, traditional: "₹1,500 – ₹1,800" },
-  { id: "patna-arrah", destination: "Arrah (Bhojpur)", destKey: "ara", distKm: 55, hatchback: 899, sedan: 999, suv: 1399, traditional: "₹2,000 – ₹2,200" },
-  { id: "patna-jehanabad", destination: "Jehanabad", destKey: "jehanabad", distKm: 50, hatchback: 899, sedan: 999, suv: 1399, traditional: "₹1,800 – ₹2,200" },
-  { id: "patna-chapra", destination: "Chapra (Saran)", destKey: "chhapra", distKm: 70, hatchback: 1099, sedan: 1199, suv: 1699, traditional: "₹2,200 – ₹2,500" },
-  { id: "patna-muzaffarpur", destination: "Muzaffarpur", destKey: "muzaffarpur", distKm: 75, hatchback: 1099, sedan: 1249, suv: 1749, traditional: "₹2,200 – ₹2,600" },
-  { id: "patna-biharsharif", destination: "Bihar Sharif (Nalanda)", destKey: "biharsharif", distKm: 75, hatchback: 1099, sedan: 1249, suv: 1749, traditional: "₹2,200 – ₹2,500" },
-  { id: "patna-rajgir", destination: "Rajgir", destKey: "rajgir", distKm: 100, hatchback: 1299, sedan: 1449, suv: 1999, traditional: "₹2,600 – ₹3,000" },
-  { id: "patna-samastipur", destination: "Samastipur", destKey: "samastipur", distKm: 95, hatchback: 1249, sedan: 1399, suv: 1949, traditional: "₹2,500 – ₹2,800" },
-  { id: "patna-gaya", destination: "Gaya / Bodh Gaya", destKey: "gaya", distKm: 110, hatchback: 1399, sedan: 1549, suv: 2149, traditional: "₹2,800 – ₹3,200" },
-  { id: "patna-begusarai", destination: "Begusarai", destKey: "begusarai", distKm: 125, hatchback: 1499, sedan: 1699, suv: 2349, traditional: "₹3,000 – ₹3,400" },
-  { id: "patna-nawada", destination: "Nawada", destKey: "nawada", distKm: 115, hatchback: 1449, sedan: 1599, suv: 2249, traditional: "₹2,800 – ₹3,200" },
-  { id: "patna-siwan", destination: "Siwan", destKey: "siwan", distKm: 135, hatchback: 1599, sedan: 1799, suv: 2499, traditional: "₹3,200 – ₹3,600" },
-  { id: "patna-darbhanga", destination: "Darbhanga", destKey: "darbhanga", distKm: 140, hatchback: 1599, sedan: 1799, suv: 2549, traditional: "₹3,200 – ₹3,600" },
-  { id: "patna-aurangabad", destination: "Aurangabad", destKey: "aurangabad", distKm: 140, hatchback: 1599, sedan: 1799, suv: 2549, traditional: "₹3,200 – ₹3,600" },
-  { id: "patna-sasaram", destination: "Sasaram (Rohtas)", destKey: "sasaram", distKm: 155, hatchback: 1799, sedan: 1999, suv: 2799, traditional: "₹3,500 – ₹4,000" },
-  { id: "patna-madhubani", destination: "Madhubani", destKey: "madhubani", distKm: 165, hatchback: 1899, sedan: 2099, suv: 2899, traditional: "₹3,600 – ₹4,200" },
-  { id: "patna-munger", destination: "Munger", destKey: "munger", distKm: 175, hatchback: 1999, sedan: 2249, suv: 3099, traditional: "₹4,000 – ₹4,500" },
-  { id: "patna-sitamarhi", destination: "Sitamarhi", destKey: "sitamarhi", distKm: 140, hatchback: 1649, sedan: 1849, suv: 2599, traditional: "₹3,200 – ₹3,800" },
-  { id: "patna-motihari", destination: "Motihari (East Champaran)", destKey: "motihari", distKm: 155, hatchback: 1799, sedan: 1999, suv: 2799, traditional: "₹3,500 – ₹4,000" },
-  { id: "patna-gopalganj", destination: "Gopalganj", destKey: "gopalganj", distKm: 150, hatchback: 1749, sedan: 1949, suv: 2699, traditional: "₹3,400 – ₹3,800" },
-  { id: "patna-jamui", destination: "Jamui", destKey: "jamui", distKm: 160, hatchback: 1849, sedan: 2049, suv: 2849, traditional: "₹3,600 – ₹4,000" },
-  { id: "patna-buxar", destination: "Buxar", destKey: "buxar", distKm: 130, hatchback: 1549, sedan: 1749, suv: 2449, traditional: "₹3,000 – ₹3,400" },
-  { id: "patna-bhabua", destination: "Bhabua (Kaimur)", destKey: "bhabua", distKm: 190, hatchback: 2199, sedan: 2449, suv: 3399, traditional: "₹4,200 – ₹4,800" },
-  { id: "patna-saharsa", destination: "Saharsa", destKey: "saharsa", distKm: 185, hatchback: 2149, sedan: 2399, suv: 3299, traditional: "₹4,200 – ₹4,600" },
-  { id: "patna-khagaria", destination: "Khagaria", destKey: "khagaria", distKm: 165, hatchback: 1899, sedan: 2149, suv: 2999, traditional: "₹3,800 – ₹4,200" },
-  { id: "patna-bettiah", destination: "Bettiah (West Champaran)", destKey: "bettiah", distKm: 205, hatchback: 2399, sedan: 2649, suv: 3699, traditional: "₹4,800 – ₹5,400" },
-  { id: "patna-supaul", destination: "Supaul", destKey: "supaul", distKm: 215, hatchback: 2499, sedan: 2799, suv: 3849, traditional: "₹4,800 – ₹5,500" },
-  { id: "patna-madhepura", destination: "Madhepura", destKey: "madhepura", distKm: 210, hatchback: 2449, sedan: 2749, suv: 3799, traditional: "₹4,800 – ₹5,400" },
-  { id: "patna-bhagalpur", destination: "Bhagalpur", destKey: "bhagalpur", distKm: 235, hatchback: 2699, sedan: 2999, suv: 4199, traditional: "₹5,200 – ₹6,000" },
-  { id: "patna-banka", destination: "Banka", destKey: "banka", distKm: 225, hatchback: 2599, sedan: 2899, suv: 4049, traditional: "₹5,000 – ₹5,800" },
-  { id: "patna-purnia", destination: "Purnea", destKey: "purnia", distKm: 290, hatchback: 3299, sedan: 3649, suv: 5099, traditional: "₹6,500 – ₹7,200" },
-  { id: "patna-araria", destination: "Araria", destKey: "araria", distKm: 310, hatchback: 3499, sedan: 3899, suv: 5449, traditional: "₹6,800 – ₹7,500" },
-  { id: "patna-katihar", destination: "Katihar", destKey: "katihar", distKm: 305, hatchback: 3449, sedan: 3849, suv: 5399, traditional: "₹6,800 – ₹7,500" },
-  { id: "patna-kishanganj", destination: "Kishanganj", destKey: "kishanganj", distKm: 380, hatchback: 4299, sedan: 4799, suv: 6699, traditional: "₹8,500 – ₹9,500" }
-];
-
-// Verified Highway Distance Matrix for Major Routes
 const BIHAR_DISTANCES = {
-  "patna_gaya": 110,
+  "patna_gaya": 104,
   "patna_muzaffarpur": 75,
-  "patna_darbhanga": 140,
+  "patna_darbhanga": 142,
   "patna_bhagalpur": 235,
-  "patna_purnia": 290,
-  "patna_purnea": 290,
-  "patna_rajgir": 100,
-  "patna_ara": 55,
-  "patna_arrah": 55,
-  "patna_bhojpur": 55,
+  "patna_purnia": 305,
+  "patna_rajgir": 102,
+  "patna_ara": 54,
   "patna_buxar": 130,
-  "patna_sasaram": 155,
-  "patna_rohtas": 155,
+  "patna_sasaram": 150,
   "patna_begusarai": 125,
-  "patna_chhapra": 70,
-  "patna_chapra": 70,
-  "patna_saran": 70,
+  "patna_chhapra": 50,
   "patna_motihari": 155,
-  "patna_eastchamparan": 155,
-  "patna_bettiah": 205,
-  "patna_westchamparan": 205,
+  "patna_bettiah": 200,
   "patna_siwan": 135,
-  "patna_samastipur": 95,
-  "patna_katihar": 305,
-  "patna_saharsa": 185,
-  "patna_munger": 175,
-  "patna_kishanganj": 380,
-  "patna_hajipur": 25,
-  "patna_vaishali": 25,
-  "patna_jehanabad": 50,
-  "patna_biharsharif": 75,
-  "patna_nalanda": 75,
-  "patna_nawada": 115,
-  "patna_aurangabad": 140,
-  "patna_madhubani": 165,
-  "patna_sitamarhi": 140,
-  "patna_gopalganj": 150,
-  "patna_jamui": 160,
-  "patna_bhabua": 190,
-  "patna_kaimur": 190,
-  "patna_khagaria": 165,
-  "patna_supaul": 215,
-  "patna_madhepura": 210,
-  "patna_banka": 225,
-  "patna_araria": 310,
+  "patna_samastipur": 88,
+  "patna_katihar": 320,
+  "patna_saharsa": 210,
+  "patna_munger": 178,
+  "patna_kishanganj": 395,
   "patna_deoghar": 255,
   "patna_varanasi": 250,
   "patna_ranchi": 325,
@@ -282,163 +214,48 @@ function getRouteDistance(origin, dest) {
 }
 
 // Server-Side Fare Calculation Engine (Authoritative source of truth)
-// Calibrated to RodBez one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12.00/km Sedan, ~₹15.50–₹16.00/km SUV)
-const DEFAULT_FLEET_RATES = {
-  hatchback: { perKm: 10.5, minFare: 699, minKm: 25, rentalPrice: 1800, rentalDriverAllowance: 1000, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
-  sedan: { perKm: 11.75, minFare: 799, minKm: 25, rentalPrice: 2200, rentalDriverAllowance: 1000, name: "Prime Sedan", model: "Dzire, Etios, Aura", seats: 4 },
-  sedan_prime: { perKm: 14.0, minFare: 999, minKm: 25, rentalPrice: 2600, rentalDriverAllowance: 1000, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
-  suv: { perKm: 15.75, minFare: 1199, minKm: 25, rentalPrice: 4000, rentalDriverAllowance: 1000, name: "Family SUV (6+1)", model: "Ertiga, Triber, Carens", seats: 6 },
-  innova_crysta: { perKm: 20.0, minFare: 1699, minKm: 25, rentalPrice: 5000, rentalDriverAllowance: 1000, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
+const FLEET_RATES = {
+  hatchback: { perKm: 21.0, minFare: 1698, minKm: 50, name: "Go Hatchback", model: "WagonR, Tiago, Celerio", seats: 4 },
+  sedan: { perKm: 25.0, minFare: 2198, minKm: 50, name: "Prime Sedan", model: "Dzire, Etios, Amaze", seats: 4 },
+  sedan_prime: { perKm: 29.0, minFare: 2698, minKm: 50, name: "Executive Sedan", model: "Honda City, Ciaz", seats: 4 },
+  suv: { perKm: 33.0, minFare: 3398, minKm: 50, name: "Family SUV (6+1)", model: "Maruti Ertiga, Carens", seats: 6 },
+  innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
 };
 
-const DEFAULT_SEGMENT_FARES = {
-  oneway: {
-    driverAllowance: 250,
-    driverAllowanceThresholdKm: 250,
-    nightCharge: 250,
-    gstPct: 5
-  },
-  roundtrip: {
-    returnDiscountPct: 12,
-    driverAllowancePerDay: 350,
-    minKmPerDay: 250
-  },
-  airport: {
-    convenienceCharge: 150,
-    minFare: 999
-  },
-  rental: {
-    rentalHours: 8,
-    rentalKm: 80,
-    driverAllowance: 1000,
-    extraKmRate: 22,
-    extraHourRate: 150
-  }
-};
-
-function getEffectiveFleetRates(db) {
-  const saved = db?.settings?.fleet_rates || db?.settings?.fleetRates || {};
-  const merged = {};
-  for (const [tierKey, defVal] of Object.entries(DEFAULT_FLEET_RATES)) {
-    const s = saved[tierKey] || {};
-    merged[tierKey] = {
-      perKm: Number(s.perKm) > 0 ? Number(s.perKm) : defVal.perKm,
-      minFare: Number(s.minFare) > 0 ? Number(s.minFare) : defVal.minFare,
-      minKm: Number(s.minKm) > 0 ? Number(s.minKm) : defVal.minKm,
-      rentalPrice: Number(s.rentalPrice) > 0 ? Number(s.rentalPrice) : defVal.rentalPrice,
-      rentalDriverAllowance: Number(s.rentalDriverAllowance) > 0 ? Number(s.rentalDriverAllowance) : defVal.rentalDriverAllowance,
-      name: s.name || defVal.name,
-      model: s.model || defVal.model,
-      seats: s.seats || defVal.seats
-    };
-  }
-  return merged;
-}
-
-function getEffectiveSegmentFares(db) {
-  const saved = db?.settings?.segment_fares || db?.settings?.segmentFares || {};
-  return {
-    oneway: {
-      driverAllowance: Number(saved.oneway?.driverAllowance) >= 0 ? Number(saved.oneway.driverAllowance) : DEFAULT_SEGMENT_FARES.oneway.driverAllowance,
-      driverAllowanceThresholdKm: Number(saved.oneway?.driverAllowanceThresholdKm) > 0 ? Number(saved.oneway.driverAllowanceThresholdKm) : DEFAULT_SEGMENT_FARES.oneway.driverAllowanceThresholdKm,
-      nightCharge: Number(saved.oneway?.nightCharge) >= 0 ? Number(saved.oneway.nightCharge) : DEFAULT_SEGMENT_FARES.oneway.nightCharge,
-      gstPct: Number(saved.oneway?.gstPct) >= 0 ? Number(saved.oneway.gstPct) : DEFAULT_SEGMENT_FARES.oneway.gstPct
-    },
-    roundtrip: {
-      returnDiscountPct: Number(saved.roundtrip?.returnDiscountPct) >= 0 ? Number(saved.roundtrip.returnDiscountPct) : DEFAULT_SEGMENT_FARES.roundtrip.returnDiscountPct,
-      driverAllowancePerDay: Number(saved.roundtrip?.driverAllowancePerDay) >= 0 ? Number(saved.roundtrip.driverAllowancePerDay) : DEFAULT_SEGMENT_FARES.roundtrip.driverAllowancePerDay,
-      minKmPerDay: Number(saved.roundtrip?.minKmPerDay) > 0 ? Number(saved.roundtrip.minKmPerDay) : DEFAULT_SEGMENT_FARES.roundtrip.minKmPerDay
-    },
-    airport: {
-      convenienceCharge: Number(saved.airport?.convenienceCharge) >= 0 ? Number(saved.airport.convenienceCharge) : DEFAULT_SEGMENT_FARES.airport.convenienceCharge,
-      minFare: Number(saved.airport?.minFare) > 0 ? Number(saved.airport.minFare) : DEFAULT_SEGMENT_FARES.airport.minFare
-    },
-    rental: {
-      rentalHours: Number(saved.rental?.rentalHours) > 0 ? Number(saved.rental.rentalHours) : DEFAULT_SEGMENT_FARES.rental.rentalHours,
-      rentalKm: Number(saved.rental?.rentalKm) > 0 ? Number(saved.rental.rentalKm) : DEFAULT_SEGMENT_FARES.rental.rentalKm,
-      driverAllowance: Number(saved.rental?.driverAllowance) >= 0 ? Number(saved.rental.driverAllowance) : DEFAULT_SEGMENT_FARES.rental.driverAllowance,
-      extraKmRate: Number(saved.rental?.extraKmRate) > 0 ? Number(saved.rental.extraKmRate) : DEFAULT_SEGMENT_FARES.rental.extraKmRate,
-      extraHourRate: Number(saved.rental?.extraHourRate) > 0 ? Number(saved.rental.extraHourRate) : DEFAULT_SEGMENT_FARES.rental.extraHourRate
-    }
-  };
-}
-
-const FLEET_RATES = DEFAULT_FLEET_RATES;
-
-function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway', origin = '', dest = '', options = {}) {
-  const db = options.db || null;
-  const rates = getEffectiveFleetRates(db);
-  const segments = getEffectiveSegmentFares(db);
-
-  const cleanTier = (cabTier || 'sedan').toLowerCase().replace(/\s+/g, '_');
-  const tier = rates[cleanTier] || rates.sedan;
+function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway', origin = '', dest = '') {
+  const cleanTier = (cabTier || 'sedan').toLowerCase();
+  const tier = FLEET_RATES[cleanTier] || FLEET_RATES.sedan;
   const dist = Math.max(25, Number(distanceKm) || 50);
-
-  const isRental = (tripType === 'rental' || tripType === 'local');
-  const withDriver = Boolean(options.withDriver || options.rentalMode === 'with_driver');
 
   let distanceCharge = 0;
   let driverAllowance = 0;
   let roundTripDiscount = 0;
-  let isCalibratedRoute = false;
 
-  const originClean = (origin || '').toLowerCase().replace(/[^a-z]/g, '');
-  const destClean = (dest || '').toLowerCase().replace(/[^a-z]/g, '');
-  const isPatnaOrigin = originClean.includes('patna');
-  const isPatnaDest = destClean.includes('patna');
-
-  let matchedCalibrated = null;
-  if ((isPatnaOrigin || isPatnaDest) && (!isRental && tripType !== 'roundtrip')) {
-    const otherClean = isPatnaOrigin ? destClean : originClean;
-    matchedCalibrated = PATNA_MARKET_FARE_CHART.find(c => {
-      const destKey = c.destKey.toLowerCase().replace(/[^a-z]/g, '');
-      const idKey = c.id.replace('patna-', '').replace(/[^a-z]/g, '');
-      const destFull = c.destination.toLowerCase().replace(/[^a-z]/g, '');
-      return otherClean === destKey || otherClean.includes(destKey) || otherClean === idKey || otherClean.includes(idKey) || destFull.includes(otherClean);
-    });
-  }
-
-  if (isRental) {
-    // Rental Mode: base rental price (self-drive / rented only) + optional chauffeur allowance
-    const baseRental = Number(tier.rentalPrice) || (cleanTier === 'suv' ? 4000 : 2200);
-    const driverFee = withDriver ? (Number(tier.rentalDriverAllowance) || Number(segments.rental.driverAllowance) || 1000) : 0;
-    driverAllowance = driverFee;
-    distanceCharge = baseRental + driverAllowance;
-  } else if (tripType === 'roundtrip') {
+  if (tripType === 'roundtrip') {
     const rawTotal = Math.round(dist * 2 * tier.perKm);
-    const discountPct = Number(segments.roundtrip.returnDiscountPct) || 12;
-    roundTripDiscount = Math.round(rawTotal * (discountPct / 100)); // e.g. 12% return leg discount
-    driverAllowance = Number(segments.roundtrip.driverAllowancePerDay) || 350;
+    roundTripDiscount = Math.round(rawTotal * 0.12); // 12% return leg discount
+    driverAllowance = 350;
     distanceCharge = (rawTotal - roundTripDiscount) + driverAllowance;
-  } else if (matchedCalibrated) {
-    isCalibratedRoute = true;
-    if (cleanTier === 'hatchback') distanceCharge = matchedCalibrated.hatchback;
-    else if (cleanTier === 'sedan') distanceCharge = matchedCalibrated.sedan;
-    else if (cleanTier === 'sedan_prime') distanceCharge = Math.round(matchedCalibrated.sedan * 1.18);
-    else if (cleanTier === 'suv') distanceCharge = matchedCalibrated.suv;
-    else if (cleanTier === 'innova_crysta') distanceCharge = Math.round(matchedCalibrated.suv * 1.32);
-    else distanceCharge = matchedCalibrated.sedan;
   } else {
-    // oneway / airport calibrated per-KM benchmark (~₹10.50 Hatchback, ~₹11.75 Sedan, ~₹15.75 SUV)
     distanceCharge = Math.round(dist * tier.perKm);
-    const minSlab = Number(tier.minFare) || (cleanTier === 'hatchback' ? 699 : cleanTier === 'sedan' ? 799 : cleanTier === 'suv' ? 1199 : 999);
-    distanceCharge = Math.max(minSlab, distanceCharge);
+    if (dist > 250) {
+      driverAllowance = 250;
+      distanceCharge += driverAllowance;
+    }
   }
 
-  const baseFare = isRental ? (Number(tier.rentalPrice) || 2200) : (isCalibratedRoute ? distanceCharge : tier.minFare);
-  const totalFare = isRental ? distanceCharge : Math.max(baseFare, distanceCharge);
-  const tollEst = isRental ? 0 : Math.round((dist / 70) * 55);
+  const baseFare = tier.minFare;
+  const totalFare = Math.max(baseFare, distanceCharge);
+  const tollEst = Math.round((dist / 70) * 55);
   const taxableAmount = Math.round(totalFare / 1.05);
   const gstAmount = totalFare - taxableAmount;
 
-  const hours = isRental ? Number(segments.rental.rentalHours || 8) : Math.floor(dist / 45);
-  const mins = isRental ? 0 : Math.round((dist % 45) * 1.3);
-  const duration = isRental 
-    ? `${hours} Hours / ${segments.rental.rentalKm || 80} KM`
-    : `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : '15m'}`;
+  const hours = Math.floor(dist / 45);
+  const mins = Math.round((dist % 45) * 1.3);
+  const duration = `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : '15m'}`;
 
   return {
-    distanceKm: isRental ? (segments.rental.rentalKm || 80) : dist,
+    distanceKm: dist,
     duration,
     tierId: cleanTier,
     tierName: tier.name,
@@ -446,44 +263,23 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
     seats: tier.seats,
     baseFare,
     perKmRate: tier.perKm,
-    rentalPrice: tier.rentalPrice,
-    rentalDriverAllowance: tier.rentalDriverAllowance,
-    rentalMode: isRental ? (withDriver ? 'with_driver' : 'without_driver') : null,
-    withDriver: isRental ? withDriver : true,
     distanceCharge,
     driverAllowance,
     roundTripDiscount,
     tollFastag: tollEst,
     gst: gstAmount,
     totalFare: Math.round(totalFare),
-    isCalibratedRoute,
-    traditionalMarketRate: matchedCalibrated ? matchedCalibrated.traditional : null,
-    farePolicy: {
-      included: "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
-      excluded: "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
-      advanceFee: "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
-    },
-    inclusions: isRental ? [
-      "100% Sanitized & AC Vehicle",
-      withDriver ? "Professional Bihar Chauffeur Included" : "Self-Drive Freedom (Rented without Driver)",
-      `${segments.rental.rentalHours || 8} Hours / ${segments.rental.rentalKm || 80} KM Included`,
-      "Doorstep Vehicle Delivery & Pickup",
-      "Comprehensive Commercial Insurance Included",
-      "Transparent Pricing with No Hidden Charges"
-    ] : [
-      "Fuel Included",
-      "Vehicle Hire Included",
-      "Professional Chauffeur Allowance Included",
-      "Doorstep Pickup & Drop within Municipal City Limits",
+    inclusions: [
+      "100% AC Chilled Ride",
+      "Doorstep Pickup & Drop",
+      "Driver Allowance Included",
+      "State Highway Tolls & FASTag Included",
+      "5% GST Tax Included",
       "Zero Return Fare Charged"
     ],
-    exclusions: isRental ? [
-      withDriver ? "Fuel beyond included KM package" : "Fuel to be refilled by renter / self-drive",
-      "Traffic violation challans during rental period",
-      `Extra KM @ ₹${segments.rental.extraKmRate || 22}/km, Extra Hour @ ₹${segments.rental.extraHourRate || 150}/hr`
-    ] : [
-      "Fastag Toll Plaza taxes and state road permits (paid directly by passenger at actuals, maintaining transparent pricing without inflated buffers)",
-      "Multiple city diversions not specified in booking"
+    exclusions: [
+      "Multiple city diversions not specified in booking",
+      "Overnight detention if passenger delays vehicle to following calendar day"
     ]
   };
 }
@@ -614,56 +410,14 @@ function getSessionAdmin(req, db) {
 
 function getSessionDriver(req, db) {
   const authHeader = req.headers['authorization'] || '';
-  let token = authHeader.replace(/^Bearer\s+/i, '').trim();
-  if (!token && req.headers['cookie']) {
-    const match = req.headers['cookie'].match(/drv_session=([^;]+)/) || req.headers['cookie'].match(/driver_token=([^;]+)/);
-    if (match) token = match[1];
-  }
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
   if (!token) return null;
 
-  // 1. Cryptographic JWT Verification (Stateless, Resilient & Cloud Proof)
-  try {
-    const jwtPayload = securityService.verifyJwt(token);
-    if (jwtPayload && jwtPayload.driverId) {
-      let driver = (db.drivers || []).find(d => 
-        d.id === jwtPayload.driverId || 
-        d.phone.replace(/\D/g, '').slice(-10) === String(jwtPayload.phone || '').replace(/\D/g, '').slice(-10)
-      );
-      if (!driver) {
-        driver = {
-          id: jwtPayload.driverId,
-          name: jwtPayload.name || 'Driver Partner',
-          phone: jwtPayload.phone || '+91 6206494214',
-          vehicleModel: jwtPayload.vehicleModel || 'Swift Dzire (Commercial Taxi)',
-          vehicleNumber: jwtPayload.vehicleNumber || 'BR 01 PA 4921',
-          dutyStatus: 'ON_DUTY',
-          isVerified: true,
-          status: 'Available',
-          rating: 4.9,
-          totalTrips: 1
-        };
-        if (!db.drivers) db.drivers = [];
-        db.drivers.push(driver);
-      }
-      return { driver, session: jwtPayload };
-    }
-  } catch (jwtErr) {}
-
-  // 2. Active Session lookup in db.sessions
   const session = (db.sessions || []).find(s => s.token === token && s.role === 'driver');
-  if (session) {
-    const driver = (db.drivers || []).find(d => d.id === session.driverId);
-    if (driver) return { driver, session };
-  }
+  if (!session) return null;
 
-  // 3. Resilient fallback for direct driver tokens
-  if (token.startsWith('drv_')) {
-    const cleanId = token.replace(/^drv_sess_/, 'drv_');
-    const driver = (db.drivers || []).find(d => d.id === cleanId || d.phone.replace(/\D/g, '').slice(-10) === token.slice(-10));
-    if (driver) return { driver, session: { driverId: driver.id, role: 'driver' } };
-  }
-
-  return null;
+  const driver = (db.drivers || []).find(d => d.id === session.driverId);
+  return driver ? { driver, session } : null;
 }
 
 // Main Request Handler
@@ -809,19 +563,6 @@ module.exports = async (req, res) => {
         message: `Your OneWayTaxiBihar verification OTP is ${code}. Valid for 10 minutes. Do not share.`
       });
 
-      // Dispatch automated WhatsApp OTP via Meta WhatsApp Cloud API if configured
-      let whatsappDispatch = null;
-      if (process.env.WHATSAPP_ACCESS_TOKEN || process.env.META_WHATSAPP_TOKEN) {
-        whatsappDispatch = await notificationService.sendOtpViaWhatsApp({
-          phone: cleanPhone,
-          otp: code,
-          name
-        }).catch(err => {
-          console.warn('[WhatsApp Cloud OTP] Dispatch notice:', err.message);
-          return { success: false, error: err.message };
-        });
-      }
-
       // Auto-register customer lead in db.leads so Admin Portal displays customer inquiry
       if (!db.leads) db.leads = [];
       const exLead = db.leads.find(l => (l.cleanPhone || (l.phone || '').replace(/\D/g, '').slice(-10)) === cleanPhone);
@@ -871,37 +612,26 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Valid 10-digit mobile number required.' });
       }
 
-      // Master Test OTP Override (Req: Fixed OTP 969696)
-      const isMasterTestOtp = (inputCode === '969696');
-
-      if (!isMasterTestOtp) {
-        if (!activeVerificationCodes.has(cleanPhone)) {
-          return sendJson(400, { success: false, message: 'No active verification code found. Please request a new code.' });
-        }
-
-        const activeRecord = activeVerificationCodes.get(cleanPhone);
-        if (Date.now() > activeRecord.expiresAt) {
-          activeVerificationCodes.delete(cleanPhone);
-          return sendJson(400, { success: false, message: 'Verification code expired. Please request a new code.' });
-        }
-
-        if (activeRecord.code !== inputCode) {
-          activeRecord.attempts++;
-          if (activeRecord.attempts >= 5) {
-            activeVerificationCodes.delete(cleanPhone);
-            return sendJson(400, { success: false, message: 'Too many incorrect attempts. Please request a new code.' });
-          }
-          return sendJson(400, { success: false, message: 'Invalid verification code. Please check and re-enter.' });
-        }
-
-        activeVerificationCodes.delete(cleanPhone);
-      } else {
-        if (activeVerificationCodes.has(cleanPhone)) {
-          activeVerificationCodes.delete(cleanPhone);
-        }
+      if (!activeVerificationCodes.has(cleanPhone)) {
+        return sendJson(400, { success: false, message: 'No active verification code found. Please request a new code.' });
       }
 
-      const activeRecord = activeVerificationCodes.get(cleanPhone) || {};
+      const activeRecord = activeVerificationCodes.get(cleanPhone);
+      if (Date.now() > activeRecord.expiresAt) {
+        activeVerificationCodes.delete(cleanPhone);
+        return sendJson(400, { success: false, message: 'Verification code expired. Please request a new code.' });
+      }
+
+      if (activeRecord.code !== inputCode) {
+        activeRecord.attempts++;
+        if (activeRecord.attempts >= 5) {
+          activeVerificationCodes.delete(cleanPhone);
+          return sendJson(400, { success: false, message: 'Too many incorrect attempts. Please request a new code.' });
+        }
+        return sendJson(400, { success: false, message: 'Invalid verification code. Please check and re-enter.' });
+      }
+
+      activeVerificationCodes.delete(cleanPhone);
       const finalName = name || activeRecord.name || 'Valued Passenger';
 
       let user = (db.users || []).find(u => u.phone.replace(/\D/g, '').slice(-10) === cleanPhone);
@@ -1004,149 +734,6 @@ module.exports = async (req, res) => {
         message: isFirstTime
           ? 'Mobile verified successfully! Rs 100 Welcome Reward credited to your wallet.'
           : 'Mobile verified successfully! Welcome back.'
-      });
-    }
-
-    // -------------------------------------------------------------
-    // 2C. PASSENGER AUTH: Google Firebase Phone Auth Configuration & Verification
-    // -------------------------------------------------------------
-    if (pathname === '/auth/firebase-config' && method === 'GET') {
-      const hasConfig = Boolean(process.env.FIREBASE_PROJECT_ID || process.env.FIREBASE_API_KEY);
-      return sendJson(200, {
-        success: true,
-        enabled: hasConfig,
-        config: hasConfig ? {
-          apiKey: process.env.FIREBASE_API_KEY || '',
-          authDomain: process.env.FIREBASE_AUTH_DOMAIN || `${process.env.FIREBASE_PROJECT_ID || 'onewaytaxibihar'}.firebaseapp.com`,
-          projectId: process.env.FIREBASE_PROJECT_ID || 'onewaytaxibihar',
-          storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID || 'onewaytaxibihar'}.appspot.com`,
-          messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '',
-          appId: process.env.FIREBASE_APP_ID || ''
-        } : null
-      });
-    }
-
-    if ((pathname === '/auth/firebase-verify' || pathname === '/auth/verify-firebase') && method === 'POST') {
-      const idToken = (body.idToken || body.token || '').trim();
-      let cleanPhone = (body.phone || '').replace(/\D/g, '').slice(-10);
-      const name = (body.name || '').trim();
-
-      if (!idToken && !cleanPhone) {
-        return sendJson(400, { success: false, message: 'Firebase verification token or phone number required.' });
-      }
-
-      // If idToken is provided, decode and verify payload
-      if (idToken) {
-        try {
-          const parts = idToken.split('.');
-          if (parts.length === 3) {
-            const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
-            if (payload.phone_number) {
-              cleanPhone = payload.phone_number.replace(/\D/g, '').slice(-10);
-            }
-          }
-        } catch (e) {
-          console.warn('[Firebase Auth] Token parse notice:', e.message);
-        }
-      }
-
-      if (!cleanPhone || cleanPhone.length !== 10) {
-        return sendJson(400, { success: false, message: 'Valid 10-digit mobile number could not be verified from Firebase token.' });
-      }
-
-      const finalName = name || 'Valued Passenger';
-      let user = (db.users || []).find(u => u.phone.replace(/\D/g, '').slice(-10) === cleanPhone);
-      let isFirstTime = false;
-      let rewardGranted = 0;
-
-      if (!user) {
-        isFirstTime = true;
-        rewardGranted = 100;
-        user = {
-          id: `usr_${cleanPhone}`,
-          name: finalName,
-          phone: `+91 ${cleanPhone}`,
-          email: (body.email || '').trim().toLowerCase(),
-          walletBalance: 100,
-          rewardClaimed: true,
-          isPhoneVerified: true,
-          authProvider: 'firebase_sms',
-          memberSince: new Date().getFullYear().toString(),
-          createdAt: new Date().toISOString()
-        };
-        if (!db.users) db.users = [];
-        db.users.push(user);
-
-        if (!db.wallet_ledger) db.wallet_ledger = [];
-        db.wallet_ledger.push({
-          id: `WLT_${Date.now()}`,
-          userId: user.id,
-          phone: user.phone,
-          type: 'CREDIT',
-          amount: 100,
-          balanceAfter: 100,
-          description: 'Welcome Bonus Credit (Firebase Verified Phone Reward)',
-          createdAt: new Date().toISOString()
-        });
-      } else {
-        user.isPhoneVerified = true;
-        user.authProvider = 'firebase_sms';
-        if (finalName && finalName !== 'Valued Passenger') {
-          user.name = finalName;
-        }
-      }
-
-      const token = `otb_sess_${crypto.randomBytes(16).toString('hex')}`;
-      if (!db.sessions) db.sessions = [];
-      db.sessions.push({
-        token,
-        userId: user.id,
-        phone: user.phone,
-        role: 'customer',
-        authMethod: 'firebase_sms',
-        createdAt: new Date().toISOString()
-      });
-
-      // Upsert lead in db.leads
-      if (!db.leads) db.leads = [];
-      const vLeadIdx = db.leads.findIndex(l => (l.cleanPhone || (l.phone || '').replace(/\D/g, '').slice(-10)) === cleanPhone);
-      if (vLeadIdx >= 0) {
-        db.leads[vLeadIdx].passengerName = finalName;
-        db.leads[vLeadIdx].source = 'Firebase SMS Verified Login';
-        db.leads[vLeadIdx].updatedAt = new Date().toISOString();
-      } else {
-        db.leads.unshift({
-          id: `lead_${cleanPhone}_${Date.now().toString().slice(-4)}`,
-          phone: `+91 ${cleanPhone}`,
-          cleanPhone,
-          rawPhone: cleanPhone,
-          passengerName: finalName,
-          originCity: 'Patna',
-          destCity: 'Bihar Outstation',
-          tripType: 'oneway',
-          source: 'Firebase SMS Verified Login',
-          status: 'NEW',
-          createdAt: new Date().toISOString()
-        });
-      }
-
-      await saveDb(db);
-
-      return sendJson(200, {
-        success: true,
-        token,
-        user: {
-          id: user.id,
-          name: user.name,
-          phone: user.phone,
-          email: user.email,
-          walletBalance: user.walletBalance,
-          isPhoneVerified: true
-        },
-        isFirstTimeUser: isFirstTime,
-        rewardGranted: rewardGranted > 0,
-        rewardAmount: rewardGranted,
-        message: 'Google Firebase phone verification confirmed! Welcome to OneWayTaxiBihar.'
       });
     }
 
@@ -1297,43 +884,25 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 4. SERVER-SIDE FARE CONFIGURATION & CALCULATION ENGINE
+    // 4. SERVER-SIDE FARE CALCULATION
     // -------------------------------------------------------------
-    if ((pathname === '/fares/config' || pathname === '/fares/rates') && method === 'GET') {
-      const fleetRates = getEffectiveFleetRates(db);
-      const segmentFares = getEffectiveSegmentFares(db);
-      return sendJson(200, {
-        success: true,
-        fleetRates,
-        segmentFares
-      });
-    }
-
     if ((pathname === '/fares/calculate' || pathname === '/fare/calculate') && method === 'POST') {
       const origin = body.origin || body.originCity || body.pickup || body.pickupCity;
       const dest = body.dest || body.destCity || body.drop || body.dropCity;
       const cabTier = body.cabTier || body.cabType || 'sedan';
-      const tripType = String(body.tripType || 'oneway').toLowerCase();
-      const rentalMode = body.rentalMode || (body.withDriver ? 'with_driver' : 'without_driver');
-      const withDriver = Boolean(body.withDriver || rentalMode === 'with_driver');
+      const tripType = body.tripType || 'oneway';
       const distanceKm = getRouteDistance(origin, dest);
-      const options = { db, withDriver, rentalMode };
-
-      const fareData = calculateServerFare(distanceKm, cabTier, tripType, origin, dest, options);
+      const fareData = calculateServerFare(distanceKm, cabTier, tripType);
       return sendJson(200, {
         success: true,
         distanceKm,
-        tripType,
-        rentalMode: (tripType === 'rental' || tripType === 'local') ? rentalMode : null,
-        withDriver: (tripType === 'rental' || tripType === 'local') ? withDriver : true,
         totalFare: fareData.totalFare,
         fare: fareData,
         fares: {
-          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType, origin, dest, options),
-          sedan: calculateServerFare(distanceKm, 'sedan', tripType, origin, dest, options),
-          sedan_prime: calculateServerFare(distanceKm, 'sedan_prime', tripType, origin, dest, options),
-          suv: calculateServerFare(distanceKm, 'suv', tripType, origin, dest, options),
-          innova_crysta: calculateServerFare(distanceKm, 'innova_crysta', tripType, origin, dest, options)
+          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType),
+          sedan: calculateServerFare(distanceKm, 'sedan', tripType),
+          suv: calculateServerFare(distanceKm, 'suv', tripType),
+          innova: calculateServerFare(distanceKm, 'innova', tripType)
         }
       });
     }
@@ -1401,61 +970,11 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 4C-2. MARKET-CALIBRATED ONE-WAY FARE CHART API (From Patna)
-    // -------------------------------------------------------------
-    if ((pathname === '/fare-chart' || pathname === '/fares/chart') && method === 'GET') {
-      return sendJson(200, {
-        success: true,
-        benchmark: {
-          formula: "RodBez-benchmarked one-way pricing formula (~₹10.50/km Hatchback, ~₹11.50–₹12.00/km Sedan, ~₹15.50–₹16.00/km SUV)",
-          originCity: "Patna",
-          zeroReturnFare: true
-        },
-        farePolicy: {
-          included: "Fuel, vehicle hire, driver allowance, and pickup/drop anywhere within municipal city limits.",
-          excluded: "Fastag Toll Plaza taxes and state road permits (paid directly by the passenger at actuals, maintaining transparent pricing without inflated buffers).",
-          advanceBookingFee: "Standard ₹200 – ₹499 commitment token or full cash/UPI payment directly to the driver at the destination drop."
-        },
-        routesCount: PATNA_MARKET_FARE_CHART.length,
-        routes: PATNA_MARKET_FARE_CHART
-      });
-    }
-
-    // -------------------------------------------------------------
     // 4D. oneway.cab API: ROUTE DETAILS & CAB OPTIONS
     // -------------------------------------------------------------
     if (pathname === '/route-details' && method === 'GET') {
       const fromVal = url.searchParams.get('from') || 'Patna';
       const toVal = url.searchParams.get('to') || 'Gaya';
-      const rawPhone = (url.searchParams.get('phone') || '').replace(/\D/g, '').slice(-10);
-
-      if (!rawPhone || rawPhone.length !== 10 || !/^[6-9]\d{9}$/.test(rawPhone)) {
-        return sendJson(400, {
-          success: false,
-          requirePhone: true,
-          message: 'Valid 10-digit Indian mobile number is required to check route fares.'
-        });
-      }
-
-      // Record inquiry lead in central dispatch
-      if (!db.leads) db.leads = [];
-      const exLead = db.leads.find(l => (l.cleanPhone || (l.phone || '').replace(/\D/g, '').slice(-10)) === rawPhone);
-      if (!exLead) {
-        db.leads.unshift({
-          id: `lead_${rawPhone}_${Date.now().toString().slice(-4)}`,
-          phone: `+91 ${rawPhone}`,
-          cleanPhone: rawPhone,
-          rawPhone: rawPhone,
-          passengerName: 'Passenger Inquiry',
-          originCity: fromVal,
-          destCity: toVal,
-          tripType: 'oneway',
-          source: 'Route Details Fare Check API',
-          status: 'NEW',
-          createdAt: new Date().toISOString()
-        });
-        await saveDb(db);
-      }
 
       const distanceKm = getRouteDistance(fromVal, toVal);
       const hatchFare = calculateServerFare(distanceKm, 'hatchback', 'oneway', fromVal, toVal);
@@ -1723,12 +1242,6 @@ module.exports = async (req, res) => {
       }
       const safePassengerName = String(passengerName || 'Valued Passenger').trim().slice(0, 80) || 'Valued Passenger';
 
-      // Phase 9: Book for someone else support
-      const isForOther = Boolean(body.isForOther || body.bookForSomeoneElse);
-      const bookerName = isForOther ? String(body.bookerName || body.userName || 'Account Booker').trim().slice(0, 80) : '';
-      const bookerPhone = isForOther ? String(body.bookerPhone || body.userPhone || '').replace(/\D/g, '').slice(-10) : '';
-      const specialInstructions = String(body.specialInstructions || body.instructions || '').trim().slice(0, 300);
-
       let safePickupDate = pickupDate;
       if (pickupDate && typeof pickupDate === 'string') {
         if (/^\d{2}[-/]\d{2}[-/]\d{4}$/.test(pickupDate.trim())) {
@@ -1763,11 +1276,7 @@ module.exports = async (req, res) => {
 
       // Server-side distance and fare recalculation (Anti-tamper: server is sole authority)
       const distanceKm = getRouteDistance(originCity, destCity);
-      const tripType = String(body.tripType || 'oneway').toLowerCase();
-      const isRental = (tripType === 'rental' || tripType === 'local');
-      const rentalMode = String(body.rentalMode || (body.withDriver ? 'with_driver' : 'without_driver'));
-      const withDriver = Boolean(body.withDriver || rentalMode === 'with_driver');
-      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', tripType, originCity, destCity, { db, withDriver, rentalMode });
+      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', 'oneway');
       const baseTotal = serverFare.totalFare;
 
       // Find or create customer
@@ -1913,9 +1422,6 @@ module.exports = async (req, res) => {
       const newBooking = {
         bookingId,
         tripOtp,
-        tripType: isRental ? 'rental' : tripType,
-        rentalMode: isRental ? rentalMode : null,
-        withDriver: isRental ? withDriver : true,
         customerId: user.id,
         paymentTxnId: txnId,
         idempotencyKey: idempotencyKey || null,
@@ -1923,7 +1429,7 @@ module.exports = async (req, res) => {
         passengerPhone: `+91 ${cleanPhone}`,
         passengerEmail: passengerEmail || '',
         originCity: originCity || 'Patna',
-        destCity: isRental ? `${originCity || 'Patna'} (Rental Tour)` : (destCity || 'Gaya'),
+        destCity: destCity || 'Gaya',
         pickupAddress: pickupAddress || `${originCity || 'Patna'} City`,
         dropAddress: dropAddress || `${destCity || 'Gaya'} City`,
         pickupDate: safePickupDate,
@@ -1945,10 +1451,6 @@ module.exports = async (req, res) => {
         paymentStatus: initialPaymentStatus,
         bookingStatus: initialBookingStatus,
         status: initialBookingStatus,
-        isForOther,
-        bookerName: bookerName || null,
-        bookerPhone: bookerPhone ? `+91 ${bookerPhone}` : null,
-        specialInstructions: specialInstructions || null,
         phoneVerified: Boolean(body.phoneVerified !== false),
         verifiedMethod: body.verifiedMethod || 'Telecom SMS OTP (Verified)',
         verifiedAt: body.verifiedAt || new Date().toISOString(),
@@ -2296,101 +1798,6 @@ module.exports = async (req, res) => {
       const cgst = Math.round(gst / 2);
       const sgst = gst - cgst;
 
-      if (url.searchParams.get('format') === 'html') {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.end(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Tax Invoice - ${invNumber}</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; max-width: 800px; margin: 40px auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; }
-    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #059669; padding-bottom: 16px; margin-bottom: 24px; }
-    .brand { font-size: 22px; font-weight: 800; color: #059669; }
-    .inv-details { text-align: right; font-size: 13px; color: #64748b; }
-    .section { margin-bottom: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
-    th { background: #f8fafc; color: #475569; }
-    .total-row { font-weight: 800; font-size: 16px; color: #0f172a; border-top: 2px solid #cbd5e1; }
-    .btn-print { background: #059669; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-bottom: 20px; }
-    @media print { .btn-print { display: none; } body { border: none; margin: 0; padding: 0; } }
-  </style>
-</head>
-<body>
-  <button class="btn-print" onclick="window.print()">🖨️ Print / Download PDF</button>
-  <div class="header">
-    <div>
-      <div class="brand">OneWayTaxiBihar</div>
-      <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-        OneWayTaxiBihar Mobility Solutions<br>
-        GSTIN: 10AABCO1234F1Z5 | SAC: 996412<br>
-        Boring Road, Patna, Bihar - 800001<br>
-        Helpline: +91 80021 41816
-      </div>
-    </div>
-    <div class="inv-details">
-      <div style="font-size: 18px; font-weight: 800; color: #0f172a;">TAX INVOICE</div>
-      <div><strong>Invoice #:</strong> ${invNumber}</div>
-      <div><strong>Date:</strong> ${(booking.createdAt || new Date().toISOString()).split('T')[0]}</div>
-      <div><strong>Booking ID:</strong> ${booking.bookingId}</div>
-    </div>
-  </div>
-
-  <div class="section" style="display: flex; justify-content: space-between; font-size: 13px; background: #f8fafc; padding: 12px; border-radius: 8px;">
-    <div>
-      <strong>Passenger:</strong> ${escapeHtml(booking.passengerName || 'Valued Passenger')}<br>
-      <strong>Phone:</strong> +91 ${bPhone}<br>
-      <strong>Pickup:</strong> ${escapeHtml(booking.pickupAddress || booking.originCity)}<br>
-      <strong>Drop:</strong> ${escapeHtml(booking.dropAddress || booking.destCity)}
-    </div>
-    <div style="text-align: right;">
-      <strong>Vehicle:</strong> ${escapeHtml(booking.vehicleModel || (booking.fleetClass || 'Prime Sedan'))}<br>
-      <strong>Trip Date:</strong> ${booking.pickupDate} (${booking.pickupTime})<br>
-      <strong>Distance:</strong> ${booking.distanceKm || 104} KM<br>
-      <strong>Status:</strong> ${booking.bookingStatus}
-    </div>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>HSN / SAC</th>
-        <th style="text-align: right;">Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Intercity Passenger Transport (${escapeHtml(booking.originCity)} ➔ ${escapeHtml(booking.destCity)})</td>
-        <td>996412</td>
-        <td style="text-align: right;">₹${taxable}</td>
-      </tr>
-      <tr>
-        <td>Central GST (CGST @ 2.5%)</td>
-        <td>-</td>
-        <td style="text-align: right;">₹${cgst}</td>
-      </tr>
-      <tr>
-        <td>State GST (SGST @ 2.5%)</td>
-        <td>-</td>
-        <td style="text-align: right;">₹${sgst}</td>
-      </tr>
-      <tr class="total-row">
-        <td colspan="2">Total All-Inclusive Fare</td>
-        <td style="text-align: right; color: #059669;">₹${total}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; display: flex; justify-content: space-between;">
-    <div>Payment Method: <strong>${escapeHtml(booking.paymentMethod || 'Cash to Chauffeur')}</strong> (${booking.paymentStatus || 'SETTLED'})</div>
-    <div>Electronic Invoice • Authorized by OneWayTaxiBihar</div>
-  </div>
-</body>
-</html>`);
-      }
-
       return sendJson(200, {
         success: true,
         invoice: {
@@ -2485,20 +1892,6 @@ module.exports = async (req, res) => {
         }
       }
 
-      let driverLocation = booking.liveTelemetry || null;
-      if (!driverLocation && booking.assignedDriverId) {
-        const foundD = (db.drivers || []).find(d => d.id === booking.assignedDriverId);
-        if (foundD && foundD.currentLat && foundD.currentLng) {
-          driverLocation = {
-            lat: foundD.currentLat,
-            lng: foundD.currentLng,
-            heading: foundD.heading || 0,
-            speed: foundD.speed || 0,
-            updatedAt: foundD.locationUpdatedAt || new Date().toISOString()
-          };
-        }
-      }
-
       return sendJson(200, {
         success: true,
         trip: {
@@ -2516,7 +1909,6 @@ module.exports = async (req, res) => {
           paymentMethod: booking.paymentMethod,
           tripOtp: booking.tripOtp,
           driver: driverInfo,
-          driverLocation,
           statusHistory: booking.statusHistory || [],
           updatedAt: booking.updatedAt || booking.createdAt || new Date().toISOString()
         }
@@ -2677,17 +2069,6 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Invalid webhook signature' });
       }
 
-      // Webhook Idempotency Lock
-      if (!db.processed_webhooks) db.processed_webhooks = [];
-      const eventId = body.id || (body.payload?.payment?.entity?.id ? `${body.event}_${body.payload.payment.entity.id}` : null);
-      if (eventId && db.processed_webhooks.includes(eventId)) {
-        return sendJson(200, { status: 'ok', deduplicated: true, message: 'Webhook event already processed' });
-      }
-      if (eventId) {
-        db.processed_webhooks.push(eventId);
-        if (db.processed_webhooks.length > 500) db.processed_webhooks.shift();
-      }
-
       const event = body.event;
       if (event === 'payment.captured' || event === 'order.paid') {
         const payload = body.payload?.payment?.entity || {};
@@ -2699,31 +2080,6 @@ module.exports = async (req, res) => {
             b.balanceDue = Math.max(0, (b.totalFare || 0) - b.advancePaid);
             b.paymentStatus = 'PARTIALLY PAID (Webhook Verified)';
             b.bookingStatus = 'CONFIRMED';
-            b.status = 'CONFIRMED';
-            if (!b.statusHistory) b.statusHistory = [];
-            b.statusHistory.push({
-              status: 'CONFIRMED',
-              timestamp: new Date().toISOString(),
-              actor: 'Gateway Webhook',
-              note: `Online payment verified via webhook event ${event}`
-            });
-            await saveDb(db);
-          }
-        }
-      } else if (event === 'payment.failed') {
-        const payload = body.payload?.payment?.entity || {};
-        const bId = payload.notes?.bookingId;
-        if (bId) {
-          const b = (db.bookings || []).find(x => x.bookingId === bId);
-          if (b) {
-            b.paymentStatus = 'PAYMENT_FAILED (Gateway)';
-            if (!b.statusHistory) b.statusHistory = [];
-            b.statusHistory.push({
-              status: 'PAYMENT_FAILED',
-              timestamp: new Date().toISOString(),
-              actor: 'Gateway Webhook',
-              note: `Payment attempt failed: ${payload.error_description || 'Card/UPI bank decline'}`
-            });
             await saveDb(db);
           }
         }
@@ -2862,24 +2218,6 @@ module.exports = async (req, res) => {
         targetPhone: `+91 ${targetPhone}`,
         result,
         whatsappLink: notificationService.generateWhatsAppDeepLink(targetPhone, testMsg)
-      });
-    }
-
-    if ((pathname === '/admin/whatsapp/test' || pathname === '/whatsapp/test') && method === 'POST') {
-      const targetPhone = body.phone || '6206494214';
-      const testMsg = body.message || `Namaste! OneWayTaxiBihar Meta WhatsApp Cloud API operational test message sent at ${new Date().toLocaleTimeString('en-IN')}.`;
-
-      const result = await notificationService.sendViaWhatsAppCloud({
-        phone: targetPhone,
-        message: testMsg
-      });
-
-      return sendJson(200, {
-        success: result.success,
-        targetPhone: `+91 ${targetPhone}`,
-        result,
-        configured: Boolean(process.env.WHATSAPP_ACCESS_TOKEN && (process.env.WHATSAPP_PHONE_ID || process.env.META_PHONE_NUMBER_ID)),
-        message: result.success ? 'WhatsApp message dispatched successfully via Meta Cloud API!' : (result.error || 'Failed to dispatch WhatsApp message. Check access token and phone ID.')
       });
     }
 
@@ -3368,8 +2706,6 @@ module.exports = async (req, res) => {
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
       const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
       const emPhone = db.settings?.emergencyHotline || hPhone;
-      const fleetRates = getEffectiveFleetRates(db);
-      const segmentFares = getEffectiveSegmentFares(db);
 
       return sendJson(200, {
         success: true,
@@ -3382,11 +2718,9 @@ module.exports = async (req, res) => {
           emergencyHotline: emPhone,
           baseFare: db.settings?.baseFare || 2198,
           baseKm: db.settings?.baseKm || 80,
-          sedanRatePerKm: fleetRates.sedan.perKm,
-          suvRatePerKm: fleetRates.suv.perKm,
-          innovaRatePerKm: fleetRates.innova_crysta.perKm,
-          fleetRates,
-          segmentFares,
+          sedanRatePerKm: db.settings?.sedanRatePerKm || 11,
+          suvRatePerKm: db.settings?.suvRatePerKm || 15,
+          innovaRatePerKm: db.settings?.innovaRatePerKm || 19,
           advanceAmount: db.settings?.payment?.defaultAdvanceAmount || 299,
           enableRazorpay: db.settings?.payment?.enableRazorpay !== false,
           enableDirectUpi: db.settings?.payment?.enableDirectUpi !== false,
@@ -3439,30 +2773,6 @@ module.exports = async (req, res) => {
         db.settings.emergencyBookingPause = Boolean(body.emergencyPause);
       }
 
-      // Fleet Rates Matrix Update (Per KM, Min Fare, Rental Prices, Chauffeur Allowance)
-      if (body.fleetRates || body.fleet_rates) {
-        const fr = body.fleetRates || body.fleet_rates;
-        if (!db.settings.fleet_rates) db.settings.fleet_rates = {};
-        for (const [tierKey, tVal] of Object.entries(fr)) {
-          if (!db.settings.fleet_rates[tierKey]) db.settings.fleet_rates[tierKey] = {};
-          if (tVal.perKm !== undefined) db.settings.fleet_rates[tierKey].perKm = Number(tVal.perKm);
-          if (tVal.minFare !== undefined) db.settings.fleet_rates[tierKey].minFare = Number(tVal.minFare);
-          if (tVal.minKm !== undefined) db.settings.fleet_rates[tierKey].minKm = Number(tVal.minKm);
-          if (tVal.rentalPrice !== undefined) db.settings.fleet_rates[tierKey].rentalPrice = Number(tVal.rentalPrice);
-          if (tVal.rentalDriverAllowance !== undefined) db.settings.fleet_rates[tierKey].rentalDriverAllowance = Number(tVal.rentalDriverAllowance);
-        }
-      }
-
-      // Segment Fares Matrix Update (OneWay, RoundTrip, Rental, Airport)
-      if (body.segmentFares || body.segment_fares) {
-        const sf = body.segmentFares || body.segment_fares;
-        if (!db.settings.segment_fares) db.settings.segment_fares = {};
-        for (const [segKey, sVal] of Object.entries(sf)) {
-          if (!db.settings.segment_fares[segKey]) db.settings.segment_fares[segKey] = {};
-          Object.assign(db.settings.segment_fares[segKey], sVal);
-        }
-      }
-
       if (!db.settings.payment) db.settings.payment = {};
       if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
       if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = Boolean(body.enableRazorpay);
@@ -3477,13 +2787,13 @@ module.exports = async (req, res) => {
         entityId: 'global',
         oldValue: oldSettings,
         newValue: db.settings,
-        note: `Operational & Fleet Fare settings modified by ${admin.username}`
+        note: `Operational settings modified (Helpline: ${db.settings.helplinePhone}, WhatsApp: ${db.settings.whatsappPhone})`
       });
 
       await saveDb(db);
       return sendJson(200, {
         success: true,
-        message: 'Settings and fleet pricing successfully saved and propagated.',
+        message: 'Settings successfully saved and propagated.',
         settings: {
           helplinePhone: db.settings.helplinePhone,
           helpline: db.settings.helpline,
@@ -3492,41 +2802,8 @@ module.exports = async (req, res) => {
           supportPhone: db.settings.supportPhone,
           emergencyHotline: db.settings.emergencyHotline,
           baseFare: db.settings.baseFare,
-          baseKm: db.settings.baseKm,
-          fleetRates: getEffectiveFleetRates(db),
-          segmentFares: getEffectiveSegmentFares(db)
+          baseKm: db.settings.baseKm
         }
-      });
-    }
-
-    // Reset Fleet Rates & Segment Fares to Standard Defaults
-    if (pathname === '/admin/fares/reset' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      if (!['owner', 'manager', 'admin'].includes(admin.role)) {
-        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to reset system fares.' });
-      }
-
-      if (!db.settings) db.settings = {};
-      db.settings.fleet_rates = JSON.parse(JSON.stringify(DEFAULT_FLEET_RATES));
-      db.settings.segment_fares = JSON.parse(JSON.stringify(DEFAULT_SEGMENT_FARES));
-      await saveDb(db);
-
-      await securityService.recordAuditLog(db, {
-        actor: admin.username,
-        role: admin.role,
-        action: 'FARES_RESET',
-        entityType: 'SETTINGS',
-        entityId: 'fares',
-        newValue: { fleetRates: db.settings.fleet_rates, segmentFares: db.settings.segment_fares },
-        note: 'Fleet pricing and segment rates reset to factory defaults'
-      });
-
-      return sendJson(200, {
-        success: true,
-        message: 'Fleet rates and segment fares reset to standard Bihar defaults.',
-        fleetRates: getEffectiveFleetRates(db),
-        segmentFares: getEffectiveSegmentFares(db)
       });
     }
 
@@ -3728,101 +3005,6 @@ module.exports = async (req, res) => {
       return sendJson(200, {
         success: true,
         bookings: db.bookings || []
-      });
-    }
-
-    // -------------------------------------------------------------
-    // MANUAL AGENT BOOKING (Admin Desk)
-    // -------------------------------------------------------------
-    if ((pathname === '/admin/bookings/manual' || pathname === '/admin/bookings/create-manual') && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      const customerName = String(body.customerName || body.passengerName || body.name || '').trim();
-      const rawMobile = String(body.mobile || body.passengerPhone || body.phone || '').replace(/\D/g, '').slice(-10);
-      const pickup = String(body.pickup || body.originCity || '').trim();
-      const drop = String(body.drop || body.destCity || '').trim();
-      const date = String(body.date || body.pickupDate || new Date().toISOString().split('T')[0]).trim();
-      const time = String(body.time || body.pickupTime || '10:00 AM').trim();
-      const vehicle = String(body.vehicle || body.cabTier || 'Sedan').trim();
-      const paymentMethod = String(body.paymentMethod || 'Cash to Driver').trim();
-      const notes = String(body.notes || body.instructions || '').trim();
-      let fare = Number(body.fare || body.totalFare || 0);
-
-      if (!customerName || customerName.length < 2) {
-        return sendJson(400, { success: false, message: 'Customer name is required (at least 2 characters).' });
-      }
-      if (!rawMobile || rawMobile.length !== 10 || !/^[6-9]\d{9}$/.test(rawMobile)) {
-        return sendJson(400, { success: false, message: 'Valid 10-digit Indian mobile number required.' });
-      }
-      if (!pickup || !drop) {
-        return sendJson(400, { success: false, message: 'Pickup and Drop locations are required.' });
-      }
-
-      // If fare not manually set, calculate authoritative server fare
-      if (!fare || fare <= 0) {
-        const dist = getRouteDistance(pickup, drop) || 80;
-        const calc = calculateServerFare(dist, vehicle.toLowerCase().includes('suv') ? 'suv' : 'sedan', 'oneway', pickup, drop, { db });
-        fare = calc.totalFare || 1999;
-      }
-
-      const bookingId = `OTB-${Math.floor(10000 + Math.random() * 90000)}`;
-      const manualBooking = {
-        id: bookingId,
-        bookingId: bookingId,
-        passengerName: customerName,
-        passengerPhone: `+91 ${rawMobile}`,
-        cleanPhone: rawMobile,
-        pickupLocation: pickup,
-        dropLocation: drop,
-        originCity: pickup,
-        destCity: drop,
-        pickupDate: date,
-        pickupTime: time,
-        cabTier: vehicle,
-        cabCategory: vehicle,
-        totalFare: fare,
-        fare: fare,
-        paymentMethod: paymentMethod,
-        paymentStatus: 'PENDING',
-        advancePaid: 0,
-        balanceDue: fare,
-        specialNotes: notes,
-        bookingStatus: 'CONFIRMED',
-        source: 'MANUAL_AGENT',
-        otpStatus: 'MANUAL',
-        createdBy: admin.username || 'admin',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if (!db.bookings) db.bookings = [];
-      db.bookings.unshift(manualBooking);
-
-      // Audit log
-      if (!db.audit_logs) db.audit_logs = [];
-      db.audit_logs.push({
-        id: `AUD_MANUAL_${Date.now()}`,
-        entity: 'BOOKING',
-        entityId: bookingId,
-        action: 'MANUAL_BOOKING_CREATED',
-        actor: admin.username || 'admin',
-        details: `Agent manual booking for ${customerName} (+91 ${rawMobile}): ${pickup} ➔ ${drop} (₹${fare})`,
-        createdAt: new Date().toISOString()
-      });
-
-      // Notification
-      notificationService.sendBookingConfirmationNotifications(manualBooking).catch(err => {
-        console.warn('[Manual Booking Notification Warning]:', err.message);
-      });
-
-      await saveDb(db);
-
-      return sendJson(201, {
-        success: true,
-        message: `Manual booking ${bookingId} created successfully.`,
-        bookingId,
-        booking: manualBooking
       });
     }
 
@@ -4346,15 +3528,8 @@ module.exports = async (req, res) => {
         createdAt: new Date().toISOString()
       });
 
-      // Generate instant active session token (Cryptographic JWT + Session)
-      const token = securityService.createJwt({
-        driverId: driverRecord.id,
-        phone: driverRecord.phone,
-        name: driverRecord.name,
-        vehicleNumber: driverRecord.vehicleNumber,
-        vehicleModel: driverRecord.vehicleModel,
-        role: 'driver'
-      });
+      // Generate instant active session token
+      const token = generateToken('drv_sess');
       if (!db.sessions) db.sessions = [];
       db.sessions.push({
         token,
@@ -4386,13 +3561,11 @@ module.exports = async (req, res) => {
     }
 
     if (pathname === '/driver/login' && method === 'POST') {
-      const { phone, pin, password } = body;
+      const { phone, pin } = body;
       const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
       if (cleanPhone.length !== 10) {
         return sendJson(400, { success: false, message: 'Please enter a valid 10-digit mobile number' });
       }
-
-      const inputPin = String(pin || password || '').trim();
 
       let driver = (db.drivers || []).find(d => d.phone.replace(/\D/g, '').slice(-10) === cleanPhone);
 
@@ -4425,54 +3598,29 @@ module.exports = async (req, res) => {
         }
       }
 
-      if (driver) {
-        const expectedPin = String(driver.pin || driver.password || cleanPhone.slice(-4) || '1234').trim();
-        if (inputPin && expectedPin && inputPin !== expectedPin) {
-          return sendJson(401, { success: false, message: 'Invalid Driver PIN or Password. Please try again or call dispatch desk (+91 6206494214).' });
-        }
-      } else {
-        // Reject unverified logins with incorrect credentials
-        if (inputPin && inputPin !== '1234' && inputPin !== cleanPhone.slice(-4)) {
-          return sendJson(401, { success: false, message: 'Driver partner not registered or invalid credentials. Please register or contact dispatch desk (+91 6206494214).' });
-        }
-
-        driver = {
-          id: `drv_${cleanPhone}`,
-          name: `Driver Partner (${cleanPhone.slice(-4)})`,
-          phone: `+91 ${cleanPhone}`,
-          cleanPhone,
-          pin: inputPin || '1234',
-          fleetTier: 'sedan',
-          vehicleModel: 'Swift Dzire (Commercial Taxi)',
-          vehicleNumber: `BR 01 PA ${cleanPhone.slice(-4)}`,
-          city: 'Patna',
-          isVerified: true,
-          verificationStatus: 'VERIFIED',
-          dutyStatus: 'ON_DUTY',
-          status: 'Available',
-          rating: 4.9,
-          totalTrips: 1,
-          earningsToday: 0,
-          kmToday: 0,
-          currentLat: 25.5941,
-          currentLng: 85.1376,
-          heading: 90,
-          speed: 35,
-          createdAt: new Date().toISOString()
-        };
-        if (!db.drivers) db.drivers = [];
-        db.drivers.push(driver);
-        await saveDb(db);
+      if (!driver) {
+        return sendJson(404, { 
+          success: false, 
+          message: 'Mobile number not found in fleet. Please click "New Driver Sign Up" to register in 1 minute, or call 6206494214.' 
+        });
       }
 
-      const token = securityService.createJwt({
-        driverId: driver.id,
-        phone: driver.phone,
-        name: driver.name,
-        vehicleNumber: driver.vehicleNumber,
-        vehicleModel: driver.vehicleModel,
-        role: 'driver'
-      });
+      const inputPin = (pin || '').trim();
+      const expectedPin = driver.pin || cleanPhone.slice(-4);
+
+      // Verify PIN: accepts stored PIN, default last 4 digits of phone, or '1234'
+      if (inputPin !== '' && driver.pin && driver.pin !== inputPin && inputPin !== cleanPhone.slice(-4) && inputPin !== '1234') {
+        return sendJson(401, { 
+          success: false, 
+          message: `Incorrect Security PIN. Tip: Use your 4-digit PIN or last 4 digits of your phone (${cleanPhone.slice(-4)}). Call 6206494214 for PIN reset.` 
+        });
+      }
+
+      if (!driver.pin && inputPin !== '') {
+        driver.pin = inputPin;
+      }
+
+      const token = generateToken('drv_sess');
       if (!db.sessions) db.sessions = [];
       db.sessions.push({
         token,
@@ -4559,53 +3707,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // -------------------------------------------------------------
-    // DRIVER REAL-TIME GPS TELEMETRY (Phase 4 Live Tracking)
-    // -------------------------------------------------------------
-    if (pathname === '/driver/location' && method === 'POST') {
-      const driverAuth = getSessionDriver(req, db);
-      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
-
-      const { lat, lng, latitude, longitude, heading, speed } = body;
-      const numLat = Number(lat !== undefined ? lat : latitude);
-      const numLng = Number(lng !== undefined ? lng : longitude);
-
-      if (isNaN(numLat) || isNaN(numLng) || numLat < 20 || numLat > 30 || numLng < 80 || numLng > 90) {
-        return sendJson(400, { success: false, message: 'Valid geographical coordinates (Bihar region) required' });
-      }
-
-      const targetDriver = (db.drivers || []).find(d => d.id === driverAuth.driver.id);
-      if (targetDriver) {
-        targetDriver.currentLat = numLat;
-        targetDriver.currentLng = numLng;
-        targetDriver.heading = Number(heading) || 0;
-        targetDriver.speed = Number(speed) || 0;
-        targetDriver.locationUpdatedAt = new Date().toISOString();
-      }
-
-      const activeTrip = (db.bookings || []).find(b => 
-        b.assignedDriverId === driverAuth.driver.id &&
-        ['DRIVER ASSIGNED', 'ACCEPTED', 'ON THE WAY', 'DRIVER ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus)
-      );
-
-      if (activeTrip) {
-        activeTrip.liveTelemetry = {
-          lat: numLat,
-          lng: numLng,
-          heading: Number(heading) || 0,
-          speed: Number(speed) || 0,
-          updatedAt: new Date().toISOString()
-        };
-      }
-
-      await saveDb(db);
-      return sendJson(200, {
-        success: true,
-        message: 'Telemetry updated',
-        activeTripId: activeTrip ? activeTrip.bookingId : null
-      });
-    }
-
     if (pathname === '/driver/accept-trip' && method === 'POST') {
       const driverAuth = getSessionDriver(req, db);
       if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
@@ -4666,20 +3767,14 @@ module.exports = async (req, res) => {
       const booking = (db.bookings || []).find(b => b.bookingId === bookingId && b.assignedDriverId === driverAuth.driver.id);
       if (!booking) return sendJson(404, { success: false, message: 'Trip not found or not assigned to you' });
 
-      // Verify OTP on trip start (Phase 10: Mandatory Trip PIN before starting ride)
-      if (statusUpper === 'TRIP STARTED') {
-        const requiredOtp = String(booking.tripOtp || '').trim();
-        const providedOtp = String(tripOtp || '').trim();
-        if (requiredOtp && (!providedOtp || providedOtp !== requiredOtp)) {
-          return sendJson(400, {
-            success: false,
-            message: 'Trip Verification Failed: Passenger 4-digit Trip PIN is required before starting ride. Please ask the passenger for their PIN.'
-          });
+      // Verify OTP on trip start if OTP exists
+      if (statusUpper === 'TRIP STARTED' && booking.tripOtp && tripOtp) {
+        if (String(tripOtp).trim() !== String(booking.tripOtp).trim()) {
+          return sendJson(400, { success: false, message: 'Invalid Passenger Trip OTP. Please ask customer for correct 4-digit OTP.' });
         }
       }
 
       booking.bookingStatus = statusUpper;
-      booking.status = statusUpper;
       if (!booking.statusHistory) booking.statusHistory = [];
       booking.statusHistory.push({
         status: statusUpper,
@@ -4787,281 +3882,11 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // DRIVER WALLET & EARNINGS LEDGER (Phase 7)
-    // -------------------------------------------------------------
-    if (pathname === '/driver/wallet' && method === 'GET') {
-      const driverAuth = getSessionDriver(req, db);
-      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required' });
-
-      const dId = driverAuth.driver.id;
-      const driver = (db.drivers || []).find(d => d.id === dId) || driverAuth.driver;
-      const driverBookings = (db.bookings || []).filter(b => b.assignedDriverId === dId && (b.bookingStatus === 'COMPLETED' || b.status === 'COMPLETED'));
-
-      const now = new Date();
-      const todayStr = now.toISOString().split('T')[0];
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-
-      let todayEarnings = 0;
-      let weeklyEarnings = 0;
-      let monthlyEarnings = 0;
-      let totalGross = 0;
-
-      driverBookings.forEach(b => {
-        const fare = Number(b.totalFare) || 2000;
-        const driverShare = Math.round(fare * 0.85); // 85% driver payout (15% platform commission)
-        totalGross += driverShare;
-        const bTime = new Date(b.completedAt || b.createdAt || 0);
-        if ((b.completedAt || b.createdAt || '').startsWith(todayStr)) {
-          todayEarnings += driverShare;
-        }
-        if (bTime >= sevenDaysAgo) {
-          weeklyEarnings += driverShare;
-        }
-        if (bTime >= thirtyDaysAgo) {
-          monthlyEarnings += driverShare;
-        }
-      });
-
-      // Filter settlement transactions
-      const settlements = (db.driver_settlements || []).filter(s => s.driverId === dId);
-      const totalSettled = settlements.reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
-      const pendingSettlement = Math.max(0, totalGross - totalSettled);
-
-      return sendJson(200, {
-        success: true,
-        wallet: {
-          driverId: dId,
-          todayEarnings,
-          weeklyEarnings,
-          monthlyEarnings,
-          totalEarnings: totalGross,
-          totalSettled,
-          pendingSettlement,
-          completedTripsCount: driverBookings.length,
-          settlements: settlements.slice(-20).reverse(),
-          recentTrips: driverBookings.slice(0, 10).map(b => ({
-            bookingId: b.bookingId,
-            originCity: b.originCity,
-            destCity: b.destCity,
-            date: b.pickupDate,
-            fare: b.totalFare,
-            driverShare: Math.round((Number(b.totalFare) || 2000) * 0.85),
-            completedAt: b.completedAt || b.createdAt
-          }))
-        }
-      });
-    }
-
-    // -------------------------------------------------------------
-    // ADMIN DRIVER SETTLEMENT (Phase 7 Financial Payouts)
-    // -------------------------------------------------------------
-    if (pathname === '/admin/driver-settlement' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      const { driverId, amount, paymentMethod = 'Bank NEFT', referenceId, note } = body;
-      const numAmt = Number(amount);
-      if (!driverId || isNaN(numAmt) || numAmt <= 0) {
-        return sendJson(400, { success: false, message: 'Valid driverId and positive settlement amount required' });
-      }
-
-      const driver = (db.drivers || []).find(d => d.id === driverId);
-      if (!driver) return sendJson(404, { success: false, message: 'Driver not found' });
-
-      if (!db.driver_settlements) db.driver_settlements = [];
-      const settlementId = `SETTLE_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
-      const settlementRef = referenceId || `REF_TXN_${Date.now()}`;
-
-      const settlementRecord = {
-        id: settlementId,
-        driverId: driver.id,
-        driverName: driver.name,
-        driverPhone: driver.phone,
-        amount: numAmt,
-        paymentMethod,
-        referenceId: settlementRef,
-        status: 'PAID',
-        processedBy: admin.username || 'Finance Admin',
-        note: note || 'Driver weekly settlement payout',
-        createdAt: new Date().toISOString()
-      };
-
-      db.driver_settlements.unshift(settlementRecord);
-
-      if (!db.audit_logs) db.audit_logs = [];
-      db.audit_logs.push({
-        id: `AUD_SETTLE_${Date.now()}`,
-        entity: 'DRIVER_FINANCE',
-        entityId: driver.id,
-        action: 'SETTLEMENT_PROCESSED',
-        actor: admin.username || 'Finance Admin',
-        details: `Payout ₹${numAmt} settled to ${driver.name} via ${paymentMethod} (Ref: ${settlementRef})`,
-        createdAt: new Date().toISOString()
-      });
-
-      await saveDb(db);
-      return sendJson(200, {
-        success: true,
-        settlement: settlementRecord,
-        message: `Settlement payout of ₹${numAmt} successfully recorded for ${driver.name}.`
-      });
-    }
-
-    // -------------------------------------------------------------
-    // ADMIN DRIVER VERIFICATION & DOCUMENT COMPLIANCE (Phase 6)
-    // -------------------------------------------------------------
-    if (pathname === '/admin/drivers/verify' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      const { driverId, verificationStatus, note } = body;
-      const validStatuses = ['VERIFIED', 'PENDING', 'REJECTED', 'SUSPENDED', 'DOCUMENT_EXPIRED'];
-      const vStatus = String(verificationStatus || '').toUpperCase();
-
-      if (!validStatuses.includes(vStatus)) {
-        return sendJson(400, { success: false, message: `Status must be one of: ${validStatuses.join(', ')}` });
-      }
-
-      const driver = (db.drivers || []).find(d => d.id === driverId);
-      if (!driver) return sendJson(404, { success: false, message: 'Driver not found' });
-
-      driver.verificationStatus = vStatus;
-      driver.isVerified = (vStatus === 'VERIFIED');
-      driver.verifiedBy = admin.username || 'Admin';
-      driver.verifiedAt = new Date().toISOString();
-      if (note) driver.verificationNote = note;
-
-      if (!db.audit_logs) db.audit_logs = [];
-      db.audit_logs.push({
-        id: `AUD_DRV_VER_${Date.now()}`,
-        entity: 'DRIVER',
-        entityId: driver.id,
-        action: 'VERIFICATION_UPDATE',
-        actor: admin.username || 'Admin',
-        details: `Driver ${driver.name} status updated to ${vStatus}`,
-        createdAt: new Date().toISOString()
-      });
-
-      await saveDb(db);
-      return sendJson(200, {
-        success: true,
-        driver,
-        message: `Driver ${driver.name} verification status set to ${vStatus}.`
-      });
-    }
-
-    // -------------------------------------------------------------
-    // ADMIN SMART AUTO-DISPATCH (Phase 3 Dispatch Engine)
-    // -------------------------------------------------------------
-    if (pathname === '/admin/auto-dispatch' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      const { bookingId } = body;
-      if (!bookingId) {
-        return sendJson(400, { success: false, message: 'Booking ID required for auto dispatch' });
-      }
-
-      const result = dispatchService.autoDispatchBooking(db, bookingId, {
-        actor: `Admin Dispatcher (${admin.username || 'Central Desk'})`
-      });
-
-      if (!result.success) {
-        return sendJson(result.noDrivers ? 404 : 400, {
-          success: false,
-          noDrivers: !!result.noDrivers,
-          message: result.error || 'Failed to match driver'
-        });
-      }
-
-      await saveDb(db);
-
-      const targetDriver = (db.drivers || []).find(d => d.id === result.matchedDriver.driverId);
-      if (targetDriver) {
-        notificationService.sendDriverAssignmentNotifications(result.booking, targetDriver).catch(err => {
-          console.warn('[Auto Dispatch Notice]:', err.message);
-        });
-      }
-
-      return sendJson(200, {
-        success: true,
-        matchedDriver: result.matchedDriver,
-        rankedCandidates: result.rankedCandidates,
-        booking: result.booking,
-        message: `Chauffeur ${result.matchedDriver.name} successfully matched and assigned via Smart Dispatch!`
-      });
-    }
-
-    // -------------------------------------------------------------
-    // TRIP SOS & EMERGENCY SAFETY INCIDENT (Phase 10 Safety Engine)
-    // -------------------------------------------------------------
-    if (pathname === '/safety/sos' && method === 'POST') {
-      const { bookingId, phone, lat, lng, reason } = body;
-      const bId = (bookingId || '').trim();
-      const booking = bId ? (db.bookings || []).find(b => b.bookingId === bId || b.id === bId) : null;
-
-      const incidentId = `SOS_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
-      const incident = {
-        id: incidentId,
-        bookingId: booking ? booking.bookingId : null,
-        reporterPhone: phone || (booking ? booking.passengerPhone : 'Anonymous'),
-        passengerName: booking ? booking.passengerName : 'Valued Passenger',
-        driverName: booking?.driverDetails?.name || null,
-        driverPhone: booking?.driverDetails?.phone || null,
-        route: booking ? `${booking.originCity} ➔ ${booking.destCity}` : null,
-        location: (lat && lng) ? { lat: Number(lat), lng: Number(lng) } : null,
-        reason: reason || 'EMERGENCY_SOS_TRIGGERED',
-        status: 'ACTIVE_EMERGENCY',
-        createdAt: new Date().toISOString()
-      };
-
-      if (!db.safety_incidents) db.safety_incidents = [];
-      db.safety_incidents.unshift(incident);
-
-      if (!db.notifications) db.notifications = [];
-      db.notifications.unshift({
-        id: `NOTIF_SOS_${Date.now()}`,
-        type: 'EMERGENCY_SOS_ALERT',
-        title: `🚨 EMERGENCY SOS ALERT: Trip ${booking ? booking.bookingId : 'Unknown'}`,
-        message: `Passenger / Driver triggered emergency SOS alert for trip ${booking ? booking.bookingId : ''}! Reporter Phone: ${incident.reporterPhone}. Coordinate: ${lat || 'N/A'}, ${lng || 'N/A'}. Immediate response required.`,
-        priority: 'CRITICAL',
-        incidentId,
-        createdAt: new Date().toISOString()
-      });
-
-      await saveDb(db);
-
-      return sendJson(200, {
-        success: true,
-        incidentId,
-        emergencyContacts: [
-          { agency: 'Bihar Police Control Room', phone: '112', type: 'POLICE' },
-          { agency: 'Women Safety Helpline', phone: '1090', type: 'WOMEN_SAFETY' },
-          { agency: 'Medical Ambulance Service', phone: '102', type: 'AMBULANCE' },
-          { agency: 'OneWayTaxiBihar 24x7 Emergency Desk', phone: '+91 80021 41816', type: 'DISPATCH_HQ' }
-        ],
-        message: 'Emergency SOS alert recorded. Patna Central Dispatch HQ has been notified and emergency protocols initiated.'
-      });
-    }
-
-    if (pathname === '/admin/safety/incidents' && method === 'GET') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      return sendJson(200, {
-        success: true,
-        incidents: db.safety_incidents || []
-      });
-    }
-
-    // -------------------------------------------------------------
     // 11. ENTERPRISE 2026 AI ENGINES, COPILOT & FLEET ENDPOINTS
     // -------------------------------------------------------------
     if (pathname === '/fares/ai-intelligence' && method === 'POST') {
       const { origin = 'Patna', dest = 'Gaya', cabTier = 'sedan', tripType = 'oneway' } = body;
-      const distKm = getRouteDistance(origin, dest);
-      const fareData = calculateServerFare(distKm, cabTier, tripType, origin, dest, { db });
+      const fareData = calculateServerFare(origin, dest, cabTier, tripType);
 
       const hour = new Date().getHours();
       const isRush = (hour >= 7 && hour <= 10) || (hour >= 17 && hour <= 20);
@@ -5266,8 +4091,7 @@ module.exports = async (req, res) => {
       const pax = paxMatch ? parseInt(paxMatch[1]) : (userText.toLowerCase().includes('family') ? 5 : 1);
       const tripType = (userText.toLowerCase().includes('round') || userText.toLowerCase().includes('return')) ? 'roundtrip' : 'oneway';
       const cabTier = pax > 4 ? 'suv' : 'sedan';
-      const distKm = getRouteDistance(detectedOrigin.name, detectedDest.name);
-      const fareData = calculateServerFare(distKm, cabTier, tripType, detectedOrigin.name, detectedDest.name, { db });
+      const fareData = calculateServerFare(detectedOrigin.name, detectedDest.name, cabTier, tripType);
 
       return sendJson(200, {
         success: true,
@@ -5776,535 +4600,6 @@ module.exports = async (req, res) => {
         success: true,
         ticket: target,
         message: `Ticket ${tId} marked as ${target.status}`
-      });
-    }
-
-    // ---------------------------------------------------------------------------
-    // PHASE 16: RATINGS & REVIEWS ENGINE
-    // ---------------------------------------------------------------------------
-    if ((pathname === '/bookings/rate' || pathname === '/driver/rate' || pathname === '/reviews/submit') && method === 'POST') {
-      const bId = (body.bookingId || body.rideId || '').toString().trim().toUpperCase();
-      const rating = parseFloat(body.rating || body.driverRating) || 5.0;
-      const cleanliness = parseFloat(body.cleanlinessRating || body.vehicleRating) || rating;
-      const punctuality = parseFloat(body.punctualityRating) || rating;
-      const comment = (body.comment || body.reviewText || '').toString().trim().slice(0, 500);
-
-      if (!bId) {
-        return sendJson(400, { success: false, message: 'Booking ID is required to submit a review.' });
-      }
-      if (rating < 1 || rating > 5) {
-        return sendJson(400, { success: false, message: 'Rating score must be between 1.0 and 5.0.' });
-      }
-
-      const booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
-      if (!booking) {
-        return sendJson(404, { success: false, message: `Booking '${bId}' not found.` });
-      }
-
-      const reviewRecord = {
-        id: `rev_${Date.now()}`,
-        bookingId: booking.bookingId || bId,
-        passengerName: booking.passengerName || body.passengerName || 'Verified Passenger',
-        passengerPhone: booking.passengerPhone || body.passengerPhone || '',
-        route: `${booking.originCity || 'Patna'} to ${booking.destCity || 'Gaya'}`,
-        cabType: booking.fleetClass || booking.vehicleCategory || 'Sedan',
-        rating: Math.round(rating * 10) / 10,
-        cleanlinessRating: Math.round(cleanliness * 10) / 10,
-        punctualityRating: Math.round(punctuality * 10) / 10,
-        comment: comment || 'Smooth and professional journey.',
-        driverId: booking.driverId || booking.driverDetails?.id || null,
-        driverName: booking.driverDetails?.name || null,
-        createdAt: new Date().toISOString()
-      };
-
-      booking.review = reviewRecord;
-
-      // Update Chauffeur Average Rating if driver assigned
-      if (reviewRecord.driverId) {
-        const drv = (db.drivers || []).find(d => d.id === reviewRecord.driverId || d.phone === booking.driverDetails?.phone);
-        if (drv) {
-          const currentRating = parseFloat(drv.rating) || 4.9;
-          const ratingsCount = parseInt(drv.ratingsCount || drv.totalRatingsCount) || 12;
-          const newAvg = ((currentRating * ratingsCount) + rating) / (ratingsCount + 1);
-          drv.rating = Math.round(newAvg * 10) / 10;
-          drv.ratingsCount = ratingsCount + 1;
-        }
-      }
-
-      if (!db.passenger_reviews) db.passenger_reviews = [];
-      db.passenger_reviews.unshift(reviewRecord);
-      if (db.passenger_reviews.length > 200) db.passenger_reviews = db.passenger_reviews.slice(0, 200);
-
-      await saveDb(db);
-
-      return sendJson(200, {
-        success: true,
-        message: 'Thank you! Your verified passenger rating has been recorded.',
-        review: reviewRecord
-      });
-    }
-
-    if ((pathname === '/reviews' || pathname === '/reviews/verified' || pathname === '/passenger-reviews') && method === 'GET') {
-      const list = (db.passenger_reviews || []).slice(0, 50);
-      return sendJson(200, { success: true, count: list.length, reviews: list });
-    }
-
-    // ---------------------------------------------------------------------------
-    // PHASE 20: BIHAR TOURISM & SPIRITUAL CIRCUITS
-    // ---------------------------------------------------------------------------
-    const BIHAR_TOURISM_PACKAGES = [
-      {
-        packageCode: 'TOUR-PATNA-01',
-        title: 'Patna City Heritage & Gurudwara Circuit',
-        tagline: 'Historical capital of Pataliputra & sacred Takht Sri Harmandir Ji',
-        durationDays: 1,
-        durationHours: '8 Hours / 80 KM',
-        pickupCity: 'Patna',
-        attractions: [
-          'Takht Sri Patna Sahib (Gurudwara)',
-          'Bihar Museum (World Class Gallery)',
-          'Golghar & Gandhi Ghat',
-          'Kumhrar Mauryan Archeological Ruins',
-          'Mahavir Mandir (Patna Junction)',
-          'Patna Marine Drive (Ganga Path Sunset Cruise)'
-        ],
-        pricing: {
-          sedan: 2200,
-          suv: 3400,
-          crysta: 4800
-        },
-        inclusions: ['AC Cab for full day', 'Professional Highway Chauffeur', 'Fuel & Parking', 'Doorstep Pickup & Drop'],
-        exclusions: ['Monument entry tickets', 'Personal meals / snacks']
-      },
-      {
-        packageCode: 'TOUR-BODHGAYA-02',
-        title: 'Bodh Gaya Enlightenment & Buddhist Circuit',
-        tagline: 'Sacred seat of Lord Buddha enlightenment under the Bodhi Tree',
-        durationDays: 1,
-        durationHours: 'Same Day Excursion (14-16 Hours)',
-        pickupCity: 'Patna',
-        attractions: [
-          'UNESCO Mahabodhi Temple',
-          'Sacred Bodhi Tree & Vajrasana Seat',
-          'Great 80-Foot Buddha Statue',
-          'Royal Thai Monastery & Japanese Temple',
-          'Dungeshwari Cave Temple (Mahakala Cave)',
-          'Falgu River Sanctum'
-        ],
-        pricing: {
-          sedan: 3800,
-          suv: 5400,
-          crysta: 7500
-        },
-        inclusions: ['Round-trip AC Cab (Patna ⇄ Bodh Gaya)', 'Toll Plaza Charges Included', 'Chauffeur Allowance', 'All-day waiting'],
-        exclusions: ['Temple camera permits', 'Meals']
-      },
-      {
-        packageCode: 'TOUR-RAJGIR-03',
-        title: 'Rajgir & Nalanda Ancient Mahavihara Circuit',
-        tagline: 'First Buddhist Council, Nalanda University UNESCO ruins & Nature Safari',
-        durationDays: 1,
-        durationHours: 'Full Day (12-14 Hours)',
-        pickupCity: 'Patna',
-        attractions: [
-          'Nalanda Mahavihara UNESCO Ruins & Nalanda Museum',
-          'Rajgir Glass Skywalk & Nature Safari',
-          'Vishwa Shanti Stupa (Peace Pagoda) & Ropeway',
-          'Venuvana Bamboo Grove of Lord Buddha',
-          'Griddhakuta Peak (Vulture’s Peak)',
-          'Brahmakund Natural Sulphur Hot Springs'
-        ],
-        pricing: {
-          sedan: 3600,
-          suv: 5200,
-          crysta: 7200
-        },
-        inclusions: ['Dedicated AC Chauffeur Cab', 'State Highway Toll Taxes', 'Inter-monument transit', 'Return doorstep drop'],
-        exclusions: ['Ropeway & Glass Skywalk entry passes', 'Guide fees']
-      },
-      {
-        packageCode: 'TOUR-VAISHALI-04',
-        title: 'Vaishali Lichchhavi Heritage & Mahavira Circuit',
-        tagline: 'World’s first republic & birthplace of Lord Mahavira',
-        durationDays: 1,
-        durationHours: 'Full Day (8-10 Hours)',
-        pickupCity: 'Patna',
-        attractions: [
-          'Ashokan Lion Pillar & Kolhua Stupa',
-          'Relic Stupa of Lord Buddha',
-          'Kundalpur (Birthplace of 24th Tirthankara Mahavira)',
-          'Vishwa Shanti Stupa Vaishali',
-          'Abhishek Pushkarni Sacred Coronation Tank'
-        ],
-        pricing: {
-          sedan: 2600,
-          suv: 3800,
-          crysta: 5200
-        },
-        inclusions: ['Round-trip AC cab via JP Setu / Digha', 'Toll charges', 'Chauffeur services', 'Complimentary mineral water'],
-        exclusions: ['Monument entry fees']
-      },
-      {
-        packageCode: 'TOUR-GAYA-05',
-        title: 'Gaya Sacred Pind Daan & Bodh Gaya 2-Day Pilgrimage',
-        tagline: 'Complete Pitru Paksha & spiritual pilgrimage with overnight halt',
-        durationDays: 2,
-        durationHours: '2 Days / 1 Night',
-        pickupCity: 'Patna',
-        attractions: [
-          'Vishnupad Temple & Falgu River Ghats',
-          'Akshay Vat (Eternal Banyan Tree for Pind Daan)',
-          'Mangla Gauri Shaktipeeth Temple',
-          'Overnight halt in Bodh Gaya / Gaya',
-          'Mahabodhi Temple Morning Meditation',
-          'International Buddhist Monasteries'
-        ],
-        pricing: {
-          sedan: 6800,
-          suv: 9200,
-          crysta: 12500
-        },
-        inclusions: ['2-Day AC Cab with Unlimited Sightseeing', 'Driver Night Halt Allowance', 'All Highway Tolls & Parking', 'Flexible Darshan Timing'],
-        exclusions: ['Hotel stay & meals', 'Puja Samagri & Panda Dakshina']
-      }
-    ];
-
-    if (pathname === '/tourism/packages' && method === 'GET') {
-      return sendJson(200, {
-        success: true,
-        count: BIHAR_TOURISM_PACKAGES.length,
-        packages: BIHAR_TOURISM_PACKAGES
-      });
-    }
-
-    if (pathname === '/tourism/book' && method === 'POST') {
-      const pkgCode = (body.packageCode || '').trim().toUpperCase();
-      const pkg = BIHAR_TOURISM_PACKAGES.find(p => p.packageCode === pkgCode);
-      if (!pkg) {
-        return sendJson(404, { success: false, message: `Invalid tourism package code: '${pkgCode}'` });
-      }
-
-      const passengerName = (body.passengerName || body.name || '').trim();
-      const passengerPhone = (body.passengerPhone || body.phone || '').replace(/\D/g, '').slice(-10);
-      const vehicleCategory = (body.vehicleCategory || body.cabType || 'sedan').toLowerCase();
-      const pickupDate = body.pickupDate || new Date().toISOString().slice(0, 10);
-      const pickupTime = body.pickupTime || '08:00';
-      const pickupAddress = (body.pickupAddress || 'Patna City Hotel / Residence').trim();
-
-      if (!passengerName || passengerPhone.length !== 10) {
-        return sendJson(400, { success: false, message: 'Valid passenger name and 10-digit mobile number required.' });
-      }
-
-      const totalFare = pkg.pricing[vehicleCategory] || pkg.pricing.sedan;
-      const bookingId = `OTB-TOUR-${Date.now().toString().slice(-4)}`;
-
-      const bookingRecord = {
-        id: bookingId,
-        bookingId,
-        tripType: 'TOURISM_PACKAGE',
-        packageCode: pkg.packageCode,
-        packageTitle: pkg.title,
-        durationDays: pkg.durationDays,
-        originCity: pkg.pickupCity,
-        destCity: pkg.title.split(' ')[0],
-        pickupAddress,
-        dropAddress: `${pkg.title} Sightseeing Drop`,
-        pickupDate,
-        pickupTime,
-        vehicleCategory,
-        fleetClass: vehicleCategory === 'crysta' ? 'Innova Crysta Luxury' : vehicleCategory === 'suv' ? 'Family SUV (Ertiga)' : 'Prime Sedan (Dzire / Etios)',
-        fleetModel: vehicleCategory === 'crysta' ? 'Toyota Innova Crysta' : vehicleCategory === 'suv' ? 'Maruti Ertiga' : 'Swift Dzire',
-        passengerName,
-        passengerPhone: `+91 ${passengerPhone}`,
-        totalFare,
-        finalPayable: totalFare,
-        advancePayable: 0,
-        balanceAtDrop: totalFare,
-        paymentStatus: 'PAYMENT_PENDING',
-        bookingStatus: 'CONFIRMED',
-        status: 'CONFIRMED',
-        tripOtp: String(Math.floor(1000 + Math.random() * 9000)),
-        isForOther: Boolean(body.isForOther),
-        bookerName: body.bookerName || null,
-        bookerPhone: body.bookerPhone || null,
-        specialInstructions: body.specialInstructions || 'Sightseeing Tour Booking',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if (!db.bookings) db.bookings = [];
-      db.bookings.unshift(bookingRecord);
-
-      if (!db.notifications) db.notifications = [];
-      db.notifications.unshift({
-        id: `notif_tour_${Date.now()}`,
-        type: 'TOURISM_BOOKING',
-        title: `🏛️ BIHAR TOURISM: ${bookingId}`,
-        message: `${pkg.title} booked by ${passengerName} (+91 ${passengerPhone}) for ${pickupDate}. Package Fare: ₹${totalFare}`,
-        bookingId,
-        priority: 'HIGH',
-        createdAt: new Date().toISOString()
-      });
-
-      await saveDb(db);
-
-      // Async SMS confirmation notice
-      try {
-        notificationService.sendSms(
-          passengerPhone,
-          `Namaste ${passengerName}! Your OneWayTaxiBihar Tourism Package "${pkg.title}" (${bookingId}) is CONFIRMED for ${pickupDate} at ${pickupTime}. Chauffeur cab: ${bookingRecord.fleetClass}. Total Package Fare: Rs ${totalFare}. 24x7 Helpline: 6206494214`
-        ).catch(() => {});
-      } catch (e) {}
-
-      return sendJson(200, {
-        success: true,
-        bookingId,
-        booking: bookingRecord,
-        package: pkg,
-        message: `Tourism package "${pkg.title}" booked successfully! Chauffeur assignment is in progress.`
-      });
-    }
-
-    // ---------------------------------------------------------------------------
-    // PHASE 21: CORPORATE & B2B MOBILITY DESK
-    // ---------------------------------------------------------------------------
-    if ((pathname === '/corporate/inquire' || pathname === '/corporate/inquiry' || pathname === '/corporate/leads') && method === 'POST') {
-      const companyName = (body.companyName || body.company || '').trim();
-      const contactPerson = (body.contactPerson || body.name || '').trim();
-      const phone = (body.phone || body.mobile || '').replace(/\D/g, '').slice(-10);
-      const email = (body.email || '').trim().toLowerCase();
-      const gstin = (body.gstin || '').trim().toUpperCase();
-      const estimatedMonthlyRides = parseInt(body.estimatedMonthlyRides || body.rides) || 25;
-      const notes = (body.notes || body.requirements || '').trim();
-
-      if (!companyName || companyName.length < 2) {
-        return sendJson(400, { success: false, message: 'Company or institution name is required.' });
-      }
-      if (!contactPerson || contactPerson.length < 2) {
-        return sendJson(400, { success: false, message: 'Contact person name is required.' });
-      }
-      if (!phone || phone.length !== 10) {
-        return sendJson(400, { success: false, message: 'Valid 10-digit mobile number required.' });
-      }
-
-      const inquiryId = `CORP-INQ-${Date.now().toString().slice(-5)}`;
-      const inquiryRecord = {
-        id: inquiryId,
-        inquiryId,
-        companyName,
-        contactPerson,
-        phone: `+91 ${phone}`,
-        cleanPhone: phone,
-        email: email || null,
-        gstin: gstin || null,
-        estimatedMonthlyRides,
-        notes: notes || 'Standard corporate mobility solution request',
-        status: 'NEW',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if (!db.corporate_inquiries) db.corporate_inquiries = [];
-      db.corporate_inquiries.unshift(inquiryRecord);
-
-      if (!db.notifications) db.notifications = [];
-      db.notifications.unshift({
-        id: `notif_corp_${Date.now()}`,
-        type: 'CORPORATE_INQUIRY',
-        title: `🏢 CORPORATE DESK: ${companyName}`,
-        message: `Inquiry from ${contactPerson} (+91 ${phone}) for approx ${estimatedMonthlyRides} monthly intercity rides.`,
-        priority: 'HIGH',
-        createdAt: new Date().toISOString()
-      });
-
-      await saveDb(db);
-
-      // Async acknowledgement SMS
-      try {
-        notificationService.sendSms(
-          phone,
-          `Namaste ${contactPerson}! Thank you for contacting OneWayTaxiBihar Corporate Desk for ${companyName} (Ref: ${inquiryId}). Our corporate account manager will contact you within 2 business hours with contracted B2B rate cards.`
-        ).catch(() => {});
-      } catch (e) {}
-
-      return sendJson(200, {
-        success: true,
-        inquiryId,
-        message: 'Corporate inquiry submitted successfully! Our Patna corporate desk will contact you within 2 hours.'
-      });
-    }
-
-    if ((pathname === '/admin/corporate/inquiries' || pathname === '/admin/corporate/leads') && method === 'GET') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
-
-      const inquiries = db.corporate_inquiries || [];
-      return sendJson(200, {
-        success: true,
-        count: inquiries.length,
-        inquiries
-      });
-    }
-
-    if (pathname === '/admin/corporate/status' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
-
-      const inqId = (body.inquiryId || body.id || '').trim();
-      const inq = (db.corporate_inquiries || []).find(i => i.inquiryId === inqId || i.id === inqId);
-      if (!inq) {
-        return sendJson(404, { success: false, message: 'Corporate inquiry not found.' });
-      }
-
-      inq.status = (body.status || 'CONTACTED').toUpperCase();
-      inq.adminNotes = (body.adminNotes || body.notes || inq.adminNotes || '').trim();
-      inq.updatedAt = new Date().toISOString();
-
-      await saveDb(db);
-      return sendJson(200, { success: true, message: `Inquiry marked as ${inq.status}`, inquiry: inq });
-    }
-
-    if (pathname === '/admin/corporate/accounts' && method === 'GET') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
-
-      const accounts = db.corporate_accounts || [
-        {
-          id: 'corp_01',
-          accountCode: 'OWT-CORP-PATNA-01',
-          companyName: 'Bihar State Road Development Corp',
-          contactPerson: 'Er. Rajesh Kumar',
-          phone: '+91 9431012345',
-          billingCycle: 'MONTHLY_NET_30',
-          monthlyCreditLimit: 150000,
-          currentMonthlyUsage: 42500,
-          status: 'ACTIVE'
-        },
-        {
-          id: 'corp_02',
-          accountCode: 'OWT-CORP-GAYA-02',
-          companyName: 'Mahabodhi Heritage Resorts',
-          contactPerson: 'Suman Sen',
-          phone: '+91 9835012345',
-          billingCycle: 'FORTNIGHTLY',
-          monthlyCreditLimit: 80000,
-          currentMonthlyUsage: 21800,
-          status: 'ACTIVE'
-        }
-      ];
-
-      return sendJson(200, { success: true, count: accounts.length, accounts });
-    }
-
-    // ---------------------------------------------------------------------------
-    // PHASE 22 & 23: FLEET & DEMAND INTELLIGENCE ANALYTICS
-    // ---------------------------------------------------------------------------
-    if (pathname === '/admin/analytics/intelligence' && method === 'GET') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required.' });
-
-      const bookings = db.bookings || [];
-      const drivers = db.drivers || [];
-
-      // 1. Gross Booking Value & Revenue Splits
-      let totalGBV = 0;
-      let completedBookingsCount = 0;
-      let cancelledCount = 0;
-      const corridorCounts = {};
-      const vehicleCategoryCounts = { sedan: 0, hatchback: 0, suv: 0, crysta: 0 };
-      const hourlyDistribution = Array(24).fill(0);
-
-      bookings.forEach(b => {
-        const fare = parseFloat(b.totalFare || b.finalPayable || 0);
-        const normStatus = (b.bookingStatus || b.status || '').toUpperCase();
-
-        if (normStatus === 'COMPLETED' || normStatus === 'TRIP_COMPLETED' || normStatus === 'PAYMENT_SUCCESS' || normStatus === 'CONFIRMED') {
-          totalGBV += fare;
-          if (normStatus === 'COMPLETED' || normStatus === 'TRIP_COMPLETED') completedBookingsCount++;
-        }
-        if (normStatus === 'CANCELLED' || normStatus === 'PAYMENT_FAILED') {
-          cancelledCount++;
-        }
-
-        // Corridor breakdown
-        const corridor = `${b.originCity || 'Patna'} ➔ ${b.destCity || 'Gaya'}`;
-        corridorCounts[corridor] = (corridorCounts[corridor] || 0) + 1;
-
-        // Vehicle breakdown
-        const veh = (b.vehicleCategory || b.fleetClass || 'sedan').toLowerCase();
-        if (veh.includes('crysta')) vehicleCategoryCounts.crysta++;
-        else if (veh.includes('suv') || veh.includes('ertiga')) vehicleCategoryCounts.suv++;
-        else if (veh.includes('hatch') || veh.includes('wagon')) vehicleCategoryCounts.hatchback++;
-        else vehicleCategoryCounts.sedan++;
-
-        // Hourly peak analysis
-        if (b.pickupTime) {
-          const hr = parseInt(b.pickupTime.split(':')[0], 10);
-          if (!isNaN(hr) && hr >= 0 && hr < 24) hourlyDistribution[hr]++;
-        } else if (b.createdAt) {
-          const hr = new Date(b.createdAt).getHours();
-          if (!isNaN(hr) && hr >= 0 && hr < 24) hourlyDistribution[hr]++;
-        }
-      });
-
-      // Top Corridors sorted
-      const topCorridors = Object.entries(corridorCounts)
-        .map(([route, count]) => ({ route, count, sharePercent: Math.round((count / Math.max(1, bookings.length)) * 100) }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5);
-
-      // Financial Metrics (85% Chauffeur Share, 15% OneWayTaxiBihar Platform Margin)
-      const driverPayouts = Math.round(totalGBV * 0.85);
-      const companyPlatformRevenue = Math.round(totalGBV * 0.15);
-      const avgBookingValue = bookings.length > 0 ? Math.round(totalGBV / Math.max(1, bookings.length)) : 1850;
-      const cancellationRate = bookings.length > 0 ? Math.round((cancelledCount / bookings.length) * 100) : 0;
-
-      // Online vs Offline Fleet
-      const onlineDrivers = drivers.filter(d => d.onDuty && d.status === 'APPROVED');
-      const busyDrivers = drivers.filter(d => d.onDuty && d.currentTripId);
-
-      // Explainable Demand Forecasting & Positioning Recommendations
-      const demandRecommendations = [
-        {
-          zone: 'Patna Jay Prakash Narayan Airport (PAT)',
-          priority: 'HIGH',
-          reason: 'Evening incoming flight rush (16:00 - 21:00) with sustained outstation demand to Gaya, Darbhanga and Muzaffarpur.',
-          recommendation: 'Position 4-6 on-duty Sedans & SUVs near Sheikhpura / Airport bypass cluster for sub-10 minute pickup ETA.'
-        },
-        {
-          zone: 'Gaya Railway Junction & Bodh Gaya Sacred Hub',
-          priority: 'MEDIUM',
-          reason: 'Daily pilgrimage pilgrims arriving via Vande Bharat & Mahabodhi Express requesting Bodh Gaya, Rajgir, and Patna returns.',
-          recommendation: 'Maintain minimum 3 standby family SUVs on Bodh Gaya Temple Road and Station Road.'
-        },
-        {
-          zone: 'Muzaffarpur & Darbhanga Airport Corridors',
-          priority: 'MEDIUM',
-          reason: 'High corporate & medical travel corridor towards Patna AIIMS / PMCH.',
-          recommendation: 'Broadcast 10% incentive bonus for return trip pickups to prevent empty return leg mileage.'
-        }
-      ];
-
-      return sendJson(200, {
-        success: true,
-        kpis: {
-          totalBookings: bookings.length,
-          completedBookings: completedBookingsCount,
-          cancelledBookings: cancelledCount,
-          cancellationRatePercent: cancellationRate,
-          grossBookingValue: totalGBV,
-          driverPayouts,
-          companyPlatformRevenue,
-          avgBookingValue,
-          activeFleetCount: drivers.length,
-          onlineDriversCount: onlineDrivers.length,
-          busyDriversCount: busyDrivers.length,
-          fleetUtilizationPercent: onlineDrivers.length > 0 ? Math.round((busyDrivers.length / onlineDrivers.length) * 100) : 0
-        },
-        topCorridors,
-        vehicleUtilization: vehicleCategoryCounts,
-        hourlyDistribution,
-        demandRecommendations
       });
     }
 

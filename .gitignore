@@ -17,10 +17,6 @@ dist-apk/
 *.apk
 *.aab
 data/tunnel.json
-lighthouse-*.json
-css/*.min.css
-js/app.bundle.min.js
-
 
 
 

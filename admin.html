@@ -1817,12 +1817,6 @@
           <span class="nav-badge warning" id="badge-bookings-count">0</span>
         </button>
 
-        <button type="button" class="nav-item-btn" id="side-tab-manual" onclick="openManualBookingModal()" style="color: #0284c7;">
-          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-          <span class="nav-label" style="font-weight: 700;">Manual Booking</span>
-          <span class="nav-badge" style="background:#0284c7; color:#fff;">+ New</span>
-        </button>
-
         <button type="button" class="nav-item-btn" id="side-tab-customers" onclick="switchMainTab('customers')">
           <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
           <span class="nav-label">Customers</span>
@@ -2250,7 +2244,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Export CSV
               </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="openManualBookingModal()">
+              <button type="button" class="btn btn-primary btn-sm" onclick="openDetailsModal('')">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Manual Booking
               </button>
@@ -2577,16 +2571,6 @@
               <div class="kpi-subtitle">Confirmed payment received</div>
             </div>
             <div class="kpi-tile">
-              <div class="kpi-title">Chauffeur Share (85%)</div>
-              <div class="kpi-value" id="rep-driver-payouts-val" style="color: #0284c7;">₹0</div>
-              <div class="kpi-subtitle">Fleet earnings allocated</div>
-            </div>
-            <div class="kpi-tile">
-              <div class="kpi-title">Platform Margin (15%)</div>
-              <div class="kpi-value" id="rep-platform-margin-val" style="color: #059669;">₹0</div>
-              <div class="kpi-subtitle">OneWayTaxiBihar net margin</div>
-            </div>
-            <div class="kpi-tile">
               <div class="kpi-title">Conversion Rate</div>
               <div class="kpi-value" id="rep-conversion-rate">0%</div>
               <div class="kpi-subtitle">Lead to completed ride</div>
@@ -2598,37 +2582,8 @@
             </div>
           </div>
 
-          <!-- AI Fleet Demand Intelligence & Positioning Card (Phase 23) -->
-          <div class="ops-card" style="margin-bottom: 20px;">
-            <div class="ops-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <div class="ops-card-title" style="display: flex; align-items: center; gap: 8px;">
-                <span>⚡ AI Fleet Demand Intelligence &amp; Repositioning</span>
-                <span class="badge badge-info" style="font-size: 11px;">REAL-TIME CORRIDOR RADAR</span>
-              </div>
-            </div>
-            <div class="ops-card-body" style="padding: 16px;" id="demand-intelligence-container">
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; border-left: 4px solid #ef4444;">
-                  <div style="font-weight: 800; color: #0f172a; font-size: 13.5px; margin-bottom: 4px;">Patna Jay Prakash Narayan Airport (PAT)</div>
-                  <div style="font-size: 12px; color: #dc2626; font-weight: 700; margin-bottom: 6px;">HIGH DEMAND SURGE EXPECTED</div>
-                  <p style="font-size: 12px; color: #475569; line-height: 1.5; margin-bottom: 0;">Reposition 4-6 on-duty Sedans &amp; SUVs near Sheikhpura / Airport bypass cluster for sub-10 minute pickup ETA.</p>
-                </div>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; border-left: 4px solid #3b82f6;">
-                  <div style="font-weight: 800; color: #0f172a; font-size: 13.5px; margin-bottom: 4px;">Gaya Junction &amp; Bodh Gaya Sacred Hub</div>
-                  <div style="font-size: 12px; color: #2563eb; font-weight: 700; margin-bottom: 6px;">PILGRIMAGE CORRIDOR ACTIVE</div>
-                  <p style="font-size: 12px; color: #475569; line-height: 1.5; margin-bottom: 0;">Maintain minimum 3 standby family SUVs on Bodh Gaya Temple Road and Station Road for outstation returns.</p>
-                </div>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; border-left: 4px solid #10b981;">
-                  <div style="font-weight: 800; color: #0f172a; font-size: 13.5px; margin-bottom: 4px;">Muzaffarpur &amp; Darbhanga Airport</div>
-                  <div style="font-size: 12px; color: #059669; font-weight: 700; margin-bottom: 6px;">RETURN LOAD OPTIMIZATION</div>
-                  <p style="font-size: 12px; color: #475569; line-height: 1.5; margin-bottom: 0;">Broadcast return leg discounts to incoming Patna drivers to minimize empty-trip deadhead mileage.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Route Corridors Breakdown -->
-          <div class="ops-card" style="margin-bottom: 20px;">
+          <div class="ops-card">
             <div class="ops-card-header">
               <div class="ops-card-title">Top Bihar Intercity Routes</div>
             </div>
@@ -2644,33 +2599,6 @@
                 </thead>
                 <tbody id="reports-routes-body">
                   <tr><td colspan="4" style="text-align:center; padding:24px; color:#94a3b8;">Generating routes summary...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Corporate & B2B Accounts Desk (Phase 21) -->
-          <div class="ops-card">
-            <div class="ops-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <div class="ops-card-title" style="display: flex; align-items: center; gap: 8px;">
-                <span>🏢 Corporate &amp; Institutional Client Desk</span>
-                <span class="badge badge-success" style="font-size: 11px;">B2B CONTRACTS</span>
-              </div>
-            </div>
-            <div class="table-container">
-              <table class="ops-table">
-                <thead>
-                  <tr>
-                    <th>Company / Institution</th>
-                    <th>Contact Person</th>
-                    <th>Phone</th>
-                    <th>Monthly Rides</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="reports-corporate-body">
-                  <tr><td colspan="6" style="text-align:center; padding:24px; color:#94a3b8;">Loading corporate accounts...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2745,7 +2673,6 @@
           <div class="filter-toolbar">
             <div class="tab-pills-row">
               <button type="button" class="tab-pill active" onclick="switchSettingsSubTab('general', this)">General Settings</button>
-              <button type="button" class="tab-pill" onclick="switchSettingsSubTab('fares', this)">🚕 Fleet &amp; Segment Fares</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('gateways', this)">Payments &amp; Gateways</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('rbac', this)">RBAC Operators</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('diagnostics', this)">Diagnostics &amp; Data</button>
@@ -2821,274 +2748,6 @@
                 </form>
               </div>
             </div>
-          </div>
-
-          <!-- Sub-Tab A2: Fleet & Segment Fares (Bihar Road Fleet Pricing Engine) -->
-          <div class="settings-sub-panel" id="settings-sub-fares" style="display:none;">
-            <form id="form-fleet-fares" onsubmit="handleSaveFleetFares(event)">
-              
-              <!-- Fleet Tiers & Rental Pricing Card -->
-              <div class="ops-card">
-                <div class="ops-card-header">
-                  <div>
-                    <div class="ops-card-title">🚕 Bihar Road Fleet Pricing &amp; Rental Rates</div>
-                    <div style="font-size:12px; color:#64748b; margin-top:3px;">
-                      Configure highway per-KM rates, minimum base fares, and Car Rental prices (Self-Drive vs With Driver)
-                    </div>
-                  </div>
-                  <div style="display:flex; gap:8px;">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="resetFleetFaresAdmin()">↺ Reset Defaults</button>
-                    <button type="submit" class="btn btn-primary btn-sm">💾 Save All Fares</button>
-                  </div>
-                </div>
-                <div class="ops-card-body">
-                  <div class="table-container" style="overflow-x:auto;">
-                    <table class="ops-table" style="min-width:780px;">
-                      <thead>
-                        <tr>
-                          <th>Fleet Tier &amp; Models</th>
-                          <th>Per KM Rate (₹)</th>
-                          <th>Min Base Fare (₹)</th>
-                          <th>Min Base KM</th>
-                          <th>Rented Only (Self-Drive ₹/Day)</th>
-                          <th>With Driver Surcharge (+₹/Day)</th>
-                          <th style="text-align:right;">Total With Driver (₹)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <!-- Sedan -->
-                        <tr style="background:#f8fafc;">
-                          <td>
-                            <strong style="color:var(--navy-900); display:block;">Prime Sedan</strong>
-                            <span style="font-size:11px; color:#64748b;">Dzire, Etios, Amaze (4 Seats)</span>
-                          </td>
-                          <td>
-                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-sedan-per-km" value="25" style="width:85px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan-min-fare" value="2198" style="width:95px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan-min-km" value="50" style="width:75px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan-rental-price" value="2200" style="width:105px; font-weight:700; color:#0f172a;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
-                          </td>
-                          <td style="text-align:right;">
-                            <strong id="preview-sedan-total" style="color:#059669; font-size:14px;">₹3,200</strong>
-                          </td>
-                        </tr>
-
-                        <!-- SUV / XUV -->
-                        <tr>
-                          <td>
-                            <strong style="color:var(--navy-900); display:block;">Family SUV / XUV</strong>
-                            <span style="font-size:11px; color:#64748b;">Ertiga, Carens, Scorpio (6+1 Seats)</span>
-                          </td>
-                          <td>
-                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-suv-per-km" value="33" style="width:85px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-suv-min-fare" value="3398" style="width:95px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-suv-min-km" value="50" style="width:75px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-suv-rental-price" value="4000" style="width:105px; font-weight:700; color:#0f172a;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-suv-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
-                          </td>
-                          <td style="text-align:right;">
-                            <strong id="preview-suv-total" style="color:#059669; font-size:14px;">₹5,000</strong>
-                          </td>
-                        </tr>
-
-                        <!-- Hatchback -->
-                        <tr style="background:#f8fafc;">
-                          <td>
-                            <strong style="color:var(--navy-900); display:block;">Go Hatchback</strong>
-                            <span style="font-size:11px; color:#64748b;">WagonR, Tiago, Celerio (4 Seats)</span>
-                          </td>
-                          <td>
-                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-hatchback-per-km" value="21" style="width:85px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-min-fare" value="1698" style="width:95px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-min-km" value="50" style="width:75px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-rental-price" value="1800" style="width:105px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-hatchback-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
-                          </td>
-                          <td style="text-align:right;">
-                            <strong id="preview-hatchback-total" style="color:#059669; font-size:14px;">₹2,800</strong>
-                          </td>
-                        </tr>
-
-                        <!-- Executive Sedan -->
-                        <tr>
-                          <td>
-                            <strong style="color:var(--navy-900); display:block;">Executive Sedan</strong>
-                            <span style="font-size:11px; color:#64748b;">Honda City, Ciaz (4 Seats)</span>
-                          </td>
-                          <td>
-                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-sedan_prime-per-km" value="29" style="width:85px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-min-fare" value="2698" style="width:95px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-min-km" value="50" style="width:75px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-rental-price" value="2600" style="width:105px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-sedan_prime-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
-                          </td>
-                          <td style="text-align:right;">
-                            <strong id="preview-sedan_prime-total" style="color:#059669; font-size:14px;">₹3,600</strong>
-                          </td>
-                        </tr>
-
-                        <!-- Innova Crysta -->
-                        <tr style="background:#f8fafc;">
-                          <td>
-                            <strong style="color:var(--navy-900); display:block;">Toyota Innova Crysta</strong>
-                            <span style="font-size:11px; color:#64748b;">VIP Luxury Recliners (7 Seats)</span>
-                          </td>
-                          <td>
-                            <input type="number" step="0.5" class="form-control form-control-sm" id="fare-innova_crysta-per-km" value="44" style="width:85px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-min-fare" value="4598" style="width:95px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-min-km" value="50" style="width:75px;">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-rental-price" value="5000" style="width:105px;" oninput="updateFarePreviews()">
-                          </td>
-                          <td>
-                            <input type="number" class="form-control form-control-sm" id="fare-innova_crysta-rental-driver" value="1000" style="width:100px; color:#059669; font-weight:700;" oninput="updateFarePreviews()">
-                          </td>
-                          <td style="text-align:right;">
-                            <strong id="preview-innova_crysta-total" style="color:#059669; font-size:14px;">₹6,000</strong>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Segment Fares & Surcharges Rules Card -->
-              <div class="ops-card" style="margin-top:20px;">
-                <div class="ops-card-header">
-                  <div class="ops-card-title">⚙️ Segment Rules (One-Way, Round-Trip, Rental &amp; Airport)</div>
-                </div>
-                <div class="ops-card-body">
-                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:18px;">
-                    
-                    <!-- 1. One-Way Rules -->
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
-                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <span>➡️</span> One-Way Segment
-                      </h4>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Long Distance Driver Allowance (₹)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-oneway-allowance" value="250">
-                      </div>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Applied Above Distance (KM)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-oneway-threshold" value="250">
-                      </div>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Night Driving Charge (₹)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-oneway-night" value="250">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:11.5px;">GST Tax Rate (%)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-oneway-gst" value="5">
-                      </div>
-                    </div>
-
-                    <!-- 2. Round-Trip Rules -->
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
-                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <span>🔄</span> Round-Trip (Two-Way) Segment
-                      </h4>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Return Leg Discount (%)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-discount" value="12">
-                      </div>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Chauffeur Allowance / Day (₹)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-allowance" value="350">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:11.5px;">Minimum Billable KM / Day</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-roundtrip-min-km" value="250">
-                      </div>
-                    </div>
-
-                    <!-- 3. Car Rental Rules -->
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
-                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <span>🚗</span> Car Rental Segment
-                      </h4>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Package Included Hours</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-rental-hours" value="8">
-                      </div>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Package Included KM</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-rental-km" value="80">
-                      </div>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Default Chauffeur Fee (+₹/Day)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-rental-driver-fee" value="1000">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:11.5px;">Extra KM Rate (₹/KM)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-rental-extra-km" value="22">
-                      </div>
-                    </div>
-
-                    <!-- 4. Airport Transfer Rules -->
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:14px;">
-                      <h4 style="font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <span>✈️</span> Airport Transfer Segment
-                      </h4>
-                      <div class="form-group" style="margin-bottom:10px;">
-                        <label class="form-label" style="font-size:11.5px;">Airport Terminal Fee / Toll (₹)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-airport-fee" value="150">
-                      </div>
-                      <div class="form-group">
-                        <label class="form-label" style="font-size:11.5px;">Minimum Airport Base Fare (₹)</label>
-                        <input type="number" class="form-control form-control-sm" id="seg-airport-min" value="999">
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid #e2e8f0; padding-top:16px;">
-                    <button type="button" class="btn btn-secondary" onclick="resetFleetFaresAdmin()">↺ Reset to Factory Defaults</button>
-                    <button type="submit" class="btn btn-primary" id="btn-save-fleet-fares">💾 Save Fleet &amp; Segment Fares</button>
-                  </div>
-                </div>
-              </div>
-
-            </form>
           </div>
 
           <!-- Sub-Tab B: Payments & Gateways (Masked Credentials) -->
@@ -3254,69 +2913,6 @@
                   </div>
                   <div id="diag-error-logs-box" style="background:#0f172a; color:#f8fafc; font-family:var(--font-mono); font-size:11.5px; padding:12px; border-radius:var(--radius-sm); max-height:220px; overflow-y:auto;">
                     No error logs reported.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Communications & Gateway Diagnostics (Meta WhatsApp Cloud API & Google Firebase SMS) -->
-            <div class="ops-card" style="margin-top:20px;">
-              <div class="ops-card-header">
-                <div class="ops-card-title">📱 Meta WhatsApp Cloud API &amp; Google Firebase SMS Gateways</div>
-                <span class="pill" id="badge-comm-overall" style="background:#ecfdf5; color:#059669; font-weight:700;">Multi-Gateway Active</span>
-              </div>
-              <div class="ops-card-body">
-                <!-- Gateway Status Badges -->
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:20px;">
-                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
-                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">META WHATSAPP CLOUD API</div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span id="dot-meta-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
-                      <strong id="label-meta-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
-                    </div>
-                    <div style="font-size:11px; color:#64748b; margin-top:4px;">1,000 Free Conversations / Month (Graph v20.0)</div>
-                  </div>
-                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
-                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">GOOGLE FIREBASE PHONE AUTH</div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span id="dot-firebase-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
-                      <strong id="label-firebase-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
-                    </div>
-                    <div style="font-size:11px; color:#64748b; margin-top:4px;">10,000 Free Carrier SMS / Month</div>
-                  </div>
-                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
-                    <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:4px;">INDIAN TELECOM (FAST2SMS)</div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <span id="dot-fast2sms-status" style="width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
-                      <strong id="label-fast2sms-status" style="font-size:13px; color:#0f172a;">Checking...</strong>
-                    </div>
-                    <div style="font-size:11px; color:#64748b; margin-top:4px;">DLT / Quick Route Backup (~₹0.20/SMS)</div>
-                  </div>
-                </div>
-
-                <!-- Test Message Sender -->
-                <div style="border-top:1px solid #e2e8f0; padding-top:16px;">
-                  <h4 style="font-size:13.5px; font-weight:700; color:var(--navy-900); margin-bottom:8px;">Live Gateway Delivery Test</h4>
-                  <p style="font-size:12px; color:#64748b; margin-bottom:12px;">Send an immediate live diagnostic message to verify WhatsApp Meta Cloud API or Indian Telecom SMS.</p>
-                  <div class="form-grid-2" style="margin-bottom:12px;">
-                    <div class="form-group">
-                      <label class="form-label">Recipient Mobile Number (10 digits)</label>
-                      <input type="text" class="form-control" id="diag-test-phone" placeholder="91XXXXXXXX" value="6206494214">
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Custom Test Message</label>
-                      <input type="text" class="form-control" id="diag-test-message" value="OneWayTaxiBihar test message: Meta WhatsApp Cloud API &amp; Firebase SMS operational.">
-                    </div>
-                  </div>
-                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-test-whatsapp-cloud" onclick="testWhatsAppCloudAdmin()">
-                      <span>💬</span> Test Meta WhatsApp Cloud API
-                    </button>
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-test-telecom-sms" onclick="testTelecomSmsAdmin()">
-                      <span>✉️</span> Test Telecom SMS Gateway
-                    </button>
-                  </div>
-                  <div id="diag-test-result-box" style="background:#0f172a; color:#f8fafc; font-family:var(--font-mono); font-size:11.5px; padding:12px; border-radius:var(--radius-sm); max-height:160px; overflow-y:auto; display:none; white-space:pre-wrap;">
                   </div>
                 </div>
               </div>
@@ -3668,84 +3264,6 @@
         </div>
       </form>
     </div>
-  <!-- MANUAL AGENT BOOKING MODAL (Req. 12) -->
-  <div class="modal-backdrop" id="modal-manual-booking">
-    <div class="ops-modal" style="max-width: 580px;">
-      <div class="ops-modal-header">
-        <div class="ops-modal-title">Manual Dispatch Booking (Agent Desk)</div>
-        <button type="button" class="btn-icon btn-secondary" onclick="closeManualBookingModal()">✕</button>
-      </div>
-      <form id="form-manual-booking" onsubmit="handleManualBookingSubmit(event)">
-        <div class="ops-modal-body">
-          <div class="form-grid-2" style="margin-bottom:12px;">
-            <div class="form-group">
-              <label class="form-label">Customer Name *</label>
-              <input type="text" class="form-control" id="manual-customer-name" placeholder="Full Name" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Customer Mobile *</label>
-              <input type="tel" class="form-control" id="manual-mobile" placeholder="10-digit mobile" required maxlength="10">
-            </div>
-          </div>
-
-          <div class="form-grid-2" style="margin-bottom:12px;">
-            <div class="form-group">
-              <label class="form-label">Pickup Location *</label>
-              <input type="text" class="form-control" id="manual-pickup" placeholder="e.g. Patna Airport" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Drop Location *</label>
-              <input type="text" class="form-control" id="manual-drop" placeholder="e.g. Gaya Bodh Gaya" required>
-            </div>
-          </div>
-
-          <div class="form-grid-2" style="margin-bottom:12px;">
-            <div class="form-group">
-              <label class="form-label">Pickup Date *</label>
-              <input type="date" class="form-control" id="manual-date" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Pickup Time *</label>
-              <input type="time" class="form-control" id="manual-time" value="08:30" required>
-            </div>
-          </div>
-
-          <div class="form-grid-2" style="margin-bottom:12px;">
-            <div class="form-group">
-              <label class="form-label">Vehicle Tier *</label>
-              <select class="form-control" id="manual-vehicle" required>
-                <option value="Sedan">Prime Sedan (Dzire / Etios)</option>
-                <option value="Hatchback">Go Hatchback (WagonR)</option>
-                <option value="SUV">Family SUV (Ertiga 6+1)</option>
-                <option value="Innova Crysta">Toyota Innova Crysta</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Agreed Total Fare (₹)</label>
-              <input type="number" class="form-control" id="manual-fare" placeholder="Leave empty for auto-calc">
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-bottom:12px;">
-            <label class="form-label">Payment Method *</label>
-            <select class="form-control" id="manual-payment-method">
-              <option value="Cash to Driver">Cash to Driver (Pay at drop destination)</option>
-              <option value="Advance UPI Token (₹200 - ₹500)">Advance UPI Token (₹200 - ₹500)</option>
-              <option value="Full Online Pre-paid">Full Online Pre-paid (Razorpay / QR)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Agent Notes &amp; Special Instructions</label>
-            <textarea class="form-control" id="manual-notes" placeholder="e.g. Flight delay expected, customer requested English speaking driver" rows="2"></textarea>
-          </div>
-        </div>
-        <div class="ops-modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeManualBookingModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="btn-manual-booking-submit">Create Booking</button>
-        </div>
-      </form>
-    </div>
   </div>
 
   <!-- CONFIRMATION MODAL (For Destructive Actions) -->
@@ -3814,8 +3332,19 @@
     // UNIFIED API ENGINE (Cross-Port, Domain, and Auth Bearer Layer)
     // =========================================================================
     function getApiUrl(endpoint) {
-      if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
-        return endpoint;
+      if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+        if (typeof ApiClient !== "undefined" && ApiClient.baseUrl) {
+          return `${ApiClient.baseUrl}${endpoint}`;
+        }
+        if (typeof window !== "undefined") {
+          // If already running directly on live domain or vercel
+          if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
+            return endpoint;
+          }
+          // Default to live production cloud backend
+          return `https://onewaytaxibihar.com${endpoint}`;
+        }
+        return `https://onewaytaxibihar.com${endpoint}`;
       }
       return endpoint;
     }
@@ -3838,6 +3367,9 @@
 
       try {
         let res = await fetch(url, fetchOpts);
+        if (!res.ok && isCrossOrigin && !url.startsWith("https://onewaytaxibihar.com")) {
+          res = await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
+        }
 
         // Automatic session invalidation on 401 Unauthorized
         if (res.status === 401 && !endpoint.includes("/login")) {
@@ -3852,6 +3384,9 @@
 
         return res;
       } catch (err) {
+        if (!url.startsWith("https://onewaytaxibihar.com")) {
+          return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
+        }
         throw err;
       }
     }
@@ -4287,7 +3822,7 @@
     }
 
     function switchSettingsSubTab(subName, btn) {
-      const subs = ['general', 'fares', 'gateways', 'rbac', 'diagnostics'];
+      const subs = ['general', 'gateways', 'rbac', 'diagnostics'];
       subs.forEach(s => {
         const el = document.getElementById(`settings-sub-${s}`);
         if (el) el.style.display = s === subName ? "block" : "none";
@@ -4393,36 +3928,6 @@
           if (text) text.textContent = isAtlas ? "Atlas ONLINE" : "Local Sync Active";
           const diagEng = document.getElementById("diag-db-engine");
           if (diagEng) diagEng.textContent = `${data.engine || data.database?.engine || 'MongoDB Atlas Cloud'} (Ping: OK)`;
-
-          if (data.notifications) {
-            const n = data.notifications;
-            const metaDot = document.getElementById("dot-meta-status");
-            const metaLabel = document.getElementById("label-meta-status");
-            if (metaDot && metaLabel) {
-              const metaOk = Boolean(n.whatsappCloudConfigured && n.whatsappPhoneId);
-              metaDot.style.background = metaOk ? "#10b981" : "#f59e0b";
-              metaLabel.textContent = metaOk ? "ACTIVE (Graph API v20.0)" : "Config Pending (TOKEN/PHONE_ID)";
-              metaLabel.style.color = metaOk ? "#059669" : "#b45309";
-            }
-
-            const fbDot = document.getElementById("dot-firebase-status");
-            const fbLabel = document.getElementById("label-firebase-status");
-            if (fbDot && fbLabel) {
-              const fbOk = Boolean(n.firebaseConfigured);
-              fbDot.style.background = fbOk ? "#10b981" : "#f59e0b";
-              fbLabel.textContent = fbOk ? "ACTIVE (10,000 Free SMS/Mo)" : "Config Pending (FIREBASE_API_KEY)";
-              fbLabel.style.color = fbOk ? "#059669" : "#b45309";
-            }
-
-            const f2sDot = document.getElementById("dot-fast2sms-status");
-            const f2sLabel = document.getElementById("label-fast2sms-status");
-            if (f2sDot && f2sLabel) {
-              const f2sOk = Boolean(n.fast2smsConfigured);
-              f2sDot.style.background = f2sOk ? "#10b981" : "#64748b";
-              f2sLabel.textContent = f2sOk ? "ACTIVE (DLT Route)" : "Standby / WhatsApp Link Fallback";
-              f2sLabel.style.color = f2sOk ? "#059669" : "#475569";
-            }
-          }
         }
       } catch (e) {}
     }
@@ -4653,7 +4158,7 @@
       _dispatchMarkers.forEach(m => _dispatchMap.removeLayer(m));
       _dispatchMarkers = [];
 
-      // 1. Add pins for major Bihar hubs & active rides
+      // Add pins for major Bihar hubs & active rides
       _allBookings.slice(0, 15).forEach(b => {
         const originKey = (b.originCity || '').toLowerCase().split(" ")[0];
         const coords = BIHAR_COORDS[originKey] || [25.5941, 85.1376];
@@ -4672,54 +4177,10 @@
             Route: ${b.originCity} ➔ ${b.destCity}<br>
             Status: <strong>${b.bookingStatus}</strong><br>
             Fare: ₹${b.totalFare || b.fare || 0}<br>
-            <div style="display:flex; gap:4px; margin-top:6px;">
-              <button onclick="openBookingDrawer('${b.bookingId}')" style="padding:3px 8px; font-size:11px; background:#2563eb; color:white; border:none; border-radius:4px; cursor:pointer;">Manage</button>
-              <button onclick="triggerSmartAutoDispatch('${b.bookingId}')" style="padding:3px 8px; font-size:11px; background:#059669; color:white; border:none; border-radius:4px; cursor:pointer;">⚡ Auto-Dispatch</button>
-            </div>
+            <button onclick="openBookingDrawer('${b.bookingId}')" style="margin-top:6px; padding:3px 8px; font-size:11px; background:#2563eb; color:white; border:none; border-radius:4px; cursor:pointer;">Manage Ride</button>
           </div>
         `);
         _dispatchMarkers.push(marker);
-      });
-
-      // 2. Add Live Driver Telemetry Pins on Map (Phase 4 & 5 Fleet Control Tower)
-      _allDrivers.forEach((d, idx) => {
-        let lat = d.currentLat;
-        let lng = d.currentLng;
-        if (!lat || !lng) {
-          const cityKey = (d.city || 'patna').toLowerCase().replace(/[^a-z]/g, '');
-          const baseCoords = BIHAR_COORDS[cityKey] || [25.5941, 85.1376];
-          // Minor jitter offset based on index so multiple drivers in same city spread out visually
-          lat = baseCoords[0] + (Math.sin(idx + 1) * 0.025);
-          lng = baseCoords[1] + (Math.cos(idx + 1) * 0.025);
-        }
-
-        const isOnline = (d.dutyStatus === 'ONLINE' || (d.status || '').toLowerCase() === 'available' || d.isAvailable === true);
-        const driverMarker = L.circleMarker([lat, lng], {
-          radius: 9,
-          fillColor: isOnline ? '#10b981' : '#64748b',
-          color: '#ffffff',
-          weight: 2.5,
-          opacity: 1,
-          fillOpacity: 0.95
-        }).addTo(_dispatchMap);
-
-        driverMarker.bindPopup(`
-          <div style="font-size:12px; font-family:sans-serif; min-width:190px;">
-            <div style="font-weight:700; color:#0f172a; margin-bottom:2px;">🚖 ${escapeHtml(d.name || d.driverName)}</div>
-            <div style="font-size:11px; color:#475569;">${escapeHtml(d.carModel || d.vehicleModel || 'Taxi')} • <strong>${escapeHtml(d.carNo || d.vehicleNumber || 'Plate')}</strong></div>
-            <div style="margin-top:4px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
-              <span style="display:inline-block; padding:1px 6px; border-radius:4px; background:${isOnline ? '#dcfce7; color:#166534' : '#f1f5f9; color:#475569'}; font-weight:700;">
-                ${isOnline ? '🟢 On-Duty' : '⚪ Offline'}
-              </span>
-              <span style="color:#f59e0b; font-weight:700;">${d.rating || 4.9} ★</span>
-            </div>
-            <div style="margin-top:6px; display:flex; gap:4px;">
-              <a href="tel:${d.phone}" style="flex:1; text-align:center; padding:3px 6px; font-size:11px; background:#0284c7; color:white; border-radius:4px; text-decoration:none;">Call</a>
-              <a href="https://wa.me/91${cleanPhone(d.phone)}" target="_blank" style="flex:1; text-align:center; padding:3px 6px; font-size:11px; background:#10b981; color:white; border-radius:4px; text-decoration:none;">WhatsApp</a>
-            </div>
-          </div>
-        `);
-        _dispatchMarkers.push(driverMarker);
       });
 
       // Render Unassigned Queue
@@ -4740,8 +4201,7 @@
                 <div style="font-size:11px; color:#334155; margin-top:2px;">Passenger: ${escapeHtml(b.passengerName)} (${escapeHtml(b.passengerPhone)})</div>
               </div>
               <div style="display:flex; flex-direction:column; gap:6px;">
-                <button type="button" class="btn btn-sm" style="background:#059669; color:white; font-size:11.5px;" onclick="triggerSmartAutoDispatch('${b.bookingId}')">⚡ Smart Dispatch</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Manual Assign</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Assign Driver</button>
                 <a href="https://wa.me/91${cleanPhone(b.passengerPhone)}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; text-align:center;">WhatsApp</a>
               </div>
             </div>
@@ -4751,7 +4211,7 @@
 
       // Render Available Drivers Pool
       const driversPool = document.getElementById("dispatch-drivers-pool-list");
-      const avail = _allDrivers.filter(d => (d.status || '').toLowerCase() === 'available' || d.dutyStatus === 'ONLINE' || d.isAvailable);
+      const avail = _allDrivers.filter(d => d.status === 'available' || d.isAvailable);
       setText("dispatch-drivers-avail-pill", `${avail.length} Ready`);
 
       if (driversPool) {
@@ -5356,51 +4816,6 @@
       }
     }
 
-    async function triggerSmartAutoDispatch(bookingId) {
-      if (!bookingId) return;
-      try {
-        showToast(`Running Smart Dispatch Engine for ${bookingId}...`, "info");
-        const res = await adminFetch("/api/admin/auto-dispatch", {
-          method: "POST",
-          body: JSON.stringify({ bookingId })
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(`⚡ Chauffeur ${data.matchedDriver.name} matched (${data.matchedDriver.suitabilityScore}%)!`, "success");
-          closeAssignModal();
-          closeBookingDrawer();
-          await loadBookings();
-          await loadDrivers();
-          renderDispatchWorkspace();
-          renderDashboard();
-        } else {
-          showToast(data.message || "No eligible driver available for auto-dispatch", "warning");
-        }
-      } catch (err) {
-        showToast("Auto-dispatch error: " + err.message, "error");
-      }
-    }
-
-    async function verifyDriverDoc(driverId, vStatus) {
-      try {
-        showToast(`Updating document status to ${vStatus}...`, "info");
-        const res = await adminFetch("/api/admin/drivers/verify", {
-          method: "POST",
-          body: JSON.stringify({ driverId, verificationStatus: vStatus })
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast(`Driver verified: ${data.message}`, "success");
-          await loadDrivers();
-          renderDrivers();
-        } else {
-          showToast(data.message || "Failed to update driver status", "error");
-        }
-      } catch (err) {
-        showToast("Verification error: " + err.message, "error");
-      }
-    }
-
     // Status Transitions
     async function updateBookingStatusAdmin(bookingId, newStatus) {
       try {
@@ -5569,9 +4984,6 @@
         const status = d.status || (d.isAvailable ? 'available' : 'offline');
         const pillClass = status === 'available' ? 'success' : (status === 'on_trip' ? 'assigned' : 'offline');
 
-        const vStatus = d.verificationStatus || (d.isVerified ? 'VERIFIED' : 'PENDING');
-        const vBadgeColor = vStatus === 'VERIFIED' ? '#059669' : (vStatus === 'REJECTED' ? '#dc2626' : '#d97706');
-
         return `
           <div class="ops-card" style="margin-bottom:0;">
             <div class="ops-card-body" style="padding:16px;">
@@ -5585,10 +4997,7 @@
                     <div style="font-size:11.5px; color:#64748b;">${phone}</div>
                   </div>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-                  <span class="pill ${pillClass}">${status}</span>
-                  <span style="font-size:10.5px; font-weight:700; color:${vBadgeColor};">${vStatus}</span>
-                </div>
+                <span class="pill ${pillClass}">${status}</span>
               </div>
 
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:10px; margin-bottom:12px; font-size:12px;">
@@ -5600,24 +5009,15 @@
                   <span style="color:#64748b;">Operating District:</span>
                   <strong>${escapeHtml(d.city || 'Patna')}</strong>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <div style="display:flex; justify-content:space-between;">
                   <span style="color:#64748b;">Rating &amp; Trips:</span>
                   <span>⭐ ${d.rating || 4.9} • <strong>${d.totalTrips || 0} rides</strong></span>
                 </div>
-                <div style="display:flex; justify-content:space-between;">
-                  <span style="color:#64748b;">Documents:</span>
-                  <span style="font-weight:700; color:${vBadgeColor};">${vStatus === 'VERIFIED' ? '✓ RTO & DL Verified' : '⏳ Awaiting Review'}</span>
-                </div>
               </div>
 
-              <div style="display:flex; gap:6px; margin-bottom:6px;">
+              <div style="display:flex; gap:6px;">
                 <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">📞 Call</a>
                 <a href="https://wa.me/91${phone}" target="_blank" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">💬 WhatsApp</a>
-              </div>
-              <div>
-                <button type="button" onclick="verifyDriverDoc('${d.id}', '${vStatus === 'VERIFIED' ? 'PENDING' : 'VERIFIED'}')" class="btn btn-sm" style="width:100%; justify-content:center; font-size:11.5px; ${vStatus === 'VERIFIED' ? 'background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;' : 'background:#059669; color:white;'}">
-                  ${vStatus === 'VERIFIED' ? 'Revoke Partner Verification' : '✓ Verify Driver Documents'}
-                </button>
               </div>
             </div>
           </div>
@@ -5661,86 +5061,6 @@
         showToast("Error: " + err.message, "error");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Onboard Chauffeur"; }
-      }
-    }
-
-    // =========================================================================
-    // MANUAL AGENT BOOKING CONTROLLER (Req. 12)
-    // =========================================================================
-    function openManualBookingModal() {
-      const modal = document.getElementById("modal-manual-booking");
-      if (modal) {
-        const today = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById("manual-date");
-        if (dateInput && !dateInput.value) dateInput.value = today;
-        modal.classList.add("active");
-      }
-    }
-
-    function closeManualBookingModal() {
-      const modal = document.getElementById("modal-manual-booking");
-      if (modal) modal.classList.remove("active");
-    }
-
-    async function handleManualBookingSubmit(e) {
-      if (e) e.preventDefault();
-      const btn = document.getElementById("btn-manual-booking-submit");
-      const customerName = document.getElementById("manual-customer-name")?.value?.trim() || "";
-      const mobile = document.getElementById("manual-mobile")?.value?.replace(/\D/g, '')?.slice(-10) || "";
-      const pickup = document.getElementById("manual-pickup")?.value?.trim() || "";
-      const drop = document.getElementById("manual-drop")?.value?.trim() || "";
-      const date = document.getElementById("manual-date")?.value || "";
-      const time = document.getElementById("manual-time")?.value || "08:30";
-      const vehicle = document.getElementById("manual-vehicle")?.value || "Sedan";
-      const fare = Number(document.getElementById("manual-fare")?.value) || 0;
-      const paymentMethod = document.getElementById("manual-payment-method")?.value || "Cash to Driver";
-      const notes = document.getElementById("manual-notes")?.value?.trim() || "";
-
-      if (!customerName || customerName.length < 2) {
-        showToast("Please enter customer name (at least 2 characters)", "error");
-        return;
-      }
-      if (!mobile || mobile.length !== 10 || !/^[6-9]\d{9}$/.test(mobile)) {
-        showToast("Please enter valid 10-digit mobile number", "error");
-        return;
-      }
-      if (!pickup || !drop) {
-        showToast("Pickup and Drop locations are required", "error");
-        return;
-      }
-
-      try {
-        if (btn) { btn.disabled = true; btn.textContent = "Creating Booking..."; }
-        const res = await adminFetch("/api/admin/bookings/manual", {
-          method: "POST",
-          body: JSON.stringify({
-            customerName,
-            mobile,
-            pickup,
-            drop,
-            date,
-            time,
-            vehicle,
-            fare,
-            paymentMethod,
-            notes
-          })
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          const createdId = data.booking?.bookingId || data.booking?.id || "Created";
-          showToast(`Manual booking ${createdId} confirmed successfully!`, "success");
-          closeManualBookingModal();
-          document.getElementById("form-manual-booking")?.reset();
-          await fetchDashboardData();
-        } else {
-          showToast(data.message || "Failed to create manual booking", "error");
-        }
-      } catch (err) {
-        showToast("Error creating booking: " + err.message, "error");
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = "Create Booking"; }
       }
     }
 
@@ -6099,94 +5419,38 @@
     }
 
     // =========================================================================
-    // VIEW 10: REPORTS & ANALYTICS (ENHANCED PHASES 21, 22, 23)
+    // VIEW 10: REPORTS & ANALYTICS
     // =========================================================================
     async function loadReports() {
       try {
-        const [repRes, intelRes, corpRes] = await Promise.allSettled([
-          adminFetch("/api/admin/reports"),
-          adminFetch("/api/admin/analytics/intelligence"),
-          adminFetch("/api/admin/corporate/inquiries")
-        ]);
-
-        let repData = {};
-        if (repRes.status === 'fulfilled' && repRes.value.ok) {
-          try { repData = await repRes.value.json(); } catch (e) {}
+        const res = await adminFetch("/api/admin/reports");
+        if (res.ok) {
+          const data = await res.json();
+          renderReportsView(data);
         }
-
-        let intelData = null;
-        if (intelRes.status === 'fulfilled' && intelRes.value.ok) {
-          try { intelData = await intelRes.value.json(); } catch (e) {}
-        }
-
-        let corpData = null;
-        if (corpRes.status === 'fulfilled' && corpRes.value.ok) {
-          try { corpData = await corpRes.value.json(); } catch (e) {}
-        }
-
-        renderReportsView(repData, intelData, corpData);
-      } catch (e) {
-        console.warn("[Admin Reports] Load error:", e.message);
-      }
+      } catch (e) {}
     }
 
-    function renderReportsView(data, intelData, corpData) {
+    function renderReportsView(data) {
       const stats = data?.stats || {};
-      const gross = intelData?.kpis?.grossBookingValue !== undefined ? intelData.kpis.grossBookingValue : (data?.grossRevenue !== undefined ? data.grossRevenue : (stats.grossRevenue !== undefined ? stats.grossRevenue : (stats.grossVolume !== undefined ? stats.grossVolume : (stats.totalRevenue || 0))));
+      const gross = data?.grossRevenue !== undefined ? data.grossRevenue : (stats.grossRevenue !== undefined ? stats.grossRevenue : (stats.grossVolume !== undefined ? stats.grossVolume : (stats.totalRevenue || 0)));
       const delivered = data?.deliveredRevenue !== undefined ? data.deliveredRevenue : (stats.deliveredRevenue !== undefined ? stats.deliveredRevenue : (stats.totalRevenue || 0));
       const convRate = data?.conversionRate !== undefined ? data.conversionRate : (stats.totalBookings > 0 ? Math.round(((stats.completedTrips || 0) / stats.totalBookings) * 100) : 92);
-      const cancRate = intelData?.kpis?.cancellationRatePercent !== undefined ? intelData.kpis.cancellationRatePercent : (data?.cancellationRate !== undefined ? data.cancellationRate : (stats.totalBookings > 0 ? Math.round(((stats.cancelledTrips || 0) / stats.totalBookings) * 100) : 4));
-
-      const driverPayouts = intelData?.kpis?.driverPayouts !== undefined ? intelData.kpis.driverPayouts : Math.round(gross * 0.85);
-      const platformMargin = intelData?.kpis?.companyPlatformRevenue !== undefined ? intelData.kpis.companyPlatformRevenue : Math.round(gross * 0.15);
+      const cancRate = data?.cancellationRate !== undefined ? data.cancellationRate : (stats.totalBookings > 0 ? Math.round(((stats.cancelledTrips || 0) / stats.totalBookings) * 100) : 4);
 
       setText("rep-gross-val", "₹" + Number(gross).toLocaleString('en-IN'));
       setText("rep-delivered-val", "₹" + Number(delivered).toLocaleString('en-IN'));
-      setText("rep-driver-payouts-val", "₹" + Number(driverPayouts).toLocaleString('en-IN'));
-      setText("rep-platform-margin-val", "₹" + Number(platformMargin).toLocaleString('en-IN'));
       setText("rep-conversion-rate", convRate + "%");
       setText("rep-cancellation-rate", cancRate + "%");
 
-      // 1. Demand Intelligence Alerts
-      const demandContainer = document.getElementById("demand-intelligence-container");
-      if (demandContainer && intelData?.demandRecommendations && intelData.demandRecommendations.length > 0) {
-        demandContainer.innerHTML = `
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
-            ${intelData.demandRecommendations.map(rec => {
-              const borderCol = rec.priority === 'HIGH' ? '#ef4444' : rec.priority === 'MEDIUM' ? '#3b82f6' : '#10b981';
-              const badgeCol = rec.priority === 'HIGH' ? '#dc2626' : rec.priority === 'MEDIUM' ? '#2563eb' : '#059669';
-              return `
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; border-left: 4px solid ${borderCol};">
-                  <div style="font-weight: 800; color: #0f172a; font-size: 13.5px; margin-bottom: 4px;">${escapeHtml(rec.zone)}</div>
-                  <div style="font-size: 11.5px; color: ${badgeCol}; font-weight: 700; margin-bottom: 6px;">PRIORITY: ${escapeHtml(rec.priority)} • ${escapeHtml(rec.reason)}</div>
-                  <p style="font-size: 12px; color: #475569; line-height: 1.5; margin-bottom: 0;">${escapeHtml(rec.recommendation)}</p>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        `;
-      }
-
-      // 2. Route Corridors Breakdown
       const tbody = document.getElementById("reports-routes-body");
       if (tbody) {
-        let routes = [];
-        if (intelData?.topCorridors && intelData.topCorridors.length > 0) {
-          routes = intelData.topCorridors.map(c => {
-            const parts = c.route.split(' ➔ ');
-            return { origin: parts[0] || 'Patna', dest: parts[1] || 'Gaya', count: c.count, share: c.sharePercent + '%' };
-          });
-        } else if (Array.isArray(data?.topRoutes) && data.topRoutes.length > 0) {
-          routes = data.topRoutes;
-        } else {
-          routes = [
-            { origin: 'Patna', dest: 'Gaya', count: 18, share: '32%' },
-            { origin: 'Patna', dest: 'Muzaffarpur', count: 14, share: '24%' },
-            { origin: 'Patna', dest: 'Darbhanga', count: 12, share: '21%' },
-            { origin: 'Patna', dest: 'Bhagalpur', count: 9, share: '15%' }
-          ];
-        }
-
+        const routes = (Array.isArray(data?.topRoutes) && data.topRoutes.length > 0) ? data.topRoutes : [
+          { origin: 'Patna', dest: 'Gaya', count: 18, share: '32%' },
+          { origin: 'Patna', dest: 'Muzaffarpur', count: 14, share: '24%' },
+          { origin: 'Patna', dest: 'Darbhanga', count: 12, share: '21%' },
+          { origin: 'Patna', dest: 'Bhagalpur', count: 9, share: '15%' }
+        ];
         tbody.innerHTML = routes.map(r => `
           <tr>
             <td><strong>${r.origin || (r.route ? r.route.split(' ➔ ')[0] : 'Patna')}</strong></td>
@@ -6195,37 +5459,6 @@
             <td><strong style="color:#059669;">${r.share || ''}</strong></td>
           </tr>
         `).join("");
-      }
-
-      // 3. Corporate & B2B Inquiries Desk
-      const corpBody = document.getElementById("reports-corporate-body");
-      if (corpBody) {
-        const inqs = corpData?.inquiries || [
-          { companyName: 'Bihar State Road Development Corp', contactPerson: 'Er. Rajesh Kumar', phone: '+91 9431012345', estimatedMonthlyRides: 45, status: 'CONTRACTED' },
-          { companyName: 'Mahabodhi Heritage Resorts', contactPerson: 'Suman Sen', phone: '+91 9835012345', estimatedMonthlyRides: 30, status: 'ACTIVE' }
-        ];
-
-        if (inqs.length === 0) {
-          corpBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:#94a3b8;">No corporate inquiries received yet.</td></tr>`;
-        } else {
-          corpBody.innerHTML = inqs.map(i => {
-            const badgeClass = i.status === 'CONTRACTED' || i.status === 'ACTIVE' ? 'badge-success' : i.status === 'CONTACTED' ? 'badge-info' : 'badge-warning';
-            return `
-              <tr>
-                <td><strong>${escapeHtml(i.companyName)}</strong></td>
-                <td>${escapeHtml(i.contactPerson)}</td>
-                <td><a href="tel:${i.phone}" style="color:var(--navy-700); font-weight:700;">${escapeHtml(i.phone)}</a></td>
-                <td><strong>${i.estimatedMonthlyRides || 25}</strong> trips/mo</td>
-                <td><span class="badge ${badgeClass}">${escapeHtml(i.status || 'NEW')}</span></td>
-                <td>
-                  <a href="https://wa.me/91${(i.phone || '').replace(/\\D/g, '').slice(-10)}?text=Namaste%20${encodeURIComponent(i.contactPerson)}!%20OneWayTaxiBihar%20Corporate%20Desk%20calling%20regarding%20your%20B2B%20inquiry." target="_blank" class="btn btn-secondary btn-sm" style="padding:4px 8px; font-size:11px;">
-                    WhatsApp Desk
-                  </a>
-                </td>
-              </tr>
-            `;
-          }).join("");
-        }
       }
     }
 
@@ -6329,48 +5562,6 @@
             document.getElementById("btn-emergency-pause-top")?.classList.add("paused");
             setText("emergency-pause-text", "PAUSED ACTIVE");
           }
-
-          // Populate Fleet Rates
-          if (s.fleetRates) {
-            const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
-            tiers.forEach(t => {
-              const r = s.fleetRates[t];
-              if (r) {
-                if (r.perKm !== undefined) setVal(`fare-${t}-per-km`, r.perKm);
-                if (r.minFare !== undefined) setVal(`fare-${t}-min-fare`, r.minFare);
-                if (r.minKm !== undefined) setVal(`fare-${t}-min-km`, r.minKm);
-                if (r.rentalPrice !== undefined) setVal(`fare-${t}-rental-price`, r.rentalPrice);
-                if (r.rentalDriverAllowance !== undefined) setVal(`fare-${t}-rental-driver`, r.rentalDriverAllowance);
-              }
-            });
-            if (typeof updateFarePreviews === 'function') updateFarePreviews();
-          }
-
-          // Populate Segment Rules
-          if (s.segmentFares) {
-            const sf = s.segmentFares;
-            if (sf.oneway) {
-              if (sf.oneway.driverAllowance !== undefined) setVal("seg-oneway-allowance", sf.oneway.driverAllowance);
-              if (sf.oneway.driverAllowanceThresholdKm !== undefined) setVal("seg-oneway-threshold", sf.oneway.driverAllowanceThresholdKm);
-              if (sf.oneway.nightCharge !== undefined) setVal("seg-oneway-night", sf.oneway.nightCharge);
-              if (sf.oneway.gstPct !== undefined) setVal("seg-oneway-gst", sf.oneway.gstPct);
-            }
-            if (sf.roundtrip) {
-              if (sf.roundtrip.returnDiscountPct !== undefined) setVal("seg-roundtrip-discount", sf.roundtrip.returnDiscountPct);
-              if (sf.roundtrip.driverAllowancePerDay !== undefined) setVal("seg-roundtrip-allowance", sf.roundtrip.driverAllowancePerDay);
-              if (sf.roundtrip.minKmPerDay !== undefined) setVal("seg-roundtrip-min-km", sf.roundtrip.minKmPerDay);
-            }
-            if (sf.rental) {
-              if (sf.rental.rentalHours !== undefined) setVal("seg-rental-hours", sf.rental.rentalHours);
-              if (sf.rental.rentalKm !== undefined) setVal("seg-rental-km", sf.rental.rentalKm);
-              if (sf.rental.driverAllowance !== undefined) setVal("seg-rental-driver-fee", sf.rental.driverAllowance);
-              if (sf.rental.extraKmRate !== undefined) setVal("seg-rental-extra-km", sf.rental.extraKmRate);
-            }
-            if (sf.airport) {
-              if (sf.airport.convenienceCharge !== undefined) setVal("seg-airport-fee", sf.airport.convenienceCharge);
-              if (sf.airport.minFare !== undefined) setVal("seg-airport-min", sf.airport.minFare);
-            }
-          }
         }
 
         // Load Gateway settings
@@ -6470,97 +5661,6 @@
         showToast("Error: " + err.message, "error");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform Settings"; }
-      }
-    }
-
-    function updateFarePreviews() {
-      const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
-      tiers.forEach(t => {
-        const rentalPrice = Number(document.getElementById(`fare-${t}-rental-price`)?.value) || 0;
-        const driverAllowance = Number(document.getElementById(`fare-${t}-rental-driver`)?.value) || 0;
-        const total = rentalPrice + driverAllowance;
-        const el = document.getElementById(`preview-${t}-total`);
-        if (el) el.textContent = `₹${total.toLocaleString('en-IN')}`;
-      });
-    }
-
-    async function handleSaveFleetFares(e) {
-      if (e) e.preventDefault();
-      const btn = document.getElementById("btn-save-fleet-fares");
-      if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving Fares..."; }
-
-      const tiers = ['sedan', 'suv', 'hatchback', 'sedan_prime', 'innova_crysta'];
-      const fleetRates = {};
-      tiers.forEach(t => {
-        fleetRates[t] = {
-          perKm: Number(document.getElementById(`fare-${t}-per-km`)?.value) || 0,
-          minFare: Number(document.getElementById(`fare-${t}-min-fare`)?.value) || 0,
-          minKm: Number(document.getElementById(`fare-${t}-min-km`)?.value) || 0,
-          rentalPrice: Number(document.getElementById(`fare-${t}-rental-price`)?.value) || 0,
-          rentalDriverAllowance: Number(document.getElementById(`fare-${t}-rental-driver`)?.value) || 0
-        };
-      });
-
-      const segmentFares = {
-        oneway: {
-          driverAllowance: Number(document.getElementById("seg-oneway-allowance")?.value) || 0,
-          driverAllowanceThresholdKm: Number(document.getElementById("seg-oneway-threshold")?.value) || 0,
-          nightCharge: Number(document.getElementById("seg-oneway-night")?.value) || 0,
-          gstPct: Number(document.getElementById("seg-oneway-gst")?.value) || 0
-        },
-        roundtrip: {
-          returnDiscountPct: Number(document.getElementById("seg-roundtrip-discount")?.value) || 0,
-          driverAllowancePerDay: Number(document.getElementById("seg-roundtrip-allowance")?.value) || 0,
-          minKmPerDay: Number(document.getElementById("seg-roundtrip-min-km")?.value) || 0
-        },
-        rental: {
-          rentalHours: Number(document.getElementById("seg-rental-hours")?.value) || 8,
-          rentalKm: Number(document.getElementById("seg-rental-km")?.value) || 80,
-          driverAllowance: Number(document.getElementById("seg-rental-driver-fee")?.value) || 1000,
-          extraKmRate: Number(document.getElementById("seg-rental-extra-km")?.value) || 22
-        },
-        airport: {
-          convenienceCharge: Number(document.getElementById("seg-airport-fee")?.value) || 150,
-          minFare: Number(document.getElementById("seg-airport-min")?.value) || 999
-        }
-      };
-
-      try {
-        const res = await adminFetch("/api/admin/settings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fleetRates, segmentFares })
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast("Bihar fleet & segment fare matrices successfully updated!", "success");
-          await loadSettings();
-        } else {
-          showToast(data.message || "Failed to update fares", "error");
-        }
-      } catch (err) {
-        showToast("Error updating fares: " + err.message, "error");
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "💾 Save Fleet & Segment Fares"; }
-      }
-    }
-
-    async function resetFleetFaresAdmin() {
-      if (!confirm("Are you sure you want to reset all fleet rates and segment pricing to factory defaults?")) return;
-      try {
-        const res = await adminFetch("/api/admin/fares/reset", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" }
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showToast("Fleet and segment fares successfully reset to defaults!", "success");
-          await loadSettings();
-        } else {
-          showToast(data.message || "Failed to reset fares", "error");
-        }
-      } catch (err) {
-        showToast("Error resetting fares: " + err.message, "error");
       }
     }
 
@@ -6730,88 +5830,6 @@
         if (box) box.textContent = "Error logs cleared by admin.";
         showToast("Diagnostics error logs cleared", "info");
       } catch (e) {}
-    }
-
-    async function testWhatsAppCloudAdmin() {
-      const phoneInput = document.getElementById("diag-test-phone");
-      const msgInput = document.getElementById("diag-test-message");
-      const box = document.getElementById("diag-test-result-box");
-      const btn = document.getElementById("btn-test-whatsapp-cloud");
-
-      const cleanPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
-      if (!cleanPhone || cleanPhone.length !== 10) {
-        showToast("Please enter a valid 10-digit mobile number", "warning");
-        return;
-      }
-
-      if (btn) { btn.disabled = true; btn.textContent = "Dispatching via Meta Cloud..."; }
-      if (box) { box.style.display = "block"; box.textContent = "Contacting Meta Graph API v20.0 endpoint..."; }
-
-      try {
-        const res = await adminFetch("/api/admin/whatsapp/test", {
-          method: "POST",
-          body: JSON.stringify({
-            phone: cleanPhone,
-            message: msgInput?.value || "OneWayTaxiBihar test message: Meta WhatsApp Cloud API operational."
-          })
-        });
-        const data = await res.json();
-        if (box) {
-          box.innerHTML = `<span style="color:#38bdf8;">[Meta WhatsApp Cloud API Response - ${new Date().toLocaleTimeString()}]:</span>\n` +
-            JSON.stringify(data, null, 2);
-        }
-        if (data.success) {
-          showToast("WhatsApp message dispatched successfully via Meta Cloud API!", "success");
-        } else {
-          showToast(data.message || "Meta API returned response. See details box.", "warning");
-        }
-      } catch (err) {
-        if (box) box.textContent = `[Request Failed]: ${err.message}`;
-        showToast("Network error testing WhatsApp Cloud API: " + err.message, "error");
-      } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = `<span>💬</span> Test Meta WhatsApp Cloud API`; }
-      }
-    }
-
-    async function testTelecomSmsAdmin() {
-      const phoneInput = document.getElementById("diag-test-phone");
-      const msgInput = document.getElementById("diag-test-message");
-      const box = document.getElementById("diag-test-result-box");
-      const btn = document.getElementById("btn-test-telecom-sms");
-
-      const cleanPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
-      if (!cleanPhone || cleanPhone.length !== 10) {
-        showToast("Please enter a valid 10-digit mobile number", "warning");
-        return;
-      }
-
-      if (btn) { btn.disabled = true; btn.textContent = "Dispatching SMS..."; }
-      if (box) { box.style.display = "block"; box.textContent = "Contacting Telecom SMS Gateway..."; }
-
-      try {
-        const res = await adminFetch("/api/notifications/test", {
-          method: "POST",
-          body: JSON.stringify({
-            phone: cleanPhone,
-            message: msgInput?.value || "OneWayTaxiBihar Telecom Test: System ready for live operations across Bihar."
-          })
-        });
-        const data = await res.json();
-        if (box) {
-          box.innerHTML = `<span style="color:#38bdf8;">[Telecom SMS Gateway Response - ${new Date().toLocaleTimeString()}]:</span>\n` +
-            JSON.stringify(data, null, 2);
-        }
-        if (data.success && data.result?.success) {
-          showToast("SMS dispatched successfully via telecom route!", "success");
-        } else {
-          showToast("Telecom gateway responded. See details box.", "info");
-        }
-      } catch (err) {
-        if (box) box.textContent = `[Request Failed]: ${err.message}`;
-        showToast("Error testing SMS Gateway: " + err.message, "error");
-      } finally {
-        if (btn) { btn.disabled = false; btn.innerHTML = `<span>✉️</span> Test Telecom SMS Gateway`; }
-      }
     }
 
     async function toggleEmergencyPauseAdmin() {

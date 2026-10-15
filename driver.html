@@ -381,7 +381,7 @@
         </div>
 
         <div style="margin-top: 14px; text-align: center; font-size: 12.5px; color: #94a3b8;">
-          New Driver? <a href="#signup" onclick="switchAuthMode('signup'); return false;" style="color: #34d399; font-weight: 800; text-decoration: none;">Register Vehicle &amp; Join Fleet →</a>
+          New Driver? <a href="javascript:void(0)" onclick="switchAuthMode('signup')" style="color: #34d399; font-weight: 800; text-decoration: none;">Register Vehicle &amp; Join Fleet →</a>
         </div>
       </div>
 
@@ -460,7 +460,7 @@
         </button>
 
         <div style="margin-top: 14px; text-align: center; font-size: 12.5px; color: #94a3b8;">
-          Already registered? <a href="#login" onclick="switchAuthMode('login'); return false;" style="color: #38bdf8; text-decoration: none; font-weight: 700;">Click to Login</a>
+          Already registered? <a href="javascript:void(0)" onclick="switchAuthMode('login')" style="color: #38bdf8; text-decoration: none; font-weight: 700;">Click to Login</a>
         </div>
       </div>
 
@@ -630,42 +630,6 @@
       updateDriverNotificationUiState();
       await loadDriverTrips();
       startDriverPolling();
-      startDriverLocationTelemetry();
-    }
-
-    let _gpsWatcherId = null;
-    function startDriverLocationTelemetry() {
-      if (!_driverToken || !navigator.geolocation) return;
-      if (_gpsWatcherId) return;
-
-      const sendLocation = (position) => {
-        if (!_driverToken) return;
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const heading = position.coords.heading || 0;
-        const speed = position.coords.speed || 0;
-
-        fetch("/api/driver/location", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + _driverToken
-          },
-          body: JSON.stringify({ lat, lng, heading, speed })
-        }).catch(() => {});
-      };
-
-      try {
-        navigator.geolocation.getCurrentPosition(sendLocation, () => {}, { enableHighAccuracy: true });
-        _gpsWatcherId = setInterval(() => {
-          if (!_driverToken) {
-            clearInterval(_gpsWatcherId);
-            _gpsWatcherId = null;
-            return;
-          }
-          navigator.geolocation.getCurrentPosition(sendLocation, () => {}, { enableHighAccuracy: true });
-        }, 25000);
-      } catch (e) {}
     }
 
     function switchAuthMode(mode) {
@@ -798,10 +762,6 @@
       if (_driverPollingTimer) {
         clearInterval(_driverPollingTimer);
         _driverPollingTimer = null;
-      }
-      if (_gpsWatcherId) {
-        clearInterval(_gpsWatcherId);
-        _gpsWatcherId = null;
       }
       _driverInitialSyncDone = false;
       _knownDriverTripStates.clear();

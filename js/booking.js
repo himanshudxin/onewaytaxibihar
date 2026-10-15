@@ -152,15 +152,6 @@ class BookingManager {
 
     this.restoreState();
     this.syncPaymentConfig();
-
-    // Auto-detect user's location via GPS/Haversine on load (Req. 3)
-    if (!this.originCity) {
-      setTimeout(() => {
-        if (!this.originCity) {
-          this.detectCurrentLocation(false);
-        }
-      }, 350);
-    }
   }
 
   saveState() {
@@ -1401,21 +1392,7 @@ class BookingManager {
       }, 250);
     }
 
-    if (window.viewRouter) {
-      const pDate = document.getElementById("display-pickup-date")?.textContent || "Today";
-      const pTime = document.getElementById("display-pickup-time")?.textContent || "10:00 AM";
-      window.viewRouter.updateRouteSummary(
-        this.originCity.name,
-        this.destCity.name,
-        pDate,
-        pTime,
-        this.calculatedDistance,
-        this.calculatedDuration
-      );
-      window.viewRouter.navigateTo("cabs");
-      window.showToast(`Outstation Fares Calculated: ${this.originCity.name} to ${this.destCity.name}`, "success");
-      this.saveState();
-    } else if (section && !silent) {
+    if (section && !silent) {
       setTimeout(() => {
         const topPos = section.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top: Math.max(0, topPos), behavior: "smooth" });
@@ -2053,44 +2030,16 @@ class BookingManager {
       this.passengerDetails.phone = `+91 ${rawPhone}`;
     }
 
+    const checkoutModal = document.getElementById("modal-checkout");
+    const checkoutBody = document.getElementById("modal-checkout-body");
+
+    if (!checkoutModal || !checkoutBody) return;
+
     this.currentCheckoutPrice = price;
     this.currentCheckoutFleet = fleet;
     this.appliedCouponCode = "";
     this.appliedCouponDiscount = 0;
     this.tempBookingId = "OTB-2026-" + Math.floor(1000 + Math.random() * 9000);
-
-    // If in-app Sub-View Router is active, populate #view-checkout and navigate
-    if (window.viewRouter) {
-      const coName = document.getElementById("co-name");
-      const coPhone = document.getElementById("co-phone");
-      const coPath = document.getElementById("checkout-summary-route-path");
-      const coSidebarTier = document.getElementById("co-sidebar-tier");
-      const coSidebarCarName = document.getElementById("co-sidebar-car-name");
-      const coSidebarBaseFare = document.getElementById("co-sidebar-base-fare");
-      const coSidebarTotalFare = document.getElementById("co-sidebar-total-fare");
-
-      if (coName && this.passengerDetails.name) coName.value = this.passengerDetails.name;
-      if (coPhone && rawPhone) coPhone.value = rawPhone;
-      if (coPath) {
-        coPath.innerHTML = `
-          <span class="route-summary-city"><span class="city-dot pickup"></span>${this.originCity?.name || 'Pickup'}</span>
-          <span class="route-summary-arrow">➔</span>
-          <span class="route-summary-city"><span class="city-dot drop"></span>${this.destCity?.name || 'Drop'}</span>
-        `;
-      }
-      if (coSidebarTier) coSidebarTier.textContent = fleet.category;
-      if (coSidebarCarName) coSidebarCarName.textContent = `${fleet.category} (${fleet.models})`;
-      if (coSidebarBaseFare) coSidebarBaseFare.textContent = `₹${price.toLocaleString('en-IN')}`;
-      if (coSidebarTotalFare) coSidebarTotalFare.textContent = `₹${price.toLocaleString('en-IN')}`;
-
-      window.viewRouter.navigateTo("checkout");
-      return;
-    }
-
-    const checkoutModal = document.getElementById("modal-checkout");
-    const checkoutBody = document.getElementById("modal-checkout-body");
-
-    if (!checkoutModal || !checkoutBody) return;
 
     const km = this.calculatedDistanceKm || 104;
     const baseKm = (this.tripType === "local") ? 80 : (fleet.baseKm || 15);
@@ -3770,217 +3719,6 @@ class BookingManager {
     document.body.classList.add("modal-open");
     history.pushState({ modal: "modal-confirmation" }, "", "#modal-confirmation");
     window.showToast("Booking request sent! Our agent will call you in 5 minutes.", "success");
-  }
-
-  async handleDedicatedCheckoutSubmit() {
-    const nameInput = document.getElementById("co-name");
-    const phoneInput = document.getElementById("co-phone");
-    const pickupAddrInput = document.getElementById("co-pickup-address");
-    const dropAddrInput = document.getElementById("co-drop-address");
-    const notesInput = document.getElementById("co-notes");
-    const payMode = document.querySelector('input[name="co_pay_mode"]:checked')?.value || "advance";
-
-    const name = (nameInput?.value || "").trim();
-    const rawPhone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
-    const pickupAddress = (pickupAddrInput?.value || "").trim();
-    const dropAddress = (dropAddrInput?.value || "").trim();
-    const notes = (notesInput?.value || "").trim();
-
-    if (!name) {
-      window.showToast("Please enter passenger's full name", "warning");
-      nameInput?.focus();
-      return;
-    }
-    if (!rawPhone || rawPhone.length !== 10 || !/^[6-9]\d{9}$/.test(rawPhone)) {
-      window.showToast("Please enter a valid 10-digit mobile number", "warning");
-      phoneInput?.focus();
-      return;
-    }
-    if (!pickupAddress) {
-      window.showToast("Please enter complete doorstep pickup address", "warning");
-      pickupAddrInput?.focus();
-      return;
-    }
-
-    this.passengerDetails.name = name;
-    this.passengerDetails.phone = `+91 ${rawPhone}`;
-    this.passengerDetails.pickupAddress = pickupAddress;
-    this.passengerDetails.dropAddress = dropAddress;
-    this.passengerDetails.notes = notes;
-    this.passengerDetails.paymentMethod = payMode;
-
-    const submitBtn = document.getElementById("btn-co-confirm");
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Dispatching Chauffeur...</span>`;
-    }
-
-    try {
-      const payload = {
-        bookingId: "OTB-2026-" + Math.floor(10000 + Math.random() * 90000),
-        pickup: this.originCity ? `${this.originCity.name}, ${this.originCity.state}` : pickupAddress,
-        drop: this.destCity ? `${this.destCity.name}, ${this.destCity.state}` : dropAddress,
-        originCity: this.originCity,
-        destCity: this.destCity,
-        tripType: this.tripType || "oneway",
-        pickupDate: this.pickupDate || document.getElementById("pickup-date-input")?.value || new Date().toISOString().split("T")[0],
-        pickupTime: this.pickupTime || document.getElementById("pickup-time-select")?.value || "10:00 AM",
-        cabTier: this.currentCheckoutFleet?.category || "Executive Sedan",
-        cabId: this.selectedCabId || "sedan",
-        price: this.currentCheckoutPrice || 1499,
-        totalFare: this.currentCheckoutPrice || 1499,
-        passenger: {
-          name: name,
-          phone: `+91 ${rawPhone}`,
-          pickupAddress: pickupAddress,
-          dropAddress: dropAddress,
-          specialNotes: notes,
-          paymentMethod: payMode
-        },
-        paymentPreference: payMode,
-        status: "CONFIRMED"
-      };
-
-      let res = null;
-      if (typeof ApiClient !== "undefined" && typeof ApiClient.createBooking === "function") {
-        res = await ApiClient.createBooking(payload);
-      } else {
-        const response = await fetch("/api/bookings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        res = await response.json();
-      }
-
-      const confirmedId = res?.bookingId || res?.booking?.bookingId || res?.booking?.id || payload.bookingId;
-
-      // Update Confirmation View
-      const idEl = document.getElementById("conf-display-id");
-      const routeEl = document.getElementById("conf-display-route");
-      const carEl = document.getElementById("conf-display-car");
-      const timeEl = document.getElementById("conf-display-time");
-      const fareEl = document.getElementById("conf-display-fare");
-
-      if (idEl) idEl.textContent = confirmedId;
-      if (routeEl) routeEl.textContent = `${this.originCity?.name || 'Pickup'} ➔ ${this.destCity?.name || 'Destination'}`;
-      if (carEl) carEl.textContent = `${this.currentCheckoutFleet?.category || 'Executive Sedan'} (${this.currentCheckoutFleet?.models || 'Dzire/Etios'})`;
-      if (timeEl) timeEl.textContent = `${payload.pickupDate}, ${payload.pickupTime}`;
-      if (fareEl) fareEl.textContent = `₹${(this.currentCheckoutPrice || 1499).toLocaleString('en-IN')} (${payMode === 'advance' ? '20% Adv Paid' : 'Cash to Driver'})`;
-
-      window.showToast("Booking Confirmed! Chauffeur dispatch queued.", "success");
-
-      if (window.viewRouter) {
-        window.viewRouter.navigateTo("confirmation");
-      }
-    } catch (err) {
-      console.error("Booking error:", err);
-      window.showToast("Booking queued! Central Desk will call you to confirm.", "info");
-      if (window.viewRouter) {
-        window.viewRouter.navigateTo("confirmation");
-      }
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Confirm Booking &amp; Dispatch Chauffeur</span>`;
-      }
-    }
-  }
-
-  preselectFleetCategory(cat) {
-    this.selectedCabId = cat;
-    if (window.viewRouter) {
-      window.viewRouter.navigateTo("home");
-    }
-    const pInput = document.getElementById("input-pickup");
-    if (pInput) {
-      pInput.focus();
-      const parent = pInput.closest(".input-field-group");
-      if (parent) {
-        parent.classList.add("shake-error");
-        setTimeout(() => parent.classList.remove("shake-error"), 400);
-      }
-    }
-    window.showToast(`Selected ${cat.toUpperCase()}. Please enter pickup & drop cities.`, "info");
-  }
-
-  async handleTrackLookup() {
-    const idInput = document.getElementById("track-booking-id");
-    const phoneInput = document.getElementById("track-booking-phone");
-    const resultBox = document.getElementById("track-result-container");
-
-    const id = (idInput?.value || "").trim().toUpperCase();
-    const phone = (phoneInput?.value || "").replace(/\D/g, "").slice(-10);
-
-    if (!id) {
-      window.showToast("Please enter Booking Reference ID", "warning");
-      idInput?.focus();
-      return;
-    }
-    if (!phone || phone.length !== 10) {
-      window.showToast("Please enter 10-digit registered mobile number", "warning");
-      phoneInput?.focus();
-      return;
-    }
-
-    if (resultBox) {
-      resultBox.style.display = "block";
-      resultBox.innerHTML = `
-        <div style="text-align: center; padding: 20px; color: var(--owc-text-muted);">
-          <div class="trust-pulse-dot" style="margin: 0 auto 10px auto;"></div>
-          <span>Locating live dispatch status for ${id}...</span>
-        </div>
-      `;
-    }
-
-    try {
-      let bookingData = null;
-      if (typeof ApiClient !== "undefined" && typeof ApiClient.getBooking === "function") {
-        bookingData = await ApiClient.getBooking(id, phone);
-      } else {
-        const res = await fetch(`/api/bookings?bookingId=${encodeURIComponent(id)}&phone=${encodeURIComponent(phone)}`);
-        const json = await res.json();
-        bookingData = json.booking || json;
-      }
-
-      if (resultBox) {
-        const status = bookingData?.status || "CONFIRMED";
-        const driverName = bookingData?.driver?.name || "Ramesh Kumar (Assigned Chauffeur)";
-        const driverPhone = bookingData?.driver?.phone || "+91 80021 41816";
-        const vehicleNum = bookingData?.driver?.vehicleNumber || "BR-01-PK-8824";
-        const carModel = bookingData?.cabTier || bookingData?.cabCategory || "Maruti Suzuki Dzire (White)";
-
-        resultBox.innerHTML = `
-          <div style="background: var(--owc-slate-50); border: 1.5px solid var(--owc-border); border-radius: var(--radius-lg); padding: 18px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-              <span class="route-meta-pill" style="background: #ecfdf5; color: #059669; border-color: rgba(16,185,129,0.3); font-weight: 800;">STATUS: ${status}</span>
-              <span style="font-size: 13px; font-weight: 850; color: var(--owc-primary);">${id}</span>
-            </div>
-            <div style="margin-bottom: 14px; font-size: 14px;">
-              <div style="color: var(--owc-text-muted); font-size: 12px; font-weight: 600;">ASSIGNED CHAUFFEUR &amp; VEHICLE</div>
-              <div style="font-weight: 850; color: var(--owc-text); font-size: 16px; margin-top: 3px;">${driverName}</div>
-              <div style="font-size: 13px; color: var(--owc-text-muted);">${carModel} • <strong style="color: var(--owc-text);">${vehicleNum}</strong></div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-              <a href="tel:${driverPhone}" class="checkout-submit-btn" style="flex: 1; margin-top: 0; padding: 11px; text-decoration: none; font-size: 14px; background: #0284c7;">
-                <span>Call Chauffeur</span>
-              </a>
-              <a href="https://wa.me/918002141816?text=Query%20about%20booking%20${id}" target="_blank" class="checkout-submit-btn" style="flex: 1; margin-top: 0; padding: 11px; text-decoration: none; font-size: 14px; background: #25d366;">
-                <span>WhatsApp Desk</span>
-              </a>
-            </div>
-          </div>
-        `;
-      }
-    } catch (e) {
-      if (resultBox) {
-        resultBox.innerHTML = `
-          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 14px; color: #991b1b; font-size: 13.5px; text-align: center;">
-            Booking reference not found or invalid phone number. Please check or call 24x7 Helpdesk at <strong>+91 80021 41816</strong>.
-          </div>
-        `;
-      }
-    }
   }
 }
 

@@ -1,29 +1,45 @@
 /**
  * OneWayTaxiBihar (onewaytaxibihar.com)
  * High-Performance Offline & PWA Service Worker
- * Version: 2026.10.15-v2.0
+ * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v3.0';
+const CACHE_NAME = 'onewaytaxibihar-v1.4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
-  '/css/style.css',
-  '/css/components.css',
-  '/js/data.js',
-  '/js/calculator.js',
-  '/js/map.js',
-  '/js/api.js',
-  '/js/datetime-picker.js',
-  '/js/firebase-otp.js',
-  '/js/view-router.js',
-  '/js/booking.js',
-  '/js/app.js',
-  '/img/logo-reframed.png',
-  '/favicon.svg',
-  '/manifest.json',
+  '/driver',
+  '/driver.html',
+  '/patna-to-gaya-cab',
+  '/patna-to-gaya-cab.html',
+  '/patna-to-muzaffarpur-cab',
+  '/patna-to-muzaffarpur-cab.html',
+  '/patna-to-darbhanga-cab',
+  '/patna-to-darbhanga-cab.html',
+  '/patna-to-bhagalpur-cab',
+  '/patna-to-bhagalpur-cab.html',
   '/404.html',
-  '/500.html'
+  '/500.html',
+  '/css/style.css',
+  '/css/components.css?v=3.0',
+  '/js/data.js?v=20261008_0030',
+  '/js/calculator.js?v=20261008_0030',
+  '/js/map.js?v=20261008_0030',
+  '/js/api.js?v=20261008_0030',
+  '/js/datetime-picker.js?v=20261008_0030',
+  '/js/firebase-otp.js?v=20261008_fast2sms',
+  '/js/booking.js?v=20261008_0030',
+  '/js/app.js?v=20261008_0030',
+  '/favicon.svg',
+  '/img/logo-reframed.png',
+  '/images/icon-192.png',
+  '/images/icon-512.png',
+  '/images/phonepe-qr.png',
+  '/manifest.json',
+  '/driver-manifest.json',
+  '/driver-icon.svg',
+  '/images/driver-icon-192.png',
+  '/images/driver-icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -54,14 +70,8 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 1. NEVER cache API requests, bookings, payments, or admin - ALWAYS bypass SW
-  if (
-    req.method !== 'GET' ||
-    url.pathname.startsWith('/api/') ||
-    url.pathname.startsWith('/admin') ||
-    url.pathname.includes('/checkout') ||
-    url.pathname.includes('/payment')
-  ) {
+  // 1. NEVER cache API requests or non-GET requests - ALWAYS Network First
+  if (req.method !== 'GET' || url.pathname.startsWith('/api/') || url.pathname.startsWith('/admin')) {
     event.respondWith(
       fetch(req).catch(() => {
         return new Response(JSON.stringify({ 
@@ -96,31 +106,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Static Assets (Fonts, WebP Images, Minified CSS/JS) - Cache-First for maximum speed
-  if (
-    url.pathname.startsWith('/fonts/') ||
-    url.pathname.endsWith('.woff2') ||
-    url.pathname.endsWith('.webp') ||
-    url.pathname.endsWith('.svg') ||
-    url.pathname.endsWith('.min.css') ||
-    url.pathname.endsWith('.min.js')
-  ) {
-    event.respondWith(
-      caches.match(req).then((cachedRes) => {
-        if (cachedRes) return cachedRes;
-        return fetch(req).then((networkRes) => {
-          if (networkRes && networkRes.status === 200) {
-            const clone = networkRes.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          }
-          return networkRes;
-        });
-      })
-    );
-    return;
-  }
-
-  // 4. Default: Stale While Revalidate
+  // 3. Static Assets (CSS, JS, Images, Fonts) - Stale While Revalidate
   event.respondWith(
     caches.match(req).then((cachedRes) => {
       const fetchPromise = fetch(req).then((networkRes) => {

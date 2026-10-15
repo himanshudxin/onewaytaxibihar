@@ -128,7 +128,7 @@
 
 /* "Made in" Prefix */
 .pride-text-prefix {
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13.5px;
   font-weight: 600;
   text-transform: uppercase;
@@ -139,7 +139,7 @@
 
 /* "बिहार" in authentic Devanagari */
 .pride-bihar-hindi {
-  font-family: 'Mukta', 'Noto Sans Devanagari', var(--font-sans, sans-serif);
+  font-family: 'Mukta', 'Noto Sans Devanagari', -apple-system, sans-serif;
   font-size: 21px;
   font-weight: 900;
   color: #ff9e2c;
@@ -168,17 +168,17 @@
 
 /* "for" separator */
 .pride-text-mid {
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: 'Inter', Georgia, serif;
   font-size: 13.5px;
-  font-style: normal;
-  font-weight: 500;
+  font-style: italic;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.65);
   line-height: 1;
 }
 
 /* "BHARAT" with prestigious typography */
 .pride-bharat-bold {
-  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-family: 'Montserrat', 'Inter', sans-serif;
   font-size: 15.5px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -1236,9 +1236,8 @@
 .exec-picker-modal {
   position: fixed !important;
   inset: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  height: 100% !important;
+  width: 100vw !important;
+  height: 100vh !important;
   background: rgba(15, 23, 42, 0.72) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
@@ -3309,7 +3308,7 @@
   font-size: 32px;
   color: var(--owc-primary);
   opacity: 0.15;
-  font-family: var(--font-sans);
+  font-family: serif;
 }
 
 .test-stars-row {
@@ -5579,8 +5578,7 @@
 
 /* 4. Popular Routes Quickbar */
 .popular-routes-quickbar {
-  max-width: 960px;
-  margin: 24px auto 0;
+  margin-top: 28px;
   text-align: center;
 }
 
@@ -6417,7 +6415,7 @@ body.modal-open .mobile-call-bar {
   bottom: 24px;
   right: 24px;
   z-index: 9999;
-  font-family: var(--font-sans);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .ai-copilot-trigger {
@@ -6763,373 +6761,4 @@ body.modal-open .mobile-sticky-bottom-bar,
 body.drawer-open .mobile-sticky-bottom-bar {
   display: none !important;
   pointer-events: none !important;
-}
-
-/* ==========================================================================
-   PAGE-WITHIN-PAGE (SPA SUB-VIEW) ARCHITECTURE & STYLING
-   ========================================================================== */
-.app-main-viewport {
-  min-height: calc(100vh - var(--navbar-total-height, 100px) - 300px);
-  position: relative;
-}
-
-.app-view {
-  display: none;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.app-view.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Sticky Route Summary Bar in Cab Selection & Checkout Views */
-.route-summary-bar {
-  background: var(--owc-surface);
-  border-bottom: 1.5px solid var(--owc-border);
-  padding: 14px 0;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
-  position: sticky;
-  top: var(--navbar-main-height, 72px);
-  z-index: 95;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.route-summary-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.route-summary-path {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--owc-text);
-}
-
-.route-summary-city {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.route-summary-city .city-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-}
-
-.city-dot.pickup {
-  background: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-}
-
-.city-dot.drop {
-  background: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
-
-.route-summary-arrow {
-  color: var(--owc-primary);
-  font-size: 14px;
-}
-
-.route-summary-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--owc-text-muted);
-}
-
-.route-meta-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--owc-slate-100);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  color: var(--owc-text);
-  border: 1px solid var(--owc-border);
-}
-
-.route-summary-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-edit-search {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: var(--owc-primary-subtle);
-  color: var(--owc-primary);
-  border: 1.5px solid var(--owc-primary-glow);
-  border-radius: var(--radius-md);
-  font-size: 13.5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.btn-edit-search:hover {
-  background: var(--owc-primary);
-  color: #ffffff;
-}
-
-/* Dedicated Sub-View Hero Header (Fleet, Routes, Reviews, FAQ) */
-.subview-header-strip {
-  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0, 149, 246, 0.12) 0%, transparent 70%), var(--owc-surface);
-  border-bottom: 1px solid var(--owc-border);
-  padding: 32px 0 24px 0;
-  margin-bottom: 32px;
-}
-
-.subview-header-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.subview-breadcrumbs {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--owc-text-muted);
-}
-
-.subview-breadcrumbs a {
-  color: var(--owc-primary);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.subview-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.subview-main-title {
-  font-size: 28px;
-  font-weight: 850;
-  color: var(--owc-text);
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-
-.subview-subtitle {
-  font-size: 15px;
-  color: var(--owc-text-muted);
-  max-width: 650px;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.btn-subview-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  background: var(--owc-surface);
-  color: var(--owc-text);
-  border: 1.5px solid var(--owc-border);
-  border-radius: var(--radius-md);
-  font-size: 13.5px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-fast);
-}
-
-.btn-subview-back:hover {
-  border-color: var(--owc-primary);
-  color: var(--owc-primary);
-}
-
-/* Dedicated Checkout View Layout */
-.checkout-view-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 28px;
-  margin-bottom: 48px;
-}
-
-@media (max-width: 992px) {
-  .checkout-view-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.checkout-card-box {
-  background: var(--owc-surface);
-  border: 1.5px solid var(--owc-border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 20px;
-}
-
-.checkout-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--owc-border-light);
-  padding-bottom: 14px;
-  margin-bottom: 18px;
-}
-
-.checkout-card-title {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--owc-text);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.checkout-card-title svg {
-  color: var(--owc-primary);
-}
-
-.checkout-summary-sidebar {
-  position: sticky;
-  top: 90px;
-}
-
-.fare-recap-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  font-size: 14px;
-  color: var(--owc-text-muted);
-  border-bottom: 1px dashed var(--owc-border-light);
-}
-
-.fare-recap-row.total {
-  border-bottom: none;
-  padding-top: 14px;
-  font-size: 18px;
-  font-weight: 850;
-  color: var(--owc-text);
-}
-
-.fare-recap-row.total .price {
-  color: var(--owc-primary);
-  font-size: 22px;
-}
-
-.checkout-submit-btn {
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(135deg, var(--owc-primary), var(--owc-primary-hover));
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: 16px;
-  font-weight: 800;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: var(--shadow-blue-glow);
-  transition: all var(--transition-fast);
-  margin-top: 18px;
-}
-
-.checkout-submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 149, 246, 0.35);
-}
-
-/* Dedicated Booking Confirmation View */
-.confirmation-container {
-  max-width: 680px;
-  margin: 32px auto 64px auto;
-  text-align: center;
-}
-
-.conf-success-badge {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: #ecfdf5;
-  color: #10b981;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-  box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.15);
-  animation: pulseBadge 2s infinite;
-}
-
-@keyframes pulseBadge {
-  0%, 100% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.15); }
-  50% { box-shadow: 0 0 0 16px rgba(16, 185, 129, 0.05); }
-}
-
-.conf-main-card {
-  background: var(--owc-surface);
-  border: 1.5px solid var(--owc-border);
-  border-radius: var(--radius-xl);
-  padding: 32px 28px;
-  box-shadow: var(--shadow-xl);
-  text-align: left;
-  margin-top: 24px;
-}
-
-.conf-id-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--owc-slate-50);
-  border: 1px solid var(--owc-border);
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  margin-bottom: 20px;
-}
-
-.conf-id-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--owc-text-muted);
-  text-transform: uppercase;
-}
-
-.conf-id-val {
-  font-size: 17px;
-  font-weight: 850;
-  color: var(--owc-primary);
-  letter-spacing: 0.5px;
-}
-
-.conf-actions-cluster {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 24px;
-}
-
-@media (max-width: 600px) {
-  .conf-actions-cluster {
-    grid-template-columns: 1fr;
-  }
 }

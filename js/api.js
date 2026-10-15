@@ -13,14 +13,15 @@ class ApiClient {
 
   static baseUrl = (() => {
     if (typeof window !== "undefined") {
-      // Whenever running from a web server (localhost, custom port, trycloudflare tunnel, vercel, production domain),
-      // use same-origin relative URLs ("") so requests hit the active server that served the page.
-      if (window.location.origin && window.location.origin !== "null" && !window.location.protocol.startsWith("file")) {
+      // 1. If running directly on the production domain or vercel
+      if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
         return "";
       }
+      // 2. Default to LIVE production cloud backend (onewaytaxibihar.com) so the frontend
+      // always connects to live MongoDB Atlas without requiring a local node server
       return "https://onewaytaxibihar.com";
     }
-    return "";
+    return "https://onewaytaxibihar.com";
   })();
 
   static async request(endpoint, options = {}) {
@@ -198,24 +199,6 @@ class ApiClient {
     }
   }
 
-  // Google Firebase Phone Auth Token Verification (10,000 Free SMS/Month)
-  static async verifyFirebaseToken(idToken, phone = "", name = "") {
-    const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
-    try {
-      let res = await this.request("/api/auth/firebase-verify", {
-        method: "POST",
-        body: JSON.stringify({ idToken, phone: cleanPhone, name })
-      });
-      if (res && res.success && res.token) {
-        localStorage.setItem("otb_auth_token", res.token);
-        localStorage.setItem("otb_current_user", JSON.stringify(res.user));
-      }
-      return res || { success: false, message: "Firebase verification failed." };
-    } catch (e) {
-      return { success: false, message: "Network error during Firebase verification." };
-    }
-  }
-
   // Privacy-Secured Official GST Tax Invoice Lookup (Booking ID + Phone verification)
   static async lookupInvoice(bookingId, phone = "") {
     const cleanPhone = (phone || "").replace(/\D/g, "").slice(-10);
@@ -312,9 +295,8 @@ class ApiClient {
   }
 
   // oneway.cab API: Route Details & Cab Tiers
-  static async getRouteDetails(from, to, phone = "") {
-    const rawPhone = (phone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "").slice(-10);
-    const res = await this.request(`/api/route-details?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}${rawPhone ? `&phone=${encodeURIComponent(rawPhone)}` : ''}`);
+  static async getRouteDetails(from, to) {
+    const res = await this.request(`/api/route-details?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
     if (res && res.success) {
       return res;
     }
@@ -1112,6 +1094,13 @@ class ApiClient {
   }
 
   // Enterprise Admin Methods
+  static async adminLogin(username, password) {
+    return await this.request("/api/admin/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    });
+  }
+
   static async adminLogout() {
     return await this.request("/api/admin/logout", {
       method: "POST"

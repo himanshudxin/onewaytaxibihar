@@ -273,7 +273,7 @@ button, a, input, select {
 }
 
 .brand-text-logo {
-  font-family: var(--font-sans);
+  font-family: 'Inter', 'Montserrat', -apple-system, sans-serif;
   font-size: 22px;
   font-weight: 900;
   color: var(--owc-text);
@@ -706,7 +706,7 @@ body.call-bar-collapsed .navbar-call-mini-pill {
   color: #ffffff;
   padding: 8px 18px;
   border-radius: 9999px;
-  font-family: var(--font-sans);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
@@ -2138,14 +2138,6 @@ main.site-main {
     box-sizing: border-box !important;
   }
 
-  .app-section {
-    padding: 40px 0;
-  }
-
-  .section-header {
-    margin: 0 auto 28px auto;
-  }
-
   .client-trial-banner {
     display: none !important;
   }
@@ -2263,7 +2255,7 @@ main.site-main {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  font-family: var(--font-sans);
+  font-family: 'Inter', sans-serif;
   color: var(--owc-text);
   font-size: 20px;
   font-weight: 800;

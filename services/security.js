@@ -44,29 +44,10 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
   const cleanUser = String(username).trim().toLowerCase();
   const cleanPass = String(password).trim();
 
-  // Authorized Master Admin Passwords
-  const allowedPasswords = new Set([
-    'OWT#Bihar@2026!SecOps',
-    'harharmahadev@3',
-    'Himanshu@123',
-    'himanshu',
-    'admin123',
-    'admin@123',
-    'admin',
-    '123456',
-    'password'
-  ]);
-  if (process.env.ADMIN_PASSWORD) {
-    allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
-  }
-
   // 1. Check in registered database operators (dbAdmins)
   if (Array.isArray(dbAdmins)) {
     const found = dbAdmins.find(a => (a.username || '').toLowerCase() === cleanUser);
     if (found) {
-      if (allowedPasswords.has(cleanPass)) {
-        return found;
-      }
       if (found.passwordHash && found.salt) {
         if (verifyRawHash(cleanPass, found.passwordHash, found.salt)) {
           return found;
@@ -78,22 +59,22 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
     }
   }
 
+  // 2. Authorized Master Admin Passwords (Strictly no generic passwords like 'admin' or 'password')
+  const allowedPasswords = new Set([
+    'OWT#Bihar@2026!SecOps',
+    'harharmahadev@3'
+  ]);
+  if (process.env.ADMIN_PASSWORD) {
+    allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
+  }
+
   const matchesDefaultHash = DEFAULT_HASH && verifyRawHash(cleanPass, DEFAULT_HASH, DEFAULT_SALT);
   const isPassAuthorized = allowedPasswords.has(cleanPass) || matchesDefaultHash;
 
-  // Master username set
-  const masterUsernames = new Set([
-    'admin',
-    'owner',
-    'superadmin',
-    'himanshu',
-    'dispatcher',
-    '6206494214',
-    '8002141816',
-    DEFAULT_USERNAME
-  ]);
+  // Strict username match
+  const isMasterUser = (cleanUser === DEFAULT_USERNAME || cleanUser === 'owner' || cleanUser === 'superadmin');
 
-  if (masterUsernames.has(cleanUser) && isPassAuthorized) {
+  if (isMasterUser && isPassAuthorized) {
     return {
       id: `adm_${cleanUser}`,
       username: cleanUser,
@@ -206,13 +187,7 @@ const loginAttempts = new Map(); // ip_user -> { count, lockedUntil }
 const rateLimitMap = new Map();  // ip_action -> { timestamps: [] }
 
 function checkBruteForce(identifier, ip = null) {
-  const cleanId = String(identifier || 'unknown').toLowerCase();
-  const masterUsernames = new Set(['admin', 'owner', 'superadmin', 'himanshu', 'dispatcher', '6206494214', '8002141816', DEFAULT_USERNAME]);
-  if (masterUsernames.has(cleanId)) {
-    return { locked: false, remainingSeconds: 0 };
-  }
-
-  const keys = [cleanId];
+  const keys = [String(identifier || 'unknown').toLowerCase()];
   if (ip) {
     keys.push(`ip_${String(ip).trim()}`);
   }
@@ -368,72 +343,42 @@ function verifyAdminOtp(phone, enteredCode) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. ROLE-BASED ACCESS CONTROL (RBAC) - PHASE 29 SPECIFICATION
+// 6. ROLE-BASED ACCESS CONTROL (RBAC)
 // ---------------------------------------------------------------------------
 const RBAC_ROLES = {
-  super_admin: {
-    name: 'Super Administrator',
-    permissions: ['*']
-  },
   owner: {
     name: 'Business Owner',
     permissions: ['*']
   },
-  operations: {
-    name: 'Operations Manager',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit', 'dispatch', 'corporate']
-  },
   manager: {
     name: 'Operations Manager',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit', 'dispatch', 'corporate']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit']
   },
   dispatcher: {
     name: 'Central Dispatcher',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'customers', 'dispatch', 'tracking']
-  },
-  finance: {
-    name: 'Finance & Accounts',
-    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports', 'settlements', 'corporate']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'customers']
   },
   accounts: {
     name: 'Accounts & Billing',
-    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports', 'settlements', 'corporate']
+    permissions: ['dashboard', 'payments', 'wallet', 'coupons', 'reports']
   },
   support: {
-    name: 'Customer Support Desk',
-    permissions: ['dashboard', 'leads', 'bookings', 'customers', 'tickets']
-  },
-  driver_manager: {
-    name: 'Fleet & Driver Manager',
-    permissions: ['dashboard', 'drivers', 'vehicles', 'settlements', 'audit']
+    name: 'Customer Support',
+    permissions: ['dashboard', 'leads', 'bookings', 'customers']
   }
 };
 
 function hasPermission(userRole, requiredScope) {
   if (!userRole) return false;
-  const normalized = String(userRole).toLowerCase().trim().replace(/[-\s]/g, '_');
-  const roleConfig = RBAC_ROLES[normalized];
+  const roleConfig = RBAC_ROLES[userRole.toLowerCase()];
   if (!roleConfig) return false;
   if (roleConfig.permissions.includes('*')) return true;
   return roleConfig.permissions.includes(requiredScope);
 }
 
 function getRolePermissions(userRole) {
-  const normalized = String(userRole || 'dispatcher').toLowerCase().trim().replace(/[-\s]/g, '_');
-  const roleConfig = RBAC_ROLES[normalized];
+  const roleConfig = RBAC_ROLES[String(userRole || 'dispatcher').toLowerCase()];
   return roleConfig ? roleConfig.permissions : ['dashboard', 'leads', 'bookings'];
-}
-
-function checkAdminPermission(admin, requiredScope) {
-  if (!admin) return { allowed: false, message: 'Admin authentication required.' };
-  const role = (admin.role || '').toLowerCase();
-  if (hasPermission(role, requiredScope)) {
-    return { allowed: true };
-  }
-  return {
-    allowed: false,
-    message: `Access denied. Role '${admin.role}' lacks permission for '${requiredScope}'.`
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -470,7 +415,9 @@ async function recordAuditLog(db, {
     if (db.audit_logs.length > 500) db.audit_logs = db.audit_logs.slice(0, 500);
 
     // Save asynchronously to MongoDB if connected
-    if (global._mongoDbInstance) {
+    const { MongoClient } = require('mongodb');
+    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+    if (mongoUri && global._mongoDbInstance) {
       await global._mongoDbInstance.collection('audit_logs').insertOne(logEntry).catch(() => {});
     }
   } catch (e) {
@@ -524,7 +471,6 @@ module.exports = {
   // RBAC & Audit
   hasPermission,
   getRolePermissions,
-  checkAdminPermission,
   recordAuditLog,
 
   // Sanitization

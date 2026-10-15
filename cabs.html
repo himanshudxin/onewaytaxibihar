@@ -111,16 +111,95 @@
     }
     .cabs-list-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 20px;
       margin-bottom: 48px;
     }
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .cabs-list-container {
         grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 30px;
+      }
+      .route-highlight-strip {
+        padding: 14px 12px;
+        border-radius: 14px;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: stretch;
       }
       .route-path-main {
-        font-size: 16px;
+        font-size: 15px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .route-chips-wrap {
+        gap: 6px;
+      }
+      .route-badge {
+        font-size: 11px;
+        padding: 3px 8px;
+      }
+      .route-highlight-strip .btn-modify-route {
+        width: 100%;
+        justify-content: center;
+        padding: 9px 12px;
+        font-size: 12px;
+        box-sizing: border-box;
+      }
+      .nav-actions .btn-modify-route {
+        padding: 6px 10px;
+        font-size: 11.5px;
+        white-space: nowrap;
+      }
+      .cab-tier-card {
+        padding: 16px 14px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: 16px !important;
+      }
+      .cab-card-top {
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+      }
+      .cab-header-info h3 {
+        font-size: 16px !important;
+      }
+      .cab-models-sub {
+        font-size: 11.5px !important;
+      }
+      .cab-specs-chips {
+        gap: 5px !important;
+        margin-bottom: 10px !important;
+      }
+      .cab-spec-chip {
+        font-size: 10.5px !important;
+        padding: 3px 6px !important;
+      }
+      .cab-price-container {
+        padding-top: 10px !important;
+        margin-bottom: 12px !important;
+      }
+      .cab-price-row {
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+      }
+      .cab-price-main {
+        font-size: 22px !important;
+      }
+      .cab-tax-note {
+        font-size: 10px !important;
+      }
+      .cab-savings-pill {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+      }
+      .btn-select-cab {
+        height: 46px !important;
+        font-size: 14px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
     }
   </style>
@@ -259,9 +338,11 @@
       const pickupTime = trip?.pickupTime || urlParams.get('time') || '10:00 AM';
       const phone = trip?.phone || urlParams.get('phone') || '';
 
-      // Update UI Header
-      document.getElementById('txt-origin').textContent = originName;
-      document.getElementById('txt-dest').textContent = destName;
+      // Update UI Header (Clean display names to avoid mobile overflow)
+      const cleanOrigin = (originName || 'Patna').split('(')[0].split(',')[0].trim();
+      const cleanDest = (destName || 'Gaya').split('(')[0].split(',')[0].trim();
+      document.getElementById('txt-origin').textContent = cleanOrigin;
+      document.getElementById('txt-dest').textContent = cleanDest;
       document.getElementById('badge-date').textContent = `${displayDate} at ${pickupTime}`;
       document.getElementById('badge-trip-type').textContent = tripType === 'roundtrip' ? 'Round-Trip' : (tripType === 'local' ? 'Local Package' : 'One-Way');
 

@@ -30,6 +30,14 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/components.css">
   <style>
+    html, body {
+      overflow-x: hidden !important;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    *, *:before, *:after {
+      box-sizing: border-box;
+    }
     .page-step-header {
       padding: 24px 0 16px 0;
       text-align: center;
@@ -55,11 +63,6 @@
       gap: 28px;
       align-items: start;
       margin-bottom: 50px;
-    }
-    @media (max-width: 900px) {
-      .booking-grid-layout {
-        grid-template-columns: 1fr;
-      }
     }
     .summary-card {
       background: var(--owc-card-bg);
@@ -105,11 +108,6 @@
       gap: 14px;
       margin-bottom: 14px;
     }
-    @media (max-width: 600px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
     .input-box-wrap {
       display: flex;
       flex-direction: column;
@@ -149,15 +147,22 @@
       padding: 20px;
       margin: 20px 0;
     }
-    .otp-inputs-row {
+    .otp-request-row {
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
+    }
+    .otp-inputs-row {
+      display: grid;
+      grid-template-columns: repeat(6, 44px);
+      gap: 8px;
       margin: 14px 0;
       justify-content: flex-start;
-      flex-wrap: wrap;
     }
     .otp-box-digit {
-      width: 44px;
+      width: 100%;
       height: 48px;
       text-align: center;
       font-size: 20px;
@@ -168,6 +173,7 @@
       color: var(--owc-text);
       outline: none;
       transition: all 0.18s ease;
+      box-sizing: border-box;
     }
     .otp-box-digit:focus {
       border-color: var(--owc-primary);
@@ -186,9 +192,20 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
     .btn-send-otp:hover {
       filter: brightness(1.1);
+    }
+    .btn-verify-otp-block {
+      width: 100%;
+      max-width: 320px;
+      height: 44px;
+      justify-content: center;
+      margin-top: 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      background: #10b981;
     }
     .verified-pill {
       display: none;
@@ -226,6 +243,7 @@
       width: 18px;
       height: 18px;
       accent-color: #10b981;
+      flex-shrink: 0;
     }
     .btn-confirm-booking {
       width: 100%;
@@ -245,6 +263,7 @@
       margin-top: 20px;
       box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
       transition: all 0.2s ease;
+      box-sizing: border-box;
     }
     .btn-confirm-booking:hover:not(:disabled) {
       filter: brightness(1.08);
@@ -290,6 +309,99 @@
       color: var(--owc-primary);
       margin: 12px 0 20px;
       letter-spacing: 1px;
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 900px) {
+      .booking-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 30px;
+      }
+      .summary-card {
+        position: static !important;
+        top: auto !important;
+        padding: 18px 14px !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+    @media (max-width: 600px) {
+      .page-step-header {
+        padding: 16px 0 10px 0;
+      }
+      .page-step-header .section-title {
+        font-size: 20px !important;
+      }
+      .page-step-header .section-subtitle {
+        font-size: 12.5px !important;
+      }
+      .form-card {
+        padding: 16px 14px !important;
+        border-radius: 14px;
+      }
+      .form-section-title {
+        font-size: 15px !important;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .otp-block {
+        padding: 14px 12px !important;
+        margin: 16px 0 !important;
+      }
+      .otp-request-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .otp-request-row .btn-send-otp {
+        width: 100%;
+        justify-content: center;
+        height: 42px;
+      }
+      .otp-inputs-row {
+        grid-template-columns: repeat(6, 1fr) !important;
+        gap: 6px !important;
+        max-width: 280px !important;
+        margin: 12px auto !important;
+        width: 100% !important;
+      }
+      .otp-box-digit {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 44px !important;
+        font-size: 18px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+      }
+      .btn-verify-otp-block {
+        max-width: 280px !important;
+        margin: 10px auto 0 auto !important;
+      }
+      .btn-confirm-booking {
+        height: 48px !important;
+        font-size: 15px !important;
+        border-radius: 10px !important;
+      }
+      .payment-option-card {
+        padding: 12px 14px !important;
+      }
+      .nav-actions .btn-modify-route {
+        padding: 6px 10px !important;
+        font-size: 11.5px !important;
+        white-space: nowrap;
+      }
+      .success-booking-box {
+        padding: 24px 14px !important;
+        border-radius: 16px !important;
+      }
+      .success-booking-box h2 {
+        font-size: 20px !important;
+      }
+      .booking-id-tag {
+        font-size: 15px !important;
+        padding: 4px 12px !important;
+      }
     }
   </style>
 </head>
@@ -454,7 +566,7 @@
           </div>
 
           <div class="otp-block" id="otp-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div class="otp-request-row">
               <div>
                 <div style="font-size: 13.5px; font-weight: 750; color: var(--owc-text);" id="txt-otp-prompt">Verify Mobile for Driver Dispatch</div>
                 <div style="font-size: 12px; color: var(--owc-text-muted);" id="txt-otp-note">We send an instant 6-digit SMS code to confirm your ride.</div>
@@ -465,7 +577,7 @@
             </div>
 
             <div id="otp-boxes-wrapper" style="display: none; margin-top: 14px;">
-              <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted);">ENTER 6-DIGIT OTP:</div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); text-align: center;">ENTER 6-DIGIT OTP:</div>
               <div class="otp-inputs-row">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-1" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-2" inputmode="numeric">
@@ -473,11 +585,11 @@
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-4" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-5" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-6" inputmode="numeric">
-                <button type="button" class="btn-send-otp" id="btn-verify-otp" style="background:#10b981; margin-left: 6px;" onclick="verifyOtpCode()">
-                  Verify OTP
-                </button>
               </div>
-              <div style="font-size: 11.5px; color: var(--owc-text-muted);">
+              <button type="button" class="btn-send-otp btn-verify-otp-block" id="btn-verify-otp" onclick="verifyOtpCode()">
+                Verify OTP
+              </button>
+              <div style="font-size: 11.5px; color: var(--owc-text-muted); text-align: center; margin-top: 8px;">
                 Test Code: <strong style="color: var(--owc-primary);">969696</strong> or SMS code sent to your mobile.
               </div>
             </div>
@@ -634,10 +746,12 @@
       }
 
       // Update Summary Card
+      const cleanOrigin = (trip.origin.name || 'Patna').split('(')[0].split(',')[0].trim();
+      const cleanDest = (trip.dest.name || 'Gaya').split('(')[0].split(',')[0].trim();
       document.getElementById('txt-cab-category').textContent = cab.category;
       document.getElementById('txt-cab-models').textContent = cab.models;
-      document.getElementById('txt-origin').textContent = trip.origin.name;
-      document.getElementById('txt-dest').textContent = trip.dest.name;
+      document.getElementById('txt-origin').textContent = cleanOrigin;
+      document.getElementById('txt-dest').textContent = cleanDest;
       document.getElementById('txt-route-sub').textContent = `${trip.distanceKm} KM • ~${trip.duration}`;
       document.getElementById('txt-schedule').textContent = `${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}`;
       document.getElementById('txt-base-fare').textContent = `₹${(cab.price - Math.round(cab.price * 0.05)).toLocaleString('en-IN')}`;
@@ -828,8 +942,10 @@
         document.getElementById('page-header-wrap').style.display = 'none';
         document.getElementById('booking-grid').style.display = 'none';
         
+        const succOrigin = (trip.origin.name || 'Patna').split('(')[0].split(',')[0].trim();
+        const succDest = (trip.dest.name || 'Gaya').split('(')[0].split(',')[0].trim();
         document.getElementById('succ-booking-id').textContent = bookingId;
-        document.getElementById('succ-route').textContent = `${trip.origin.name} ➔ ${trip.dest.name}`;
+        document.getElementById('succ-route').textContent = `${succOrigin} ➔ ${succDest}`;
         document.getElementById('succ-cab').textContent = `${cab.category} (${cab.models})`;
         document.getElementById('succ-time').textContent = `${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}`;
         document.getElementById('succ-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;

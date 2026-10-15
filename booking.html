@@ -442,6 +442,9 @@
       </a>
 
       <div class="nav-actions">
+        <a href="passenger.html" class="btn-modify-route" style="border: 1px solid rgba(0, 149, 246, 0.35); padding: 7px 14px; border-radius: 9999px; text-decoration: none; color: var(--owc-primary); font-size: 13px; font-weight: 700;">
+          <span>Passenger Portal</span>
+        </a>
         <a href="cabs.html" class="btn-modify-route" style="border: 1px solid var(--owc-border); padding: 7px 14px; border-radius: 9999px; text-decoration: none; color: var(--owc-text); font-size: 13px; font-weight: 700;">
           <span>← Change Cab</span>
         </a>
@@ -461,9 +464,9 @@
 
       <!-- Step Indicator -->
       <div class="page-step-header" id="page-header-wrap">
-        <span class="page-step-indicator">Step 3 of 3 • Rider Verification &amp; Confirmation</span>
+        <span class="page-step-indicator">Step 3 of 4 • Rider Verification &amp; OTP</span>
         <h1 class="section-title" style="font-size: 28px; margin-bottom: 8px;">Passenger Details &amp; Mobile OTP</h1>
-        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Zero advance booking • Pay directly to your driver after arrival</p>
+        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Instant OTP verification • Dedicated driver dispatch across Bihar</p>
       </div>
 
       <!-- Main Booking Layout -->
@@ -595,34 +598,12 @@
             </div>
           </div>
 
-          <!-- Step 3: Payment Preference -->
-          <div class="form-section-title" style="margin-top: 24px;">
-            <span class="step-num">3</span>
-            <span>Payment Preference</span>
-          </div>
-
-          <label class="payment-option-card selected" id="opt-cash">
-            <input type="radio" name="payment_method" value="cash_to_driver" checked>
-            <div>
-              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Cash on Ride (Zero Advance)</div>
-              <div style="font-size: 12px; color: var(--owc-text-muted);">Pay full amount directly to driver via Cash or UPI at trip completion.</div>
-            </div>
-          </label>
-
-          <label class="payment-option-card" id="opt-advance">
-            <input type="radio" name="payment_method" value="token_advance">
-            <div>
-              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Pay ₹299 Token Advance</div>
-              <div style="font-size: 12px; color: var(--owc-text-muted);">Lock guaranteed cab priority now, pay balance to driver.</div>
-            </div>
-          </label>
-
-          <!-- Submit Button -->
-          <button type="button" class="btn-confirm-booking" id="btn-submit-booking" onclick="submitBooking()" disabled>
-            <span>Verify OTP to Confirm Booking</span>
+          <!-- Submit Button to Proceed to Dedicated Payment Page (Step 4) -->
+          <button type="button" class="btn-confirm-booking" id="btn-submit-booking" onclick="proceedToPayment()" disabled>
+            <span>Verify Mobile OTP to Continue to Payment</span>
           </button>
-          <div style="text-align: center; font-size: 11.5px; color: var(--owc-text-muted); margin-top: 8px;">
-            By booking, you agree to OneWayTaxiBihar's transparent zero-cancellation terms.
+          <div style="text-align: center; font-size: 11.5px; color: var(--owc-text-muted); margin-top: 10px;">
+            Next Step: Choose Payment Preference (Cash on Ride / UPI) &amp; Dispatch Cab
           </div>
 
         </div>
@@ -877,22 +858,48 @@
           
           const submitBtn = document.getElementById('btn-submit-booking');
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span>Confirm &amp; Book Cab Now ➔</span>';
+          submitBtn.innerHTML = '<span>Proceed to Payment &amp; Review ➔</span>';
         } else {
           alert('Invalid OTP. Use test OTP 969696.');
         }
       };
 
-      window.submitBooking = async function () {
+      // Prefill if returning from payment.html
+      try {
+        const storedRider = sessionStorage.getItem('otb_rider_details');
+        if (storedRider) {
+          const rider = JSON.parse(storedRider);
+          if (rider.passengerName) document.getElementById('input-rider-name').value = rider.passengerName;
+          if (rider.passengerPhone) document.getElementById('input-rider-phone').value = rider.passengerPhone;
+          if (rider.pickupAddress) document.getElementById('input-pickup-addr').value = rider.pickupAddress;
+          if (rider.dropAddress) document.getElementById('input-drop-addr').value = rider.dropAddress;
+          if (rider.verified) {
+            isOtpVerified = true;
+            document.getElementById('badge-phone-verified').classList.add('active');
+            document.getElementById('txt-otp-prompt').innerHTML = '<span style="color: #10b981;">✓ Mobile Number Verified</span>';
+            document.getElementById('txt-otp-note').textContent = 'Your phone number is confirmed for live driver assignment.';
+            document.getElementById('btn-trigger-otp').style.display = 'none';
+            const submitBtn = document.getElementById('btn-submit-booking');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Proceed to Payment &amp; Review ➔</span>';
+          }
+        }
+      } catch (e) {}
+
+      window.proceedToPayment = function () {
         const name = document.getElementById('input-rider-name').value.trim();
         const phone = document.getElementById('input-rider-phone').value.trim().replace(/\D/g, '').slice(-10);
         const pickupAddr = document.getElementById('input-pickup-addr').value.trim();
         const dropAddr = document.getElementById('input-drop-addr').value.trim();
-        const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'cash_to_driver';
 
         if (!name) {
           alert('Please enter passenger full name.');
           document.getElementById('input-rider-name').focus();
+          return;
+        }
+        if (!phone || phone.length !== 10) {
+          alert('Please enter a valid 10-digit mobile number.');
+          document.getElementById('input-rider-phone').focus();
           return;
         }
         if (!pickupAddr) {
@@ -905,57 +912,15 @@
           return;
         }
 
-        const submitBtn = document.getElementById('btn-submit-booking');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>Booking Your Cab...</span>';
-
-        const bookingPayload = {
-          origin: trip.origin.name,
-          destination: trip.dest.name,
-          originCity: trip.origin.name,
-          destCity: trip.dest.name,
-          cabTier: cab.cabId || 'sedan',
-          tripType: trip.tripType || 'oneway',
-          pickupDate: trip.pickupDate,
-          pickupTime: trip.pickupTime,
+        const riderData = {
           passengerName: name,
           passengerPhone: phone,
           pickupAddress: pickupAddr,
-          dropAddress: dropAddr || trip.dest.name,
-          totalFare: Number(cab.price),
-          paymentMethod: paymentMethod === 'token_advance' ? 'token_advance_299' : 'cash_to_driver'
+          dropAddress: dropAddr || (trip ? trip.dest.name : ''),
+          verified: true
         };
-
-        let bookingId = 'OTB-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
-        try {
-          if (window.ApiClient && ApiClient.createBooking) {
-            const res = await ApiClient.createBooking(bookingPayload);
-            if (res && res.success && res.booking && res.booking.bookingId) {
-              bookingId = res.booking.bookingId;
-            }
-          }
-        } catch (e) {
-          console.warn('Booking API fallback:', e);
-        }
-
-        // Show Success Confirmation View
-        document.getElementById('page-header-wrap').style.display = 'none';
-        document.getElementById('booking-grid').style.display = 'none';
-        
-        const succOrigin = (trip.origin.name || 'Patna').split('(')[0].split(',')[0].trim();
-        const succDest = (trip.dest.name || 'Gaya').split('(')[0].split(',')[0].trim();
-        document.getElementById('succ-booking-id').textContent = bookingId;
-        document.getElementById('succ-route').textContent = `${succOrigin} ➔ ${succDest}`;
-        document.getElementById('succ-cab').textContent = `${cab.category} (${cab.models})`;
-        document.getElementById('succ-time').textContent = `${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}`;
-        document.getElementById('succ-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
-
-        const waText = `Hi OneWayTaxiBihar, I booked ride *${bookingId}* from ${trip.origin.name} to ${trip.dest.name} on ${trip.displayDate || trip.pickupDate} at ${trip.pickupTime}. Please dispatch driver details.`;
-        document.getElementById('btn-wa-dispatch').href = `https://wa.me/917281851011?text=${encodeURIComponent(waText)}`;
-
-        const successCard = document.getElementById('success-card');
-        successCard.style.display = 'block';
-        window.scrollTo({ top: 40, behavior: 'smooth' });
+        sessionStorage.setItem('otb_rider_details', JSON.stringify(riderData));
+        window.location.href = 'payment.html';
       };
     })();
   </script>

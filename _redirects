@@ -1,6 +1,10 @@
 # Specific application routes
 /admin        /admin.html        200
 /driver       /driver.html       200
+/cabs         /cabs.html         200
+/booking      /booking.html      200
+/payment      /payment.html      200
+/passenger    /passenger.html    200
 /404          /404.html          200
 /500          /500.html          200
 

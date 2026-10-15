@@ -5,6 +5,8 @@ const htmlFiles = [
   'index.html',
   'cabs.html',
   'booking.html',
+  'payment.html',
+  'passenger.html',
   'admin.html',
   'driver.html',
   'patna-to-gaya-cab.html',

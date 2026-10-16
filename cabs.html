@@ -450,11 +450,6 @@
 
       // Check phone number existence & validity (Mandatory gate to view fares)
       let rawPhone = (trip?.phone || urlParams.get('phone') || '').replace(/\D/g, '');
-      if (!rawPhone) {
-        try {
-          rawPhone = (localStorage.getItem('oneway_fare_phone') || '').replace(/\D/g, '');
-        } catch (e) {}
-      }
       if (rawPhone.length > 10) rawPhone = rawPhone.slice(-10);
 
       let isUnlocked = Boolean(rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone));

@@ -120,11 +120,15 @@ class BookingManager {
       }
     }
 
-    // Transparent Fares: Automatically show fares when route is configured
+    // Fares remain locked until user enters valid 10-digit mobile number
+    const farePhoneInput = document.getElementById("input-fare-phone");
+    const rawInitPhone = (farePhoneInput?.value || "").replace(/\D/g, "");
+    const hasValidInitPhone = rawInitPhone.length === 10 && /^[6-9]\d{9}$/.test(rawInitPhone);
+
     const section = document.getElementById("cab-selection-section");
     const mapSection = document.getElementById("route-map-section");
 
-    if (this.originCity && this.destCity) {
+    if (this.originCity && this.destCity && hasValidInitPhone) {
       this.isFareUnlocked = true;
       if (section) {
         section.classList.remove("fare-section-closed");
@@ -136,16 +140,15 @@ class BookingManager {
       }
       this.calculateAndRenderFares();
     } else {
-      this.isFareUnlocked = true;
+      this.isFareUnlocked = false;
       if (section) {
-        section.classList.remove("fare-section-closed");
-        section.classList.add("fare-section-open");
+        section.classList.add("fare-section-closed");
+        section.classList.remove("fare-section-open");
       }
       if (mapSection) {
-        mapSection.classList.remove("fare-section-closed");
-        mapSection.classList.add("fare-section-open");
+        mapSection.classList.add("fare-section-closed");
+        mapSection.classList.remove("fare-section-open");
       }
-      this.calculateAndRenderFares();
     }
 
     // If deep-link params were supplied, smooth-scroll to cab options
@@ -1248,7 +1251,7 @@ class BookingManager {
     if (!btn) return;
 
     const phoneInput = document.getElementById("input-fare-phone");
-    const rawVal = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    const rawVal = (phoneInput?.value || "").replace(/\D/g, "");
     const isValid = rawVal.length === 10 && /^[6-9]\d{9}$/.test(rawVal);
 
     btn.classList.add("ready");
@@ -1261,7 +1264,7 @@ class BookingManager {
         </svg>
       `;
     } else {
-      btn.setAttribute("title", "Please enter 10-digit mobile number to view fares");
+      btn.setAttribute("title", "Please enter 10-digit mobile number to check fares");
       btn.innerHTML = `
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         <span>Enter Mobile to View Fares</span>
@@ -1312,24 +1315,11 @@ class BookingManager {
       if (dropInput) dropInput.value = "Gaya (Bodh Gaya) (गया), Bihar";
     }
 
-    // 3. Mandatory Phone validation to view fares
+    // 3. Mandatory Phone validation to view fares (strictly required in input field)
     let phoneToRecord = "";
     if (phoneInput && phoneInput.value) {
       phoneToRecord = phoneInput.value.trim().replace(/\D/g, "");
     }
-    if (!phoneToRecord && this.userPhone) {
-      phoneToRecord = this.userPhone.replace(/\D/g, "");
-    }
-    if (!phoneToRecord && window.currentUser && window.currentUser.phone) {
-      phoneToRecord = window.currentUser.phone.replace(/\D/g, "");
-    }
-    if (!phoneToRecord) {
-      try {
-        const cachedPhone = localStorage.getItem("oneway_fare_phone");
-        if (cachedPhone) phoneToRecord = cachedPhone.replace(/\D/g, "");
-      } catch (e) {}
-    }
-
     if (phoneToRecord.length > 10) {
       phoneToRecord = phoneToRecord.slice(-10);
     }
@@ -1341,7 +1331,7 @@ class BookingManager {
         if (phoneGroup) {
           phoneGroup.classList.add("shake-error");
           phoneGroup.style.borderColor = "#ef4444";
-          phoneGroup.style.boxShadow = "0 0 0 3px rgba(239, 68, 68, 0.25)";
+          phoneGroup.style.boxShadow = "0 0 0 3.5px rgba(239, 68, 68, 0.3)";
           phoneGroup.scrollIntoView({ behavior: "smooth", block: "center" });
           setTimeout(() => {
             phoneGroup.classList.remove("shake-error");
@@ -1351,9 +1341,9 @@ class BookingManager {
           phoneInput.focus();
         }
         if (typeof window.showToast === "function") {
-          window.showToast("Please enter your 10-digit mobile number to view fares & cab availability", "warning");
+          window.showToast("Please enter your 10-digit mobile number to check fares", "warning");
         } else {
-          alert("Please enter your 10-digit mobile number to view fares & cab availability");
+          alert("Please enter your 10-digit mobile number to check fares");
         }
       }
       return false;
@@ -1813,7 +1803,7 @@ class BookingManager {
     window.closeAllModals();
 
     const phoneInput = document.getElementById("input-fare-phone");
-    const rawVal = (phoneInput?.value || this.userPhone || localStorage.getItem("oneway_fare_phone") || "").replace(/\D/g, "");
+    const rawVal = (phoneInput?.value || "").replace(/\D/g, "");
     if (!rawVal || rawVal.length !== 10 || !/^[6-9]\d{9}$/.test(rawVal)) {
       const phoneGroup = document.getElementById("phone-check-group");
       if (phoneGroup) {
@@ -1823,7 +1813,7 @@ class BookingManager {
       }
       if (phoneInput) phoneInput.focus();
       if (typeof window.showToast === "function") {
-        window.showToast(`Selected ${from.name} → ${to.name}. Please enter 10-digit mobile number to view fares.`, "info");
+        window.showToast(`Selected ${from.name} → ${to.name}. Please enter 10-digit mobile number to check fares.`, "info");
       }
       return;
     }

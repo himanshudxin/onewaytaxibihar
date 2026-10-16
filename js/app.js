@@ -1209,8 +1209,9 @@ window.openRoutesModal = () => {
       r.highway.toLowerCase().includes(q)
     );
 
-    const storedPhone = (localStorage.getItem('oneway_fare_phone') || (window.currentUser ? window.currentUser.phone : '') || '').replace(/\D/g, '');
-    const hasPhone = Boolean(storedPhone.length === 10 && /^[6-9]\d{9}$/.test(storedPhone));
+    const farePhoneInput = document.getElementById('input-fare-phone');
+    const activePhone = (farePhoneInput?.value || (window.currentUser ? window.currentUser.phone : '') || '').replace(/\D/g, '').slice(-10);
+    const hasPhone = Boolean(activePhone.length === 10 && /^[6-9]\d{9}$/.test(activePhone));
 
     list.innerHTML = matches.map(r => `
       <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 16px;">
@@ -2607,19 +2608,11 @@ window.applyAiParsedTrip = (intent) => {
     heroCard.scrollIntoView({ behavior: "smooth" });
   }
 
-  // If user phone exists, automatically calculate fare, otherwise prompt phone
-  const storedPhone = localStorage.getItem("oneway_fare_phone") || (window.currentUser ? window.currentUser.phone : "");
-  if (storedPhone && storedPhone.length >= 10) {
-    const phoneInput = document.getElementById("input-fare-phone");
-    if (phoneInput && !phoneInput.value) phoneInput.value = storedPhone.slice(-10);
-    bm.handleCheckFare(false);
-  } else {
-    const phoneInput = document.getElementById("input-fare-phone");
-    if (phoneInput) {
-      phoneInput.focus();
-      if (window.showToast) {
-        window.showToast("Trip details loaded! Enter mobile number to unlock live fares", "info");
-      }
+  const phoneInput = document.getElementById("input-fare-phone");
+  if (phoneInput) {
+    phoneInput.focus();
+    if (window.showToast) {
+      window.showToast("Trip details loaded! Please enter your 10-digit mobile number to check fares", "info");
     }
   }
 };

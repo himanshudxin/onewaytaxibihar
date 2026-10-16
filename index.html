@@ -1796,20 +1796,15 @@
       const phoneInput = document.getElementById('input-fare-phone');
 
       let phoneVal = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
-      if (!phoneVal) {
-        try {
-          phoneVal = (localStorage.getItem('oneway_fare_phone') || '').replace(/\D/g, '');
-        } catch (e) {}
-      }
       if (phoneVal.length > 10) phoneVal = phoneVal.slice(-10);
 
-      const isValidPhone = phoneVal.length === 10 && /^[6-9]\d{9}$/.test(phoneVal);
+      const isValidPhone = Boolean(phoneVal.length === 10 && /^[6-9]\d{9}$/.test(phoneVal));
       if (!isValidPhone) {
         const phoneGroup = document.getElementById('phone-check-group');
         if (phoneGroup) {
           phoneGroup.classList.add('shake-error');
           phoneGroup.style.borderColor = '#ef4444';
-          phoneGroup.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.25)';
+          phoneGroup.style.boxShadow = '0 0 0 3.5px rgba(239, 68, 68, 0.3)';
           phoneGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
           setTimeout(() => {
             phoneGroup.classList.remove('shake-error');
@@ -1819,9 +1814,9 @@
           phoneInput.focus();
         }
         if (typeof window.showToast === 'function') {
-          window.showToast('Please enter your 10-digit mobile number to view fares & cab availability', 'warning');
+          window.showToast('Please enter your 10-digit mobile number to check fares', 'warning');
         } else {
-          alert('Please enter your 10-digit mobile number to view fares & cab availability');
+          alert('Please enter your 10-digit mobile number to check fares');
         }
         return false;
       }

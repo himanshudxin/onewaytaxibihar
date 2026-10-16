@@ -283,7 +283,7 @@ button, a, input, select {
 .brand-text-logo {
   display: inline-flex;
   align-items: center;
-  font-family: 'Montserrat', 'Inter', -apple-system, sans-serif;
+  font-family: 'Inter', 'Montserrat', -apple-system, sans-serif;
   font-size: 22px;
   font-weight: 900;
   letter-spacing: -0.6px;
@@ -311,7 +311,7 @@ button, a, input, select {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
-  margin-left: 0;
+  margin-left: 1px;
 }
 
 /* 1. Desktop Header Variant (40-44px height) */

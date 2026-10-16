@@ -44,12 +44,12 @@
     if (variant === 'auth') {
       const size = options.size || 64;
       return `
-        <div class="brand-logo brand-logo--auth${extraClass}">
-          <div class="brand-logo__icon-box">
-            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OnewayTaxiBihar Logo" width="${size}" height="${size}" class="brand-logo__img" loading="eager">
+        <div class="brand-wrapper brand-wrapper--auth${extraClass}">
+          <div class="brand-badge-icon">
+            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OneWayTaxiBihar" width="${size}" height="${size}" class="brand-logo-img" loading="eager">
           </div>
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
+          <div class="brand-text-group">
+            <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
           </div>
         </div>
       `.trim();
@@ -58,30 +58,24 @@
     if (variant === 'splash') {
       const size = options.size || 72;
       return `
-        <div class="brand-logo brand-logo--splash${extraClass}">
-          <div class="brand-logo__icon-box brand-logo__icon-box--splash">
-            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OnewayTaxiBihar Logo" width="${size}" height="${size}" class="brand-logo__img" loading="eager">
+        <div class="brand-wrapper brand-wrapper--splash${extraClass}">
+          <div class="brand-badge-icon">
+            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OneWayTaxiBihar" width="${size}" height="${size}" class="brand-logo-img" loading="eager">
           </div>
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
+          <div class="brand-text-group">
+            <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
           </div>
-          <div class="brand-logo__spinner" aria-hidden="true"></div>
         </div>
       `.trim();
     }
 
     if (variant === 'footer') {
-      const size = options.size || 42;
+      const size = options.size || 38;
       return `
-        <div class="brand-logo brand-logo--footer${extraClass}">
-          <div class="brand-logo__icon-box">
-            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OnewayTaxiBihar Logo" width="${size}" height="${size}" class="brand-logo__img" loading="lazy">
-          </div>
-          <div class="brand-logo__text-group">
-            <div class="brand-logo__title">
-              <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-            </div>
-            <div class="brand-logo__tagline">Dedicated Intercity Cab Mobility Platform</div>
+        <div class="footer-brand-badge${extraClass}">
+          <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OneWayTaxiBihar" width="${size}" height="${size}" class="footer-brand-logo" loading="lazy">
+          <div class="footer-brand-name">
+            OneWay<span>TaxiBihar</span>
           </div>
         </div>
       `.trim();
@@ -92,31 +86,29 @@
       const tag = linkUrl ? 'a' : 'div';
       const hrefAttr = linkUrl ? ` href="${linkUrl}"` : '';
       return `
-        <${tag}${hrefAttr}${clickHandler} class="brand-logo brand-logo--compact${extraClass}" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service" aria-label="OneWayTaxiBihar Home">
-          <div class="brand-logo__icon-box">
-            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OnewayTaxiBihar Logo" width="${size}" height="${size}" class="brand-logo__img">
+        <${tag}${hrefAttr}${clickHandler} class="brand-wrapper brand-wrapper--compact${extraClass}" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service" aria-label="OneWayTaxiBihar Home">
+          <div class="brand-badge-icon">
+            <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OneWayTaxiBihar" width="${size}" height="${size}" class="brand-logo-img">
           </div>
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
+          <div class="brand-text-group">
+            <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
           </div>
         </${tag}>
       `.trim();
     }
 
     // Default: 'header' (handles desktop full name & mobile responsive)
-    const size = options.size || 42;
+    const size = options.size || 40;
     const tag = linkUrl ? 'a' : 'div';
     const hrefAttr = linkUrl ? ` href="${linkUrl}"` : '';
 
     return `
-      <${tag}${hrefAttr}${clickHandler} class="brand-logo brand-logo--header${extraClass}" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service" aria-label="OneWayTaxiBihar Home">
-        <div class="brand-logo__icon-box">
-          <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OnewayTaxiBihar Logo" width="${size}" height="${size}" class="brand-logo__img">
+      <${tag}${hrefAttr}${clickHandler} class="brand-wrapper${extraClass}" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service" aria-label="OneWayTaxiBihar Home">
+        <div class="brand-badge-icon" aria-label="OneWayTaxiBihar Brand Emblem">
+          <img src="${ASSETS.iconWebp}" onerror="this.onerror=null;this.src='${ASSETS.iconPng}'" alt="OneWayTaxiBihar" width="${size}" height="${size}" class="brand-logo-img">
         </div>
-        <div class="brand-logo__text-group">
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-          </div>
+        <div class="brand-text-group">
+          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
         </div>
       </${tag}>
     `.trim();

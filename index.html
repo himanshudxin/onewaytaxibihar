@@ -126,7 +126,7 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261015_soc">
+  <link rel="stylesheet" href="/css/style.css?v=20261016_v3">
   <link rel="stylesheet" href="/css/components.css?v=3.0">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
@@ -171,14 +171,12 @@
     </div>
 
     <div class="container nav-content">
-      <a href="index.html" class="brand-logo brand-logo--header" aria-label="OneWayTaxiBihar Home" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
-        <div class="brand-logo__icon-box">
-          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OnewayTaxiBihar Logo" width="42" height="42" class="brand-logo__img">
+      <a href="#" class="brand-wrapper" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
+        <div class="brand-badge-icon" aria-label="OneWayTaxiBihar Brand Emblem">
+          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
         </div>
-        <div class="brand-logo__text-group">
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-          </div>
+        <div class="brand-text-group">
+          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
         </div>
       </a>
 
@@ -257,14 +255,12 @@
     <!-- Drawer Header -->
     <div class="drawer-header">
       <div class="drawer-brand">
-        <a href="index.html" class="brand-logo brand-logo--compact" title="OneWayTaxiBihar" style="text-decoration: none;">
-          <div class="brand-logo__icon-box">
-            <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OnewayTaxiBihar Logo" width="34" height="34" class="brand-logo__img">
-          </div>
-          <div class="brand-logo__title">
-            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-          </div>
-        </a>
+        <div class="drawer-brand-badge">
+          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="34" height="34" class="brand-logo-img" style="width: 34px; height: 34px; object-fit: contain; display: block; border-radius: 8px;">
+        </div>
+        <div class="drawer-brand-text">
+          OneWay<span>TaxiBihar</span>
+        </div>
       </div>
       <div class="drawer-header-actions">
         <!-- Theme Toggle Button inside Drawer -->
@@ -1031,16 +1027,9 @@
         <!-- Corporate Brand & Trust Column -->
         <div class="footer-brand-col">
           <div class="footer-brand-badge">
-            <div class="brand-logo brand-logo--footer">
-              <div class="brand-logo__icon-box">
-                <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OnewayTaxiBihar Logo" width="42" height="42" class="brand-logo__img" loading="lazy">
-              </div>
-              <div class="brand-logo__text-group">
-                <div class="brand-logo__title">
-                  <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-                </div>
-                <div class="brand-logo__tagline">Dedicated Intercity Cab Mobility Platform</div>
-              </div>
+            <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="38" height="38" class="footer-brand-logo">
+            <div class="footer-brand-name">
+              OneWay<span>TaxiBihar</span>
             </div>
           </div>
           <p class="footer-brand-tagline">
@@ -1333,16 +1322,11 @@
             <div style="font-size: 12px; color: #059669; font-weight: 700; margin-top: 2px;" id="auth-booking-discount-note">✓ ₹100 Welcome Reward will apply directly to this ride!</div>
           </div>
 
-          <div class="brand-logo brand-logo--auth">
-            <div class="brand-logo__icon-box">
-              <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OnewayTaxiBihar Logo" width="64" height="64" class="brand-logo__img" loading="eager">
-            </div>
-            <div class="brand-logo__title">
-              <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
-            </div>
+          <div class="auth-logo-badge">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--owc-primary)" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
           </div>
-          <h3 id="auth-modal-title" style="font-size: 17px; font-weight: 800; margin-bottom: 6px; text-align: center;">SMS OTP Login &amp; ₹100 Wallet Reward</h3>
-          <p id="auth-modal-sub" style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px; text-align: center;">Enter your name &amp; mobile number. We will send a secure 6-digit SMS OTP to your phone.</p>
+          <h3 id="auth-modal-title" style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">SMS OTP Login &amp; ₹100 Wallet Reward</h3>
+          <p id="auth-modal-sub" style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px;">Enter your name &amp; mobile number. We will send a secure 6-digit SMS OTP to your phone.</p>
 
           <!-- Step 1: Name and Phone Input -->
           <div id="auth-step-phone">

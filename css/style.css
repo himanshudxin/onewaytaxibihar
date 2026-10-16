@@ -5,14 +5,12 @@
  */
 
 :root {
-  /* OnewayTaxiBihar Official Brand Palette (Emerald Green #01904D) */
-  --owc-primary: #01904d;
-  --owc-primary-hover: #017a41;
-  --owc-primary-dark: #016b39;
-  --owc-primary-glow: rgba(1, 144, 77, 0.24);
-  --owc-primary-subtle: rgba(1, 144, 77, 0.1);
-  --owc-brand-green: #01904d;
-  --owc-brand-navy: #090d16;
+  /* Instagram-Grade Soothing Light Theme Palette */
+  --owc-primary: #0095f6;
+  --owc-primary-hover: #0084e8;
+  --owc-primary-dark: #0073c6;
+  --owc-primary-glow: rgba(0, 149, 246, 0.18);
+  --owc-primary-subtle: rgba(0, 149, 246, 0.08);
 
   --owc-yellow: #f59e0b;
   --owc-yellow-hover: #d97706;
@@ -95,12 +93,9 @@ body.call-bar-collapsed {
   --owc-slate-100: #16223b;
   --owc-slate-50: #0f1626;
 
-  --owc-primary: #01904d;
-  --owc-primary-hover: #05a85b;
-  --owc-primary-subtle: rgba(1, 144, 77, 0.16);
-  --owc-primary-glow: rgba(1, 144, 77, 0.35);
-  --owc-brand-green: #01904d;
-  --owc-brand-navy: #090d16;
+  --owc-primary: #0095f6;
+  --owc-primary-hover: #0084e8;
+  --owc-primary-subtle: rgba(0, 149, 246, 0.14);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -221,248 +216,78 @@ button, a, input, select {
   margin-right: 8px;
 }
 
-/* ==========================================================================
-   ONEWAY TAXI BIHAR — UNIFIED CENTRAL BRANDING SYSTEM
-   ========================================================================== */
-
-.brand-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: inherit;
-  user-select: none;
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.brand-logo:hover {
+.brand-wrapper:hover {
   transform: translateY(-1px);
 }
 
-.brand-logo__icon-box,
 .brand-badge-icon {
-  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  width: 40px;
-  height: 40px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
-.brand-logo:hover .brand-logo__icon-box,
-.brand-wrapper:hover .brand-badge-icon {
-  transform: scale(1.04);
-}
-
-.brand-logo__img,
+.brand-badge-icon .brand-logo-img,
 .brand-logo-img {
-  display: block;
-  object-fit: contain;
-  aspect-ratio: 1 / 1;
-  border-radius: 10px;
   width: 40px;
   height: 40px;
-  box-shadow: 0 2px 8px rgba(1, 144, 77, 0.2);
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(5, 150, 105, 0.35);
 }
 
-.brand-logo__text-group,
+@keyframes logoShimmerSweep {
+  0% { transform: translate(-140%, -140%) rotate(25deg); }
+  22%, 100% { transform: translate(140%, 140%) rotate(25deg); }
+}
+
+@keyframes logoAuraGlow {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(37, 99, 235, 0.25), 0 0 8px rgba(250, 204, 21, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.45), 0 0 14px rgba(250, 204, 21, 0.35);
+    border-color: rgba(250, 204, 21, 0.65);
+  }
+}
+
+.brand-wrapper:hover .brand-badge-icon {
+  border-color: #facc15;
+  box-shadow: 0 6px 26px rgba(37, 99, 235, 0.5), 0 0 18px rgba(250, 204, 21, 0.45);
+  transform: translateY(-1.5px) scale(1.04);
+}
+
 .brand-text-group {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   line-height: 1.1;
 }
 
-.brand-logo__title,
 .brand-text-logo {
-  display: inline-flex;
-  align-items: center;
   font-family: 'Inter', 'Montserrat', -apple-system, sans-serif;
   font-size: 22px;
   font-weight: 900;
+  color: var(--owc-text);
   letter-spacing: -0.6px;
-  color: var(--owc-text, #0f172a);
-  text-transform: none;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
-.brand-logo__word-one {
-  color: var(--owc-text, #0f172a);
-  font-weight: 900;
-}
-
-[data-theme="dark"] .brand-logo__word-one {
-  color: #f8fafc;
-}
-
-.brand-logo__word-two,
-.brand-text-logo .brand-highlight,
-.checkout-brand-highlight,
-.portal-brand-highlight,
-.brand-highlight {
+.brand-text-logo .brand-highlight {
   color: #facc15;
   background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 900;
   margin-left: 1px;
-}
-
-/* 1. Desktop Header Variant (40-44px height) */
-.brand-logo--header {
-  height: 42px;
-}
-.brand-logo--header .brand-logo__img {
-  width: 40px;
-  height: 40px;
-}
-.brand-logo--header .brand-logo__title {
-  font-size: 22px;
-}
-
-/* 2. Mobile Header Variant (34-38px height) */
-@media (max-width: 640px) {
-  .brand-logo--header,
-  .brand-wrapper {
-    height: 38px !important;
-    gap: 8px !important;
-  }
-  .brand-logo--header .brand-logo__img,
-  .brand-logo-img {
-    width: 36px !important;
-    height: 36px !important;
-  }
-  .brand-logo--header .brand-logo__title,
-  .brand-text-logo {
-    font-size: 18px !important;
-    letter-spacing: -0.4px !important;
-  }
-  .brand-logo--header .brand-logo__word-two,
-  .brand-text-logo .brand-highlight {
-    display: inline !important;
-  }
-  .brand-subtag,
-  .brand-logo__tagline {
-    display: none !important;
-  }
-}
-
-/* 3. Compact / Booking Pages Variant (28-34px) */
-.brand-logo--compact {
-  height: 34px;
-  gap: 8px;
-}
-.brand-logo--compact .brand-logo__img {
-  width: 32px;
-  height: 32px;
-}
-.brand-logo--compact .brand-logo__title {
-  font-size: 16px;
-}
-
-/* 4. Login / Signup / Auth Screens Variant */
-.brand-logo--auth {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin: 0 auto 16px auto;
-  gap: 10px;
-}
-.brand-logo--auth .brand-logo__icon-box {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(1, 144, 77, 0.25);
-}
-.brand-logo--auth .brand-logo__img {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-}
-.brand-logo--auth .brand-logo__title {
-  font-size: 17px;
-  letter-spacing: 0.2px;
-}
-
-/* 5. Splash / Loading Screen Variant */
-.brand-logo--splash {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  text-align: center;
-}
-.brand-logo--splash .brand-logo__icon-box {
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(1, 144, 77, 0.28);
-}
-.brand-logo--splash .brand-logo__img {
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
-}
-.brand-logo--splash .brand-logo__title {
-  font-size: 18px;
-}
-.brand-logo__spinner {
-  width: 24px;
-  height: 24px;
-  border: 2.5px solid rgba(1, 144, 77, 0.2);
-  border-top-color: var(--owc-brand-green, #01904d);
-  border-radius: 50%;
-  animation: brandLogoSpin 0.75s linear infinite;
-}
-@keyframes brandLogoSpin {
-  to { transform: rotate(360deg); }
-}
-
-/* 6. Footer Variant */
-.brand-logo--footer {
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.brand-logo--footer .brand-logo__icon-box {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-}
-.brand-logo--footer .brand-logo__img {
-  width: 42px;
-  height: 42px;
-}
-.brand-logo--footer .brand-logo__title {
-  font-size: 20px;
-}
-.brand-logo--footer .brand-logo__tagline {
-  font-size: 11.5px;
-  color: var(--owc-text-muted);
-  font-weight: 550;
-  margin-top: 3px;
-  text-transform: none;
-  letter-spacing: 0.1px;
-}
-
-.brand-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform var(--transition-fast);
-  user-select: none;
-  flex-shrink: 0;
-  margin-right: 8px;
 }
 
 .brand-subtag {
@@ -470,7 +295,7 @@ button, a, input, select {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  color: var(--owc-brand-green, #01904d);
+  color: #38bdf8;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -490,6 +315,54 @@ button, a, input, select {
 @keyframes logoDotPulse {
   0%, 100% { transform: scale(1); opacity: 0.7; }
   50% { transform: scale(1.4); opacity: 1; }
+}
+
+/* Universal compatibility aliases */
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.brand-logo__icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-logo__img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(5, 150, 105, 0.35);
+}
+.brand-logo__text-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.brand-logo__title {
+  font-family: 'Inter', 'Montserrat', -apple-system, sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--owc-text);
+  letter-spacing: -0.6px;
+  display: flex;
+  align-items: center;
+}
+.brand-logo__word-one {
+  color: var(--owc-text);
+  font-weight: 900;
+}
+.brand-logo__word-two {
+  color: #facc15;
+  background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: 1px;
+  font-weight: 900;
 }
 
 /* Nav Menu Links */
@@ -1856,10 +1729,7 @@ main.site-main {
 }
 
 .footer-brand-name span {
-  color: #facc15;
-  background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #38bdf8;
 }
 
 .footer-brand-tagline {

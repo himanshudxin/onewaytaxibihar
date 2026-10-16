@@ -120,39 +120,199 @@
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
+      gap: 16px;
+      margin-bottom: 16px;
     }
     .input-box-wrap {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 14px;
+      gap: 7px;
+      margin-bottom: 16px;
     }
     .input-box-wrap label {
-      font-size: 12px;
-      font-weight: 750;
+      font-size: 11px;
+      font-weight: 800;
       color: var(--owc-text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
+    .input-box-wrap label .req-star {
+      color: #ef4444;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    /* Executive Grade Form Input Wrapper */
+    .pro-input-wrap {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0 14px;
+      min-height: 52px;
+      gap: 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      box-sizing: border-box;
+      position: relative;
+    }
+    [data-theme="dark"] .pro-input-wrap {
+      background: #182234;
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .pro-input-wrap:hover {
+      border-color: rgba(0, 149, 246, 0.5);
+    }
+    .pro-input-wrap:focus-within {
+      border-color: var(--owc-primary, #0095f6) !important;
+      box-shadow: 0 0 0 3.5px rgba(0, 149, 246, 0.18), 0 4px 12px rgba(0, 149, 246, 0.08) !important;
+      background: #ffffff !important;
+    }
+    [data-theme="dark"] .pro-input-wrap:focus-within {
+      background: #1c273c !important;
+      border-color: var(--owc-primary, #0095f6) !important;
+      box-shadow: 0 0 0 3.5px rgba(0, 149, 246, 0.28), 0 4px 16px rgba(0, 149, 246, 0.12) !important;
+    }
+
+    .pro-input-icon {
+      color: #94a3b8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .pro-input-wrap:focus-within .pro-input-icon {
+      color: var(--owc-primary, #0095f6);
+      transform: scale(1.06);
+    }
+
+    .pro-input-field {
+      flex: 1;
+      border: none !important;
+      outline: none !important;
+      background: transparent !important;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--owc-text, #0f172a);
+      font-family: inherit;
+      padding: 13px 0;
+      width: 100%;
+      min-width: 0;
+      box-shadow: none !important;
+    }
+    [data-theme="dark"] .pro-input-field {
+      color: #f8fafc;
+    }
+    .pro-input-field::placeholder {
+      color: #94a3b8;
+      opacity: 0.85;
+      font-weight: 450;
+      letter-spacing: normal;
+    }
+    [data-theme="dark"] .pro-input-field::placeholder {
+      color: #64748b;
+    }
+
+    /* Flag + Country Code Pill (+91) */
+    .pro-phone-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding-right: 12px;
+      border-right: 1.5px solid #e2e8f0;
+      flex-shrink: 0;
+      user-select: none;
+      transition: border-color 0.2s ease;
+    }
+    [data-theme="dark"] .pro-phone-pill {
+      border-right-color: rgba(255, 255, 255, 0.14);
+    }
+    .pro-input-wrap:focus-within .pro-phone-pill {
+      border-right-color: rgba(0, 149, 246, 0.4);
+    }
+    .pro-phone-flag {
+      border-radius: 2px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+    .pro-phone-code {
+      font-size: 14px;
+      font-weight: 750;
+      color: var(--owc-text, #0f172a);
+      letter-spacing: 0.2px;
+    }
+    [data-theme="dark"] .pro-phone-code {
+      color: #f8fafc;
+    }
+
+    .pro-phone-input {
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    /* Live 10-digit Validation Checkmark Badge */
+    .pro-valid-indicator {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+    }
+    .pro-valid-indicator.active {
+      display: inline-flex;
+      animation: proPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes proPopIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
     .input-control {
-      background: var(--owc-slate-50);
-      border: 1.5px solid var(--owc-border);
-      color: var(--owc-text);
-      padding: 12px 14px;
-      border-radius: 10px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      color: var(--owc-text, #0f172a);
+      padding: 13px 16px;
+      border-radius: 12px;
       font-size: 14px;
       font-family: inherit;
       outline: none;
       transition: all 0.2s ease;
       width: 100%;
       box-sizing: border-box;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    [data-theme="dark"] .input-control {
+      background: #182234;
+      border-color: rgba(255, 255, 255, 0.14);
+      color: #f8fafc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .input-control:hover {
+      border-color: rgba(0, 149, 246, 0.5);
     }
     .input-control:focus {
-      border-color: var(--owc-primary);
-      box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.15);
-      background: var(--owc-surface);
+      border-color: var(--owc-primary, #0095f6) !important;
+      box-shadow: 0 0 0 3.5px rgba(0, 149, 246, 0.18), 0 4px 12px rgba(0, 149, 246, 0.08) !important;
+      background: #ffffff !important;
+    }
+    [data-theme="dark"] .input-control:focus {
+      background: #1c273c !important;
     }
     /* OTP Verification Box */
     .otp-block {
@@ -447,12 +607,15 @@
     </div>
 
     <div class="container nav-content">
-      <a href="index.html" class="brand-wrapper" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
-        <div class="brand-badge-icon">
-          <img src="img/logo-reframed.png?v=20260905" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
+      <a href="index.html" class="brand-logo brand-logo--header" aria-label="OneWayTaxiBihar Home" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
+        <div class="brand-logo__icon-box">
+          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OnewayTaxiBihar Logo" width="42" height="42" class="brand-logo__img">
         </div>
-        <div class="brand-text-group">
-          <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
+        <div class="brand-logo__text-group">
+          <div class="brand-logo__title">
+            <span class="brand-logo__word-one">OneWay</span><span class="brand-logo__word-two">TaxiBihar</span>
+          </div>
+          <div class="brand-subtag">DEDICATED INTERCITY</div>
         </div>
       </a>
 
@@ -551,23 +714,64 @@
 
           <div class="form-row">
             <div class="input-box-wrap">
-              <label for="input-rider-name">PASSENGER FULL NAME *</label>
-              <input type="text" id="input-rider-name" class="input-control" placeholder="e.g. Ramesh Kumar" required>
+              <label for="input-rider-name">PASSENGER FULL NAME <span class="req-star">*</span></label>
+              <div class="pro-input-wrap">
+                <span class="pro-input-icon" title="Passenger Name">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <input type="text" id="input-rider-name" class="pro-input-field" placeholder="Enter your name" autocomplete="name" required>
+              </div>
             </div>
             <div class="input-box-wrap">
-              <label for="input-rider-phone">10-DIGIT MOBILE NUMBER *</label>
-              <input type="tel" id="input-rider-phone" class="input-control" maxlength="10" placeholder="e.g. 9876543210" required>
+              <label for="input-rider-phone">10-DIGIT MOBILE NUMBER <span class="req-star">*</span></label>
+              <div class="pro-input-wrap" id="rider-phone-wrap">
+                <div class="pro-phone-pill" title="India (+91)">
+                  <svg class="pro-phone-flag" width="18" height="13" viewBox="0 0 30 20">
+                    <rect width="30" height="6.67" fill="#FF9933"/>
+                    <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+                    <rect y="13.33" width="30" height="6.67" fill="#138808"/>
+                    <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7"/>
+                    <circle cx="15" cy="10" r="0.6" fill="#000080"/>
+                  </svg>
+                  <span class="pro-phone-code">+91</span>
+                </div>
+                <input type="tel" id="input-rider-phone" class="pro-input-field pro-phone-input" maxlength="10" placeholder="Enter 10-digit mobile number" autocomplete="tel" inputmode="numeric" spellcheck="false" required>
+                <span class="pro-valid-indicator" id="rider-phone-valid-indicator" title="Valid 10-digit mobile number">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
 
           <div class="input-box-wrap">
-            <label for="input-pickup-addr">EXACT PICKUP ADDRESS / LANDMARK *</label>
-            <input type="text" id="input-pickup-addr" class="input-control" placeholder="House no, Street, Landmark, Colony, or Airport Gate" required>
+            <label for="input-pickup-addr">EXACT PICKUP ADDRESS / LANDMARK <span class="req-star">*</span></label>
+            <div class="pro-input-wrap">
+              <span class="pro-input-icon" title="Pickup Location">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </span>
+              <input type="text" id="input-pickup-addr" class="pro-input-field" placeholder="House no, Street, Landmark, Colony, or Airport Gate" required>
+            </div>
           </div>
 
           <div class="input-box-wrap">
             <label for="input-drop-addr">DROP DESTINATION LANDMARK / ADDRESS (OPTIONAL)</label>
-            <input type="text" id="input-drop-addr" class="input-control" placeholder="Destination town, landmark or railway station">
+            <div class="pro-input-wrap">
+              <span class="pro-input-icon" title="Drop Location">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                  <circle cx="12" cy="9" r="2.5"/>
+                </svg>
+              </span>
+              <input type="text" id="input-drop-addr" class="pro-input-field" placeholder="Destination town, landmark or railway station">
+            </div>
           </div>
 
           <!-- Step 2: OTP Verification -->
@@ -693,6 +897,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="js/brand-logo.js?v=20261016_v1"></script>
   <script src="js/data.js?v=20261015_multipage_v3"></script>
   <script src="js/api.js?v=20261015_multipage_v3"></script>
   <script>
@@ -753,11 +958,31 @@
       document.getElementById('txt-total-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
 
       // Pre-fill phone if provided
+      const phoneInput = document.getElementById('input-rider-phone');
+      const phoneValidBadge = document.getElementById('rider-phone-valid-indicator');
+      const updatePhoneValidationBadge = () => {
+        if (!phoneInput) return;
+        const cleanVal = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+        if (phoneInput.value !== cleanVal) {
+          phoneInput.value = cleanVal;
+        }
+        if (phoneValidBadge) {
+          if (cleanVal.length === 10 && /^[6-9]/.test(cleanVal)) {
+            phoneValidBadge.classList.add('active');
+          } else {
+            phoneValidBadge.classList.remove('active');
+          }
+        }
+      };
+      if (phoneInput) {
+        phoneInput.addEventListener('input', updatePhoneValidationBadge);
+        phoneInput.addEventListener('change', updatePhoneValidationBadge);
+      }
       if (trip.phone) {
         const cleanPhone = trip.phone.replace(/\D/g, '').slice(-10);
-        const phoneInput = document.getElementById('input-rider-phone');
         if (phoneInput && cleanPhone.length === 10) {
           phoneInput.value = cleanPhone;
+          updatePhoneValidationBadge();
         }
       }
 
@@ -884,7 +1109,10 @@
         if (storedRider) {
           const rider = JSON.parse(storedRider);
           if (rider.passengerName) document.getElementById('input-rider-name').value = rider.passengerName;
-          if (rider.passengerPhone) document.getElementById('input-rider-phone').value = rider.passengerPhone;
+          if (rider.passengerPhone) {
+            document.getElementById('input-rider-phone').value = rider.passengerPhone;
+            updatePhoneValidationBadge();
+          }
           if (rider.pickupAddress) document.getElementById('input-pickup-addr').value = rider.pickupAddress;
           if (rider.dropAddress) document.getElementById('input-drop-addr').value = rider.dropAddress;
           if (rider.verified) {

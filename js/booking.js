@@ -2162,21 +2162,28 @@ class BookingManager {
           <div class="checkout-form-grid">
             <div class="input-field-group">
               <span class="input-icon-clean">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               </span>
               <div class="input-content">
                 <label>PASSENGER FULL NAME *</label>
-                <input type="text" id="chk-name" value="${this.passengerDetails.name || window.currentUser?.name || ''}" placeholder="Enter passenger name" autocomplete="name">
+                <input type="text" id="chk-name" value="${this.passengerDetails.name || window.currentUser?.name || ''}" placeholder="Enter your name" autocomplete="name">
               </div>
             </div>
 
             <div class="input-field-group">
-              <span class="input-icon-clean">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              </span>
+              <div class="phone-country-pill" style="padding: 2px 8px; border-right: 1.5px solid var(--owc-border); display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; user-select: none;">
+                <svg width="18" height="13" viewBox="0 0 30 20" style="border-radius: 2px; overflow: hidden; display: inline-block;">
+                  <rect width="30" height="6.67" fill="#FF9933"/>
+                  <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
+                  <rect y="13.33" width="30" height="6.67" fill="#138808"/>
+                  <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7"/>
+                  <circle cx="15" cy="10" r="0.6" fill="#000080"/>
+                </svg>
+                <span style="font-weight: 750; font-size: 13.5px; color: var(--owc-text);">+91</span>
+              </div>
               <div class="input-content">
                 <label>10-DIGIT MOBILE NUMBER *</label>
-                <input type="tel" id="chk-phone" value="${this.passengerDetails.phone || window.currentUser?.phone || ''}" placeholder="e.g. 8002141816" autocomplete="tel">
+                <input type="tel" id="chk-phone" maxlength="10" value="${this.passengerDetails.phone || window.currentUser?.phone || ''}" placeholder="Enter 10-digit mobile number" autocomplete="tel" inputmode="numeric" style="letter-spacing: 0.8px; font-weight: 700;">
               </div>
             </div>
           </div>

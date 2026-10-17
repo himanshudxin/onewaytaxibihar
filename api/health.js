@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
   return res.end(JSON.stringify({
     success: true,
     status: 'ONLINE',
-    version: '2026.10.13-prod',
+    version: '2026.10.17-prod',
     platform: 'OneWayTaxiBihar Production Cloud',
     domain: 'onewaytaxibihar.com',
     engine: dbStatus.engine === 'mongodb' ? 'MongoDB Atlas Active' : (dbStatus.engine || 'Local Sync Active'),

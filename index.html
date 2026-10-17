@@ -656,12 +656,10 @@
             </div>
           </div>
 
-          <!-- Primary "Check Fare" Action Button -->
-          <button type="button" class="check-fare-primary-btn ready" id="btn-check-fare" onclick="window.executeCheckFareFlow()" title="Check live outstation cab fares &amp; availability">
-            <span>Check Fares &amp; Availability</span>
-            <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+          <!-- Primary "Check Fare" Action Button (Locked until 10-digit mobile entered) -->
+          <button type="button" class="check-fare-primary-btn" id="btn-check-fare" onclick="window.executeCheckFareFlow()" title="Enter 10-digit mobile number to view live fares &amp; availability">
+            <svg class="btn-check-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right: 6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Enter Mobile to View Fares</span>
           </button>
 
           <!-- BELOW CHECK FARE OPTION: Built in Bihar for BHARAT (Prestigious National Identity Badge) -->
@@ -1825,6 +1823,23 @@
         localStorage.setItem('oneway_fare_phone', phoneVal);
       } catch (e) {}
 
+      // Background lead capture
+      fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cleanPhone: phoneVal,
+          phone: '+91 ' + phoneVal,
+          passengerName: 'Homepage Check Fare Visitor',
+          originCity: (pInput && pInput.value.trim()) ? pInput.value.trim() : 'Patna',
+          destCity: (dInput && dInput.value.trim()) ? dInput.value.trim() : 'Gaya',
+          tripType: 'oneway',
+          pickupDate: new Date().toISOString().split('T')[0],
+          pickupTime: document.getElementById('display-pickup-time')?.textContent?.trim() || '10:00 AM',
+          source: 'Homepage Check Fare Button'
+        })
+      }).catch(() => {});
+
       if (window.bookingManager && typeof window.bookingManager.handleCheckFare === 'function') {
         try {
           const handled = window.bookingManager.handleCheckFare();
@@ -1874,6 +1889,59 @@
 
       window.location.href = 'cabs.html?' + query.toString();
     };
+
+    // Live phone validation & button state synchronizer on homepage
+    document.addEventListener('DOMContentLoaded', () => {
+      const phoneInput = document.getElementById('input-fare-phone');
+      const btn = document.getElementById('btn-check-fare');
+      const badge = document.getElementById('phone-valid-badge');
+      const clearBtn = document.getElementById('phone-input-clear-btn');
+
+      function syncPhoneBtn() {
+        if (!phoneInput || !btn) return;
+        const val = phoneInput.value.replace(/\D/g, '').slice(0, 10);
+        if (phoneInput.value !== val) phoneInput.value = val;
+
+        const isValid = val.length === 10 && /^[6-9]\d{9}$/.test(val);
+        if (badge) badge.style.display = isValid ? 'inline-flex' : 'none';
+        if (clearBtn) clearBtn.style.display = val.length > 0 ? 'inline-flex' : 'none';
+
+        if (isValid) {
+          btn.classList.add('ready');
+          btn.title = 'Check live outstation cab fares & availability';
+          btn.innerHTML = `
+            <span>Check Fares &amp; Availability</span>
+            <svg class="btn-check-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          `;
+        } else {
+          btn.classList.remove('ready');
+          btn.title = 'Enter 10-digit mobile number to view live fares & availability';
+          btn.innerHTML = `
+            <svg class="btn-check-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right: 6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Enter Mobile to View Fares</span>
+          `;
+        }
+      }
+
+      if (phoneInput) {
+        phoneInput.addEventListener('input', syncPhoneBtn);
+        phoneInput.addEventListener('change', syncPhoneBtn);
+        phoneInput.addEventListener('keyup', syncPhoneBtn);
+        syncPhoneBtn();
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          if (phoneInput) {
+            phoneInput.value = '';
+            syncPhoneBtn();
+            phoneInput.focus();
+          }
+        });
+      }
+    });
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

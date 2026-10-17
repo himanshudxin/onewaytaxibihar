@@ -611,7 +611,23 @@
         }).join('');
       }
 
+      function updateGridBlur() {
+        const grid = document.getElementById('cabs-grid');
+        if (grid) {
+          if (!isUnlocked) {
+            grid.style.filter = 'blur(8px)';
+            grid.style.pointerEvents = 'none';
+            grid.style.userSelect = 'none';
+          } else {
+            grid.style.filter = 'none';
+            grid.style.pointerEvents = 'auto';
+            grid.style.userSelect = 'auto';
+          }
+        }
+      }
+
       renderFleetCards();
+      updateGridBlur();
 
       // Modal & Gate Controller
       window.openUnlockModal = function (cabId = null) {
@@ -620,9 +636,13 @@
         const phoneInput = document.getElementById('unlock-modal-phone');
         const errorBox = document.getElementById('unlock-phone-error');
         if (errorBox) errorBox.style.display = 'none';
-        if (modal) modal.style.display = 'flex';
+        if (modal) {
+          modal.style.display = 'flex';
+          modal.style.backdropFilter = 'blur(12px)';
+          modal.style.background = 'rgba(6, 10, 18, 0.92)';
+        }
         if (phoneInput) {
-          setTimeout(() => phoneInput.focus(), 150);
+          setTimeout(() => phoneInput.focus(), 80);
         }
       };
 
@@ -676,6 +696,7 @@
         const modal = document.getElementById('unlock-fares-modal');
         if (modal) modal.style.display = 'none';
 
+        updateGridBlur();
         renderFleetCards();
 
         if (pendingCabId) {
@@ -690,11 +711,9 @@
         }
       };
 
-      // Auto-open phone gate modal if not unlocked
+      // Auto-open phone gate modal immediately if not unlocked
       if (!isUnlocked) {
-        setTimeout(() => {
-          window.openUnlockModal();
-        }, 400);
+        window.openUnlockModal();
       }
 
       window.selectCabAndProceed = function (cabId, category, models, price) {

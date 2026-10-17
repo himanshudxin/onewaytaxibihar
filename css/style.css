@@ -2415,3 +2415,277 @@ main.site-main {
     display: none !important;
   }
 }
+
+/* ==========================================================================
+   PATNA ONE-WAY TAXI FARE CHART SECTION (34 ROUTES)
+   ========================================================================== */
+.patna-fare-section {
+  padding: 48px 0 64px;
+  background: var(--owc-bg);
+  position: relative;
+}
+
+.fare-section-header {
+  text-align: center;
+  max-width: 840px;
+  margin: 0 auto 32px;
+}
+
+.fare-section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(5, 150, 105, 0.12);
+  border: 1px solid rgba(5, 150, 105, 0.35);
+  color: #10b981;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.fare-section-title {
+  font-size: clamp(24px, 4.2vw, 36px);
+  font-weight: 900;
+  color: var(--owc-text);
+  line-height: 1.25;
+  margin: 0 0 10px;
+  letter-spacing: -0.5px;
+}
+
+.fare-section-subtitle {
+  font-size: clamp(13.5px, 2.5vw, 15.5px);
+  color: var(--owc-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.fare-controls-card {
+  background: var(--owc-card-bg);
+  border: 1px solid var(--owc-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fare-search-box {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+}
+
+.fare-search-input {
+  width: 100%;
+  padding: 11px 16px 11px 40px;
+  border: 1.5px solid var(--owc-border);
+  border-radius: 10px;
+  font-size: 14px;
+  background: var(--owc-surface);
+  color: var(--owc-text);
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.fare-search-input:focus {
+  border-color: var(--owc-primary);
+  box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.2);
+}
+
+.fare-search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--owc-text-muted);
+  pointer-events: none;
+}
+
+.fare-filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tab-btn {
+  background: var(--owc-surface);
+  border: 1px solid var(--owc-border);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--owc-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.filter-tab-btn:hover {
+  color: var(--owc-text);
+  border-color: var(--owc-primary);
+}
+
+.filter-tab-btn.active {
+  background: var(--owc-primary);
+  color: #ffffff;
+  border-color: var(--owc-primary);
+}
+
+.fare-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--owc-border);
+  border-radius: 16px;
+  background: var(--owc-card-bg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 28px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fare-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.fare-table thead tr {
+  background: var(--owc-surface);
+  border-bottom: 2px solid var(--owc-border);
+  color: var(--owc-text-muted);
+}
+
+.fare-table th {
+  padding: 14px 16px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fare-table tbody tr {
+  border-bottom: 1px solid var(--owc-border);
+  transition: background 0.15s ease;
+}
+
+.fare-table tbody tr:hover {
+  background: rgba(0, 149, 246, 0.04);
+}
+
+.fare-table td {
+  padding: 13px 16px;
+  vertical-align: middle;
+}
+
+.dest-name {
+  font-weight: 800;
+  color: var(--owc-text);
+  font-size: 14.5px;
+  display: block;
+}
+
+.dest-meta {
+  font-size: 12px;
+  color: var(--owc-text-muted);
+  margin-top: 2px;
+  display: block;
+}
+
+.fare-price-cell {
+  font-weight: 800;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.fare-price-cell .price-amount {
+  color: #10b981;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.fare-price-cell.sedan .price-amount {
+  color: var(--owc-primary);
+}
+
+.fare-price-cell.suv .price-amount {
+  color: #a855f7;
+}
+
+.fare-model-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--owc-text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.market-tag {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.btn-table-book {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.btn-table-book:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.45);
+}
+
+.fare-policy-banner {
+  background: var(--owc-card-bg);
+  border: 1px solid var(--owc-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.policy-block-title {
+  font-size: 14.5px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.policy-block-desc {
+  font-size: 12.5px;
+  color: var(--owc-text-muted);
+  line-height: 1.55;
+  margin: 0;
+}

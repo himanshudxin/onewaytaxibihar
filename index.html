@@ -183,7 +183,7 @@
       <!-- Desktop Nav Links -->
       <ul class="nav-links">
         <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Services</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openRoutesModal()">Fares &amp; Routes</a></li>
+        <li><a href="#patna-fare-chart" onclick="document.getElementById('patna-fare-chart')?.scrollIntoView({behavior:'smooth'}); return false;">Patna Fare Chart (from ₹699)</a></li>
         <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
         <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
         <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
@@ -303,7 +303,7 @@
             <span class="drawer-nav-text">Passenger Portal &amp; Trips</span>
             <span class="drawer-nav-badge">Live</span>
           </a>
-          <a href="javascript:void(0)" class="drawer-nav-item" onclick="window.closeMobileDrawer(); window.openRoutesModal();">
+          <a href="#patna-fare-chart" class="drawer-nav-item" onclick="window.closeMobileDrawer(); document.getElementById('patna-fare-chart')?.scrollIntoView({behavior:'smooth'});">
             <span class="drawer-nav-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </span>
@@ -714,6 +714,89 @@
           <div class="quickbar-title">POPULAR OUTSTATION ROUTES FROM PATNA:</div>
           <div class="quick-routes-chips" id="hero-quick-routes">
             <!-- Injected via JavaScript -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         1.5. PATNA TO BIHAR ONE-WAY TAXI FARE CHART (ALL 34 DESTINATIONS)
+         ====================================================================== -->
+    <section class="patna-fare-section app-section" id="patna-fare-chart">
+      <div class="container">
+        
+        <div class="fare-section-header">
+          <div class="fare-section-badge">★ 2026 OFFICIAL FARE CHART • ZERO RETURN CHARGES</div>
+          <h2 class="fare-section-title">Patna to Bihar One-Way Taxi Fare Chart</h2>
+          <p class="fare-section-subtitle">
+            Guaranteed lowest flat fares starting from <strong>₹699</strong> across 34 destinations in Bihar. All Highway FASTag Tolls, Chauffeur Allowance &amp; 5% GST 100% included with <strong>₹0 return charges</strong>.
+          </p>
+        </div>
+
+        <!-- Interactive Search & Fleet Filter Tabs -->
+        <div class="fare-controls-card">
+          <div class="fare-search-box">
+            <svg class="fare-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="hp-fare-search" class="fare-search-input" placeholder="Search destination or district (e.g. Gaya, Darbhanga, Muzaffarpur, Bhagalpur, Purnea)..." oninput="window.filterHomepageFares(this.value)">
+          </div>
+
+          <div class="fare-filter-tabs">
+            <button type="button" class="filter-tab-btn active" data-tier="all" onclick="window.setHomepageCategoryFilter('all')">All Fleets</button>
+            <button type="button" class="filter-tab-btn" data-tier="hatchback" onclick="window.setHomepageCategoryFilter('hatchback')">Go Hatchback (from ₹699)</button>
+            <button type="button" class="filter-tab-btn" data-tier="sedan" onclick="window.setHomepageCategoryFilter('sedan')">Prime Sedan (from ₹799)</button>
+            <button type="button" class="filter-tab-btn" data-tier="suv" onclick="window.setHomepageCategoryFilter('suv')">Family SUV (from ₹1,199)</button>
+          </div>
+        </div>
+
+        <!-- 34 Routes Responsive Table -->
+        <div class="fare-table-wrap">
+          <table class="fare-table" id="hp-fare-table">
+            <thead>
+              <tr>
+                <th>Destination / District</th>
+                <th>Distance</th>
+                <th class="hp-col-hatchback">Go Hatchback (AC)</th>
+                <th class="hp-col-sedan">Prime Sedan (AC)</th>
+                <th class="hp-col-suv">Family SUV (6+1 AC)</th>
+                <th>Indicative Market</th>
+                <th style="text-align: center;">Book Ride</th>
+              </tr>
+            </thead>
+            <tbody id="hp-fare-table-body">
+              <!-- Rendered via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Transparency & Guarantee Cards -->
+        <div class="fare-policy-banner">
+          <div>
+            <div class="policy-block-title" style="color: #10b981;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>100% Inclusive Pricing</span>
+            </div>
+            <p class="policy-block-desc">
+              All highway FASTag tolls, driver allowance, fuel, and 5% GST are included upfront. No extra payment required at toll plazas.
+            </p>
+          </div>
+          <div>
+            <div class="policy-block-title" style="color: var(--owc-primary);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+              <span>Zero Return Fare</span>
+            </div>
+            <p class="policy-block-desc">
+              Pay solely for the one-way distance you travel. Return empty mileage charges are strictly <strong>₹0</strong> across all 38 districts.
+            </p>
+          </div>
+          <div>
+            <div class="policy-block-title" style="color: #f59e0b;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>24×7 Patna Central Dispatch</span>
+            </div>
+            <p class="policy-block-desc">
+              Direct airport, railway junction &amp; doorstep pickup with dedicated live dispatch hotline: <strong>+91 80021 41816</strong>.
+            </p>
           </div>
         </div>
 
@@ -1778,15 +1861,128 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261016_v1"></script>
-  <script src="/js/data.js?v=20261015_multipage_v3"></script>
-  <script src="/js/calculator.js?v=20261015_multipage_v3"></script>
-  <script src="/js/map.js?v=20261015_multipage_v3"></script>
-  <script src="/js/api.js?v=20261015_multipage_v3"></script>
-  <script src="/js/datetime-picker.js?v=20261015_multipage_v3"></script>
-  <script src="/js/firebase-otp.js?v=20261008_fast2sms"></script>
-  <script src="/js/booking.js?v=20261015_multipage_v3"></script>
-  <script src="/js/app.js?v=20261015_multipage_v3"></script>
+  <script src="/js/brand-logo.js?v=20261017_fares_v3"></script>
+  <script src="/js/data.js?v=20261017_fares_v3"></script>
+  <script src="/js/calculator.js?v=20261017_fares_v3"></script>
+  <script src="/js/map.js?v=20261017_fares_v3"></script>
+  <script src="/js/api.js?v=20261017_fares_v3"></script>
+  <script src="/js/datetime-picker.js?v=20261017_fares_v3"></script>
+  <script src="/js/firebase-otp.js?v=20261017_fares_v3"></script>
+  <script src="/js/booking.js?v=20261017_fares_v3"></script>
+  <script src="/js/app.js?v=20261017_fares_v3"></script>
+
+  <!-- Homepage Patna Fare Chart Controller -->
+  <script>
+    (function initHomepageFareChart() {
+      let hpTierFilter = 'all';
+
+      function renderHpTable(fares) {
+        const tbody = document.getElementById('hp-fare-table-body');
+        if (!tbody) return;
+
+        const list = Array.isArray(fares) && fares.length > 0
+          ? fares
+          : ((typeof window !== 'undefined' && Array.isArray(window.OTB_PATNA_FARES)) ? window.OTB_PATNA_FARES : []);
+
+        if (list.length === 0) return;
+
+        tbody.innerHTML = list.map(f => {
+          const hb = Number(f.hatchback || f.baseFareHatchback || 699).toLocaleString('en-IN');
+          const sedan = Number(f.sedan || f.baseFareSedan || 799).toLocaleString('en-IN');
+          const suv = Number(f.suv || f.baseFareSuv || 1199).toLocaleString('en-IN');
+          const market = f.marketComparison || '2500–3500';
+          const destName = f.destination || f.to;
+          const destDistrict = f.district || f.destCity || '';
+
+          return `
+            <tr data-id="${f.id || ''}">
+              <td>
+                <span class="dest-name">${destName}</span>
+                <span class="dest-meta">District: ${destDistrict}</span>
+              </td>
+              <td>
+                <span style="font-weight: 750; color: var(--owc-text);">${f.distanceKm || f.distance || 50} KM</span>
+              </td>
+              <td class="fare-price-cell hp-col-hatchback">
+                <span class="price-amount">₹${hb}</span>
+                <span class="fare-model-sub">WagonR, Tiago</span>
+              </td>
+              <td class="fare-price-cell sedan hp-col-sedan">
+                <span class="price-amount">₹${sedan}</span>
+                <span class="fare-model-sub">Dzire, Etios</span>
+              </td>
+              <td class="fare-price-cell suv hp-col-suv">
+                <span class="price-amount">₹${suv}</span>
+                <span class="fare-model-sub">Ertiga, Triber</span>
+              </td>
+              <td>
+                <span class="market-tag">~₹${market}</span>
+              </td>
+              <td style="text-align: center;">
+                <button type="button" class="btn-table-book" onclick="window.loadFarePresetAndBook('${destName}', '${f.hatchback || 699}')">
+                  <span>Book Cab</span>
+                  <span>➔</span>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        applyHpColVisibility();
+      }
+
+      function applyHpColVisibility() {
+        const isHatch = hpTierFilter === 'hatchback';
+        const isSedan = hpTierFilter === 'sedan';
+        const isSuv = hpTierFilter === 'suv';
+
+        document.querySelectorAll('.hp-col-hatchback').forEach(el => el.style.display = (hpTierFilter === 'all' || isHatch) ? '' : 'none');
+        document.querySelectorAll('.hp-col-sedan').forEach(el => el.style.display = (hpTierFilter === 'all' || isSedan) ? '' : 'none');
+        document.querySelectorAll('.hp-col-suv').forEach(el => el.style.display = (hpTierFilter === 'all' || isSuv) ? '' : 'none');
+      }
+
+      window.setHomepageCategoryFilter = function(tier) {
+        hpTierFilter = tier;
+        document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-tier') === tier);
+        });
+        applyHpColVisibility();
+      };
+
+      window.filterHomepageFares = function(query) {
+        const q = (query || '').toLowerCase().trim();
+        const source = (typeof window !== 'undefined' && Array.isArray(window.OTB_PATNA_FARES)) ? window.OTB_PATNA_FARES : [];
+        const filtered = source.filter(f => {
+          if (f.active === false) return false;
+          if (!q) return true;
+          return (f.destination || '').toLowerCase().includes(q) ||
+                 (f.destCity || '').toLowerCase().includes(q) ||
+                 (f.district || '').toLowerCase().includes(q);
+        });
+        renderHpTable(filtered);
+      };
+
+      // Initial render when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          renderHpTable(window.OTB_PATNA_FARES || []);
+        });
+      } else {
+        renderHpTable(window.OTB_PATNA_FARES || []);
+      }
+
+      // Live fetch from /api/fares in background
+      fetch('/api/fares')
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.success && Array.isArray(d.fares) && d.fares.length > 0) {
+            window.OTB_PATNA_FARES = d.fares;
+            renderHpTable(d.fares);
+          }
+        })
+        .catch(() => {});
+    })();
+  </script>
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
   <script>

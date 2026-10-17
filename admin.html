@@ -6159,7 +6159,7 @@
     async function toggleAdminFareActive(id, newStatus) {
       const fare = _allFares.find(f => f.id === id);
       const actionName = newStatus ? "activate" : "deactivate";
-      confirmAction(
+      openConfirmModal(
         `${newStatus ? 'Activate' : 'Deactivate'} Route`,
         `Are you sure you want to ${actionName} "${fare?.destination || id}"?`,
         async () => {
@@ -6778,6 +6778,7 @@
 
       if (modal) modal.classList.add("active");
     }
+    window.confirmAction = openConfirmModal;
 
     function closeConfirmModal() {
       document.getElementById("modal-confirm-action")?.classList.remove("active");

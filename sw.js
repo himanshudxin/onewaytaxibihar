@@ -4,7 +4,7 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v2.0';
+const CACHE_NAME = 'onewaytaxibihar-v3.5';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -14,6 +14,8 @@ const CORE_ASSETS = [
   '/booking.html',
   '/driver',
   '/driver.html',
+  '/fare-chart',
+  '/fare-chart.html',
   '/patna-to-gaya-cab',
   '/patna-to-gaya-cab.html',
   '/patna-to-muzaffarpur-cab',
@@ -26,14 +28,15 @@ const CORE_ASSETS = [
   '/500.html',
   '/css/style.css',
   '/css/components.css?v=3.0',
-  '/js/data.js?v=20261015_multipage_v3',
-  '/js/calculator.js?v=20261015_multipage_v3',
-  '/js/map.js?v=20261015_multipage_v3',
-  '/js/api.js?v=20261015_multipage_v3',
-  '/js/datetime-picker.js?v=20261015_multipage_v3',
-  '/js/firebase-otp.js?v=20261008_fast2sms',
-  '/js/booking.js?v=20261015_multipage_v3',
-  '/js/app.js?v=20261015_multipage_v3',
+  '/js/brand-logo.js?v=20261017_fares_v3',
+  '/js/data.js?v=20261017_fares_v3',
+  '/js/calculator.js?v=20261017_fares_v3',
+  '/js/map.js?v=20261017_fares_v3',
+  '/js/api.js?v=20261017_fares_v3',
+  '/js/datetime-picker.js?v=20261017_fares_v3',
+  '/js/firebase-otp.js?v=20261017_fares_v3',
+  '/js/booking.js?v=20261017_fares_v3',
+  '/js/app.js?v=20261017_fares_v3',
   '/favicon.svg',
   '/img/logo-reframed.png',
   '/images/icon-192.png',

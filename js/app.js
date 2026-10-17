@@ -1194,6 +1194,36 @@ window.openServicesModal = () => {
   modal.classList.add("open");
 };
 
+window.loadFarePresetAndBook = (destName, fare) => {
+  window.closeAllModals();
+  const dInput = document.getElementById("input-dest");
+  const pInput = document.getElementById("input-pickup");
+  if (pInput) pInput.value = "Patna, Bihar";
+  if (dInput) dInput.value = `${destName}, Bihar`;
+
+  const phoneInput = document.getElementById("input-fare-phone");
+  const rawVal = (phoneInput?.value || localStorage.getItem('oneway_fare_phone') || "").replace(/\D/g, "").slice(-10);
+  if (rawVal.length === 10 && /^[6-9]\d{9}$/.test(rawVal)) {
+    if (phoneInput && !phoneInput.value) phoneInput.value = rawVal;
+    if (typeof window.executeCheckFareFlow === "function") {
+      window.executeCheckFareFlow();
+    } else if (window.bookingManager) {
+      window.bookingManager.handleCheckFare();
+    }
+  } else {
+    const phoneGroup = document.getElementById("phone-check-group");
+    if (phoneGroup) {
+      phoneGroup.scrollIntoView({ behavior: "smooth", block: "center" });
+      phoneGroup.classList.add("shake-error");
+      setTimeout(() => phoneGroup.classList.remove("shake-error"), 600);
+    }
+    if (phoneInput) phoneInput.focus();
+    if (typeof window.showToast === "function") {
+      window.showToast(`Selected Patna → ${destName}. Please enter your 10-digit mobile number to view fares.`, "info");
+    }
+  }
+};
+
 window.openRoutesModal = () => {
   window.closeAllModals();
   const modal = document.getElementById("modal-routes");
@@ -1203,37 +1233,65 @@ window.openRoutesModal = () => {
 
   const render = (query = "") => {
     const q = query.toLowerCase();
-    const matches = OTB_POPULAR_ROUTES.filter(r => 
-      r.from.toLowerCase().includes(q) || 
-      r.to.toLowerCase().includes(q) ||
-      r.highway.toLowerCase().includes(q)
-    );
+    const faresList = (typeof window !== "undefined" && Array.isArray(window.OTB_PATNA_FARES) && window.OTB_PATNA_FARES.length > 0)
+      ? window.OTB_PATNA_FARES
+      : (typeof OTB_PATNA_FARES !== "undefined" ? OTB_PATNA_FARES : OTB_POPULAR_ROUTES);
+
+    const matches = faresList.filter(r => {
+      if (r.active === false) return false;
+      const dest = (r.destination || r.to || "").toLowerCase();
+      const origin = (r.origin || r.from || "Patna").toLowerCase();
+      const district = (r.district || "").toLowerCase();
+      return dest.includes(q) || origin.includes(q) || district.includes(q);
+    });
 
     const farePhoneInput = document.getElementById('input-fare-phone');
-    const activePhone = (farePhoneInput?.value || (window.currentUser ? window.currentUser.phone : '') || '').replace(/\D/g, '').slice(-10);
+    const activePhone = (farePhoneInput?.value || (window.currentUser ? window.currentUser.phone : '') || localStorage.getItem('oneway_fare_phone') || '').replace(/\D/g, '').slice(-10);
     const hasPhone = Boolean(activePhone.length === 10 && /^[6-9]\d{9}$/.test(activePhone));
 
-    list.innerHTML = matches.map(r => `
-      <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 16px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-          <h4 style="font-size: 15px; font-weight: 800; color: var(--owc-text);">${r.from} → ${r.to}</h4>
-          ${hasPhone ? `
-            <span style="font-size: 16px; font-weight: 900; color: var(--owc-primary);">₹${r.baseFareHatchback}</span>
-          ` : `
-            <span style="font-size: 12.5px; font-weight: 800; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px; background: rgba(245, 158, 11, 0.12); padding: 2px 8px; border-radius: 6px;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              <span>Fare Locked</span>
-            </span>
-          `}
+    list.innerHTML = matches.map(r => {
+      const destName = r.destination || r.to;
+      const originName = r.origin || r.from || "Patna";
+      const hbFare = r.hatchback || r.baseFareHatchback || 699;
+      const sedanFare = r.sedan || r.baseFareSedan || 799;
+      const suvFare = r.suv || r.baseFareSuv || 1199;
+      const dist = r.distanceKm || r.distance || 50;
+
+      return `
+        <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 16px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <h4 style="font-size: 15px; font-weight: 800; color: var(--owc-text);">${originName} → ${destName}</h4>
+              ${hasPhone ? `
+                <span style="font-size: 16px; font-weight: 900; color: var(--owc-primary);">from ₹${hbFare}</span>
+              ` : `
+                <span style="font-size: 12.5px; font-weight: 800; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px; background: rgba(245, 158, 11, 0.12); padding: 2px 8px; border-radius: 6px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  <span>Fare Locked</span>
+                </span>
+              `}
+            </div>
+            <div style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 8px;">
+              ${dist} KM • All Tolls &amp; GST Included • ₹0 Return Fare
+            </div>
+            ${hasPhone ? `
+              <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:11.5px; margin-bottom:12px; color:var(--owc-text);">
+                <span style="background:rgba(0,149,246,0.08); padding:3px 8px; border-radius:6px; border:1px solid rgba(0,149,246,0.2);">HB: <strong>₹${hbFare}</strong></span>
+                <span style="background:rgba(5,150,105,0.08); padding:3px 8px; border-radius:6px; border:1px solid rgba(5,150,105,0.2); color:#059669;">Sedan: <strong>₹${sedanFare}</strong></span>
+                <span style="background:rgba(124,58,237,0.08); padding:3px 8px; border-radius:6px; border:1px solid rgba(124,58,237,0.2); color:#7c3aed;">SUV: <strong>₹${suvFare}</strong></span>
+              </div>
+            ` : `
+              <div style="font-size: 11.5px; color: var(--owc-text-muted); margin-bottom: 12px;">
+                Lowest fares starting ₹${hbFare} (Hatchback), ₹${sedanFare} (Sedan), ₹${suvFare} (SUV)
+              </div>
+            `}
+          </div>
+          <button type="button" class="btn-select-cab" style="padding: 8px 14px; font-size: 12.5px; width: 100%;" onclick="window.loadFarePresetAndBook('${destName}', '${hbFare}')">
+            ${hasPhone ? 'Book This Route ➔' : 'Unlock &amp; View Fare ➔'}
+          </button>
         </div>
-        <div style="font-size: 12px; color: var(--owc-text-muted); margin-bottom: 12px;">
-          ${r.distanceKm} KM • ${r.duration} • Toll included • Zero return charges
-        </div>
-        <button type="button" class="btn-select-cab" style="padding: 8px 14px; font-size: 12.5px;" onclick="window.bookingManager.loadRoutePreset('${r.fromId}', '${r.toId}')">
-          ${hasPhone ? 'Book This Route' : 'Unlock &amp; View Fare'}
-        </button>
-      </div>
-    `).join("");
+      `;
+    }).join("");
   };
 
   if (searchInput) {

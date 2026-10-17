@@ -157,8 +157,105 @@
   ],
   "payments": [],
   "wallet_ledger": [],
-  "leads": [],
-  "notifications": [],
+  "leads": [
+    {
+      "cleanPhone": "9905057552",
+      "cabName": "Prime Sedan",
+      "cabPrice": 2600,
+      "createdAt": "2026-10-17T06:26:17.820Z",
+      "destCity": "Gaya",
+      "distanceKm": 104,
+      "duration": "2h 15m",
+      "estFareHatch": 2184,
+      "estFareSedan": 2600,
+      "estFareSuv": 3432,
+      "id": "lead_9905057552_7820",
+      "notes": "Inquiry for Patna ➔ Gaya",
+      "originCity": "Patna",
+      "passengerName": "Ankit",
+      "phone": "+91 9905057552",
+      "pickupDate": "2026-10-17",
+      "pickupTime": "10:00 AM",
+      "rawPhone": "9905057552",
+      "selectedCab": "sedan",
+      "source": "Check Fares & Availability Button",
+      "status": "NEW",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-17T06:26:17.820Z"
+    },
+    {
+      "cleanPhone": "9122198451",
+      "cabName": "Prime Sedan",
+      "cabPrice": 3925,
+      "createdAt": "2026-10-17T05:06:25.899Z",
+      "destCity": "Aurangabad (Bihar)",
+      "distanceKm": 157,
+      "duration": "3h 16m",
+      "estFareHatch": 3297,
+      "estFareSedan": 3925,
+      "estFareSuv": 5181,
+      "id": "lead_9122198451_5899",
+      "notes": "Inquiry for Patna ➔ Aurangabad (Bihar)",
+      "originCity": "Patna",
+      "passengerName": "Fare Check Visitor",
+      "phone": "+91 9122198451",
+      "pickupDate": "2026-10-18",
+      "pickupTime": "10:00 AM",
+      "rawPhone": "9122198451",
+      "selectedCab": "sedan",
+      "source": "Check Fares & Availability Button",
+      "status": "NEW",
+      "tripType": "oneway",
+      "updatedAt": "2026-10-17T05:06:25.899Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "NOTIF_1792218379671",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Ankit (+91 9905057552) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
+      "leadId": "lead_9905057552_7820",
+      "isRead": false,
+      "createdAt": "2026-10-17T06:26:17.820Z"
+    },
+    {
+      "id": "NOTIF_1792213748229",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Test Phone Gate Visitor (+91 9876543210) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2198.",
+      "leadId": "lead_9876543210_7569",
+      "isRead": false,
+      "createdAt": "2026-10-17T05:09:07.569Z"
+    },
+    {
+      "id": "NOTIF_1792213587708",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Aurangabad (Bihar)",
+      "message": "Fare Check Visitor (+91 9122198451) checked fare for Patna ➔ Aurangabad (Bihar) (157 KM). Rate: ₹3925.",
+      "leadId": "lead_9122198451_5899",
+      "isRead": false,
+      "createdAt": "2026-10-17T05:06:25.899Z"
+    },
+    {
+      "id": "NOTIF_1792213586929",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Aurangabad (Bihar)",
+      "message": "Fare Check Visitor (+91 9122198451) checked fare for Patna ➔ Aurangabad (Bihar) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_9122198451_5149",
+      "isRead": false,
+      "createdAt": "2026-10-17T05:06:25.149Z"
+    },
+    {
+      "id": "NOTIF_1792213586924",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Aurangabad (Bihar)",
+      "message": "Fare Check Visitor (+91 9122198451) checked fare for Patna ➔ Aurangabad (Bihar) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_9122198451_4056",
+      "isRead": false,
+      "createdAt": "2026-10-17T05:06:24.056Z"
+    }
+  ],
   "coupons": [
     {
       "code": "FIRST100",
@@ -211,44 +308,21 @@
   ],
   "audit_logs": [
     {
-      "id": "AUD_1792206805742",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-7361",
-      "action": "MANUAL_BOOKING_CREATED",
-      "actor": "admin",
-      "details": "Manual booking created for Anil Kumar Sharma (Patna -> Gaya, ₹1850)",
-      "createdAt": "2026-10-17T03:13:25.742Z"
-    },
-    {
-      "id": "audit_1792206805348_5597",
+      "id": "audit_1792218866301_4389",
       "actor": "admin",
       "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
-      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
+      "action": "FARE_TOGGLED",
+      "entityType": "FARES",
+      "entityId": "patna-hajipur",
+      "oldValue": null,
+      "newValue": "{\"active\":true}",
+      "note": "Route Hajipur (Vaishali) activated",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T03:13:25.348Z",
-      "_id": "6ad2e7d52f7f69d12ce6fc0d"
+      "timestamp": "2026-10-17T06:34:26.301Z",
+      "_id": "6ad316f2d4f47a46fc1132fe"
     },
     {
-      "id": "audit_1792206804916_2058",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP ::1",
-      "ip": "::1",
-      "timestamp": "2026-10-17T03:13:24.917Z",
-      "_id": "6ad2e7d42f7f69d12ce6fc0c"
-    },
-    {
-      "id": "audit_1792030839118_2858",
+      "id": "audit_1792039189401_4077",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -258,33 +332,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-15T02:20:39.118Z"
-    },
-    {
-      "id": "audit_1791912348035_3333",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:48.035Z"
-    },
-    {
-      "id": "audit_1791912354729_3300",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:54.729Z"
+      "timestamp": "2026-10-15T04:39:49.401Z"
     },
     {
       "id": "audit_1791913854419_2448",
@@ -365,17 +413,17 @@
       "timestamp": "2026-10-15T02:20:29.901Z"
     },
     {
-      "id": "audit_1791912346904_8156",
+      "id": "audit_1792030839118_2858",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
+      "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:46.904Z"
+      "timestamp": "2026-10-15T02:20:39.118Z"
     },
     {
       "id": "audit_1792031938979_9869",
@@ -404,17 +452,17 @@
       "timestamp": "2026-10-15T04:39:47.933Z"
     },
     {
-      "id": "audit_1792039189401_4077",
+      "id": "audit_1791912354729_3300",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGOUT",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Operator logged out",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-15T04:39:49.401Z"
+      "timestamp": "2026-10-13T17:25:54.729Z"
     },
     {
       "id": "audit_1792039196867_8848",
@@ -482,20 +530,20 @@
       "timestamp": "2026-10-15T08:11:30.628Z"
     },
     {
-      "id": "audit_1791897115451_6762",
+      "id": "audit_1792051897163_3180",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T13:11:55.451Z"
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-15T08:11:37.163Z"
     },
     {
-      "id": "audit_1791889533099_3670",
+      "id": "audit_1792052380146_1499",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -505,10 +553,10 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T11:05:33.099Z"
+      "timestamp": "2026-10-15T08:19:40.147Z"
     },
     {
-      "id": "audit_1791894952881_7351",
+      "id": "audit_1792052391538_3414",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -518,7 +566,20 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T12:35:52.883Z"
+      "timestamp": "2026-10-15T08:19:51.538Z"
+    },
+    {
+      "id": "audit_1791897665899_9749",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T13:21:05.899Z"
     },
     {
       "id": "audit_1791895008910_1809",
@@ -599,17 +660,17 @@
       "timestamp": "2026-10-13T13:11:54.537Z"
     },
     {
-      "id": "audit_1792051897163_3180",
+      "id": "audit_1791897115451_6762",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-15T08:11:37.163Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T13:11:55.451Z"
     },
     {
       "id": "audit_1791897207060_4005",
@@ -625,7 +686,7 @@
       "timestamp": "2026-10-13T13:13:27.061Z"
     },
     {
-      "id": "audit_1791897665899_9749",
+      "id": "audit_1792052527232_5614",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -633,9 +694,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T13:21:05.899Z"
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-15T08:22:07.233Z"
     },
     {
       "id": "audit_1791897911780_9516",
@@ -716,20 +777,7 @@
       "timestamp": "2026-10-13T17:20:58.921Z"
     },
     {
-      "id": "audit_1792206592602_3870",
-      "actor": "admin",
-      "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
-      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T03:09:52.602Z"
-    },
-    {
-      "id": "audit_1792133501253_1425",
+      "id": "audit_1791912346904_8156",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_FAILED",
@@ -739,36 +787,10 @@
       "newValue": null,
       "note": "Failed credentials login from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:51:41.254Z"
+      "timestamp": "2026-10-13T17:25:46.904Z"
     },
     {
-      "id": "audit_1792133513461_3885",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:51:53.461Z"
-    },
-    {
-      "id": "audit_1792133534140_3873",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:52:14.140Z"
-    },
-    {
-      "id": "audit_1792133676561_9967",
+      "id": "audit_1791912348035_3333",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -778,7 +800,20 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:54:36.561Z"
+      "timestamp": "2026-10-13T17:25:48.035Z"
+    },
+    {
+      "id": "audit_1792206653638_3240",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
+      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T03:10:53.639Z"
     },
     {
       "id": "audit_1792203634193_8588",
@@ -833,17 +868,17 @@
       "timestamp": "2026-10-17T03:09:52.167Z"
     },
     {
-      "id": "audit_1792133488198_9430",
+      "id": "audit_1792206592602_3870",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:51:28.198Z"
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
+      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T03:09:52.602Z"
     },
     {
       "id": "audit_1792206633177_5150",
@@ -885,17 +920,17 @@
       "timestamp": "2026-10-17T03:10:53.249Z"
     },
     {
-      "id": "audit_1792206653638_3240",
+      "id": "audit_1792133676561_9967",
       "actor": "admin",
       "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
-      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T03:10:53.639Z"
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T06:54:36.561Z"
     },
     {
       "id": "audit_1792206683785_9143",
@@ -950,7 +985,7 @@
       "timestamp": "2026-10-17T03:12:09.328Z"
     },
     {
-      "id": "audit_1792054706009_3309",
+      "id": "audit_1792206804916_2058",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -958,48 +993,61 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-15T08:58:26.009Z"
+      "note": "Operator logged in from IP ::1",
+      "ip": "::1",
+      "timestamp": "2026-10-17T03:13:24.917Z"
     },
     {
-      "id": "audit_1792052380146_1499",
+      "id": "audit_1792206805348_5597",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"onewaytaxibihar@hdfcbank\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",",
+      "note": "Operational settings modified (Helpline: +91 99999 11111, WhatsApp: +91 99999 22222)",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-15T08:19:40.147Z"
+      "timestamp": "2026-10-17T03:13:25.348Z"
     },
     {
-      "id": "audit_1792052391538_3414",
+      "id": "audit_1792218676232_7974",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "action": "FARE_UPDATED",
+      "entityType": "FARES",
+      "entityId": "patna-hajipur",
+      "oldValue": "{\"id\":\"patna-hajipur\",\"origin\":\"Patna\",\"destination\":\"Hajipur (Vaishali)\",\"destCity\":\"Hajipur\",\"district\":\"Vaishali\",\"distanceKm\":25,\"hatchback\":699,\"sedan\":799,\"suv\":1199,\"marketComparison\":\"1500–1800\",\"active\":true}",
+      "newValue": "{\"id\":\"patna-hajipur\",\"origin\":\"Patna\",\"destination\":\"Hajipur (Vaishali)\",\"destCity\":\"Hajipur\",\"district\":\"\",\"distanceKm\":25,\"hatchback\":699,\"sedan\":799,\"suv\":1199,\"marketComparison\":\"1500–1800\",\"active\":true,\"updatedAt\":\"2026-10-17T06:31:16.232Z\",\"updatedBy\":\"admin\"}",
+      "note": "Fare chart for Hajipur (Vaishali) updated (Hatch: ₹699, Sedan: ₹799, SUV: ₹1199)",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-15T08:19:51.538Z"
+      "timestamp": "2026-10-17T06:31:16.232Z"
     },
     {
-      "id": "audit_1792052527232_5614",
+      "id": "audit_1792218676651_1537",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "FARE_TOGGLED",
+      "entityType": "FARES",
+      "entityId": "patna-hajipur",
+      "oldValue": null,
+      "newValue": "{\"active\":true}",
+      "note": "Route Hajipur (Vaishali) activated",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T06:31:16.651Z"
+    },
+    {
+      "id": "audit_1792110589992_4422",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Operator logged out",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-15T08:22:07.233Z"
+      "timestamp": "2026-10-16T00:29:49.992Z"
     },
     {
       "id": "audit_1792053517612_4551",
@@ -1067,7 +1115,7 @@
       "timestamp": "2026-10-15T08:57:54.695Z"
     },
     {
-      "id": "audit_1791889370117_6051",
+      "id": "audit_1792054706009_3309",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1077,7 +1125,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T11:02:50.117Z"
+      "timestamp": "2026-10-15T08:58:26.009Z"
     },
     {
       "id": "audit_1792110581138_9550",
@@ -1106,17 +1154,17 @@
       "timestamp": "2026-10-16T00:29:42.618Z"
     },
     {
-      "id": "audit_1792110589992_4422",
+      "id": "audit_1791894952881_7351",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGOUT",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T00:29:49.992Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T12:35:52.883Z"
     },
     {
       "id": "audit_1792110630749_7738",
@@ -1171,17 +1219,69 @@
       "timestamp": "2026-10-16T03:37:27.454Z"
     },
     {
-      "id": "audit_1791872130672_8909",
+      "id": "audit_1792133488198_9430",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T06:51:28.198Z"
+    },
+    {
+      "id": "audit_1792133501253_1425",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T06:51:41.254Z"
+    },
+    {
+      "id": "audit_1792133513461_3885",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T06:51:53.461Z"
+    },
+    {
+      "id": "audit_1792133534140_3873",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T06:52:14.140Z"
+    },
+    {
+      "id": "audit_1791872140630_3506",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Operator logged out",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T06:15:30.672Z"
+      "timestamp": "2026-10-13T06:15:40.630Z"
     },
     {
       "id": "audit_1791868166484_6410",
@@ -1288,6 +1388,19 @@
       "timestamp": "2026-10-13T06:15:29.151Z"
     },
     {
+      "id": "audit_1791872130672_8909",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T06:15:30.672Z"
+    },
+    {
       "id": "audit_1791866517784_1714",
       "actor": "admin",
       "role": "owner",
@@ -1299,19 +1412,6 @@
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
       "timestamp": "2026-10-13T04:41:57.784Z"
-    },
-    {
-      "id": "audit_1791872140630_3506",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T06:15:40.630Z"
     },
     {
       "id": "audit_1791872229802_7031",
@@ -1403,6 +1503,19 @@
       "note": "Operational settings modified",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-13T06:28:05.186Z"
+    },
+    {
+      "id": "audit_1791872936324_1589",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
+      "note": "Operational settings modified",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T06:28:56.324Z"
     },
     {
       "id": "audit_1791860980688_4892",
@@ -1522,7 +1635,7 @@
       "timestamp": "2026-10-13T03:09:14.376Z"
     },
     {
-      "id": "audit_1791872936324_1589",
+      "id": "audit_1791872942835_7005",
       "actor": "admin",
       "role": "owner",
       "action": "SETTINGS_UPDATED",
@@ -1532,7 +1645,7 @@
       "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
       "note": "Operational settings modified",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:28:56.324Z"
+      "timestamp": "2026-10-13T06:29:02.835Z"
     },
     {
       "id": "audit_1791861285158_3370",
@@ -1639,20 +1752,7 @@
       "timestamp": "2026-10-13T04:25:20.835Z"
     },
     {
-      "id": "audit_1791883527316_2910",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T09:25:27.316Z"
-    },
-    {
-      "id": "audit_1791875718736_1979",
+      "id": "audit_1791883678405_5028",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1662,20 +1762,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:15:18.736Z"
-    },
-    {
-      "id": "audit_1791875725024_2235",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:15:25.024Z"
+      "timestamp": "2026-10-13T09:27:58.405Z"
     },
     {
       "id": "audit_1791875887631_1527",
@@ -1756,17 +1843,17 @@
       "timestamp": "2026-10-13T09:22:14.916Z"
     },
     {
-      "id": "audit_1791875717837_2446",
+      "id": "audit_1791883527316_2910",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T07:15:17.837Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T09:25:27.316Z"
     },
     {
       "id": "audit_1791883677419_1799",
@@ -1782,17 +1869,17 @@
       "timestamp": "2026-10-13T09:27:57.419Z"
     },
     {
-      "id": "audit_1791883678405_5028",
+      "id": "audit_1791875725024_2235",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGOUT",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Operator logged out",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T09:27:58.405Z"
+      "timestamp": "2026-10-13T07:15:25.024Z"
     },
     {
       "id": "audit_1791883686540_5458",
@@ -1873,7 +1960,7 @@
       "timestamp": "2026-10-13T10:59:17.377Z"
     },
     {
-      "id": "audit_1791874912203_7986",
+      "id": "audit_1791889370117_6051",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1883,20 +1970,33 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:01:52.203Z"
+      "timestamp": "2026-10-13T11:02:50.117Z"
     },
     {
-      "id": "audit_1791872942835_7005",
+      "id": "audit_1791889533099_3670",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T11:05:33.099Z"
+    },
+    {
+      "id": "audit_1791874912430_7562",
       "actor": "admin",
       "role": "owner",
       "action": "SETTINGS_UPDATED",
       "entityType": "SETTINGS",
       "entityId": "global",
       "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "note": "Operational settings modified",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null,\"helplin",
+      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 72818 51011)",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:29:02.835Z"
+      "timestamp": "2026-10-13T07:01:52.430Z"
     },
     {
       "id": "audit_1791872977112_1730",
@@ -1990,6 +2090,19 @@
       "timestamp": "2026-10-13T07:01:31.229Z"
     },
     {
+      "id": "audit_1791874912203_7986",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:01:52.203Z"
+    },
+    {
       "id": "audit_1791656648506_2671",
       "actor": "admin",
       "role": "owner",
@@ -2001,19 +2114,6 @@
       "note": "Failed credentials login from IP ::1",
       "ip": "::1",
       "timestamp": "2026-10-10T18:24:08.518Z"
-    },
-    {
-      "id": "audit_1791874912430_7562",
-      "actor": "admin",
-      "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null}",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true},\"emergencyBookingPause\":false,\"emergencyPauseReason\":\"\",\"emergencyPausedAt\":null,\"emergencyPausedBy\":null,\"helplin",
-      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 72818 51011)",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:01:52.430Z"
     },
     {
       "id": "audit_1791875664540_6163",
@@ -2094,22 +2194,30 @@
       "timestamp": "2026-10-13T07:14:26.723Z"
     },
     {
-      "id": "AUD_1792206805452",
-      "entity": "PAYMENT_SETTINGS",
-      "entityId": "global_payment_config",
-      "action": "UPDATE_PAYMENT_SETTINGS",
+      "id": "audit_1791875717837_2446",
       "actor": "admin",
-      "details": "Updated payment gateway & UPI configuration (UPI ID: onewaytaxibihar@hdfcbank, Token Advance: ₹299)",
-      "createdAt": "2026-10-17T03:13:25.452Z"
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T07:15:17.837Z"
     },
     {
-      "id": "AUD_1792206805861",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-4226",
-      "action": "CREATE_REQUEST",
-      "actor": "+91 9123456789",
-      "details": "Patna → Muzaffarpur for ₹2198 (cash_on_ride)",
-      "createdAt": "2026-10-17T03:13:25.861Z"
+      "id": "audit_1791875718736_1979",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T07:15:18.736Z"
     }
   ],
   "sessions": [
@@ -2437,14 +2545,6 @@
       "phone": "+91 6206494214",
       "role": "customer",
       "userId": "usr_6206494214"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNTc2OWVhOWNjZWNmZDYxM2M5MzQxMzJjMTI0ODE4ZCIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkJpaGFyIEZsZWV0IERpcmVjdG9yIiwicGhvbmUiOiIrOTEgOTk5OTkgMzMzMzMiLCJpYXQiOjE3OTIyMDY4MDQsImV4cCI6MTc5MjIzNTYwNH0.-qlyaaOjs3LvDr6_xLA33QafO4C38QVQKjWr1FStxEc",
-      "adminId": "adm_admin",
-      "username": "admin",
-      "role": "owner",
-      "phone": "+91 99999 33333",
-      "createdAt": "2026-10-17T03:13:24.916Z"
     }
   ],
   "settings": {
@@ -2622,6 +2722,452 @@
       "role": "owner",
       "salt": "d81ce48f3b27c9008b7486cad4c81353",
       "username": "admin"
+    }
+  ],
+  "fares": [
+    {
+      "id": "patna-hajipur",
+      "origin": "Patna",
+      "destination": "Hajipur (Vaishali)",
+      "destCity": "Hajipur",
+      "district": "",
+      "distanceKm": 25,
+      "hatchback": 699,
+      "sedan": 799,
+      "suv": 1199,
+      "marketComparison": "1500–1800",
+      "active": true,
+      "updatedAt": "2026-10-17T06:34:26.301Z",
+      "updatedBy": "admin"
+    },
+    {
+      "id": "patna-arrah",
+      "origin": "Patna",
+      "destination": "Arrah (Bhojpur)",
+      "destCity": "Arrah",
+      "district": "Bhojpur",
+      "distanceKm": 55,
+      "hatchback": 899,
+      "sedan": 999,
+      "suv": 1399,
+      "marketComparison": "2000–2200",
+      "active": true
+    },
+    {
+      "id": "patna-jehanabad",
+      "origin": "Patna",
+      "destination": "Jehanabad",
+      "destCity": "Jehanabad",
+      "district": "Jehanabad",
+      "distanceKm": 50,
+      "hatchback": 899,
+      "sedan": 999,
+      "suv": 1399,
+      "marketComparison": "1800–2200",
+      "active": true
+    },
+    {
+      "id": "patna-chapra",
+      "origin": "Patna",
+      "destination": "Chapra (Saran)",
+      "destCity": "Chapra",
+      "district": "Saran",
+      "distanceKm": 70,
+      "hatchback": 1099,
+      "sedan": 1199,
+      "suv": 1699,
+      "marketComparison": "2200–2500",
+      "active": true
+    },
+    {
+      "id": "patna-muzaffarpur",
+      "origin": "Patna",
+      "destination": "Muzaffarpur",
+      "destCity": "Muzaffarpur",
+      "district": "Muzaffarpur",
+      "distanceKm": 75,
+      "hatchback": 1099,
+      "sedan": 1249,
+      "suv": 1749,
+      "marketComparison": "2200–2600",
+      "active": true
+    },
+    {
+      "id": "patna-biharsharif",
+      "origin": "Patna",
+      "destination": "Bihar Sharif (Nalanda)",
+      "destCity": "Bihar Sharif",
+      "district": "Nalanda",
+      "distanceKm": 75,
+      "hatchback": 1099,
+      "sedan": 1249,
+      "suv": 1749,
+      "marketComparison": "2200–2500",
+      "active": true
+    },
+    {
+      "id": "patna-rajgir",
+      "origin": "Patna",
+      "destination": "Rajgir",
+      "destCity": "Rajgir",
+      "district": "Nalanda",
+      "distanceKm": 100,
+      "hatchback": 1299,
+      "sedan": 1449,
+      "suv": 1999,
+      "marketComparison": "2600–3000",
+      "active": true
+    },
+    {
+      "id": "patna-samastipur",
+      "origin": "Patna",
+      "destination": "Samastipur",
+      "destCity": "Samastipur",
+      "district": "Samastipur",
+      "distanceKm": 95,
+      "hatchback": 1249,
+      "sedan": 1399,
+      "suv": 1949,
+      "marketComparison": "2500–2800",
+      "active": true
+    },
+    {
+      "id": "patna-gaya",
+      "origin": "Patna",
+      "destination": "Gaya / Bodh Gaya",
+      "destCity": "Gaya",
+      "district": "Gaya",
+      "distanceKm": 110,
+      "hatchback": 1399,
+      "sedan": 1549,
+      "suv": 2149,
+      "marketComparison": "2800–3200",
+      "active": true
+    },
+    {
+      "id": "patna-begusarai",
+      "origin": "Patna",
+      "destination": "Begusarai",
+      "destCity": "Begusarai",
+      "district": "Begusarai",
+      "distanceKm": 125,
+      "hatchback": 1499,
+      "sedan": 1699,
+      "suv": 2349,
+      "marketComparison": "3000–3400",
+      "active": true
+    },
+    {
+      "id": "patna-nawada",
+      "origin": "Patna",
+      "destination": "Nawada",
+      "destCity": "Nawada",
+      "district": "Nawada",
+      "distanceKm": 115,
+      "hatchback": 1449,
+      "sedan": 1599,
+      "suv": 2249,
+      "marketComparison": "2800–3200",
+      "active": true
+    },
+    {
+      "id": "patna-siwan",
+      "origin": "Patna",
+      "destination": "Siwan",
+      "destCity": "Siwan",
+      "district": "Siwan",
+      "distanceKm": 135,
+      "hatchback": 1599,
+      "sedan": 1799,
+      "suv": 2499,
+      "marketComparison": "3200–3600",
+      "active": true
+    },
+    {
+      "id": "patna-darbhanga",
+      "origin": "Patna",
+      "destination": "Darbhanga",
+      "destCity": "Darbhanga",
+      "district": "Darbhanga",
+      "distanceKm": 140,
+      "hatchback": 1599,
+      "sedan": 1799,
+      "suv": 2549,
+      "marketComparison": "3200–3600",
+      "active": true
+    },
+    {
+      "id": "patna-aurangabad",
+      "origin": "Patna",
+      "destination": "Aurangabad",
+      "destCity": "Aurangabad",
+      "district": "Aurangabad",
+      "distanceKm": 140,
+      "hatchback": 1599,
+      "sedan": 1799,
+      "suv": 2549,
+      "marketComparison": "3200–3600",
+      "active": true
+    },
+    {
+      "id": "patna-sasaram",
+      "origin": "Patna",
+      "destination": "Sasaram (Rohtas)",
+      "destCity": "Sasaram",
+      "district": "Rohtas",
+      "distanceKm": 155,
+      "hatchback": 1799,
+      "sedan": 1999,
+      "suv": 2799,
+      "marketComparison": "3500–4000",
+      "active": true
+    },
+    {
+      "id": "patna-madhubani",
+      "origin": "Patna",
+      "destination": "Madhubani",
+      "destCity": "Madhubani",
+      "district": "Madhubani",
+      "distanceKm": 165,
+      "hatchback": 1899,
+      "sedan": 2099,
+      "suv": 2899,
+      "marketComparison": "3600–4200",
+      "active": true
+    },
+    {
+      "id": "patna-munger",
+      "origin": "Patna",
+      "destination": "Munger",
+      "destCity": "Munger",
+      "district": "Munger",
+      "distanceKm": 175,
+      "hatchback": 1999,
+      "sedan": 2249,
+      "suv": 3099,
+      "marketComparison": "4000–4500",
+      "active": true
+    },
+    {
+      "id": "patna-sitamarhi",
+      "origin": "Patna",
+      "destination": "Sitamarhi",
+      "destCity": "Sitamarhi",
+      "district": "Sitamarhi",
+      "distanceKm": 140,
+      "hatchback": 1649,
+      "sedan": 1849,
+      "suv": 2599,
+      "marketComparison": "3200–3800",
+      "active": true
+    },
+    {
+      "id": "patna-motihari",
+      "origin": "Patna",
+      "destination": "Motihari (East Champaran)",
+      "destCity": "Motihari",
+      "district": "East Champaran",
+      "distanceKm": 155,
+      "hatchback": 1799,
+      "sedan": 1999,
+      "suv": 2799,
+      "marketComparison": "3500–4000",
+      "active": true
+    },
+    {
+      "id": "patna-gopalganj",
+      "origin": "Patna",
+      "destination": "Gopalganj",
+      "destCity": "Gopalganj",
+      "district": "Gopalganj",
+      "distanceKm": 150,
+      "hatchback": 1749,
+      "sedan": 1949,
+      "suv": 2699,
+      "marketComparison": "3400–3800",
+      "active": true
+    },
+    {
+      "id": "patna-jamui",
+      "origin": "Patna",
+      "destination": "Jamui",
+      "destCity": "Jamui",
+      "district": "Jamui",
+      "distanceKm": 160,
+      "hatchback": 1849,
+      "sedan": 2049,
+      "suv": 2849,
+      "marketComparison": "3600–4000",
+      "active": true
+    },
+    {
+      "id": "patna-buxar",
+      "origin": "Patna",
+      "destination": "Buxar",
+      "destCity": "Buxar",
+      "district": "Buxar",
+      "distanceKm": 130,
+      "hatchback": 1549,
+      "sedan": 1749,
+      "suv": 2449,
+      "marketComparison": "3000–3400",
+      "active": true
+    },
+    {
+      "id": "patna-bhabua",
+      "origin": "Patna",
+      "destination": "Bhabua (Kaimur)",
+      "destCity": "Bhabua",
+      "district": "Kaimur",
+      "distanceKm": 190,
+      "hatchback": 2199,
+      "sedan": 2449,
+      "suv": 3399,
+      "marketComparison": "4200–4800",
+      "active": true
+    },
+    {
+      "id": "patna-saharsa",
+      "origin": "Patna",
+      "destination": "Saharsa",
+      "destCity": "Saharsa",
+      "district": "Saharsa",
+      "distanceKm": 185,
+      "hatchback": 2149,
+      "sedan": 2399,
+      "suv": 3299,
+      "marketComparison": "4200–4600",
+      "active": true
+    },
+    {
+      "id": "patna-khagaria",
+      "origin": "Patna",
+      "destination": "Khagaria",
+      "destCity": "Khagaria",
+      "district": "Khagaria",
+      "distanceKm": 165,
+      "hatchback": 1899,
+      "sedan": 2149,
+      "suv": 2999,
+      "marketComparison": "3800–4200",
+      "active": true
+    },
+    {
+      "id": "patna-bettiah",
+      "origin": "Patna",
+      "destination": "Bettiah (West Champaran)",
+      "destCity": "Bettiah",
+      "district": "West Champaran",
+      "distanceKm": 205,
+      "hatchback": 2399,
+      "sedan": 2649,
+      "suv": 3699,
+      "marketComparison": "4800–5400",
+      "active": true
+    },
+    {
+      "id": "patna-supaul",
+      "origin": "Patna",
+      "destination": "Supaul",
+      "destCity": "Supaul",
+      "district": "Supaul",
+      "distanceKm": 215,
+      "hatchback": 2499,
+      "sedan": 2799,
+      "suv": 3849,
+      "marketComparison": "4800–5500",
+      "active": true
+    },
+    {
+      "id": "patna-madhepura",
+      "origin": "Patna",
+      "destination": "Madhepura",
+      "destCity": "Madhepura",
+      "district": "Madhepura",
+      "distanceKm": 210,
+      "hatchback": 2449,
+      "sedan": 2749,
+      "suv": 3799,
+      "marketComparison": "4800–5400",
+      "active": true
+    },
+    {
+      "id": "patna-bhagalpur",
+      "origin": "Patna",
+      "destination": "Bhagalpur",
+      "destCity": "Bhagalpur",
+      "district": "Bhagalpur",
+      "distanceKm": 235,
+      "hatchback": 2699,
+      "sedan": 2999,
+      "suv": 4199,
+      "marketComparison": "5200–6000",
+      "active": true
+    },
+    {
+      "id": "patna-banka",
+      "origin": "Patna",
+      "destination": "Banka",
+      "destCity": "Banka",
+      "district": "Banka",
+      "distanceKm": 225,
+      "hatchback": 2599,
+      "sedan": 2899,
+      "suv": 4049,
+      "marketComparison": "5000–5800",
+      "active": true
+    },
+    {
+      "id": "patna-purnea",
+      "origin": "Patna",
+      "destination": "Purnea",
+      "destCity": "Purnea",
+      "district": "Purnea",
+      "distanceKm": 290,
+      "hatchback": 3299,
+      "sedan": 3649,
+      "suv": 5099,
+      "marketComparison": "6500–7200",
+      "active": true
+    },
+    {
+      "id": "patna-araria",
+      "origin": "Patna",
+      "destination": "Araria",
+      "destCity": "Araria",
+      "district": "Araria",
+      "distanceKm": 310,
+      "hatchback": 3499,
+      "sedan": 3899,
+      "suv": 5449,
+      "marketComparison": "6800–7500",
+      "active": true
+    },
+    {
+      "id": "patna-katihar",
+      "origin": "Patna",
+      "destination": "Katihar",
+      "destCity": "Katihar",
+      "district": "Katihar",
+      "distanceKm": 305,
+      "hatchback": 3449,
+      "sedan": 3849,
+      "suv": 5399,
+      "marketComparison": "6800–7500",
+      "active": true
+    },
+    {
+      "id": "patna-kishanganj",
+      "origin": "Patna",
+      "destination": "Kishanganj",
+      "destCity": "Kishanganj",
+      "district": "Kishanganj",
+      "distanceKm": 380,
+      "hatchback": 4299,
+      "sedan": 4799,
+      "suv": 6699,
+      "marketComparison": "8500–9500",
+      "active": true
     }
   ]
 }

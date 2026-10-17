@@ -1484,6 +1484,16 @@ window.openFareChartModal = () => {
 
   body.innerHTML = `
     <div>
+      <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <div style="font-weight: 800; font-size: 16px; margin-bottom: 4px;">⚡ Patna One-Way Taxi Fare Chart (Fixed Rates)</div>
+          <div style="font-size: 13px; opacity: 0.95;">Fixed outstation drops starting at ₹699 across 34 Bihar destinations (Hajipur, Gaya, Muzaffarpur, Bhagalpur &amp; more).</div>
+        </div>
+        <a href="/fare-chart" style="display: inline-flex; align-items: center; gap: 6px; background: white; color: #047857; padding: 9px 18px; border-radius: 8px; font-weight: 800; font-size: 13px; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+          View 34 Routes Chart ➔
+        </a>
+      </div>
+
       <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">OneWayTaxiBihar Per-KM Rate Matrix</h3>
       <p style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 16px;">Transparent pricing across all 38 districts of Bihar with zero dead-mileage return charges.</p>
 

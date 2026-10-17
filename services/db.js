@@ -28,7 +28,8 @@ const ALL_COLLECTIONS = [
   'support_tickets',
   'error_logs',
   'settings',
-  'admins'
+  'admins',
+  'fares'
 ];
 
 function getLocalDbPath() {
@@ -93,8 +94,17 @@ function loadLocalDb() {
       coupons: [],
       support_tickets: [],
       error_logs: [],
-      settings: {}
+      settings: {},
+      fares: []
     };
+  }
+  if (!Array.isArray(memoryDb.fares) || memoryDb.fares.length === 0) {
+    try {
+      const pFaresPath = path.join(__dirname, '..', 'data', 'patna_fares.json');
+      if (fs.existsSync(pFaresPath)) {
+        memoryDb.fares = JSON.parse(fs.readFileSync(pFaresPath, 'utf8').replace(/^\uFEFF/, ''));
+      }
+    } catch (e) {}
   }
   return memoryDb;
 }
@@ -305,8 +315,9 @@ async function syncCollectionToCloud(colName, items) {
     if (colName === 'bookings') idField = 'bookingId';
     else if (colName === 'coupons') idField = 'code';
     else if (colName === 'sessions') idField = 'token';
+    else if (colName === 'fares') idField = 'id';
 
-    const bulkOps = items.slice(0, 100).map(item => {
+    const bulkOps = items.slice(0, 500).map(item => {
       const keyVal = item[idField] || item.id || item.phone || item.bookingId;
       const { _id, ...cleanItem } = item;
       return {

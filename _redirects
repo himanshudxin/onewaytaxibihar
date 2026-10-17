@@ -5,6 +5,7 @@
 /booking      /booking.html      200
 /payment      /payment.html      200
 /passenger    /passenger.html    200
+/fare-chart   /fare-chart.html   200
 /404          /404.html          200
 /500          /500.html          200
 

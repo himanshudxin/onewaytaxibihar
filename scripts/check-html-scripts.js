@@ -8,6 +8,7 @@ const htmlFiles = [
   'payment.html',
   'passenger.html',
   'admin.html',
+  'fare-chart.html',
   'driver.html',
   'patna-to-gaya-cab.html',
   'patna-to-muzaffarpur-cab.html',

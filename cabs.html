@@ -467,7 +467,16 @@
       let distanceKm = Number(trip?.distanceKm || urlParams.get('distance')) || 0;
       let duration = trip?.duration || urlParams.get('duration') || '';
 
-      if (!distanceKm) {
+      // 3. Resolve Distance & Duration (Check explicit Patna fare first, fallback to coordinates/routes)
+      const patnaMatchedRoute = (typeof findPatnaRouteFare === 'function')
+        ? findPatnaRouteFare(originName, destName)
+        : null;
+
+      if (patnaMatchedRoute && patnaMatchedRoute.distanceKm) {
+        distanceKm = patnaMatchedRoute.distanceKm;
+        const totalMin = Math.round((distanceKm / 45) * 60);
+        duration = `${Math.floor(totalMin / 60)}h ${totalMin % 60}m`;
+      } else if (!distanceKm) {
         const originObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === originId || c.name.toLowerCase() === originName.toLowerCase());
         const destObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === destId || c.name.toLowerCase() === destName.toLowerCase());
 
@@ -524,12 +533,33 @@
       let pendingCabId = null;
 
       function renderFleetCards() {
+        const patnaMatched = (typeof findPatnaRouteFare === 'function')
+          ? findPatnaRouteFare(originName, destName)
+          : null;
+
         container.innerHTML = fleetList.map(fleet => {
-          let baseFare = distanceKm * fleet.ratePerKm;
-          baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
-          if (tripType === 'roundtrip') baseFare *= 1.88;
+          let baseFare;
+          let savingsLabel = '';
+          if (patnaMatched && tripType === 'oneway') {
+            if (fleet.id === 'hatchback') baseFare = patnaMatched.hatchback;
+            else if (fleet.id === 'sedan') baseFare = patnaMatched.sedan;
+            else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.15);
+            else if (fleet.id === 'suv') baseFare = patnaMatched.suv;
+            else if (fleet.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+            else baseFare = patnaMatched.sedan;
+
+            if (patnaMatched.marketComparison) {
+              savingsLabel = `Indicative Market Rate: ~₹${patnaMatched.marketComparison}`;
+            } else {
+              savingsLabel = `Saved ~₹${Math.round(baseFare * 0.95).toLocaleString('en-IN')} vs Return Taxi`;
+            }
+          } else {
+            baseFare = distanceKm * fleet.ratePerKm;
+            baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+            if (tripType === 'roundtrip') baseFare *= 1.88;
+            savingsLabel = `Saved ~₹${Math.round(baseFare * 0.95).toLocaleString('en-IN')} vs Return Taxi`;
+          }
           const finalPrice = Math.round(baseFare);
-          const savings = Math.round(baseFare * 0.95);
 
           let carSvg = '';
           if (fleet.id === 'suv' || fleet.id === 'innova_crysta') {
@@ -548,7 +578,7 @@
                   <div class="cab-price-main">₹${finalPrice.toLocaleString('en-IN')}</div>
                   <div class="cab-tax-note">All Inclusive (Tolls, Fastag &amp; GST)</div>
                 </div>
-                <span class="cab-savings-pill">Saved ~₹${savings.toLocaleString('en-IN')} vs Return Taxi</span>
+                <span class="cab-savings-pill">${savingsLabel}</span>
               </div>
 
               <button type="button" class="btn-select-cab" onclick="selectCabAndProceed('${fleet.id}', '${fleet.category}', '${fleet.models}', ${finalPrice})">
@@ -702,9 +732,23 @@
         if (pendingCabId) {
           const matched = fleetList.find(f => f.id === pendingCabId);
           if (matched) {
-            let baseFare = distanceKm * matched.ratePerKm;
-            baseFare = Math.max(baseFare, matched.id === 'hatchback' ? 1698 : matched.id === 'sedan' ? 2198 : 3398);
-            if (tripType === 'roundtrip') baseFare *= 1.88;
+            let baseFare;
+            const patnaMatched = (typeof findPatnaRouteFare === 'function')
+              ? findPatnaRouteFare(originName, destName)
+              : null;
+
+            if (patnaMatched && tripType === 'oneway') {
+              if (matched.id === 'hatchback') baseFare = patnaMatched.hatchback;
+              else if (matched.id === 'sedan') baseFare = patnaMatched.sedan;
+              else if (matched.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.15);
+              else if (matched.id === 'suv') baseFare = patnaMatched.suv;
+              else if (matched.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+              else baseFare = patnaMatched.sedan;
+            } else {
+              baseFare = distanceKm * matched.ratePerKm;
+              baseFare = Math.max(baseFare, matched.id === 'hatchback' ? 1698 : matched.id === 'sedan' ? 2198 : 3398);
+              if (tripType === 'roundtrip') baseFare *= 1.88;
+            }
             selectCabAndProceed(matched.id, matched.category, matched.models, Math.round(baseFare));
             return;
           }

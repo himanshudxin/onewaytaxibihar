@@ -222,18 +222,167 @@ const FLEET_RATES = {
   innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
 };
 
-function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway', origin = '', dest = '') {
+let memoryPatnaFares = null;
+function getPatnaFaresList(db) {
+  if (db && Array.isArray(db.fares) && db.fares.length > 0) {
+    return db.fares;
+  }
+  if (memoryPatnaFares && memoryPatnaFares.length > 0) return memoryPatnaFares;
+  try {
+    memoryPatnaFares = require('../data/patna_fares.json');
+    return memoryPatnaFares;
+  } catch (e) {
+    return [];
+  }
+}
+
+function findMatchingRoute(origin, dest, db) {
+  if (!origin || !dest) return null;
+  const o = String(origin).toLowerCase().trim();
+  const d = String(dest).toLowerCase().trim();
+
+  // Route must originate from Patna or Patna Airport
+  if (!o.includes('patna')) return null;
+
+  const currentDb = db || loadDb();
+  const faresList = getPatnaFaresList(currentDb);
+  if (!faresList || faresList.length === 0) return null;
+
+  const cleanStr = (s) => String(s || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+  const targetClean = cleanStr(d);
+  if (!targetClean) return null;
+
+  for (const f of faresList) {
+    if (f.active === false) continue;
+    const fId = cleanStr(f.id);
+    const fDest = cleanStr(f.destination);
+    const fCity = cleanStr(f.destCity);
+    const fDist = cleanStr(f.district);
+
+    if (
+      targetClean === fDest ||
+      targetClean === fCity ||
+      targetClean === fDist ||
+      targetClean === fId ||
+      fDest.includes(targetClean) ||
+      targetClean.includes(fCity) ||
+      (targetClean.includes('gaya') && (fCity === 'gaya' || fDest.includes('gaya'))) ||
+      (targetClean.includes('bhojpur') && (fCity === 'arrah' || fDest.includes('arrah'))) ||
+      (targetClean.includes('ara') && (fCity === 'arrah' || fDest.includes('arrah'))) ||
+      (targetClean.includes('motihari') && fCity === 'motihari') ||
+      (targetClean.includes('bettiah') && fCity === 'bettiah') ||
+      (targetClean.includes('bhabua') && fCity === 'bhabua') ||
+      (targetClean.includes('sasaram') && fCity === 'sasaram') ||
+      (targetClean.includes('bihar sharif') && fCity === 'bihar sharif') ||
+      (targetClean.includes('nalanda') && (fCity === 'bihar sharif' || fCity === 'rajgir')) ||
+      (targetClean.includes('vaishali') && (fCity === 'hajipur' || fDest.includes('hajipur'))) ||
+      (targetClean.includes('saran') && (fCity === 'chapra' || fDest.includes('chapra'))) ||
+      (targetClean.includes('rohtas') && (fCity === 'sasaram' || fDest.includes('sasaram'))) ||
+      (targetClean.includes('kaimur') && (fCity === 'bhabua' || fDest.includes('bhabua')))
+    ) {
+      return f;
+    }
+  }
+  return null;
+}
+
+function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTypeOrCabTier = 'oneway', originOrTripType = '', destParam = '') {
+  let dist = 50;
+  let cabTier = 'sedan';
+  let tripType = 'oneway';
+  let origin = '';
+  let dest = '';
+
+  if (typeof distanceKmOrOrigin === 'object' && distanceKmOrOrigin !== null) {
+    const tripObj = distanceKmOrOrigin;
+    const bookingObj = (typeof cabTierOrDest === 'object' && cabTierOrDest !== null) ? cabTierOrDest : {};
+    origin = tripObj.originCity || tripObj.origin || '';
+    dest = tripObj.destCity || tripObj.dest || '';
+    dist = Math.max(25, Number(tripObj.distanceKm || tripObj.distance) || 50);
+    cabTier = bookingObj.cabTier || bookingObj.cabType || bookingObj.tier || 'sedan';
+    tripType = bookingObj.tripType || tripObj.tripType || 'oneway';
+  } else if (typeof distanceKmOrOrigin === 'string' && isNaN(Number(distanceKmOrOrigin))) {
+    origin = distanceKmOrOrigin;
+    dest = cabTierOrDest;
+    cabTier = tripTypeOrCabTier || 'sedan';
+    tripType = originOrTripType || 'oneway';
+  } else {
+    dist = Math.max(25, Number(distanceKmOrOrigin) || 50);
+    cabTier = cabTierOrDest || 'sedan';
+    tripType = tripTypeOrCabTier || 'oneway';
+    origin = originOrTripType || '';
+    dest = destParam || '';
+  }
+
   const cleanTier = (cabTier || 'sedan').toLowerCase();
   const tier = FLEET_RATES[cleanTier] || FLEET_RATES.sedan;
-  const dist = Math.max(25, Number(distanceKm) || 50);
 
+  // 1. Check explicit destination route fare from single source of truth
+  const matchedRoute = findMatchingRoute(origin, dest);
+  if (matchedRoute) {
+    const routeDist = matchedRoute.distanceKm;
+    let explicitFare = matchedRoute[cleanTier];
+    if (!explicitFare) {
+      if (cleanTier === 'sedan_prime') explicitFare = Math.round(matchedRoute.sedan * 1.2);
+      else if (cleanTier === 'innova_crysta') explicitFare = Math.round(matchedRoute.suv * 1.35);
+      else explicitFare = matchedRoute.sedan;
+    }
+
+    let totalFare = explicitFare;
+    let roundTripDiscount = 0;
+    if (tripType === 'roundtrip') {
+      totalFare = Math.round(explicitFare * 1.88);
+      roundTripDiscount = Math.round(explicitFare * 0.12);
+    }
+
+    const tollEst = Math.round((routeDist / 70) * 55);
+    const taxableAmount = Math.round(totalFare / 1.05);
+    const gstAmount = totalFare - taxableAmount;
+
+    const hours = Math.floor(routeDist / 45);
+    const mins = Math.round((routeDist % 45) * 1.3);
+    const duration = `${hours > 0 ? hours + 'h ' : ''}${mins > 0 ? mins + 'm' : '15m'}`;
+
+    return {
+      distanceKm: routeDist,
+      duration,
+      tierId: cleanTier,
+      tierName: tier.name,
+      tierModel: tier.model,
+      seats: tier.seats,
+      baseFare: totalFare,
+      perKmRate: Math.round(explicitFare / routeDist),
+      distanceCharge: totalFare,
+      driverAllowance: 0,
+      roundTripDiscount,
+      tollFastag: tollEst,
+      gst: gstAmount,
+      totalFare: Math.round(totalFare),
+      isExplicitRouteFare: true,
+      routeId: matchedRoute.id,
+      marketComparison: matchedRoute.marketComparison,
+      inclusions: [
+        "Fuel for the quoted one-way journey",
+        "Vehicle hire charges included",
+        "Driver allowance included",
+        "Pickup and drop-off within agreed municipal city limits"
+      ],
+      exclusions: [
+        "FASTag toll charges and toll plaza taxes",
+        "Applicable state road permits and other legally payable route charges",
+        "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+      ]
+    };
+  }
+
+  // Standard fallback per-KM formula
   let distanceCharge = 0;
   let driverAllowance = 0;
   let roundTripDiscount = 0;
 
   if (tripType === 'roundtrip') {
     const rawTotal = Math.round(dist * 2 * tier.perKm);
-    roundTripDiscount = Math.round(rawTotal * 0.12); // 12% return leg discount
+    roundTripDiscount = Math.round(rawTotal * 0.12);
     driverAllowance = 350;
     distanceCharge = (rawTotal - roundTripDiscount) + driverAllowance;
   } else {
@@ -269,17 +418,17 @@ function calculateServerFare(distanceKm, cabTier = 'sedan', tripType = 'oneway',
     tollFastag: tollEst,
     gst: gstAmount,
     totalFare: Math.round(totalFare),
+    isExplicitRouteFare: false,
     inclusions: [
-      "100% AC Chilled Ride",
-      "Doorstep Pickup & Drop",
-      "Driver Allowance Included",
-      "State Highway Tolls & FASTag Included",
-      "5% GST Tax Included",
-      "Zero Return Fare Charged"
+      "Fuel for the quoted one-way journey",
+      "Vehicle hire charges included",
+      "Driver allowance included",
+      "Pickup and drop-off within agreed municipal city limits"
     ],
     exclusions: [
-      "Multiple city diversions not specified in booking",
-      "Overnight detention if passenger delays vehicle to following calendar day"
+      "FASTag toll charges and toll plaza taxes",
+      "Applicable state road permits and other legally payable route charges",
+      "Parking, waiting charges, or other extras where applicable and disclosed in advance"
     ]
   };
 }
@@ -892,18 +1041,64 @@ module.exports = async (req, res) => {
       const cabTier = body.cabTier || body.cabType || 'sedan';
       const tripType = body.tripType || 'oneway';
       const distanceKm = getRouteDistance(origin, dest);
-      const fareData = calculateServerFare(distanceKm, cabTier, tripType);
+      const fareData = calculateServerFare(distanceKm, cabTier, tripType, origin, dest);
       return sendJson(200, {
         success: true,
-        distanceKm,
+        distanceKm: fareData.distanceKm,
         totalFare: fareData.totalFare,
         fare: fareData,
         fares: {
-          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType),
-          sedan: calculateServerFare(distanceKm, 'sedan', tripType),
-          suv: calculateServerFare(distanceKm, 'suv', tripType),
-          innova: calculateServerFare(distanceKm, 'innova', tripType)
+          hatchback: calculateServerFare(distanceKm, 'hatchback', tripType, origin, dest),
+          sedan: calculateServerFare(distanceKm, 'sedan', tripType, origin, dest),
+          suv: calculateServerFare(distanceKm, 'suv', tripType, origin, dest),
+          innova: calculateServerFare(distanceKm, 'innova_crysta', tripType, origin, dest)
         }
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 4A. PATNA ONE-WAY TAXI FARE CHART (34 Dest Routes)
+    // -------------------------------------------------------------
+    if ((pathname === '/fares' || pathname === '/fares/patna' || pathname === '/api/fares') && method === 'GET') {
+      const faresList = getPatnaFaresList(db);
+      const activeFares = faresList.filter(f => f.active !== false);
+      const q = (url.searchParams.get('q') || url.searchParams.get('search') || '').toLowerCase().trim();
+      const filtered = q
+        ? activeFares.filter(f => f.destination.toLowerCase().includes(q) || f.destCity.toLowerCase().includes(q) || (f.district || '').toLowerCase().includes(q))
+        : activeFares;
+
+      return sendJson(200, {
+        success: true,
+        origin: "Patna",
+        title: "Patna One-Way Taxi Fare Chart",
+        subtitle: "Affordable One-Way Cab Service Across Bihar",
+        startingFrom: 699,
+        currency: "INR",
+        count: filtered.length,
+        totalCount: activeFares.length,
+        fares: filtered,
+        categories: {
+          hatchback: { name: "Go Hatchback", label: "WagonR / Tiago or similar", capacity: "4 Passengers + 2 Bags" },
+          sedan: { name: "Prime Sedan", label: "Dzire / Etios / Aura or similar", capacity: "4 Passengers + 3-4 Bags" },
+          suv: { name: "Family SUV (6+1)", label: "Ertiga / Triber or similar, subject to availability", capacity: "6 Passengers + 5-6 Bags" }
+        },
+        inclusions: [
+          "Fuel for the quoted one-way journey",
+          "Vehicle hire charges included",
+          "Driver allowance included",
+          "Pickup and drop-off within agreed municipal city limits"
+        ],
+        exclusions: [
+          "FASTag toll charges and toll plaza taxes",
+          "Applicable state road permits and other legally payable route charges",
+          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+        ],
+        paymentPolicy: {
+          bookingToken: "₹200–₹499 (subject to confirmed booking terms)",
+          cashAtDestination: "Balance payable directly to driver via Cash or UPI QR upon arrival",
+          cancellation: "Zero cancellation fee if cancelled at least 2 hours before scheduled departure"
+        },
+        disclaimer: "Distances are approximate road distances. Fares must be confirmed before booking. Traditional round-trip market comparison figures are indicative estimates of round-trip penalty costs and are not independently verified competitor quotations."
       });
     }
 
@@ -1276,7 +1471,7 @@ module.exports = async (req, res) => {
 
       // Server-side distance and fare recalculation (Anti-tamper: server is sole authority)
       const distanceKm = getRouteDistance(originCity, destCity);
-      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', 'oneway');
+      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', body.tripType || 'oneway', originCity, destCity);
       const baseTotal = serverFare.totalFare;
 
       // Find or create customer
@@ -2870,6 +3065,205 @@ module.exports = async (req, res) => {
       });
     }
 
+    // =============================================================
+    // 9C. ADMIN FARE MANAGEMENT MODULE (CRUD, Toggle, CSV Import/Export)
+    // =============================================================
+    if (pathname === '/admin/fares' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const faresList = getPatnaFaresList(db);
+      return sendJson(200, {
+        success: true,
+        count: faresList.length,
+        fares: faresList
+      });
+    }
+
+    if (pathname === '/admin/fares' && (method === 'POST' || method === 'PUT')) {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { id, destination, destCity, district, distanceKm, distance, hatchback, sedan, suv, marketComparison, active } = body;
+
+      if (!destination || typeof destination !== 'string' || !destination.trim()) {
+        return sendJson(400, { success: false, message: 'Destination name is required' });
+      }
+
+      const numDist = Number(distanceKm !== undefined ? distanceKm : distance);
+      const numHatch = Number(hatchback);
+      const numSedan = Number(sedan);
+      const numSuv = Number(suv);
+
+      if (isNaN(numDist) || numDist <= 0 || isNaN(numHatch) || numHatch <= 0 || isNaN(numSedan) || numSedan <= 0 || isNaN(numSuv) || numSuv <= 0) {
+        return sendJson(400, { success: false, message: 'Distance and fares must be valid positive numeric values' });
+      }
+
+      if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
+        db.fares = getPatnaFaresList(db);
+      }
+
+      const routeId = id || `patna-${(destCity || destination).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+      const existingIdx = db.fares.findIndex(f => f.id === routeId || f.destination.toLowerCase() === destination.toLowerCase());
+
+      const fareItem = {
+        id: routeId,
+        origin: "Patna",
+        destination: destination.trim(),
+        destCity: (destCity || destination.split('(')[0]).trim(),
+        district: (district || '').trim(),
+        distanceKm: Math.round(numDist),
+        hatchback: Math.round(numHatch),
+        sedan: Math.round(numSedan),
+        suv: Math.round(numSuv),
+        marketComparison: marketComparison || `${Math.round(numSedan * 1.8)}–${Math.round(numSedan * 2.2)}`,
+        active: active !== undefined ? Boolean(active) : true,
+        updatedAt: new Date().toISOString(),
+        updatedBy: admin.username
+      };
+
+      let oldItem = null;
+      if (existingIdx >= 0) {
+        oldItem = db.fares[existingIdx];
+        db.fares[existingIdx] = { ...oldItem, ...fareItem };
+      } else {
+        db.fares.push(fareItem);
+      }
+
+      memoryPatnaFares = db.fares;
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: existingIdx >= 0 ? 'FARE_UPDATED' : 'FARE_CREATED',
+        entityType: 'FARES',
+        entityId: routeId,
+        oldValue: oldItem,
+        newValue: fareItem,
+        note: `Fare chart for ${destination} updated (Hatch: ₹${numHatch}, Sedan: ₹${numSedan}, SUV: ₹${numSuv})`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Fare for ${destination} saved successfully.`,
+        fare: fareItem
+      });
+    }
+
+    if (pathname === '/admin/fares/toggle' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { id, active } = body;
+      if (!id) return sendJson(400, { success: false, message: 'Route ID required' });
+
+      if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
+        db.fares = getPatnaFaresList(db);
+      }
+
+      const item = db.fares.find(f => f.id === id);
+      if (!item) return sendJson(404, { success: false, message: 'Route fare not found' });
+
+      item.active = Boolean(active);
+      item.updatedAt = new Date().toISOString();
+      item.updatedBy = admin.username;
+
+      memoryPatnaFares = db.fares;
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARE_TOGGLED',
+        entityType: 'FARES',
+        entityId: id,
+        newValue: { active: item.active },
+        note: `Route ${item.destination} ${item.active ? 'activated' : 'deactivated'}`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Route ${item.destination} is now ${item.active ? 'active' : 'inactive'}.`,
+        fare: item
+      });
+    }
+
+    if (pathname === '/admin/fares/export' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const faresList = getPatnaFaresList(db);
+      const csvHeader = 'ID,Pickup City,Destination,District,Distance (km),Hatchback,Sedan,SUV / 6-Seater,Market Comparison,Active\n';
+      const csvRows = faresList.map(f =>
+        `"${f.id}","${f.origin}","${f.destination}","${f.district || ''}",${f.distanceKm},${f.hatchback},${f.sedan},${f.suv},"${f.marketComparison}",${f.active !== false}`
+      ).join('\n');
+
+      res.writeHead(200, {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': 'attachment; filename="patna-taxi-fares.csv"'
+      });
+      res.end(csvHeader + csvRows);
+      return;
+    }
+
+    if (pathname === '/admin/fares/import' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const incoming = Array.isArray(body.fares) ? body.fares : null;
+      if (!incoming || incoming.length === 0) {
+        return sendJson(400, { success: false, message: 'Invalid payload: fares array expected' });
+      }
+
+      if (!db.fares || !Array.isArray(db.fares)) {
+        db.fares = [];
+      }
+
+      let importedCount = 0;
+      for (const row of incoming) {
+        if (!row.destination || !row.distanceKm) continue;
+        const routeId = row.id || `patna-${(row.destCity || row.destination).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+        const existingIdx = db.fares.findIndex(f => f.id === routeId);
+        const item = {
+          id: routeId,
+          origin: "Patna",
+          destination: String(row.destination).trim(),
+          destCity: (row.destCity || row.destination.split('(')[0]).trim(),
+          district: (row.district || '').trim(),
+          distanceKm: Number(row.distanceKm) || 50,
+          hatchback: Number(row.hatchback) || 999,
+          sedan: Number(row.sedan) || 1199,
+          suv: Number(row.suv) || 1699,
+          marketComparison: row.marketComparison || `${Math.round((row.sedan || 1199) * 1.8)}–${Math.round((row.sedan || 1199) * 2.2)}`,
+          active: row.active !== undefined ? Boolean(row.active) : true,
+          updatedAt: new Date().toISOString(),
+          updatedBy: admin.username
+        };
+        if (existingIdx >= 0) db.fares[existingIdx] = item;
+        else db.fares.push(item);
+        importedCount++;
+      }
+
+      memoryPatnaFares = db.fares;
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARES_BULK_IMPORT',
+        entityType: 'FARES',
+        entityId: 'batch',
+        note: `Imported ${importedCount} fares via admin panel`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Successfully imported ${importedCount} destination fares.`,
+        count: importedCount
+      });
+    }
+
     // Public Platform Settings Endpoint (No auth required for passenger website)
     if ((pathname === '/settings' || pathname === '/api/settings') && method === 'GET') {
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
@@ -3092,7 +3486,7 @@ module.exports = async (req, res) => {
       const pickupTime = body.pickupTime || '10:00 AM';
       const cabTier = body.cabTier || body.cabType || 'sedan';
       const distanceKm = Number(body.distanceKm) || getRouteDistance(originCity, destCity);
-      const serverFare = calculateServerFare(distanceKm, cabTier, 'oneway');
+      const serverFare = calculateServerFare(distanceKm, cabTier, 'oneway', originCity, destCity);
       
       const totalFare = Number(body.totalFare) || Number(body.fare) || serverFare.totalFare;
       const advancePaid = Number(body.advancePaid) || 0;
@@ -4977,3 +5371,8 @@ module.exports = async (req, res) => {
     });
   }
 };
+
+module.exports.calculateServerFare = calculateServerFare;
+module.exports.findMatchingRoute = findMatchingRoute;
+module.exports.getPatnaFaresList = getPatnaFaresList;
+

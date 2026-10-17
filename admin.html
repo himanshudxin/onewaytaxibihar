@@ -1853,6 +1853,12 @@
           <span class="nav-label">Coupons</span>
         </button>
 
+        <button type="button" class="nav-item-btn" id="side-tab-fares" onclick="switchMainTab('fares')">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+          <span class="nav-label">Fare Chart</span>
+          <span class="nav-badge success" id="badge-fares-count">34</span>
+        </button>
+
         <button type="button" class="nav-item-btn" id="side-tab-reports" onclick="switchMainTab('reports')">
           <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
           <span class="nav-label">Reports &amp; Analytics</span>
@@ -2552,6 +2558,75 @@
         </section>
 
         <!-- ====================================================================
+             VIEW 15: PATNA ONE-WAY TAXI FARE CHART MANAGEMENT
+             ==================================================================== -->
+        <section class="content-view" id="view-fares">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h2>Patna One-Way Taxi Fare Management</h2>
+              <p>Configure fixed route fares, distances, Hatchback, Sedan, SUV pricing and market comparisons</p>
+            </div>
+            <div class="view-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportAdminFaresCsv()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openImportFaresModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import CSV
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openAddFareModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Destination
+              </button>
+            </div>
+          </div>
+
+          <!-- Toolbar Search & Filter -->
+          <div class="ops-card" style="margin-bottom:16px; padding:12px 16px;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+              <div style="flex:1; min-width:240px; position:relative;">
+                <input type="text" id="admin-fares-search" class="form-control" placeholder="Search destination, city, or district..." oninput="filterAdminFares()" style="padding-left:34px;">
+                <svg style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#94a3b8; pointer-events:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <select id="admin-fares-status-filter" class="form-control" style="width:140px;" onchange="filterAdminFares()">
+                  <option value="ALL">All Status</option>
+                  <option value="ACTIVE" selected>Active Only</option>
+                  <option value="INACTIVE">Inactive Only</option>
+                </select>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="loadAdminFares(true)" title="Refresh from database">
+                  🔄 Refresh
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fares Table -->
+          <div class="ops-card">
+            <div class="table-container">
+              <table class="ops-table">
+                <thead>
+                  <tr>
+                    <th>Destination (From Patna)</th>
+                    <th>Distance</th>
+                    <th>Hatchback (₹)</th>
+                    <th>Sedan (₹)</th>
+                    <th>SUV / 6-Seater (₹)</th>
+                    <th>Market Comparison</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-fares-table-body">
+                  <tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading fare chart...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
              VIEW 10: REPORTS & ANALYTICS
              ==================================================================== -->
         <section class="content-view" id="view-reports">
@@ -3179,6 +3254,92 @@
     </div>
   </div>
 
+  <!-- EDIT / ADD PATNA FARE MODAL -->
+  <div class="modal-backdrop" id="modal-edit-fare">
+    <div class="ops-modal" style="max-width:540px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title" id="fare-modal-title">Edit Route Fare</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeEditFareModal()">✕</button>
+      </div>
+      <div class="ops-modal-body">
+        <form id="form-edit-fare" onsubmit="handleSaveFareSubmit(event)">
+          <input type="hidden" id="fare-edit-id" value="">
+          <div class="form-grid-2">
+            <div class="form-group" style="grid-column: span 2;">
+              <label class="form-label">Pickup City</label>
+              <input type="text" class="form-control" value="Patna" readonly style="background:#f8fafc; font-weight:600;">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label class="form-label">Destination City / District *</label>
+              <input type="text" class="form-control" id="fare-edit-dest" required placeholder="e.g. Hajipur (Vaishali)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Approx Distance (km) *</label>
+              <input type="number" class="form-control" id="fare-edit-distance" required min="1" max="2000" placeholder="e.g. 25">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hatchback Fare (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-hatchback" required min="100" max="50000" placeholder="e.g. 699">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sedan Fare (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-sedan" required min="100" max="50000" placeholder="e.g. 799">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SUV / 6-Seater Fare (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-suv" required min="100" max="50000" placeholder="e.g. 1199">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Market Comparison (Round-Trip)</label>
+              <input type="text" class="form-control" id="fare-edit-market" placeholder="e.g. 1500–1800">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Route Status</label>
+              <select class="form-control" id="fare-edit-active">
+                <option value="true">Active (Visible)</option>
+                <option value="false">Inactive (Hidden)</option>
+              </select>
+            </div>
+          </div>
+          <div class="ops-modal-footer" style="padding:0; margin-top:20px; border:none; background:transparent; display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="closeEditFareModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-fare">Save Fare</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT FARES CSV MODAL -->
+  <div class="modal-backdrop" id="modal-import-fares">
+    <div class="ops-modal" style="max-width:580px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Import Fare Chart (CSV)</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeImportFaresModal()">✕</button>
+      </div>
+      <div class="ops-modal-body">
+        <form id="form-import-fares" onsubmit="handleImportFaresSubmit(event)">
+          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
+            Paste CSV text below or upload a file. Expected header format:<br>
+            <code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:12px;">Destination,Distance,Hatchback,Sedan,SUV,MarketRate</code>
+          </p>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label">Upload CSV File</label>
+            <input type="file" id="import-fares-file" accept=".csv,text/csv" class="form-control" onchange="handleCsvFileSelected(event)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Or Paste CSV Content</label>
+            <textarea id="import-fares-csv-text" class="form-control" rows="8" placeholder="Destination,Distance,Hatchback,Sedan,SUV,MarketRate&#10;Hajipur (Vaishali),25,699,799,1199,1500–1800&#10;Arrah (Bhojpur),55,899,999,1399,2000–2200" style="font-family:var(--font-mono); font-size:12px;"></textarea>
+          </div>
+          <div class="ops-modal-footer" style="padding:0; margin-top:20px; border:none; background:transparent; display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn btn-secondary" onclick="closeImportFaresModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-import-fares">Import Fares</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- ADD RBAC OPERATOR MODAL -->
   <div class="modal-backdrop" id="modal-add-user">
     <div class="ops-modal">
@@ -3475,6 +3636,7 @@
     let _allVehicles = [];
     let _allPayments = [];
     let _allCoupons = [];
+    let _allFares = [];
     let _allAuditLogs = [];
     let _allNotifications = [];
     let _allSupportTickets = [];
@@ -3941,7 +4103,7 @@
 
       const allViews = [
         'dashboard', 'dispatch', 'leads', 'bookings', 'customers', 'drivers',
-        'vehicles', 'payments', 'wallet', 'coupons', 'reports',
+        'vehicles', 'payments', 'wallet', 'coupons', 'fares', 'reports',
         'notifications', 'audit', 'settings'
       ];
 
@@ -3957,6 +4119,8 @@
         setTimeout(() => initDispatchMap(), 150);
       } else if (tabName === 'leads') {
         renderLeadsTable();
+      } else if (tabName === 'fares') {
+        loadAdminFares();
       }
 
       // Close mobile sidebar if open
@@ -4007,6 +4171,7 @@
         loadPayments(),
         loadCustomers(),
         loadCoupons(),
+        loadAdminFares(),
         loadReports(),
         loadNotifications(),
         loadAuditLogs(),
@@ -5807,6 +5972,287 @@
     }
 
     // =========================================================================
+    // VIEW 15: PATNA ONE-WAY TAXI FARE CHART MANAGEMENT
+    // =========================================================================
+    async function loadAdminFares(force = false) {
+      const tbody = document.getElementById("admin-fares-table-body");
+      if (tbody && (!Array.isArray(_allFares) || _allFares.length === 0)) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading fare chart...</td></tr>`;
+      }
+      try {
+        const res = await adminFetch("/api/admin/fares");
+        if (res.ok) {
+          const data = await res.json();
+          _allFares = data.fares || [];
+        } else {
+          const pRes = await fetch("/api/fares");
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            _allFares = pData.fares || [];
+          }
+        }
+      } catch (err) {
+        console.error("Error loading fares:", err);
+        try {
+          const pRes = await fetch("/api/fares");
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            _allFares = pData.fares || [];
+          }
+        } catch (e2) {}
+      }
+
+      const activeCount = _allFares.filter(f => f.active !== false).length;
+      setText("badge-fares-count", activeCount);
+
+      filterAdminFares();
+    }
+
+    function filterAdminFares() {
+      const searchVal = (document.getElementById("admin-fares-search")?.value || "").toLowerCase().trim();
+      const statusFilter = document.getElementById("admin-fares-status-filter")?.value || "ACTIVE";
+
+      let filtered = _allFares.filter(f => {
+        const matchSearch = !searchVal ||
+          (f.destination && f.destination.toLowerCase().includes(searchVal)) ||
+          (f.id && f.id.toLowerCase().includes(searchVal));
+
+        const isActive = f.active !== false;
+        let matchStatus = true;
+        if (statusFilter === "ACTIVE") matchStatus = isActive;
+        else if (statusFilter === "INACTIVE") matchStatus = !isActive;
+
+        return matchSearch && matchStatus;
+      });
+
+      renderAdminFaresTable(filtered);
+    }
+
+    function renderAdminFaresTable(faresList) {
+      const tbody = document.getElementById("admin-fares-table-body");
+      if (!tbody) return;
+
+      const list = faresList !== undefined ? faresList : _allFares;
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No destinations match your search or filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(f => {
+        const isActive = f.active !== false;
+        const hb = typeof f.hatchback === 'number' ? '₹' + f.hatchback.toLocaleString('en-IN') : '-';
+        const sd = typeof f.sedan === 'number' ? '₹' + f.sedan.toLocaleString('en-IN') : '-';
+        const sv = typeof f.suv === 'number' ? '₹' + f.suv.toLocaleString('en-IN') : '-';
+        const dist = f.distance ? f.distance + ' km' : '-';
+        const comp = f.marketComparison ? '₹' + escapeHtml(f.marketComparison) : '—';
+        const safeId = escapeHtml(f.id);
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${escapeHtml(f.destination)}</div>
+              <div style="font-size:11.5px; color:#64748b;">Pickup: Patna (One-Way)</div>
+            </td>
+            <td><span style="font-family:var(--font-mono); font-weight:600;">${dist}</span></td>
+            <td><strong style="font-family:var(--font-mono); color:#0284c7;">${hb}</strong></td>
+            <td><strong style="font-family:var(--font-mono); color:#059669;">${sd}</strong></td>
+            <td><strong style="font-family:var(--font-mono); color:#7c3aed;">${sv}</strong></td>
+            <td><span style="font-family:var(--font-mono); font-size:12.5px; color:#64748b;">${comp}</span></td>
+            <td>
+              <span class="pill ${isActive ? 'confirmed' : 'cancelled'}">${isActive ? 'ACTIVE' : 'INACTIVE'}</span>
+            </td>
+            <td style="text-align:right; white-space:nowrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openEditFareModal('${safeId}')" title="Edit Fares & Distance" style="margin-right:4px;">
+                ✏️ Edit
+              </button>
+              <button type="button" class="btn ${isActive ? 'btn-danger' : 'btn-secondary'} btn-sm" onclick="toggleAdminFareActive('${safeId}', ${!isActive})" title="${isActive ? 'Deactivate destination' : 'Activate destination'}">
+                ${isActive ? 'Disable' : 'Enable'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openAddFareModal() {
+      const form = document.getElementById("form-edit-fare");
+      if (form) form.reset();
+      setVal("fare-edit-id", "");
+      setVal("fare-edit-active", "true");
+      setText("fare-modal-title", "Add Destination Fare (From Patna)");
+      document.getElementById("modal-edit-fare")?.classList.add("active");
+    }
+
+    function openEditFareModal(id) {
+      const fare = _allFares.find(f => f.id === id);
+      if (!fare) {
+        showToast("Route not found: " + id, "error");
+        return;
+      }
+      setVal("fare-edit-id", fare.id || "");
+      setVal("fare-edit-dest", fare.destination || "");
+      setVal("fare-edit-distance", fare.distance || "");
+      setVal("fare-edit-hatchback", fare.hatchback || "");
+      setVal("fare-edit-sedan", fare.sedan || "");
+      setVal("fare-edit-suv", fare.suv || "");
+      setVal("fare-edit-market", fare.marketComparison || "");
+      setVal("fare-edit-active", fare.active !== false ? "true" : "false");
+      setText("fare-modal-title", `Edit Route Fare: Patna ➔ ${fare.destination}`);
+      document.getElementById("modal-edit-fare")?.classList.add("active");
+    }
+
+    function closeEditFareModal() {
+      document.getElementById("modal-edit-fare")?.classList.remove("active");
+    }
+
+    async function handleSaveFareSubmit(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById("btn-save-fare");
+      const id = document.getElementById("fare-edit-id")?.value.trim();
+      const destination = document.getElementById("fare-edit-dest")?.value.trim();
+      const distance = Number(document.getElementById("fare-edit-distance")?.value);
+      const hatchback = Number(document.getElementById("fare-edit-hatchback")?.value);
+      const sedan = Number(document.getElementById("fare-edit-sedan")?.value);
+      const suv = Number(document.getElementById("fare-edit-suv")?.value);
+      const marketComparison = document.getElementById("fare-edit-market")?.value.trim();
+      const active = document.getElementById("fare-edit-active")?.value === "true";
+
+      if (!destination) {
+        showToast("Please provide a destination name", "error");
+        return;
+      }
+      if (!distance || distance <= 0 || !hatchback || hatchback <= 0 || !sedan || sedan <= 0 || !suv || suv <= 0) {
+        showToast("Distance and vehicle fares must be positive numbers", "error");
+        return;
+      }
+
+      try {
+        if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = "Saving..."; }
+        const res = await adminFetch("/api/admin/fares", {
+          method: "POST",
+          body: JSON.stringify({
+            id: id || undefined,
+            destination,
+            distance,
+            hatchback,
+            sedan,
+            suv,
+            marketComparison,
+            active
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Fare for "${destination}" saved successfully!`, "success");
+          closeEditFareModal();
+          await loadAdminFares(true);
+        } else {
+          showToast(data.message || "Failed to save route fare", "error");
+        }
+      } catch (err) {
+        showToast("Network error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Save Fare"; }
+      }
+    }
+
+    async function toggleAdminFareActive(id, newStatus) {
+      const fare = _allFares.find(f => f.id === id);
+      const actionName = newStatus ? "activate" : "deactivate";
+      confirmAction(
+        `${newStatus ? 'Activate' : 'Deactivate'} Route`,
+        `Are you sure you want to ${actionName} "${fare?.destination || id}"?`,
+        async () => {
+          try {
+            const res = await adminFetch("/api/admin/fares/toggle", {
+              method: "POST",
+              body: JSON.stringify({ id, active: newStatus })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              showToast(`Route "${fare?.destination || id}" ${newStatus ? 'activated' : 'deactivated'}`, "success");
+              await loadAdminFares(true);
+            } else {
+              showToast(data.message || "Failed to update route status", "error");
+            }
+          } catch (err) {
+            showToast("Network error: " + err.message, "error");
+          }
+        }
+      );
+    }
+
+    async function exportAdminFaresCsv() {
+      try {
+        const res = await adminFetch("/api/admin/fares/export");
+        if (!res.ok) throw new Error("CSV export request returned " + res.status);
+        const csvBlob = await res.blob();
+        const url = URL.createObjectURL(csvBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `patna_taxi_fares_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Patna fare chart exported successfully", "success");
+      } catch (err) {
+        showToast("Export failed: " + err.message, "error");
+      }
+    }
+
+    function openImportFaresModal() {
+      const form = document.getElementById("form-import-fares");
+      if (form) form.reset();
+      document.getElementById("modal-import-fares")?.classList.add("active");
+    }
+
+    function closeImportFaresModal() {
+      document.getElementById("modal-import-fares")?.classList.remove("active");
+    }
+
+    function handleCsvFileSelected(e) {
+      const file = e.target?.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const textarea = document.getElementById("import-fares-csv-text");
+        if (textarea) textarea.value = evt.target.result;
+      };
+      reader.readAsText(file);
+    }
+
+    async function handleImportFaresSubmit(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById("btn-import-fares");
+      const csvContent = document.getElementById("import-fares-csv-text")?.value.trim();
+      if (!csvContent) {
+        showToast("Please paste CSV content or select a CSV file", "error");
+        return;
+      }
+
+      try {
+        if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = "Importing..."; }
+        const res = await adminFetch("/api/admin/fares/import", {
+          method: "POST",
+          body: JSON.stringify({ csvContent })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Successfully imported ${data.count || 0} routes!`, "success");
+          closeImportFaresModal();
+          await loadAdminFares(true);
+        } else {
+          showToast(data.message || "Failed to import fares CSV", "error");
+        }
+      } catch (err) {
+        showToast("Import error: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Import Fares"; }
+      }
+    }
+
+    // =========================================================================
     // VIEW 10: REPORTS & ANALYTICS
     // =========================================================================
     async function loadReports() {
@@ -6399,6 +6845,8 @@
         closeAddVehicleModal();
         closeWalletAdjustModal();
         closeAddCouponModal();
+        closeEditFareModal();
+        closeImportFaresModal();
         closeAddUserModal();
         closeConvertLeadModal();
         closeConfirmModal();

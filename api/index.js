@@ -1228,9 +1228,9 @@ module.exports = async (req, res) => {
       const cabTier = body.cabTier || body.cabType || body.cab || 'sedan';
       const pickupAddress = body.pickupAddress || body.pickup || `${originCity} City`;
       const dropAddress = body.dropAddress || body.drop || `${destCity} City`;
-      const passengerPhone = body.passengerPhone || body.phone || '';
-      const passengerName = body.passengerName || body.name || 'Valued Passenger';
-      const passengerEmail = body.passengerEmail || body.email || '';
+      const passengerPhone = body.passengerPhone || body.customerPhone || body.phone || body.mobile || body.contact || '';
+      const passengerName = body.passengerName || body.customerName || body.name || 'Valued Passenger';
+      const passengerEmail = body.passengerEmail || body.customerEmail || body.email || '';
       const paymentMethod = body.paymentMethod || 'Cash on Ride (Zero Advance)';
       const pickupDate = body.pickupDate;
       const pickupTime = body.pickupTime || '10:00 AM';
@@ -1420,14 +1420,20 @@ module.exports = async (req, res) => {
       db.payments.unshift(paymentRecord);
 
       const newBooking = {
+        id: bookingId,
         bookingId,
         tripOtp,
         customerId: user.id,
+        customerName: safePassengerName,
+        customerPhone: `+91 ${cleanPhone}`,
+        customerEmail: passengerEmail || '',
         paymentTxnId: txnId,
         idempotencyKey: idempotencyKey || null,
         passengerName: safePassengerName,
         passengerPhone: `+91 ${cleanPhone}`,
         passengerEmail: passengerEmail || '',
+        pickupCity: originCity || 'Patna',
+        dropCity: destCity || 'Gaya',
         originCity: originCity || 'Patna',
         destCity: destCity || 'Gaya',
         pickupAddress: pickupAddress || `${originCity || 'Patna'} City`,
@@ -1739,22 +1745,7 @@ module.exports = async (req, res) => {
         }
       }
 
-      if (db.bookings) {
-        db.bookings = db.bookings.filter(b => b.bookingId !== bId && b.id !== bId);
-      }
-      await saveDb(db);
-
-      try {
-        const mongoUri = process.env.MONGODB_URI;
-        if (mongoUri) {
-          const { MongoClient } = require('mongodb');
-          const client = new MongoClient(mongoUri);
-          await client.connect();
-          const mDb = client.db(process.env.MONGODB_DB_NAME || 'onewaytaxibihar');
-          await mDb.collection('bookings').deleteOne({ $or: [{ bookingId: bId }, { id: bId }] });
-          await client.close();
-        }
-      } catch(e) {}
+      await dbService.deleteBooking(bId);
 
       return sendJson(200, {
         success: true,
@@ -1778,25 +1769,7 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Lead ID is required for deletion.' });
       }
 
-      const cleanPhone = leadId.replace(/\D/g, '').slice(-10);
-      if (db.leads) {
-        db.leads = db.leads.filter(l => l.id !== leadId && l.cleanPhone !== cleanPhone && l.phone !== `+91 ${cleanPhone}`);
-      }
-      await saveDb(db);
-
-      try {
-        const mongoUri = process.env.MONGODB_URI;
-        if (mongoUri) {
-          const { MongoClient } = require('mongodb');
-          const client = new MongoClient(mongoUri);
-          await client.connect();
-          const mDb = client.db(process.env.MONGODB_DB_NAME || 'onewaytaxibihar');
-          await mDb.collection('leads').deleteOne({
-            $or: [{ id: leadId }, { cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }]
-          });
-          await client.close();
-        }
-      } catch(e) {}
+      await dbService.deleteLead(leadId);
 
       return sendJson(200, {
         success: true,
@@ -2183,7 +2156,22 @@ module.exports = async (req, res) => {
       // Update fields, preserving existing secrets if placeholder/masked string sent
       const isMasked = (str) => typeof str === 'string' && (str.includes('••••') || str === '******');
 
+      // Support nested bankAccount object if passed
+      if (body.bankAccount && typeof body.bankAccount === 'object') {
+        if (body.bankAccount.bankName !== undefined) current.bankName = String(body.bankAccount.bankName).trim();
+        if (body.bankAccount.accountNumber !== undefined && !isMasked(body.bankAccount.accountNumber)) {
+          current.accountNumber = String(body.bankAccount.accountNumber).trim();
+        }
+        if (body.bankAccount.accountHolderName !== undefined) current.accountHolderName = String(body.bankAccount.accountHolderName).trim();
+        if (body.bankAccount.accountHolder !== undefined) current.accountHolderName = String(body.bankAccount.accountHolder).trim();
+        if (body.bankAccount.ifscCode !== undefined) current.ifscCode = String(body.bankAccount.ifscCode).trim().toUpperCase();
+        if (body.bankAccount.ifsc !== undefined) current.ifscCode = String(body.bankAccount.ifsc).trim().toUpperCase();
+        if (body.bankAccount.branchName !== undefined) current.branchName = String(body.bankAccount.branchName).trim();
+        if (body.bankAccount.upiId !== undefined) current.upiId = String(body.bankAccount.upiId).trim();
+      }
+
       if (body.upiId !== undefined) current.upiId = String(body.upiId).trim();
+      if (body.upiVpa !== undefined) current.upiId = String(body.upiVpa).trim();
       if (body.payeeName !== undefined) current.payeeName = String(body.payeeName).trim();
       if (body.qrImageUrl !== undefined) current.qrImageUrl = String(body.qrImageUrl).trim();
       if (body.qrImageBase64 !== undefined) current.qrImageUrl = String(body.qrImageBase64).trim();
@@ -2756,9 +2744,21 @@ module.exports = async (req, res) => {
       const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
       const emPhone = db.settings?.emergencyHotline || hPhone;
 
+      const currentAdminDoc = (db.admins || []).find(a => (a.username || '').toLowerCase() === (admin.username || '').toLowerCase());
+      const admName = currentAdminDoc?.name || admin.name || 'Central Dispatcher (ADMIN)';
+      const admPhone = currentAdminDoc?.phone || admin.phone || '+91 6206494214';
+
       return sendJson(200, {
         success: true,
+        adminProfile: {
+          username: admin.username,
+          name: admName,
+          phone: admPhone,
+          role: admin.role
+        },
         settings: {
+          adminName: admName,
+          adminPhone: admPhone,
           helplinePhone: hPhone,
           helpline: db.settings?.helpline || hPhone.replace(/\D/g, '').slice(-10),
           whatsappPhone: waPhone,
@@ -2788,6 +2788,18 @@ module.exports = async (req, res) => {
 
       if (!db.settings) db.settings = {};
       const oldSettings = { ...db.settings };
+
+      // Admin Profile updates (name, phone)
+      if (body.adminName || body.adminPhone) {
+        if (!db.admins) db.admins = [];
+        const adm = db.admins.find(a => (a.username || '').toLowerCase() === (admin.username || '').toLowerCase());
+        if (adm) {
+          if (body.adminName) adm.name = String(body.adminName).trim();
+          if (body.adminPhone) adm.phone = String(body.adminPhone).trim();
+        }
+        if (body.adminName) admin.name = String(body.adminName).trim();
+        if (body.adminPhone) admin.phone = String(body.adminPhone).trim();
+      }
 
       // Helpline Phone (support helplinePhone, helpline, phone)
       const rawHelp = body.helplinePhone || body.helpline || body.phone;
@@ -2844,6 +2856,8 @@ module.exports = async (req, res) => {
         success: true,
         message: 'Settings successfully saved and propagated.',
         settings: {
+          adminName: body.adminName || admin.name,
+          adminPhone: body.adminPhone || admin.phone,
           helplinePhone: db.settings.helplinePhone,
           helpline: db.settings.helpline,
           whatsappPhone: db.settings.whatsappPhone,
@@ -3054,6 +3068,179 @@ module.exports = async (req, res) => {
       return sendJson(200, {
         success: true,
         bookings: db.bookings || []
+      });
+    }
+
+    if ((pathname === '/admin/manual-booking' || pathname === '/admin/bookings') && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const originCity = (body.originCity || body.origin || body.pickupCity || 'Patna').trim();
+      const destCity = (body.destCity || body.destination || body.dropCity || 'Gaya').trim();
+      const passengerName = (body.passengerName || body.customerName || body.name || 'Valued Customer').trim();
+      const passengerPhone = (body.passengerPhone || body.customerPhone || body.phone || body.mobile || '').trim();
+      const passengerEmail = (body.passengerEmail || body.customerEmail || body.email || '').trim();
+      const cleanPhone = passengerPhone.replace(/\D/g, '').slice(-10);
+
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        return sendJson(400, { success: false, message: 'A valid 10-digit customer phone number is required.' });
+      }
+
+      const pickupAddress = (body.pickupAddress || `${originCity} City`).trim();
+      const dropAddress = (body.dropAddress || `${destCity} City`).trim();
+      const pickupDate = body.pickupDate || new Date().toISOString().split('T')[0];
+      const pickupTime = body.pickupTime || '10:00 AM';
+      const cabTier = body.cabTier || body.cabType || 'sedan';
+      const distanceKm = Number(body.distanceKm) || getRouteDistance(originCity, destCity);
+      const serverFare = calculateServerFare(distanceKm, cabTier, 'oneway');
+      
+      const totalFare = Number(body.totalFare) || Number(body.fare) || serverFare.totalFare;
+      const advancePaid = Number(body.advancePaid) || 0;
+      const balanceDue = Math.max(0, totalFare - advancePaid);
+      const paymentMethod = body.paymentMethod || (advancePaid > 0 ? 'Cash / UPI Advance Paid' : 'Cash on Ride (Zero Advance)');
+      const paymentStatus = advancePaid >= totalFare ? 'PAID (100% Full)' : (advancePaid > 0 ? 'PARTIALLY PAID (Advance Token)' : 'PAYABLE TO DRIVER (Cash on Ride)');
+      const bookingStatus = (body.bookingStatus || 'CONFIRMED').toUpperCase();
+
+      const bookingId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      const tripOtp = String(Math.floor(1000 + Math.random() * 9000));
+      const txnId = `TXN_MANUAL_${Date.now()}`;
+
+      // Driver Assignment if provided
+      let driverDetails = null;
+      let assignedDriverId = null;
+      let assignedDriverName = null;
+      let assignedDriverPhone = null;
+      let assignedDriverCarNo = null;
+
+      if (body.driverId) {
+        const drv = (db.drivers || []).find(d => d.id === body.driverId || d.driverId === body.driverId);
+        if (drv) {
+          assignedDriverId = drv.id;
+          assignedDriverName = drv.name;
+          assignedDriverPhone = drv.phone;
+          assignedDriverCarNo = drv.vehicleNumber || drv.carNo || drv.plate;
+          driverDetails = {
+            id: drv.id,
+            name: drv.name,
+            phone: drv.phone,
+            vehicleNumber: assignedDriverCarNo,
+            model: drv.vehicleModel || 'AC Cab'
+          };
+          drv.status = 'Assigned';
+          drv.isAvailable = false;
+        }
+      }
+
+      const manualBooking = {
+        id: bookingId,
+        bookingId,
+        tripOtp,
+        customerId: `usr_${cleanPhone}`,
+        customerName: passengerName,
+        customerPhone: `+91 ${cleanPhone}`,
+        customerEmail: passengerEmail,
+        paymentTxnId: txnId,
+        idempotencyKey: null,
+        passengerName,
+        passengerPhone: `+91 ${cleanPhone}`,
+        passengerEmail,
+        pickupCity: originCity,
+        dropCity: destCity,
+        originCity,
+        destCity,
+        pickupAddress,
+        dropAddress,
+        pickupDate,
+        pickupTime,
+        distanceKm,
+        duration: serverFare.duration || '2h 30m',
+        fleetClass: serverFare.tierName || 'Prime Sedan',
+        fleetModel: serverFare.tierModel || 'Dzire, Etios, Amaze',
+        fareBreakdown: serverFare,
+        fare: totalFare,
+        totalFare,
+        originalFare: totalFare,
+        walletUsed: 0,
+        couponCode: '',
+        couponDiscount: 0,
+        advancePaid,
+        balanceDue,
+        paymentMethod,
+        paymentStatus,
+        bookingStatus,
+        status: bookingStatus,
+        phoneVerified: true,
+        verifiedMethod: 'Admin Phone Booking (Manual)',
+        verifiedAt: new Date().toISOString(),
+        partnerNotice: 'Booking created by central dispatch operator.',
+        driverDetails,
+        assignedDriverId,
+        assignedDriverName,
+        assignedDriverPhone,
+        assignedDriverCarNo,
+        driverAssigned: Boolean(assignedDriverId),
+        notes: body.notes || 'Created manually by dispatch desk',
+        statusHistory: [
+          {
+            status: bookingStatus,
+            timestamp: new Date().toISOString(),
+            actor: `Dispatcher (${admin.username || 'admin'})`,
+            note: `Manual booking created via Central Admin Desk. Advance: ₹${advancePaid}, Balance: ₹${balanceDue}.`
+          }
+        ],
+        createdAt: new Date().toISOString()
+      };
+
+      if (!db.bookings) db.bookings = [];
+      db.bookings.unshift(manualBooking);
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.unshift({
+        id: `AUD_${Date.now()}`,
+        entity: 'BOOKING',
+        entityId: bookingId,
+        action: 'MANUAL_BOOKING_CREATED',
+        actor: admin.username || 'admin',
+        details: `Manual booking created for ${passengerName} (${originCity} -> ${destCity}, ₹${totalFare})`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+
+      return sendJson(201, {
+        success: true,
+        booking: manualBooking,
+        message: `Booking ${bookingId} successfully created!`
+      });
+    }
+
+    if (pathname === '/admin/profile' && (method === 'POST' || method === 'PUT')) {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const name = (body.name || '').trim();
+      const phone = (body.phone || '').trim();
+
+      if (name) admin.name = name;
+      if (phone) admin.phone = phone;
+
+      if (!db.admins) db.admins = [];
+      const adminDoc = db.admins.find(a => (a.username || '').toLowerCase() === (admin.username || '').toLowerCase());
+      if (adminDoc) {
+        if (name) adminDoc.name = name;
+        if (phone) adminDoc.phone = phone;
+      }
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        admin: {
+          username: admin.username,
+          name: adminDoc?.name || admin.name,
+          phone: adminDoc?.phone || admin.phone,
+          role: admin.role
+        },
+        message: 'Admin operator profile updated successfully!'
       });
     }
 
@@ -4380,40 +4567,7 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      // Clean test data
-      db.bookings = [];
-      db.leads = [];
-      db.notifications = [];
-      db.payments = [];
-      db.wallet_ledger = [];
-      db.driver_applications = [];
-      db.drivers = (db.drivers || []).filter(d => !d.id.startsWith('drv_98'));
-      db.users = (db.users || []).filter(u => u.role === 'admin' || u.phone === '+91 6206494214');
-
-      await saveDb(db);
-
-      // Clean MongoDB Atlas directly if connected
-      const mongoUri = process.env.MONGODB_URI;
-      if (mongoUri) {
-        try {
-          const { MongoClient } = require('mongodb');
-          const client = new MongoClient(mongoUri);
-          await client.connect();
-          const dbName = process.env.MONGODB_DB_NAME || 'onewaytaxibihar';
-          const mDb = client.db(dbName);
-        await Promise.allSettled([
-          mDb.collection('bookings').deleteMany({}),
-          mDb.collection('leads').deleteMany({}),
-          mDb.collection('notifications').deleteMany({}),
-          mDb.collection('payments').deleteMany({}),
-          mDb.collection('wallet_ledger').deleteMany({}),
-          mDb.collection('driver_applications').deleteMany({}),
-          mDb.collection('drivers').deleteMany({ id: { $regex: /^drv_98/ } }),
-          mDb.collection('users').deleteMany({ role: { $ne: 'admin' }, phone: { $ne: '+91 6206494214' } })
-        ]);
-        await client.close();
-        } catch(e) {}
-      }
+      await dbService.cleanTestData();
 
       return sendJson(200, {
         success: true,

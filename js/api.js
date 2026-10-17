@@ -13,12 +13,12 @@ class ApiClient {
 
   static baseUrl = (() => {
     if (typeof window !== "undefined") {
-      // 1. If running directly on the production domain or vercel
-      if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
+      // 1. If running in a browser under HTTP or HTTPS protocol, use relative paths ("")
+      // so all API requests route directly to the serving host (localhost, Vercel, or custom domain)
+      if (window.location.protocol === "http:" || window.location.protocol === "https:") {
         return "";
       }
-      // 2. Default to LIVE production cloud backend (onewaytaxibihar.com) so the frontend
-      // always connects to live MongoDB Atlas without requiring a local node server
+      // 2. Default to LIVE production cloud backend if opened via file:// protocol
       return "https://onewaytaxibihar.com";
     }
     return "https://onewaytaxibihar.com";

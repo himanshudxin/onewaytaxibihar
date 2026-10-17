@@ -2158,10 +2158,14 @@
               <h2>Live Inquiries &amp; Silent Leads</h2>
               <p>Real-time passenger fare searches and unconfirmed trip inquiries across Bihar corridors</p>
             </div>
-            <div class="view-actions">
+            <div class="view-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
               <button type="button" class="btn btn-secondary btn-sm" onclick="exportLeadsCsv()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Export CSV
+              </button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="cleanTestDataAdmin()" title="Purge fake/test inquiries and leads from database">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Purge Fake Leads
               </button>
               <button type="button" class="btn btn-primary btn-sm" onclick="loadLeads()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
@@ -2239,14 +2243,18 @@
               <h2>Bookings Management</h2>
               <p>Search, filter, assign, verify and manage intercity rides</p>
             </div>
-            <div class="view-actions">
+            <div class="view-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
               <button type="button" class="btn btn-secondary btn-sm" onclick="exportBookingsCsv()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Export CSV
               </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="openDetailsModal('')">
+              <button type="button" class="btn btn-danger btn-sm" onclick="cleanTestDataAdmin()" title="Purge fake/test bookings and inquiries from database">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Purge Test Data
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openManualBookingModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Manual Booking
+                + Manual Booking
               </button>
             </div>
           </div>
@@ -2688,7 +2696,8 @@
               </div>
               <div class="ops-card-body">
                 <form id="form-general-settings" onsubmit="handleSaveGeneralSettings(event)">
-                  <div class="form-grid-2">
+                  <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13px;">1. Dispatch Desk Hotline &amp; WhatsApp</div>
+                  <div class="form-grid-2" style="margin-bottom:16px;">
                     <div class="form-group">
                       <label class="form-label">24x7 Customer Helpline Phone</label>
                       <input type="text" class="form-control" id="set-helpline-phone" value="+91 80021 41816">
@@ -2706,8 +2715,21 @@
                       <input type="number" class="form-control" id="set-base-km" value="80">
                     </div>
                   </div>
+
+                  <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13px; border-top:1px solid #e2e8f0; padding-top:14px;">2. Admin / Operator Profile Details</div>
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Operator Display Name</label>
+                      <input type="text" class="form-control" id="set-admin-name" placeholder="Central Dispatcher (ADMIN)">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Admin Operator Mobile Phone</label>
+                      <input type="text" class="form-control" id="set-admin-phone" placeholder="+91 6206494214">
+                    </div>
+                  </div>
+
                   <div style="display:flex; justify-content:flex-end; margin-top:16px;">
-                    <button type="submit" class="btn btn-primary">Save Platform Settings</button>
+                    <button type="submit" class="btn btn-primary">Save Platform &amp; Profile Settings</button>
                   </div>
                 </form>
               </div>
@@ -3265,7 +3287,150 @@
         </div>
       </form>
     </div>
+  <!-- MANUAL CAB BOOKING MODAL -->
+  <div class="modal-backdrop" id="modal-manual-booking">
+    <div class="ops-modal" style="max-width: 680px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Create Manual Intercity Booking</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeManualBookingModal()">✕</button>
+      </div>
+      <form id="form-manual-booking" onsubmit="handleManualBookingSubmit(event)">
+        <div class="ops-modal-body" style="max-height: calc(85vh - 120px); overflow-y: auto;">
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;">
+            Book cab for offline phone calls or direct WhatsApp inquiries. Booking will instantly appear across Central Dispatch Desk.
+          </div>
+
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 12.5px; margin-bottom: 8px;">1. Passenger Details</div>
+          <div class="form-grid-2" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Passenger Full Name *</label>
+              <input type="text" class="form-control" id="man-passenger-name" placeholder="e.g. Ramesh Kumar" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Passenger Mobile Phone (10 Digits) *</label>
+              <input type="tel" class="form-control" id="man-passenger-phone" placeholder="9876543210" pattern="[0-9]{10}" required>
+            </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Passenger Email (Optional)</label>
+              <input type="email" class="form-control" id="man-passenger-email" placeholder="customer@example.com">
+            </div>
+          </div>
+
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 12.5px; margin-bottom: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">2. Route &amp; Travel Schedule</div>
+          <div class="form-grid-2" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Pickup City *</label>
+              <input type="text" class="form-control" id="man-origin-city" list="cities-data-list" placeholder="Patna" required oninput="calculateManualBookingFare()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Drop Destination City *</label>
+              <input type="text" class="form-control" id="man-dest-city" list="cities-data-list" placeholder="Gaya" required oninput="calculateManualBookingFare()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Detailed Pickup Address / Landmark</label>
+              <input type="text" class="form-control" id="man-pickup-address" placeholder="e.g. Boring Road Chauraha, Near PNB">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Detailed Drop Address / Landmark</label>
+              <input type="text" class="form-control" id="man-drop-address" placeholder="e.g. Bodh Gaya Temple Gate 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pickup Date *</label>
+              <input type="date" class="form-control" id="man-pickup-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pickup Time *</label>
+              <input type="time" class="form-control" id="man-pickup-time" value="09:00" required>
+            </div>
+          </div>
+
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 12.5px; margin-bottom: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">3. Cab Fleet &amp; Fare Quotation</div>
+          <div class="form-grid-2" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Vehicle Tier *</label>
+              <select class="form-control" id="man-cab-tier" onchange="calculateManualBookingFare()" required>
+                <option value="sedan">Prime Sedan (Dzire, Etios, Amaze) - 4 Seats</option>
+                <option value="hatchback">Go Hatchback (WagonR, Tiago) - 4 Seats</option>
+                <option value="sedan_prime">Executive Sedan (Ciaz, City) - 4 Seats</option>
+                <option value="suv">Family SUV / Ertiga (6+1 Seats)</option>
+                <option value="innova_crysta">Toyota Innova Crysta (7+1 Seats)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Route Distance (Est. KM)</label>
+              <input type="number" class="form-control" id="man-distance-km" value="104" oninput="calculateManualBookingFare()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Total Fare Agreed (₹) *</label>
+              <input type="number" class="form-control" id="man-total-fare" placeholder="2600" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Advance Paid Online / Offline (₹)</label>
+              <input type="number" class="form-control" id="man-advance-paid" value="0" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Payment Mode</label>
+              <select class="form-control" id="man-payment-mode">
+                <option value="Cash on Ride (Zero Advance)">Cash on Ride (Zero Advance)</option>
+                <option value="Direct UPI PhonePe (Advance Paid)">Direct UPI PhonePe (Advance Paid)</option>
+                <option value="Direct Bank Transfer (IMPS/NEFT)">Direct Bank Transfer (IMPS/NEFT)</option>
+                <option value="Online Razorpay (Cards/UPI)">Online Razorpay (Cards/UPI)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Ride Booking Status</label>
+              <select class="form-control" id="man-booking-status">
+                <option value="CONFIRMED">CONFIRMED (Booking Confirmed)</option>
+                <option value="DRIVER ASSIGNED">DRIVER ASSIGNED (Chauffeur Locked)</option>
+                <option value="NEW">NEW (Requested)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 12.5px; margin-bottom: 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">4. Chauffeur Assignment (Optional)</div>
+          <div class="form-grid-2">
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Assign Chauffeur Partner Immediately</label>
+              <select class="form-control" id="man-driver-select">
+                <option value="">-- Assign Later from Dispatch Workspace --</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Special Notes / Flight Number / Train Timings</label>
+              <input type="text" class="form-control" id="man-notes" placeholder="e.g. Passenger landing on 6E-204 Flight, keep AC running">
+            </div>
+          </div>
+        </div>
+        <div class="ops-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeManualBookingModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-manual-booking-submit">Create &amp; Confirm Booking</button>
+        </div>
+      </form>
+    </div>
   </div>
+
+  <datalist id="cities-data-list">
+    <option value="Patna">
+    <option value="Gaya">
+    <option value="Bodh Gaya">
+    <option value="Muzaffarpur">
+    <option value="Darbhanga">
+    <option value="Bhagalpur">
+    <option value="Purnia">
+    <option value="Begusarai">
+    <option value="Munger">
+    <option value="Chhapra">
+    <option value="Siwan">
+    <option value="Gopalganj">
+    <option value="Motihari">
+    <option value="Bettiah">
+    <option value="Saharsa">
+    <option value="Katihar">
+    <option value="Deoghar">
+    <option value="Varanasi">
+    <option value="Ranchi">
+    <option value="Kolkata">
+  </datalist>
 
   <!-- CONFIRMATION MODAL (For Destructive Actions) -->
   <div class="modal-backdrop" id="modal-confirm-action">
@@ -3334,16 +3499,12 @@
     // =========================================================================
     function getApiUrl(endpoint) {
       if (!endpoint.startsWith("http://") && !endpoint.startsWith("https://")) {
+        // When running in a browser under HTTP/HTTPS, always route relative to the current origin
+        if (typeof window !== "undefined" && window.location && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
+          return endpoint;
+        }
         if (typeof ApiClient !== "undefined" && ApiClient.baseUrl) {
           return `${ApiClient.baseUrl}${endpoint}`;
-        }
-        if (typeof window !== "undefined") {
-          // If already running directly on live domain or vercel
-          if (!window.location.port && (window.location.hostname.includes("vercel.app") || window.location.hostname.includes("onewaytaxibihar"))) {
-            return endpoint;
-          }
-          // Default to live production cloud backend
-          return `https://onewaytaxibihar.com${endpoint}`;
         }
         return `https://onewaytaxibihar.com${endpoint}`;
       }
@@ -3353,9 +3514,13 @@
     async function adminFetch(endpoint, options = {}) {
       const url = getApiUrl(endpoint);
       const isCrossOrigin = url.startsWith("http://") || url.startsWith("https://");
+      
+      const token = _adminToken || sessionStorage.getItem("otb_adm_token") || localStorage.getItem("otb_adm_token") || "";
+      if (token && !_adminToken) _adminToken = token;
+
       const headers = {
         "Content-Type": "application/json",
-        ...(_adminToken ? { "Authorization": `Bearer ${_adminToken}` } : {}),
+        ...(token ? { "Authorization": `Bearer ${token}` } : {}),
         ...(options.headers || {})
       };
       const fetchOpts = {
@@ -3368,9 +3533,6 @@
 
       try {
         let res = await fetch(url, fetchOpts);
-        if (!res.ok && isCrossOrigin && !url.startsWith("https://onewaytaxibihar.com")) {
-          res = await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
-        }
 
         // Automatic session invalidation on 401 Unauthorized
         if (res.status === 401 && !endpoint.includes("/login")) {
@@ -3385,7 +3547,7 @@
 
         return res;
       } catch (err) {
-        if (!url.startsWith("https://onewaytaxibihar.com")) {
+        if (!isCrossOrigin && typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
           return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
         }
         throw err;
@@ -4583,6 +4745,7 @@
                 <div style="display:inline-flex; gap:4px;">
                   <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert</button>
                   <button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑</button>
                 </div>
               </td>
             </tr>
@@ -4952,13 +5115,154 @@
           if (res.ok && data.success) {
             showToast(`Booking ${bookingId} removed`, "success");
             closeBookingDrawer();
-            await loadBookings();
+            _allBookings = _allBookings.filter(b => b.bookingId !== bookingId && b.id !== bookingId);
+            renderBookingsTable();
             renderDashboard();
+          } else {
+            showToast(data.message || "Failed to delete booking", "error");
           }
         } catch (e) {
           showToast("Error: " + e.message, "error");
         }
       });
+    }
+
+    // =========================================================================
+    // MANUAL BOOKING CONTROLLERS
+    // =========================================================================
+    function openManualBookingModal() {
+      const modal = document.getElementById("modal-manual-booking");
+      if (!modal) return;
+
+      const dateInput = document.getElementById("man-pickup-date");
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split("T")[0];
+      }
+
+      const drvSelect = document.getElementById("man-driver-select");
+      if (drvSelect) {
+        drvSelect.innerHTML = `<option value="">-- Assign Later from Dispatch Workspace --</option>` +
+          (_allDrivers || []).map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${d.vehicleNumber || 'Car'} • ${d.phone}) - ${d.status || 'Available'}</option>`).join("");
+      }
+
+      calculateManualBookingFare();
+      modal.classList.add("active");
+    }
+
+    function closeManualBookingModal() {
+      document.getElementById("modal-manual-booking")?.classList.remove("active");
+    }
+
+    window.openDetailsModal = function(id) {
+      if (id) {
+        openBookingDrawer(id);
+      } else {
+        openManualBookingModal();
+      }
+    };
+    window.openManualBookingModal = openManualBookingModal;
+    window.closeManualBookingModal = closeManualBookingModal;
+
+    function calculateManualBookingFare() {
+      const origin = (document.getElementById("man-origin-city")?.value || "Patna").trim();
+      const dest = (document.getElementById("man-dest-city")?.value || "Gaya").trim();
+      const cabTier = document.getElementById("man-cab-tier")?.value || "sedan";
+      const distEl = document.getElementById("man-distance-km");
+      const fareEl = document.getElementById("man-total-fare");
+
+      if (!fareEl) return;
+
+      let km = Number(distEl?.value);
+      if (!km || km <= 0) {
+        km = 104;
+        if (distEl) distEl.value = km;
+      }
+
+      const rates = {
+        hatchback: { perKm: 21, min: 1698 },
+        sedan: { perKm: 25, min: 2198 },
+        sedan_prime: { perKm: 29, min: 2698 },
+        suv: { perKm: 33, min: 3398 },
+        innova_crysta: { perKm: 44, min: 4598 }
+      };
+
+      const rate = rates[cabTier] || rates.sedan;
+      const calculated = Math.max(rate.min, Math.round(km * rate.perKm));
+      if (!fareEl.value || fareEl.dataset.autoCalculated === "true") {
+        fareEl.value = calculated;
+        fareEl.dataset.autoCalculated = "true";
+      }
+    }
+
+    async function handleManualBookingSubmit(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById("btn-manual-booking-submit");
+
+      const passengerName = (document.getElementById("man-passenger-name")?.value || "").trim();
+      const passengerPhone = (document.getElementById("man-passenger-phone")?.value || "").trim();
+      const passengerEmail = (document.getElementById("man-passenger-email")?.value || "").trim();
+      const originCity = (document.getElementById("man-origin-city")?.value || "Patna").trim();
+      const destCity = (document.getElementById("man-dest-city")?.value || "Gaya").trim();
+      const pickupAddress = (document.getElementById("man-pickup-address")?.value || "").trim();
+      const dropAddress = (document.getElementById("man-drop-address")?.value || "").trim();
+      const pickupDate = document.getElementById("man-pickup-date")?.value || "";
+      const pickupTime = document.getElementById("man-pickup-time")?.value || "10:00 AM";
+      const cabTier = document.getElementById("man-cab-tier")?.value || "sedan";
+      const distanceKm = Number(document.getElementById("man-distance-km")?.value) || 104;
+      const totalFare = Number(document.getElementById("man-total-fare")?.value) || 2600;
+      const advancePaid = Number(document.getElementById("man-advance-paid")?.value) || 0;
+      const paymentMethod = document.getElementById("man-payment-mode")?.value || "Cash on Ride (Zero Advance)";
+      const bookingStatus = document.getElementById("man-booking-status")?.value || "CONFIRMED";
+      const driverId = document.getElementById("man-driver-select")?.value || "";
+      const notes = (document.getElementById("man-notes")?.value || "").trim();
+
+      const cleanP = passengerPhone.replace(/\D/g, "").slice(-10);
+      if (!cleanP || cleanP.length !== 10) {
+        showToast("Please enter a valid 10-digit customer mobile number.", "error");
+        return;
+      }
+
+      try {
+        if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Creating Booking..."; }
+
+        const res = await adminFetch("/api/admin/manual-booking", {
+          method: "POST",
+          body: JSON.stringify({
+            passengerName,
+            passengerPhone: `+91 ${cleanP}`,
+            passengerEmail,
+            originCity,
+            destCity,
+            pickupAddress,
+            dropAddress,
+            pickupDate,
+            pickupTime,
+            cabTier,
+            distanceKm,
+            totalFare,
+            advancePaid,
+            paymentMethod,
+            bookingStatus,
+            driverId,
+            notes
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Booking ${data.booking?.bookingId || ''} created successfully!`, "success");
+          closeManualBookingModal();
+          document.getElementById("form-manual-booking")?.reset();
+          await loadBookings();
+          renderDashboard();
+        } else {
+          showToast(data.message || "Failed to create manual booking", "error");
+        }
+      } catch (err) {
+        showToast("Error creating booking: " + err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Create & Confirm Booking"; }
+      }
     }
 
     // =========================================================================
@@ -5637,6 +5941,8 @@
         if (res.ok) {
           const data = await res.json();
           const s = data.settings || {};
+          setVal("set-admin-name", s.adminName || _currentAdmin?.name || "Central Dispatcher (ADMIN)");
+          setVal("set-admin-phone", s.adminPhone || _currentAdmin?.phone || "+91 6206494214");
           setVal("set-helpline-phone", s.helplinePhone || s.helpline || "+91 80021 41816");
           setVal("set-whatsapp-phone", s.whatsappPhone || s.whatsapp || s.supportPhone || "+91 72818 51011");
           setVal("set-base-fare", s.baseFare || 2198);
@@ -5715,6 +6021,8 @@
     async function handleSaveGeneralSettings(e) {
       if (e) e.preventDefault();
       const btn = e.target?.querySelector('button[type="submit"]');
+      const adminName = (document.getElementById("set-admin-name")?.value || "").trim();
+      const adminPhone = (document.getElementById("set-admin-phone")?.value || "").trim();
       const helplinePhone = (document.getElementById("set-helpline-phone")?.value || "").trim();
       const whatsappPhone = (document.getElementById("set-whatsapp-phone")?.value || "").trim();
       const baseFare = Number(document.getElementById("set-base-fare")?.value) || 2198;
@@ -5725,6 +6033,8 @@
         const res = await adminFetch("/api/admin/settings", {
           method: "POST",
           body: JSON.stringify({
+            adminName,
+            adminPhone,
             helplinePhone,
             helpline: helplinePhone,
             whatsappPhone,
@@ -5736,7 +6046,10 @@
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast("Platform general settings saved!", "success");
+          showToast("Platform general & operator profile settings saved!", "success");
+          if (adminName && _currentAdmin) _currentAdmin.name = adminName;
+          if (adminPhone && _currentAdmin) _currentAdmin.phone = adminPhone;
+          applyOperatorProfileUi();
           await loadSettings();
         } else {
           showToast(data.message || "Failed to save settings", "error");
@@ -5744,7 +6057,7 @@
       } catch (err) {
         showToast("Error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform Settings"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Platform & Profile Settings"; }
       }
     }
 
@@ -5891,15 +6204,24 @@
     }
 
     async function cleanTestDataAdmin() {
-      openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings from MongoDB Atlas?", async () => {
+      openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings and test inquiries from MongoDB Atlas and database?", async () => {
         try {
           const res = await adminFetch("/api/admin/clean-test-data", {
             method: "POST"
           });
           const data = await res.json();
           if (res.ok && data.success) {
-            showToast("MongoDB Atlas sanitized and test bookings removed!", "success");
+            _allBookings = [];
+            _allLeads = [];
+            _allNotifications = [];
+            _allPayments = [];
+            showToast("Database & MongoDB Atlas sanitized! Test bookings and leads removed.", "success");
+            renderDashboard();
+            renderBookingsTable();
+            renderLeadsTable();
             await forceSyncAllData();
+          } else {
+            showToast(data.message || "Failed to purge test data", "error");
           }
         } catch (e) {
           showToast("Error: " + e.message, "error");

@@ -263,23 +263,10 @@ async function pullFromRemoteCloud(targetCollection = null) {
               memoryDb.settings = rest;
             }
           } else {
-            const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(300).toArray();
+            const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(500).toArray();
             if (Array.isArray(docs)) {
               const sanitized = docs.map(({ _id, ...rest }) => rest);
-              if (colName === 'bookings' || colName === 'leads') {
-                const map = new Map();
-                for (const item of sanitized) {
-                  const k = item.bookingId || item.id || item.cleanPhone;
-                  if (k) map.set(k, item);
-                }
-                for (const memItem of (memoryDb[colName] || [])) {
-                  const k = memItem.bookingId || memItem.id || memItem.cleanPhone;
-                  if (k && !map.has(k)) map.set(k, memItem);
-                }
-                memoryDb[colName] = Array.from(map.values());
-              } else {
-                memoryDb[colName] = sanitized;
-              }
+              memoryDb[colName] = sanitized;
             }
           }
         } catch (colErr) {
@@ -303,16 +290,23 @@ async function pullFromRemoteCloud(targetCollection = null) {
 
 // Targeted High-Speed Collection Upsert
 async function syncCollectionToCloud(colName, items) {
-  if (activeEngine !== 'mongodb' || !mongoDbInstance || !Array.isArray(items) || items.length === 0) return;
+  if (activeEngine !== 'mongodb' || !mongoDbInstance || !Array.isArray(items)) return;
 
   try {
     const col = mongoDbInstance.collection(colName);
+    if (items.length === 0) {
+      if (['bookings', 'leads', 'notifications', 'payments', 'wallet_ledger', 'driver_applications'].includes(colName)) {
+        await col.deleteMany({});
+      }
+      return;
+    }
+
     let idField = 'id';
     if (colName === 'bookings') idField = 'bookingId';
     else if (colName === 'coupons') idField = 'code';
     else if (colName === 'sessions') idField = 'token';
 
-    const bulkOps = items.slice(0, 50).map(item => {
+    const bulkOps = items.slice(0, 100).map(item => {
       const keyVal = item[idField] || item.id || item.phone || item.bookingId;
       const { _id, ...cleanItem } = item;
       return {
@@ -576,6 +570,99 @@ function getDatabaseStatus() {
   };
 }
 
+function getMongoDbInstance() {
+  return mongoDbInstance;
+}
+
+async function deleteBooking(bookingId) {
+  if (!bookingId) return false;
+  const bId = String(bookingId).trim();
+  if (!memoryDb) loadLocalDb();
+  if (Array.isArray(memoryDb.bookings)) {
+    memoryDb.bookings = memoryDb.bookings.filter(b => b.bookingId !== bId && b.id !== bId);
+  }
+  try {
+    const targetPath = getLocalDbPath();
+    fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
+  } catch (e) {}
+
+  if (mongoDbInstance) {
+    try {
+      await mongoDbInstance.collection('bookings').deleteMany({
+        $or: [{ bookingId: bId }, { id: bId }]
+      });
+    } catch (e) {
+      console.warn('[DB] Failed to delete booking from Atlas:', e.message);
+    }
+  }
+  lastHydrationTime = Date.now();
+  return true;
+}
+
+async function deleteLead(leadId) {
+  if (!leadId) return false;
+  const lId = String(leadId).trim();
+  if (!memoryDb) loadLocalDb();
+  if (Array.isArray(memoryDb.leads)) {
+    memoryDb.leads = memoryDb.leads.filter(l => l.id !== lId && l.leadId !== lId);
+  }
+  try {
+    const targetPath = getLocalDbPath();
+    fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
+  } catch (e) {}
+
+  if (mongoDbInstance) {
+    try {
+      await mongoDbInstance.collection('leads').deleteMany({
+        $or: [{ id: lId }, { leadId: lId }]
+      });
+    } catch (e) {
+      console.warn('[DB] Failed to delete lead from Atlas:', e.message);
+    }
+  }
+  lastHydrationTime = Date.now();
+  return true;
+}
+
+async function cleanTestData() {
+  if (!memoryDb) loadLocalDb();
+  memoryDb.bookings = [];
+  memoryDb.leads = [];
+  memoryDb.notifications = [];
+  memoryDb.payments = [];
+  memoryDb.wallet_ledger = [];
+  memoryDb.driver_applications = [];
+  if (Array.isArray(memoryDb.drivers)) {
+    memoryDb.drivers = memoryDb.drivers.filter(d => !d.id.startsWith('drv_98'));
+  }
+  if (Array.isArray(memoryDb.users)) {
+    memoryDb.users = memoryDb.users.filter(u => u.role === 'admin' || u.phone === '+91 6206494214');
+  }
+  try {
+    const targetPath = getLocalDbPath();
+    fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
+  } catch (e) {}
+
+  if (mongoDbInstance) {
+    try {
+      await Promise.allSettled([
+        mongoDbInstance.collection('bookings').deleteMany({}),
+        mongoDbInstance.collection('leads').deleteMany({}),
+        mongoDbInstance.collection('notifications').deleteMany({}),
+        mongoDbInstance.collection('payments').deleteMany({}),
+        mongoDbInstance.collection('wallet_ledger').deleteMany({}),
+        mongoDbInstance.collection('driver_applications').deleteMany({}),
+        mongoDbInstance.collection('drivers').deleteMany({ id: { $regex: /^drv_98/ } }),
+        mongoDbInstance.collection('users').deleteMany({ role: { $ne: 'admin' }, phone: { $ne: '+91 6206494214' } })
+      ]);
+    } catch (e) {
+      console.warn('[DB] Atlas clean error:', e.message);
+    }
+  }
+  lastHydrationTime = Date.now();
+  return true;
+}
+
 module.exports = {
   initDatabase,
   getDb,
@@ -584,9 +671,14 @@ module.exports = {
   saveDbAsync,
   createBooking,
   createLead,
+  deleteBooking,
+  deleteLead,
+  cleanTestData,
+  getMongoDbInstance,
   findBooking,
   updateBooking,
   recordPayment,
   addAuditLog,
   getDatabaseStatus
 };
+

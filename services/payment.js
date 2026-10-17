@@ -261,6 +261,15 @@ function getPaymentConfig(dbSettings = null) {
     ifscCode: cfg.ifscCode || '',
     branchName: cfg.branchName || 'Patna Main Branch',
     accountType: cfg.accountType || 'Current Account',
+    bankAccount: {
+      bankName: cfg.bankName || 'State Bank of India',
+      accountNumber: cfg.accountNumber || '',
+      accountHolder: cfg.accountHolderName || 'HIMANSHU KUMAR DUBEY',
+      accountHolderName: cfg.accountHolderName || 'HIMANSHU KUMAR DUBEY',
+      ifscCode: cfg.ifscCode || '',
+      branchName: cfg.branchName || 'Patna Main Branch',
+      upiId: cfg.upiId || '8002141816@ybl'
+    },
     razorpayConfigured: isRzpReady,
     cashfreeConfigured: !!(cfg.cashfreeAppId && cfg.cashfreeSecretKey),
     razorpayKeyId: isRzpReady ? cfg.razorpayKeyId : null,
@@ -295,6 +304,15 @@ function getAdminPaymentConfig(dbSettings = null) {
     ifscCode: cfg.ifscCode || '',
     branchName: cfg.branchName || 'Patna Main Branch',
     accountType: cfg.accountType || 'Current Account',
+    bankAccount: {
+      bankName: cfg.bankName || 'State Bank of India',
+      accountNumber: cfg.accountNumber || '',
+      accountHolder: cfg.accountHolderName || 'HIMANSHU KUMAR DUBEY',
+      accountHolderName: cfg.accountHolderName || 'HIMANSHU KUMAR DUBEY',
+      ifscCode: cfg.ifscCode || '',
+      branchName: cfg.branchName || 'Patna Main Branch',
+      upiId: cfg.upiId || '8002141816@ybl'
+    },
     razorpayKeyId: cfg.razorpayKeyId || '',
     razorpayKeySecret: maskSecret(cfg.razorpayKeySecret),
     razorpayKeySecretSet: !!cfg.razorpayKeySecret,

@@ -340,7 +340,7 @@
       if (!clean10) return;
       const code = sessionStorage.getItem(`otb_temp_otp_${clean10}`) || sessionStorage.getItem(`otb_verify_${clean10}`) || this.generatedOtpCode;
       const text = `Hi OneWayTaxiBihar, please verify my mobile number +91 ${clean10}. My verification code is: ${code}`;
-      const url = `https://wa.me/917281851011?text=${encodeURIComponent(text)}`;
+      const url = `https://wa.me/917739406400?text=${encodeURIComponent(text)}`;
       window.open(url, "_blank");
       window.showToast?.("Opening 24x7 WhatsApp Dispatch Desk for instant verification code...", "info");
     }

@@ -1480,7 +1480,7 @@ class BookingManager {
   }
 
   async transferLeadToHelpdesk(phone, silent = false, extra = {}) {
-    const rawWa = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917281851011";
+    const rawWa = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917739406400";
     const helpdeskNumber = rawWa.length === 10 ? `91${rawWa}` : rawWa;
     const clean10 = (phone || "").replace(/\D/g, "").slice(-10);
     if (!clean10 || clean10.length < 10) return;
@@ -3581,7 +3581,7 @@ class BookingManager {
           `━━━━━━━━━━━━━━━━━━━━━━\n` +
           `Our central dispatch agent will call you within 5 minutes.`;
 
-        const rawWaNum = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917281851011";
+        const rawWaNum = window.currentPlatformSettings?.cleanWhatsapp || this.dynamicPaymentConfig?.cleanWhatsapp || "917739406400";
         const cleanWaNum = rawWaNum.length === 10 ? `91${rawWaNum}` : rawWaNum;
         const waDispatchUrl = `https://wa.me/${cleanWaNum}?text=${encodeURIComponent(waMsg)}`;
         b.whatsappDispatchUrl = waDispatchUrl;

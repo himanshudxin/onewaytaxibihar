@@ -647,7 +647,7 @@ module.exports = async (req, res) => {
         engine: 'MongoDB Atlas Active',
         time: new Date().toISOString(),
         helpline: '+91 80021 41816',
-        whatsapp: '+91 72818 51011'
+        whatsapp: '+91 77394 06400'
       });
     }
 
@@ -666,7 +666,7 @@ module.exports = async (req, res) => {
         status: 'ONLINE',
         message: 'OneWayTaxiBihar Production Cloud Server Active',
         helpline: '+91 80021 41816',
-        whatsapp: '+91 72818 51011',
+        whatsapp: '+91 77394 06400',
         localUrl: 'http://localhost:8080'
       });
     }
@@ -2055,7 +2055,7 @@ module.exports = async (req, res) => {
             sacCode: '996412 (Passenger Land Transport Services)',
             address: 'Boring Road, Patna, Bihar - 800001',
             helpline: '+91 80021 41816',
-            whatsapp: '+91 72818 51011',
+            whatsapp: '+91 77394 06400',
             email: 'invoices@onewaytaxibihar.com'
           }
         }
@@ -2155,10 +2155,10 @@ module.exports = async (req, res) => {
     if (pathname === '/payments/config' && method === 'GET') {
       const paymentSettings = db.settings?.payment || null;
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
-      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 77394 06400';
       const cleanH = hPhone.replace(/\D/g, '').slice(-10) || '8002141816';
       const cleanWaDigits = waPhone.replace(/\D/g, '');
-      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917281851011');
+      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917739406400');
 
       return sendJson(200, {
         success: true,
@@ -2936,7 +2936,7 @@ module.exports = async (req, res) => {
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
-      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 77394 06400';
       const emPhone = db.settings?.emergencyHotline || hPhone;
 
       const currentAdminDoc = (db.admins || []).find(a => (a.username || '').toLowerCase() === (admin.username || '').toLowerCase());
@@ -3267,10 +3267,10 @@ module.exports = async (req, res) => {
     // Public Platform Settings Endpoint (No auth required for passenger website)
     if ((pathname === '/settings' || pathname === '/api/settings') && method === 'GET') {
       const hPhone = db.settings?.helplinePhone || db.settings?.helpline || '+91 80021 41816';
-      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 72818 51011';
+      const waPhone = db.settings?.whatsappPhone || db.settings?.whatsapp || db.settings?.supportPhone || '+91 77394 06400';
       const cleanH = hPhone.replace(/\D/g, '').slice(-10) || '8002141816';
       const cleanWaDigits = waPhone.replace(/\D/g, '');
-      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917281851011');
+      const cleanWa = cleanWaDigits.length === 10 ? `91${cleanWaDigits}` : (cleanWaDigits || '917739406400');
 
       return sendJson(200, {
         success: true,
@@ -4843,7 +4843,7 @@ module.exports = async (req, res) => {
         reply,
         action,
         helpline: '+91 80021 41816',
-        whatsappUrl: `https://wa.me/917281851011?text=${encodeURIComponent(`Support Inquiry: ${query}`)}`,
+        whatsappUrl: `https://wa.me/917739406400?text=${encodeURIComponent(`Support Inquiry: ${query}`)}`,
         escalate
       });
     }
@@ -5107,7 +5107,7 @@ module.exports = async (req, res) => {
         pausedAt: db.settings?.emergencyPausedAt || null,
         pausedBy: db.settings?.emergencyPausedBy || null,
         helpline: '+91 80021 41816',
-        whatsapp: '+91 72818 51011'
+        whatsapp: '+91 77394 06400'
       });
     }
 

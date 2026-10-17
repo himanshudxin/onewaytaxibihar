@@ -104,7 +104,7 @@ $$\text{Total Fare} = \text{Base Charge} + \text{Tolls} + \text{Driver Allowance
       "note": "Online booking request received"
     }
   ],
-  "whatsappDispatchUrl": "https://wa.me/917281851011?text=...",
+  "whatsappDispatchUrl": "https://wa.me/917739406400?text=...",
   "createdAt": "2026-10-03T15:00:00.000Z",
   "updatedAt": "2026-10-03T15:00:00.000Z"
 }
@@ -198,7 +198,7 @@ $$\text{Total Fare} = \text{Base Charge} + \text{Tolls} + \text{Driver Allowance
   "domain": "onewaytaxibihar.com",
   "time": "2026-10-03T15:30:00.000Z",
   "helpline": "+91 80021 41816",
-  "whatsapp": "+91 72818 51011"
+  "whatsapp": "+91 77394 06400"
 }
 ```
 
@@ -280,7 +280,7 @@ $$\text{Total Fare} = \text{Base Charge} + \text{Tolls} + \text{Driver Allowance
     "bookingStatus": "REQUESTED",
     "tripOtp": "4891",
     "totalFare": 2098,
-    "whatsappDispatchUrl": "https://wa.me/917281851011?text=..."
+    "whatsappDispatchUrl": "https://wa.me/917739406400?text=..."
   },
   "message": "Booking request received! Our partner/driver will call you within 5 minutes."
 }
@@ -471,7 +471,7 @@ MONGODB_DB_NAME=onewaytaxibihar
 
 # Central Dispatch Helplines
 CENTRAL_HELPLINE=+918002141816
-WHATSAPP_DISPATCH_PHONE=+917281851011
+WHATSAPP_DISPATCH_PHONE=+917739406400
 OWNER_ALERT_PHONE=+916206494214
 
 # Admin Authentication

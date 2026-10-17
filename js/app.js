@@ -1638,7 +1638,7 @@ window.openPrivacyModal = () => {
       <p>All data is transmitted via industry-standard TLS encryption. Payment transactions are executed directly through authorized UPI payment gateways (Beneficiary: HIMANSHU KUMAR DUBEY). We never store debit/credit card numbers or UPI PINs.</p>
 
       <h4 style="color: var(--owc-primary); margin-top: 16px; margin-bottom: 6px;">5. Data Deletion Requests</h4>
-      <p>You may request deletion of your account, ride history, and personal contact info by contacting dispatch at <strong>+91 80021 41816</strong> or WhatsApp <strong>+91 72818 51011</strong>.</p>
+      <p>You may request deletion of your account, ride history, and personal contact info by contacting dispatch at <strong>+91 80021 41816</strong> or WhatsApp <strong>+91 77394 06400</strong>.</p>
     </div>
   `;
   modal.classList.add("open");
@@ -1956,7 +1956,7 @@ window.startLiveTrackingSimulation = async (bookingId) => {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           Call Helpdesk (+91 80021 41816)
         </a>
-        <a href="https://wa.me/917281851011?text=Hello%20OneWayTaxiBihar%2C%20checking%20status%20for%20booking%20${ride.bookingId}" target="_blank" rel="noopener noreferrer" class="btn-nav-outline" style="flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
+        <a href="https://wa.me/917739406400?text=Hello%20OneWayTaxiBihar%2C%20checking%20status%20for%20booking%20${ride.bookingId}" target="_blank" rel="noopener noreferrer" class="btn-nav-outline" style="flex: 1; min-width: 180px; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
           WhatsApp Desk
         </a>
@@ -2060,8 +2060,8 @@ function updateDomPhoneNumbers(s) {
   window.currentPlatformSettings = s;
   const hPhone = s.helplinePhone || s.helpline || "+91 80021 41816";
   const cleanH = s.cleanHelpline || hPhone.replace(/\D/g, '').slice(-10) || "8002141816";
-  const waPhone = s.whatsappPhone || s.whatsapp || "+91 72818 51011";
-  const cleanWa = s.cleanWhatsapp || waPhone.replace(/\D/g, '') || "917281851011";
+  const waPhone = s.whatsappPhone || s.whatsapp || "+91 77394 06400";
+  const cleanWa = s.cleanWhatsapp || waPhone.replace(/\D/g, '') || "917739406400";
   const formattedWa = cleanWa.length === 10 ? `91${cleanWa}` : cleanWa;
 
   // Update all tel: links across the document safely without breaking SVG inner icons
@@ -2582,7 +2582,7 @@ window.handleAiSubmit = async (e) => {
 
         let waEscalateBtn = "";
         if (supportRes.escalateWhatsApp) {
-          const waUrl = `https://wa.me/917281851011?text=${encodeURIComponent('OneWay Support Assistance for: ' + query)}`;
+          const waUrl = `https://wa.me/917739406400?text=${encodeURIComponent('OneWay Support Assistance for: ' + query)}`;
           waEscalateBtn = `
             <div style="margin-top: 10px;">
               <a href="${waUrl}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: #25d366; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; text-decoration: none;">
@@ -2601,7 +2601,7 @@ window.handleAiSubmit = async (e) => {
       } else {
         botBubble.innerHTML = `
           <div class="ai-bot-name">OneWay AI Support</div>
-          <div>I am at your service. For instant trip confirmation, booking lookup, or outstation inquiries across Bihar, you can also connect 24x7 with our direct dispatch team at <strong>+91 80021 41816</strong> or WhatsApp <strong>+91 72818 51011</strong>.</div>
+          <div>I am at your service. For instant trip confirmation, booking lookup, or outstation inquiries across Bihar, you can also connect 24x7 with our direct dispatch team at <strong>+91 80021 41816</strong> or WhatsApp <strong>+91 77394 06400</strong>.</div>
         `;
       }
       msgsArea.appendChild(botBubble);
@@ -2902,7 +2902,7 @@ async function checkAndRenderEmergencyPause() {
             </div>
             <div style="display:flex; gap:8px;">
               <a href="tel:+918002141816" style="background:#fff; color:#991b1b; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12.5px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">📞 Call +91 80021 41816</a>
-              <a href="https://wa.me/917281851011?text=Urgent%20Cab%20Requirement" target="_blank" style="background:#22c55e; color:#fff; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12.5px; text-decoration:none;">WhatsApp Help</a>
+              <a href="https://wa.me/917739406400?text=Urgent%20Cab%20Requirement" target="_blank" style="background:#22c55e; color:#fff; padding:8px 14px; border-radius:8px; font-weight:700; font-size:12.5px; text-decoration:none;">WhatsApp Help</a>
             </div>
           </div>
         </div>

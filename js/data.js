@@ -753,7 +753,7 @@ const OTB_PASSENGER_REVIEWS = [
     date: "2026-09-29",
     dateFormatted: "29 Sep 2026",
     timestamp: 1790640000000,
-    comment: "Booked Innova Crysta for wedding travel. Super comfortable captain seats and peaceful driving. 24x7 helpdesk +91 72818 51011 is very responsive."
+    comment: "Booked Innova Crysta for wedding travel. Super comfortable captain seats and peaceful driving. 24x7 helpdesk +91 77394 06400 is very responsive."
   },
   {
     id: "otb_rev_07",
@@ -917,7 +917,7 @@ const OTB_FAQS = [
   },
   {
     q: "How do I contact customer support if I need assistance?",
-    a: "Our Patna central customer support team is available 24x7. Call our helpline at +91 80021 41816, WhatsApp us at +91 72818 51011, or click the Call button on the website."
+    a: "Our Patna central customer support team is available 24x7. Call our helpline at +91 80021 41816, WhatsApp us at +91 77394 06400, or click the Call button on the website."
   }
 ];
 

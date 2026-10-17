@@ -82,7 +82,7 @@ setTimeout(async () => {
           // 1. Initial elements
           const hasBranding = document.body.innerText.includes('OneWayTaxiBihar');
           const hasHelpline = document.body.innerText.includes('80021 41816');
-          const hasWhatsApp = document.body.innerHTML.includes('7281851011') || document.body.innerText.includes('72818');
+          const hasWhatsApp = document.body.innerHTML.includes('7739406400') || document.body.innerText.includes('77394');
 
           // 2. Set route & mobile & check fare
           const pInput = document.getElementById('input-pickup');

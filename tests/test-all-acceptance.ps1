@@ -20,7 +20,7 @@ Write-Host "=== STARTING COMPREHENSIVE PRODUCTION ACCEPTANCE TEST SUITE ===" -Fo
 # 1. Health & Helpline Check
 try {
     $health = Invoke-RestMethod -Uri "$baseUrl/api/health" -Method Get
-    Assert-Condition ($health.status -eq "ONLINE" -and $health.helpline -eq "+91 80021 41816" -and $health.whatsapp -eq "+91 72818 51011") "Criteria 27/28: Health endpoint reports ONLINE and official contact info"
+    Assert-Condition ($health.status -eq "ONLINE" -and $health.helpline -eq "+91 80021 41816" -and $health.whatsapp -eq "+91 77394 06400") "Criteria 27/28: Health endpoint reports ONLINE and official contact info"
 } catch {
     Assert-Condition $false "Health check failed: $($_.Exception.Message)"
 }

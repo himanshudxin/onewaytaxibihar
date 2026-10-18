@@ -790,52 +790,305 @@
     }
   ],
   "wallet_ledger": [],
-  "leads": [
+  "leads": [],
+  "notifications": [
     {
-      "cleanPhone": "8355254486",
-      "cabName": "Prime Sedan",
-      "cabPrice": 2500,
-      "createdAt": "2026-10-17T11:28:42.255Z",
-      "destCity": "Nalanda (Bihar Sharif)",
-      "distanceKm": 100,
-      "duration": "2h 00m",
-      "estFareHatch": 2100,
-      "estFareSedan": 2500,
-      "estFareSuv": 3398,
-      "id": "lead_8355254486_2255",
-      "notes": "Inquiry for Patna ➔ Nalanda (Bihar Sharif)",
-      "originCity": "Patna",
-      "passengerName": "Fare Check Visitor",
-      "phone": "+91 8355254486",
-      "pickupDate": "2026-10-31",
-      "pickupTime": "10:00 AM",
-      "rawPhone": "8355254486",
-      "selectedCab": "sedan",
-      "source": "Check Fares & Availability Button",
-      "status": "NEW",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-17T11:28:42.255Z"
+      "id": "NOTIF_1792298461283",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Varanasi",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Varanasi (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_1194",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:41:01.194Z"
     },
     {
-      "id": "LEAD_1792229846114",
-      "bookingId": "OTB-2026-5389",
-      "cleanPhone": "8434855686",
-      "createdAt": "2026-10-17T09:37:26.114Z",
-      "destCity": "Gaya",
-      "distanceKm": 104,
-      "estFareSedan": 1549,
-      "originCity": "Patna",
-      "passengerName": "Passenger",
-      "phone": "+91 8434855686",
-      "pickupDate": "2026-10-17",
-      "pickupTime": "18:07",
-      "status": "CONVERTED",
-      "tripType": "oneway",
-      "updatedAt": "2026-10-17T09:37:26.838Z",
-      "notes": ""
-    }
-  ],
-  "notifications": [
+      "id": "NOTIF_1792298461139",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Test Mock Lead (+91 9999999999) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2198.",
+      "leadId": "lead_9999999999_1052",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:41:01.052Z"
+    },
+    {
+      "id": "NOTIF_1792298460985",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Nalanda",
+      "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (104 KM). Rate: ₹2198.",
+      "leadId": "lead_8355254486_0854",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:41:00.854Z"
+    },
+    {
+      "id": "NOTIF_1792297270781",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_8982",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:21:08.982Z"
+    },
+    {
+      "id": "NOTIF_1792297270656",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
+      "leadId": "lead_6299375016_8851",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:21:08.851Z"
+    },
+    {
+      "id": "NOTIF_1792297270629",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_8816",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:21:08.816Z"
+    },
+    {
+      "id": "NOTIF_1792296968765",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Varanasi",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Varanasi (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_8675",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:16:08.675Z"
+    },
+    {
+      "id": "NOTIF_1792296968624",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Test Mock Lead (+91 9999999999) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2198.",
+      "leadId": "lead_9999999999_8533",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:16:08.533Z"
+    },
+    {
+      "id": "NOTIF_1792296968460",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Nalanda",
+      "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (104 KM). Rate: ₹2198.",
+      "leadId": "lead_8355254486_7764",
+      "isRead": false,
+      "createdAt": "2026-10-18T04:16:07.764Z"
+    },
+    {
+      "id": "NOTIF_1792295383693",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_1894",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:49:41.894Z"
+    },
+    {
+      "id": "NOTIF_1792295383672",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_1888",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:49:41.888Z"
+    },
+    {
+      "id": "NOTIF_1792295383692",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_1879",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:49:41.879Z"
+    },
+    {
+      "id": "NOTIF_1792294478178",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (193 KM). Rate: ₹4825.",
+      "leadId": "lead_8651424680_7728",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:37.728Z"
+    },
+    {
+      "id": "NOTIF_1792294478934",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_8651424680_7211",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:37.211Z"
+    },
+    {
+      "id": "NOTIF_1792294478975",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_8651424680_7208",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:37.208Z"
+    },
+    {
+      "id": "NOTIF_1792294478974",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_8651424680_6521",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:36.521Z"
+    },
+    {
+      "id": "NOTIF_1792294477789",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (193 KM). Rate: ₹4825.",
+      "leadId": "lead_8651424680_6019",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:36.019Z"
+    },
+    {
+      "id": "NOTIF_1792294478761",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ West Champaran (Bettiah), West Champaran (पश्चिमी चंपारण (बेतिया)), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 8651424680) checked fare for Patna (पटना), Bihar ➔ West Champaran (Bettiah), West Champaran (पश्चिमी चंपारण (बेतिया)), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_8651424680_5999",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:35.999Z"
+    },
+    {
+      "id": "NOTIF_1792294477775",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ West Champaran (Bettiah)",
+      "message": "Fare Check Visitor (+91 8651424680) checked fare for Patna ➔ West Champaran (Bettiah) (100 KM). Rate: ₹2500.",
+      "leadId": "lead_8651424680_4921",
+      "isRead": false,
+      "createdAt": "2026-10-18T03:34:34.921Z"
+    },
+    {
+      "id": "NOTIF_1792291238494",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_8121",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:40:38.121Z"
+    },
+    {
+      "id": "NOTIF_1792291238487",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_8110",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:40:38.110Z"
+    },
+    {
+      "id": "NOTIF_1792291238477",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_8092",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:40:38.092Z"
+    },
+    {
+      "id": "NOTIF_1792291065229",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_4855",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:44.855Z"
+    },
+    {
+      "id": "NOTIF_1792291065199",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_4827",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:44.827Z"
+    },
+    {
+      "id": "NOTIF_1792291065201",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_4826",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:44.826Z"
+    },
+    {
+      "id": "NOTIF_1792291047142",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_5348",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:25.348Z"
+    },
+    {
+      "id": "NOTIF_1792291047105",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_5315",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:25.315Z"
+    },
+    {
+      "id": "NOTIF_1792291046524",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_4763",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:24.763Z"
+    },
+    {
+      "id": "NOTIF_1792291047524",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_3931",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:23.931Z"
+    },
+    {
+      "id": "NOTIF_1792291028554",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6299375016) checked fare for Patna (पटना), Bihar ➔ Gaya (Bodh Gaya) (गया), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6299375016_6732",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:06.732Z"
+    },
+    {
+      "id": "NOTIF_1792291028005",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (110 KM). Rate: ₹2750.",
+      "leadId": "lead_6299375016_6230",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:06.230Z"
+    },
+    {
+      "id": "NOTIF_1792291029051",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
+      "leadId": "lead_6299375016_6177",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:06.177Z"
+    },
+    {
+      "id": "NOTIF_1792291028003",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Gaya",
+      "message": "Himanshu Dubey (+91 6299375016) checked fare for Patna ➔ Gaya (104 KM). Rate: ₹2600.",
+      "leadId": "lead_6299375016_5855",
+      "isRead": false,
+      "createdAt": "2026-10-18T02:37:05.855Z"
+    },
     {
       "id": "NOTIF_1792283500425",
       "type": "NEW_LEAD",
@@ -846,7 +1099,7 @@
       "createdAt": "2026-10-18T00:31:39.533Z"
     },
     {
-      "id": "NOTIF_1792236524296",
+      "id": "NOTIF_1792236524344",
       "type": "NEW_LEAD",
       "title": "New Fare Inquiry: Patna ➔ Nalanda (Bihar Sharif)",
       "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (Bihar Sharif) (100 KM). Rate: ₹2500.",
@@ -855,7 +1108,7 @@
       "createdAt": "2026-10-17T11:28:42.541Z"
     },
     {
-      "id": "NOTIF_1792236524344",
+      "id": "NOTIF_1792236524296",
       "type": "NEW_LEAD",
       "title": "New Fare Inquiry: Patna ➔ Nalanda (Bihar Sharif)",
       "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (Bihar Sharif) (100 KM). Rate: ₹2500.",
@@ -1116,109 +1369,17 @@
   ],
   "audit_logs": [
     {
-      "id": "audit_1792285555001_9479",
-      "actor": "admin",
-      "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":false,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",\"ifscCode",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":false,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",\"ifscCode",
-      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 77394 06400)",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-18T01:05:55.006Z",
-      "_id": "6ad41b737618d886e739cf35"
-    },
-    {
-      "id": "audit_1792227569454_8419",
-      "actor": "admin",
-      "role": "owner",
-      "action": "OPERATOR_CREATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_test_manager_operator",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator test_manager_operator assigned role: manager",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:59:29.454Z"
-    },
-    {
-      "id": "audit_1792226759952_3317",
-      "actor": "admin",
-      "role": "owner",
+      "id": "audit_1792227646717_2204",
+      "actor": "op_dispatcher_6037",
+      "role": "dispatcher",
       "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "adm_op_dispatcher_6037",
       "oldValue": null,
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:45:59.952Z"
-    },
-    {
-      "id": "audit_1792227500205_1797",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:58:20.205Z"
-    },
-    {
-      "id": "audit_1792227520224_5163",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:58:40.225Z"
-    },
-    {
-      "id": "audit_1792227520473_3834",
-      "actor": "admin",
-      "role": "owner",
-      "action": "OPERATOR_CREATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_dispatch_tester_1",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator dispatch_tester_1 assigned role: dispatcher",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:58:40.473Z"
-    },
-    {
-      "id": "audit_1792227544684_4924",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:59:04.684Z"
-    },
-    {
-      "id": "audit_1792227544849_4513",
-      "actor": "test_dispatcher_operator",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "test_dispatcher_operator",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:59:04.849Z"
+      "timestamp": "2026-10-17T09:00:46.717Z"
     },
     {
       "id": "audit_1792227544955_8504",
@@ -1325,17 +1486,17 @@
       "timestamp": "2026-10-17T08:59:29.352Z"
     },
     {
-      "id": "audit_1792226730851_8668",
+      "id": "audit_1792227569454_8419",
       "actor": "admin",
       "role": "owner",
-      "action": "VEHICLE_ADDED",
-      "entityType": "VEHICLE",
-      "entityId": "veh_1792226730851",
+      "action": "OPERATOR_CREATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_test_manager_operator",
       "oldValue": null,
-      "newValue": "{\"id\":\"veh_1792226730851\",\"vehicleNumber\":\"BR 01 TEST 5022\",\"model\":\"Test Maruti Dzire\",\"tier\":\"sedan\",\"fuelType\":\"CNG + Petrol\",\"assignedDriver\":\"\",\"driverPhone\":\"\",\"fitnessExpiry\":\"2027-11-20\",\"insuranceExpiry\":\"2027-10-15\",\"permitExpiry\":\"\",\"status\":\"ACTIVE\",\"updatedAt\":\"2026-10-17T08:45:30.851Z\"}",
-      "note": "Saved vehicle BR 01 TEST 5022 (Test Maruti Dzire)",
+      "newValue": null,
+      "note": "Operator test_manager_operator assigned role: manager",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T08:45:30.851Z"
+      "timestamp": "2026-10-17T08:59:29.454Z"
     },
     {
       "id": "audit_1792227571445_2081",
@@ -1416,17 +1577,17 @@
       "timestamp": "2026-10-17T09:00:46.038Z"
     },
     {
-      "id": "audit_1792227646717_2204",
-      "actor": "op_dispatcher_6037",
-      "role": "dispatcher",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "id": "audit_1792227544849_4513",
+      "actor": "test_dispatcher_operator",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_op_dispatcher_6037",
+      "entityId": "test_dispatcher_operator",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "note": "Failed credentials login from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:00:46.717Z"
+      "timestamp": "2026-10-17T08:59:04.849Z"
     },
     {
       "id": "audit_1792227646818_4174",
@@ -1520,7 +1681,111 @@
       "timestamp": "2026-10-17T09:00:53.728Z"
     },
     {
-      "id": "audit_1792206633177_5150",
+      "id": "audit_1792228508808_8412",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:08.809Z"
+    },
+    {
+      "id": "audit_1792228509051_5050",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_UPDATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_dispatch_tester_1",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator dispatch_tester_1 assigned role: dispatcher",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:09.051Z"
+    },
+    {
+      "id": "audit_1792228517693_1577",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:17.693Z"
+    },
+    {
+      "id": "audit_1792228517865_8501",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_CREATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_op_dispatcher_7869",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator op_dispatcher_7869 assigned role: dispatcher",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:17.865Z"
+    },
+    {
+      "id": "audit_1792228518745_9374",
+      "actor": "op_dispatcher_7869",
+      "role": "dispatcher",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_op_dispatcher_7869",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:18.745Z"
+    },
+    {
+      "id": "audit_1792228518852_8432",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_CREATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_op_support_7869",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator op_support_7869 assigned role: support",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:18.852Z"
+    },
+    {
+      "id": "audit_1792228519748_8612",
+      "actor": "op_support_7869",
+      "role": "support",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_op_support_7869",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:19.748Z"
+    },
+    {
+      "id": "audit_1792228519855_8990",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_CREATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_op_accounts_7869",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator op_accounts_7869 assigned role: accounts",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:19.855Z"
+    },
+    {
+      "id": "audit_1792206728896_7575",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1530,72 +1795,7 @@
       "newValue": null,
       "note": "Operator logged in from IP ::1",
       "ip": "::1",
-      "timestamp": "2026-10-17T03:10:33.177Z"
-    },
-    {
-      "id": "audit_1792110630749_7738",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-16T00:30:30.749Z"
-    },
-    {
-      "id": "audit_1792111089695_9341",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-16T00:38:09.695Z"
-    },
-    {
-      "id": "audit_1792112651375_7095",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-16T01:04:11.375Z"
-    },
-    {
-      "id": "audit_1792121847453_5047",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-16T03:37:27.454Z"
-    },
-    {
-      "id": "audit_1792133488198_9430",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T06:51:28.198Z"
+      "timestamp": "2026-10-17T03:12:08.896Z"
     },
     {
       "id": "audit_1792133501253_1425",
@@ -1715,7 +1915,7 @@
       "timestamp": "2026-10-17T03:09:52.602Z"
     },
     {
-      "id": "audit_1792228508808_8412",
+      "id": "audit_1792206633177_5150",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1723,9 +1923,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:08.809Z"
+      "note": "Operator logged in from IP ::1",
+      "ip": "::1",
+      "timestamp": "2026-10-17T03:10:33.177Z"
     },
     {
       "id": "audit_1792206633600_1073",
@@ -1793,17 +1993,17 @@
       "timestamp": "2026-10-17T03:11:24.230Z"
     },
     {
-      "id": "audit_1792206728896_7575",
-      "actor": "admin",
-      "role": "owner",
+      "id": "audit_1792228520748_3061",
+      "actor": "op_accounts_7869",
+      "role": "accounts",
       "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "adm_op_accounts_7869",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP ::1",
-      "ip": "::1",
-      "timestamp": "2026-10-17T03:12:08.896Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:15:20.748Z"
     },
     {
       "id": "audit_1792206729328_1957",
@@ -1910,20 +2110,20 @@
       "timestamp": "2026-10-17T08:45:30.037Z"
     },
     {
-      "id": "audit_1792232611625_7650",
+      "id": "audit_1792226730851_8668",
       "actor": "admin",
       "role": "owner",
-      "action": "OPERATOR_DELETED",
-      "entityType": "OPERATOR",
-      "entityId": "test_operator_99",
+      "action": "VEHICLE_ADDED",
+      "entityType": "VEHICLE",
+      "entityId": "veh_1792226730851",
       "oldValue": null,
-      "newValue": null,
-      "note": "Operator @test_operator_99 removed by Owner",
+      "newValue": "{\"id\":\"veh_1792226730851\",\"vehicleNumber\":\"BR 01 TEST 5022\",\"model\":\"Test Maruti Dzire\",\"tier\":\"sedan\",\"fuelType\":\"CNG + Petrol\",\"assignedDriver\":\"\",\"driverPhone\":\"\",\"fitnessExpiry\":\"2027-11-20\",\"insuranceExpiry\":\"2027-10-15\",\"permitExpiry\":\"\",\"status\":\"ACTIVE\",\"updatedAt\":\"2026-10-17T08:45:30.851Z\"}",
+      "note": "Saved vehicle BR 01 TEST 5022 (Test Maruti Dzire)",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:31.625Z"
+      "timestamp": "2026-10-17T08:45:30.851Z"
     },
     {
-      "id": "audit_1792232518403_5081",
+      "id": "audit_1792226759952_3317",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -1933,124 +2133,72 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:21:58.404Z"
+      "timestamp": "2026-10-17T08:45:59.952Z"
     },
     {
-      "id": "audit_1792232523459_8582",
+      "id": "audit_1792227500205_1797",
       "actor": "admin",
       "role": "owner",
-      "action": "FARE_CREATED",
-      "entityType": "FARES",
-      "entityId": "patna-testcity",
-      "oldValue": null,
-      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-17T10:22:03.459Z\",\"updatedBy\":\"admin\"}",
-      "note": "Fare chart for Test City Drop updated (Hatch: ₹1899, Sedan: ₹2199, SUV: ₹3199)",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:22:03.459Z"
-    },
-    {
-      "id": "audit_1792232523561_2150",
-      "actor": "admin",
-      "role": "owner",
-      "action": "FARE_DELETED",
-      "entityType": "FARES",
-      "entityId": "patna-testcity",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Route fare for Test City Drop permanently deleted.",
+      "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:22:03.561Z"
+      "timestamp": "2026-10-17T08:58:20.205Z"
     },
     {
-      "id": "audit_1792232524464_3641",
+      "id": "audit_1792227520224_5163",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T08:58:40.225Z"
+    },
+    {
+      "id": "audit_1792227520473_3834",
       "actor": "admin",
       "role": "owner",
       "action": "OPERATOR_CREATED",
       "entityType": "OPERATOR",
-      "entityId": "adm_test_operator_99",
+      "entityId": "adm_dispatch_tester_1",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator test_operator_99 assigned role: dispatcher",
+      "note": "Operator dispatch_tester_1 assigned role: dispatcher",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:22:04.464Z"
+      "timestamp": "2026-10-17T08:58:40.473Z"
     },
     {
-      "id": "audit_1792232525468_8572",
+      "id": "audit_1792227544684_4924",
       "actor": "admin",
       "role": "owner",
-      "action": "OPERATOR_DELETED",
-      "entityType": "OPERATOR",
-      "entityId": "test_operator_99",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator @test_operator_99 removed by Owner",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:22:05.468Z"
-    },
-    {
-      "id": "audit_1792232580445_2121",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "note": "Failed credentials login from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:00.445Z"
+      "timestamp": "2026-10-17T08:59:04.684Z"
     },
     {
-      "id": "audit_1792232585559_9886",
+      "id": "audit_1792283505433_3924",
       "actor": "admin",
       "role": "owner",
       "action": "FARE_CREATED",
       "entityType": "FARES",
       "entityId": "patna-testcity",
       "oldValue": null,
-      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-17T10:23:05.559Z\",\"updatedBy\":\"admin\"}",
+      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-18T00:31:45.433Z\",\"updatedBy\":\"admin\"}",
       "note": "Fare chart for Test City Drop updated (Hatch: ₹1899, Sedan: ₹2199, SUV: ₹3199)",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:05.559Z"
-    },
-    {
-      "id": "audit_1792232586501_7135",
-      "actor": "admin",
-      "role": "owner",
-      "action": "FARE_DELETED",
-      "entityType": "FARES",
-      "entityId": "patna-testcity",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Route fare for Test City Drop permanently deleted.",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:06.501Z"
-    },
-    {
-      "id": "audit_1792232587503_2114",
-      "actor": "admin",
-      "role": "owner",
-      "action": "OPERATOR_UPDATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_test_operator_99",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator test_operator_99 assigned role: dispatcher",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:07.503Z"
-    },
-    {
-      "id": "audit_1792232587899_9027",
-      "actor": "admin",
-      "role": "owner",
-      "action": "OPERATOR_DELETED",
-      "entityType": "OPERATOR",
-      "entityId": "test_operator_99",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator @test_operator_99 removed by Owner",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:23:07.899Z"
+      "timestamp": "2026-10-18T00:31:45.433Z"
     },
     {
       "id": "audit_1792232602578_6260",
@@ -2105,7 +2253,7 @@
       "timestamp": "2026-10-17T10:23:30.630Z"
     },
     {
-      "id": "audit_1792232404789_1836",
+      "id": "audit_1792232611625_7650",
       "actor": "admin",
       "role": "owner",
       "action": "OPERATOR_DELETED",
@@ -2115,7 +2263,7 @@
       "newValue": null,
       "note": "Operator @test_operator_99 removed by Owner",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T10:20:04.789Z"
+      "timestamp": "2026-10-17T10:23:31.625Z"
     },
     {
       "id": "audit_1792281112989_9849",
@@ -2248,17 +2396,17 @@
       "timestamp": "2026-10-18T00:31:37.362Z"
     },
     {
-      "id": "audit_1792283505433_3924",
+      "id": "audit_1792232587899_9027",
       "actor": "admin",
       "role": "owner",
-      "action": "FARE_CREATED",
-      "entityType": "FARES",
-      "entityId": "patna-testcity",
+      "action": "OPERATOR_DELETED",
+      "entityType": "OPERATOR",
+      "entityId": "test_operator_99",
       "oldValue": null,
-      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-18T00:31:45.433Z\",\"updatedBy\":\"admin\"}",
-      "note": "Fare chart for Test City Drop updated (Hatch: ₹1899, Sedan: ₹2199, SUV: ₹3199)",
+      "newValue": null,
+      "note": "Operator @test_operator_99 removed by Owner",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-18T00:31:45.433Z"
+      "timestamp": "2026-10-17T10:23:07.899Z"
     },
     {
       "id": "audit_1792283506431_7554",
@@ -2300,7 +2448,33 @@
       "timestamp": "2026-10-18T00:31:47.436Z"
     },
     {
-      "id": "audit_1792228571491_7238",
+      "id": "audit_1792285555001_9479",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":false,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",\"ifscCode",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":false,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50200012345678\",\"accountHolderName\":\"One Way Taxi Bihar Pvt Ltd\",\"ifscCode",
+      "note": "Operational settings modified (Helpline: +91 80021 41816, WhatsApp: +91 77394 06400)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T01:05:55.006Z"
+    },
+    {
+      "id": "audit_1792290919076_1381",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T02:35:19.079Z"
+    },
+    {
+      "id": "audit_1792290924595_7763",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2310,23 +2484,10 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:16:11.491Z"
+      "timestamp": "2026-10-18T02:35:24.595Z"
     },
     {
-      "id": "audit_1792228509051_5050",
-      "actor": "admin",
-      "role": "owner",
-      "action": "OPERATOR_UPDATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_dispatch_tester_1",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator dispatch_tester_1 assigned role: dispatcher",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:09.051Z"
-    },
-    {
-      "id": "audit_1792228517693_1577",
+      "id": "audit_1792292881681_4770",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2336,85 +2497,111 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:17.693Z"
+      "timestamp": "2026-10-18T03:08:01.682Z"
     },
     {
-      "id": "audit_1792228517865_8501",
+      "id": "audit_1792293213690_6789",
       "actor": "admin",
       "role": "owner",
-      "action": "OPERATOR_CREATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_op_dispatcher_7869",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator op_dispatcher_7869 assigned role: dispatcher",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:17.865Z"
-    },
-    {
-      "id": "audit_1792228518745_9374",
-      "actor": "op_dispatcher_7869",
-      "role": "dispatcher",
       "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "adm_op_dispatcher_7869",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:18.745Z"
+      "timestamp": "2026-10-18T03:13:33.690Z"
     },
     {
-      "id": "audit_1792228518852_8432",
+      "id": "audit_1792295727621_8859",
       "actor": "admin",
       "role": "owner",
-      "action": "OPERATOR_CREATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_op_support_7869",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator op_support_7869 assigned role: support",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:18.852Z"
-    },
-    {
-      "id": "audit_1792228519748_8612",
-      "actor": "op_support_7869",
-      "role": "support",
       "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "adm_op_support_7869",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:19.748Z"
+      "timestamp": "2026-10-18T03:55:27.621Z"
     },
     {
-      "id": "audit_1792228519855_8990",
+      "id": "audit_1792295871214_1917",
       "actor": "admin",
       "role": "owner",
-      "action": "OPERATOR_CREATED",
-      "entityType": "OPERATOR",
-      "entityId": "adm_op_accounts_7869",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator op_accounts_7869 assigned role: accounts",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:19.855Z"
-    },
-    {
-      "id": "audit_1792228520748_3061",
-      "actor": "op_accounts_7869",
-      "role": "accounts",
       "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "adm_op_accounts_7869",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-17T09:15:20.748Z"
+      "timestamp": "2026-10-18T03:57:51.214Z"
+    },
+    {
+      "id": "audit_1792297384815_2943",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T04:23:04.815Z"
+    },
+    {
+      "id": "audit_1792297455940_8598",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T04:24:15.940Z"
+    },
+    {
+      "id": "audit_1792298311682_8015",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T04:38:31.682Z"
+    },
+    {
+      "id": "audit_1792298465283_3861",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-18T04:41:05.283Z"
+    },
+    {
+      "id": "audit_1792229587634_8551",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-17T09:33:07.634Z"
     },
     {
       "id": "audit_1792228520852_6659",
@@ -2495,17 +2682,17 @@
       "timestamp": "2026-10-17T09:15:40.612Z"
     },
     {
-      "id": "audit_1792110589992_4422",
+      "id": "audit_1792228571491_7238",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGOUT",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-16T00:29:49.992Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T09:16:11.491Z"
     },
     {
       "id": "audit_1792228621632_8134",
@@ -2612,17 +2799,17 @@
       "timestamp": "2026-10-17T09:32:57.874Z"
     },
     {
-      "id": "audit_1792229587634_8551",
+      "id": "audit_1792133488198_9430",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
+      "note": "Failed credentials login from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-17T09:33:07.634Z"
+      "timestamp": "2026-10-16T06:51:28.198Z"
     },
     {
       "id": "audit_1792230429073_5379",
@@ -2677,20 +2864,20 @@
       "timestamp": "2026-10-17T10:20:04.685Z"
     },
     {
-      "id": "audit_1791874912203_7986",
+      "id": "audit_1792232404789_1836",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "action": "OPERATOR_DELETED",
+      "entityType": "OPERATOR",
+      "entityId": "test_operator_99",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
+      "note": "Operator @test_operator_99 removed by Owner",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:01:52.203Z"
+      "timestamp": "2026-10-17T10:20:04.789Z"
     },
     {
-      "id": "audit_1791872275188_3028",
+      "id": "audit_1792232518403_5081",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2700,7 +2887,124 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:17:55.188Z"
+      "timestamp": "2026-10-17T10:21:58.404Z"
+    },
+    {
+      "id": "audit_1792232523459_8582",
+      "actor": "admin",
+      "role": "owner",
+      "action": "FARE_CREATED",
+      "entityType": "FARES",
+      "entityId": "patna-testcity",
+      "oldValue": null,
+      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-17T10:22:03.459Z\",\"updatedBy\":\"admin\"}",
+      "note": "Fare chart for Test City Drop updated (Hatch: ₹1899, Sedan: ₹2199, SUV: ₹3199)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:22:03.459Z"
+    },
+    {
+      "id": "audit_1792232523561_2150",
+      "actor": "admin",
+      "role": "owner",
+      "action": "FARE_DELETED",
+      "entityType": "FARES",
+      "entityId": "patna-testcity",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Route fare for Test City Drop permanently deleted.",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:22:03.561Z"
+    },
+    {
+      "id": "audit_1792232524464_3641",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_CREATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_test_operator_99",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator test_operator_99 assigned role: dispatcher",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:22:04.464Z"
+    },
+    {
+      "id": "audit_1792232525468_8572",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_DELETED",
+      "entityType": "OPERATOR",
+      "entityId": "test_operator_99",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator @test_operator_99 removed by Owner",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:22:05.468Z"
+    },
+    {
+      "id": "audit_1792232580445_2121",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:23:00.445Z"
+    },
+    {
+      "id": "audit_1792232585559_9886",
+      "actor": "admin",
+      "role": "owner",
+      "action": "FARE_CREATED",
+      "entityType": "FARES",
+      "entityId": "patna-testcity",
+      "oldValue": null,
+      "newValue": "{\"id\":\"patna-testcity\",\"origin\":\"Patna\",\"destination\":\"Test City Drop\",\"destCity\":\"Test City\",\"district\":\"\",\"distanceKm\":85,\"hatchback\":1899,\"sedan\":2199,\"suv\":3199,\"marketComparison\":\"3958–4838\",\"active\":true,\"updatedAt\":\"2026-10-17T10:23:05.559Z\",\"updatedBy\":\"admin\"}",
+      "note": "Fare chart for Test City Drop updated (Hatch: ₹1899, Sedan: ₹2199, SUV: ₹3199)",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:23:05.559Z"
+    },
+    {
+      "id": "audit_1792232586501_7135",
+      "actor": "admin",
+      "role": "owner",
+      "action": "FARE_DELETED",
+      "entityType": "FARES",
+      "entityId": "patna-testcity",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Route fare for Test City Drop permanently deleted.",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:23:06.501Z"
+    },
+    {
+      "id": "audit_1792232587503_2114",
+      "actor": "admin",
+      "role": "owner",
+      "action": "OPERATOR_UPDATED",
+      "entityType": "OPERATOR",
+      "entityId": "adm_test_operator_99",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator test_operator_99 assigned role: dispatcher",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-17T10:23:07.503Z"
+    },
+    {
+      "id": "audit_1791875664540_6163",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T07:14:24.540Z"
     },
     {
       "id": "audit_1791872811169_4863",
@@ -2872,7 +3176,7 @@
       "timestamp": "2026-10-13T07:01:31.229Z"
     },
     {
-      "id": "audit_1791872263774_5871",
+      "id": "audit_1791874912203_7986",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -2882,7 +3186,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T06:17:43.774Z"
+      "timestamp": "2026-10-13T07:01:52.203Z"
     },
     {
       "id": "audit_1791874912430_7562",
@@ -2898,17 +3202,17 @@
       "timestamp": "2026-10-13T07:01:52.430Z"
     },
     {
-      "id": "audit_1791875664540_6163",
+      "id": "audit_1791872275188_3028",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP 127.0.0.1",
+      "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T07:14:24.540Z"
+      "timestamp": "2026-10-13T06:17:55.188Z"
     },
     {
       "id": "audit_1791875664839_1489",
@@ -3067,7 +3371,33 @@
       "timestamp": "2026-10-13T09:04:47.223Z"
     },
     {
-      "id": "audit_1791865419913_3245",
+      "id": "audit_1791882293790_6975",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T09:04:53.790Z"
+    },
+    {
+      "id": "audit_1791883334916_9459",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T09:22:14.916Z"
+    },
+    {
+      "id": "audit_1791865424539_3616",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3077,7 +3407,7 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T04:23:39.914Z"
+      "timestamp": "2026-10-13T04:23:44.539Z"
     },
     {
       "id": "audit_1791656648676_5439",
@@ -3262,20 +3592,7 @@
       "timestamp": "2026-10-13T03:30:48.953Z"
     },
     {
-      "id": "audit_1791882293790_6975",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T09:04:53.790Z"
-    },
-    {
-      "id": "audit_1791865424539_3616",
+      "id": "audit_1791865419913_3245",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3285,7 +3602,20 @@
       "newValue": null,
       "note": "Operator logged in from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T04:23:44.539Z"
+      "timestamp": "2026-10-13T04:23:39.914Z"
+    },
+    {
+      "id": "audit_1791883527316_2910",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T09:25:27.316Z"
     },
     {
       "id": "audit_1791865520834_5994",
@@ -3457,20 +3787,7 @@
       "timestamp": "2026-10-13T06:17:09.802Z"
     },
     {
-      "id": "audit_1792051866568_6887",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-15T08:11:06.568Z"
-    },
-    {
-      "id": "audit_1791912348035_3333",
+      "id": "audit_1791872263774_5871",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3478,38 +3795,12 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 103.51.149.111",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:48.035Z"
-    },
-    {
-      "id": "audit_1791912354729_3300",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:54.729Z"
-    },
-    {
-      "id": "audit_1791913854419_2448",
-      "actor": "admin",
-      "role": "owner",
-      "action": "SETTINGS_UPDATED",
-      "entityType": "SETTINGS",
-      "entityId": "global",
-      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
-      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
-      "note": "Operational & Fleet Fare settings modified by admin",
+      "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T17:50:54.419Z"
+      "timestamp": "2026-10-13T06:17:43.774Z"
     },
     {
-      "id": "audit_1791952368424_2412",
+      "id": "audit_1792052391538_3414",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3517,9 +3808,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 47.30.28.252",
-      "ip": "47.30.28.252",
-      "timestamp": "2026-10-14T04:32:48.424Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-15T08:19:51.538Z"
     },
     {
       "id": "audit_1791972636377_7214",
@@ -3652,7 +3943,7 @@
       "timestamp": "2026-10-15T04:52:48.481Z"
     },
     {
-      "id": "audit_1791912346904_8156",
+      "id": "audit_1792051866568_6887",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_FAILED",
@@ -3662,7 +3953,7 @@
       "newValue": null,
       "note": "Failed credentials login from IP 103.51.149.111",
       "ip": "103.51.149.111",
-      "timestamp": "2026-10-13T17:25:46.904Z"
+      "timestamp": "2026-10-15T08:11:06.568Z"
     },
     {
       "id": "audit_1792051876649_1739",
@@ -3717,7 +4008,7 @@
       "timestamp": "2026-10-15T08:19:40.147Z"
     },
     {
-      "id": "audit_1792052391538_3414",
+      "id": "audit_1791952368424_2412",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3725,9 +4016,9 @@
       "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-15T08:19:51.538Z"
+      "note": "Operator logged in from IP 47.30.28.252",
+      "ip": "47.30.28.252",
+      "timestamp": "2026-10-14T04:32:48.424Z"
     },
     {
       "id": "audit_1792052527232_5614",
@@ -3847,7 +4138,20 @@
       "timestamp": "2026-10-16T00:29:42.618Z"
     },
     {
-      "id": "audit_1791895103663_8740",
+      "id": "audit_1792110589992_4422",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-16T00:29:49.992Z"
+    },
+    {
+      "id": "audit_1792110630749_7738",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3857,23 +4161,10 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T12:38:23.663Z"
+      "timestamp": "2026-10-16T00:30:30.749Z"
     },
     {
-      "id": "audit_1791883334916_9459",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
-      "entityType": "AUTH",
-      "entityId": "admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Failed credentials login from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T09:22:14.916Z"
-    },
-    {
-      "id": "audit_1791883527316_2910",
+      "id": "audit_1792111089695_9341",
       "actor": "admin",
       "role": "owner",
       "action": "ADMIN_LOGIN_SUCCESS",
@@ -3883,7 +4174,46 @@
       "newValue": null,
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T09:25:27.316Z"
+      "timestamp": "2026-10-16T00:38:09.695Z"
+    },
+    {
+      "id": "audit_1792112651375_7095",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-16T01:04:11.375Z"
+    },
+    {
+      "id": "audit_1792121847453_5047",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-16T03:37:27.454Z"
+    },
+    {
+      "id": "audit_1791897114265_4395",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T13:11:54.267Z"
     },
     {
       "id": "audit_1791883677419_1799",
@@ -4042,17 +4372,17 @@
       "timestamp": "2026-10-13T12:36:48.911Z"
     },
     {
-      "id": "audit_1791656648506_2671",
+      "id": "audit_1791895103663_8740",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_FAILED",
+      "action": "ADMIN_LOGIN_SUCCESS",
       "entityType": "AUTH",
-      "entityId": "admin",
+      "entityId": "adm_admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Failed credentials login from IP ::1",
-      "ip": "::1",
-      "timestamp": "2026-10-10T18:24:08.518Z"
+      "note": "Operator logged in from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T12:38:23.663Z"
     },
     {
       "id": "audit_1791895104790_5219",
@@ -4081,17 +4411,17 @@
       "timestamp": "2026-10-13T12:38:26.651Z"
     },
     {
-      "id": "audit_1791897114265_4395",
+      "id": "audit_1791656648506_2671",
       "actor": "admin",
       "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
+      "action": "ADMIN_LOGIN_FAILED",
       "entityType": "AUTH",
-      "entityId": "adm_admin",
+      "entityId": "admin",
       "oldValue": null,
       "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-10-13T13:11:54.267Z"
+      "note": "Failed credentials login from IP ::1",
+      "ip": "::1",
+      "timestamp": "2026-10-10T18:24:08.518Z"
     },
     {
       "id": "audit_1791897114537_9380",
@@ -4222,6 +4552,67 @@
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-13T17:20:58.921Z"
+    },
+    {
+      "id": "audit_1791912346904_8156",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T17:25:46.904Z"
+    },
+    {
+      "id": "audit_1791912348035_3333",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged in from IP 103.51.149.111",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T17:25:48.035Z"
+    },
+    {
+      "id": "audit_1791912354729_3300",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGOUT",
+      "entityType": "AUTH",
+      "entityId": "adm_admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Operator logged out",
+      "ip": "103.51.149.111",
+      "timestamp": "2026-10-13T17:25:54.729Z"
+    },
+    {
+      "id": "audit_1791913854419_2448",
+      "actor": "admin",
+      "role": "owner",
+      "action": "SETTINGS_UPDATED",
+      "entityType": "SETTINGS",
+      "entityId": "global",
+      "oldValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
+      "newValue": "{\"id\":\"global_settings\",\"payment\":{\"upiId\":\"8002141816@ybl\",\"payeeName\":\"HIMANSHU KUMAR DUBEY\",\"razorpayKeyId\":\"\",\"razorpayKeySecret\":\"\",\"razorpayWebhookSecret\":\"\",\"cashfreeAppId\":\"\",\"cashfreeSecretKey\":\"\",\"cashfreeEnv\":\"production\",\"defaultAdvanceAmount\":299,\"enableRazorpay\":true,\"enableDirectUpi\":true,\"enableCashToDriver\":true,\"enableTokenAdvance\":true,\"autoConfirmOnAdvance\":true,\"bankName\":\"HDFC Bank\",\"accountNumber\":\"50100456789123\",\"accountHolderName\":\"HIMANSHU KUMAR DUBEY\",\"ifscCode\":\"HDFC",
+      "note": "Operational & Fleet Fare settings modified by admin",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-13T17:50:54.419Z"
+    },
+    {
+      "id": "AUD_1792298469267",
+      "entity": "DATABASE",
+      "entityId": "test_data",
+      "action": "PURGE_TEST_DATA",
+      "actor": "admin",
+      "details": "Purged mock/test records (Target: leads, Visitors: true) safely.",
+      "createdAt": "2026-10-18T04:41:09.267Z"
     }
   ],
   "sessions": [
@@ -4911,5 +5302,8 @@
       "username": "admin"
     }
   ],
-  "fares": []
+  "fares": [],
+  "revoked_tokens": [
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5OGY3NGYwNWZhZTg4MTgyMWQ3NDZmNjZjZmUyYmQwNSIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkJpaGFyIEZsZWV0IERpcmVjdG9yIiwicGhvbmUiOiIrOTEgOTk5OTkgMzMzMzMiLCJpYXQiOjE3OTIyODExMzMsImV4cCI6MTc5MjMwOTkzM30.18mgM-S9QlC0c-BE_lGx2oQIw4G3ONjfXLjIE2MYhFQ"
+  ]
 }

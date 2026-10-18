@@ -81,7 +81,22 @@ function saveLocalLead(newLead) {
   } catch (e) {}
 }
 
-module.exports = async (req, res) => {
+function deleteLocalLead(leadId) {
+  try {
+    const fPath = getLocalDbPath();
+    if (fs.existsSync(fPath)) {
+      const db = JSON.parse(fs.readFileSync(fPath, 'utf8').replace(/^\uFEFF/, ''));
+      if (Array.isArray(db.leads)) {
+        const found = db.leads.find(l => l.id === leadId || l.cleanPhone === leadId);
+        const phone = found ? (found.cleanPhone || (found.phone || '').replace(/\D/g, '').slice(-10)) : leadId.replace(/\D/g, '').slice(-10);
+        db.leads = db.leads.filter(l => l.id !== leadId && (!phone || (l.cleanPhone !== phone && (l.phone || '').replace(/\D/g, '').slice(-10) !== phone)));
+        fs.writeFileSync(fPath, JSON.stringify(db, null, 2), 'utf8');
+      }
+    }
+  } catch (e) {}
+}
+
+const handler = async (req, res) => {
   // Ultra-Permissive CORS for seamless Dispatch Console communication
   const reqOrigin = req.headers['origin'] || '*';
   res.setHeader('Access-Control-Allow-Origin', reqOrigin);
@@ -395,22 +410,31 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Lead ID is required for deletion.' });
       }
 
-      const cleanPhone = leadId.replace(/\D/g, '').slice(-10);
+      // Delete from local JSON database
+      deleteLocalLead(leadId);
 
+      // Delete from dbService / MongoDB Atlas
       try {
-        const db = await connectToDatabase();
-        if (db) {
-          await db.collection('leads').deleteOne({
-            $or: [{ id: leadId }, { cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }]
-          });
+        const dbService = require('../services/db.js');
+        if (dbService && typeof dbService.deleteLead === 'function') {
+          await dbService.deleteLead(leadId);
         }
-      } catch (e) {}
-
-      // Delete from local cache
-      if (cachedLeads) {
-        cachedLeads = cachedLeads.filter(l => l.id !== leadId && l.cleanPhone !== cleanPhone);
-        lastCacheTime = Date.now();
+      } catch (e) {
+        // Fallback direct MongoDB deletion
+        try {
+          const db = await connectToDatabase();
+          if (db) {
+            const cleanPhone = leadId.replace(/\D/g, '').slice(-10);
+            await db.collection('leads').deleteMany({
+              $or: [{ id: leadId }, { cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }]
+            });
+          }
+        } catch (mErr) {}
       }
+
+      // Invalidate memory cache immediately
+      cachedLeads = null;
+      lastCacheTime = 0;
 
       return sendJson(200, {
         success: true,
@@ -424,3 +448,10 @@ module.exports = async (req, res) => {
 
   return sendJson(405, { success: false, message: 'Method not allowed' });
 };
+
+handler.invalidateCache = () => {
+  cachedLeads = null;
+  lastCacheTime = 0;
+};
+
+module.exports = handler;

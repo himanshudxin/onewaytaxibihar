@@ -760,12 +760,17 @@
       max-width: 1600px;
       width: 100%;
       margin: 0 auto;
+      box-sizing: border-box;
+      min-width: 0;
+      overflow-x: hidden;
     }
 
     /* VIEW SECTIONS */
     .content-view {
       display: none;
       animation: fadeInView 0.2s ease-out;
+      min-width: 0;
+      max-width: 100%;
     }
     .content-view.active {
       display: block;
@@ -805,6 +810,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     /* Primary Cards */
@@ -815,6 +821,9 @@
       box-shadow: var(--shadow-sm);
       overflow: hidden;
       margin-bottom: 20px;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .ops-card-header {
@@ -839,6 +848,9 @@
 
     .ops-card-body {
       padding: 20px;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     /* KPI Grid */
@@ -905,12 +917,18 @@
     /* Clean Operational Tables */
     .table-container {
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       border-radius: var(--radius-md);
+      display: block;
+      box-sizing: border-box;
     }
 
     .ops-table {
       width: 100%;
+      min-width: 620px;
       border-collapse: collapse;
       font-size: 13px;
       text-align: left;
@@ -1464,18 +1482,23 @@
         max-width: 100vw !important;
         width: 100% !important;
       }
-      .topbar-search {
-        display: none;
+      .topbar-search,
+      .topbar-clock,
+      #emergency-pause-text,
+      #audio-label,
+      #btn-copilot-top span:last-child,
+      #topbar-db-status-text {
+        display: none !important;
       }
       .dashboard-split-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
       }
     }
 
     /* Breakpoint: Tablets & Foldables (<= 900px) */
     @media (max-width: 900px) {
       .dispatch-split-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
       }
       .kpi-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -1485,14 +1508,37 @@
     /* Breakpoint: Mobile Phones (<= 768px) */
     @media (max-width: 768px) {
       .app-workspace {
-        padding: 16px 14px;
+        padding: 16px 12px;
       }
       .app-topbar {
-        padding: 0 14px;
+        padding: 0 12px;
         height: 56px;
       }
-      .topbar-clock {
-        display: none;
+      .topbar-right {
+        gap: 6px;
+      }
+      .topbar-btn {
+        padding: 6px 8px;
+        min-width: 36px;
+        min-height: 36px;
+      }
+      .view-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .view-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .view-actions .btn {
+        flex: 1 1 auto;
+      }
+      .dashboard-split-grid,
+      .dispatch-split-grid {
+        grid-template-columns: 1fr !important;
       }
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -3693,6 +3739,8 @@
         </div>
       </form>
     </div>
+  </div>
+
   <!-- MANUAL CAB BOOKING MODAL -->
   <div class="modal-backdrop" id="modal-manual-booking">
     <div class="ops-modal" style="max-width: 680px;">
@@ -4994,21 +5042,25 @@
     }
 
     async function deleteLeadAdmin(leadId) {
+      const l = _allLeads.find(x => x.id === leadId || x.cleanPhone === leadId);
+      const name = l ? (l.passengerName || l.phone || leadId) : leadId;
       openConfirmModal(
         "Delete Lead Inquiry",
-        `Are you sure you want to permanently delete lead inquiry (${leadId})?`,
+        `Are you sure you want to permanently delete lead inquiry for "${name}" (${leadId})?`,
         async () => {
           try {
             const res = await adminFetch(`/api/leads?id=${encodeURIComponent(leadId)}&action=delete`, {
               method: "DELETE"
             });
-            if (res.ok) {
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.success !== false) {
               showToast("Inquiry lead permanently removed", "success");
-              _allLeads = _allLeads.filter(l => l.id !== leadId && l.cleanPhone !== leadId);
+              const targetPhone = l ? (l.cleanPhone || cleanPhone(l.phone)) : '';
+              _allLeads = _allLeads.filter(x => x.id !== leadId && (!targetPhone || x.cleanPhone !== targetPhone));
               renderLeadsTable();
               renderDashboard();
             } else {
-              showToast("Failed to delete lead", "warning");
+              showToast(data.message || "Failed to delete lead", "warning");
             }
           } catch (e) {
             showToast("Delete error: " + e.message, "error");
@@ -5120,6 +5172,7 @@
       ]);
       downloadCsv("OneWayTaxi_Leads_" + new Date().toISOString().slice(0, 10) + ".csv", headers, rows);
     }
+    window.exportLeadsCSV = exportLeadsCsv;
 
     // =========================================================================
     // VIEW 3: BOOKINGS MANAGEMENT & SLIDE-OVER DRAWER
@@ -6265,6 +6318,7 @@
       if (phoneInput && phone) phoneInput.value = phone;
       document.getElementById("modal-wallet-adjust")?.classList.add("active");
     }
+    window.openWalletAdjustModal = openWalletAdjustModalFor;
 
     function closeWalletAdjustModal() {
       document.getElementById("modal-wallet-adjust")?.classList.remove("active");
@@ -6527,10 +6581,10 @@
     }
 
     function openEditFareModal(id) {
+      if (!id) return openAddFareModal();
       const fare = _allFares.find(f => f.id === id);
       if (!fare) {
-        showToast("Route not found: " + id, "error");
-        return;
+        return openAddFareModal();
       }
       setVal("fare-edit-id", fare.id || "");
       setVal("fare-edit-dest", fare.destination || "");
@@ -7123,17 +7177,30 @@
       }
     }
 
-    async function cleanTestDataAdmin() {
-      openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings and test inquiries from MongoDB Atlas and database? Real customer rides will remain intact.", async () => {
+    async function cleanTestDataAdmin(target = 'all') {
+      const isLeadsOnly = target === 'leads' || _currentMainTab === 'leads';
+      const title = isLeadsOnly ? "Purge Fake Leads & Inquiries" : "Purge Test Data";
+      const message = isLeadsOnly
+        ? "Permanently purge automated fare visitor queries, test leads, and mock inquiries from MongoDB Atlas and database? Real customer rides will remain intact."
+        : "Clean automated mock bookings and test inquiries from MongoDB Atlas and database? Real customer rides will remain intact.";
+
+      openConfirmModal(title, message, async () => {
         try {
           const res = await adminFetch("/api/admin/clean-test-data", {
             method: "POST",
-            body: JSON.stringify({ confirm: "PURGE_TEST_DATA" })
+            body: JSON.stringify({
+              confirm: "PURGE_TEST_DATA",
+              target: isLeadsOnly ? "leads" : "all",
+              includeVisitors: true
+            })
           });
           const data = await res.json();
           if (res.ok && data.success) {
-            showToast(data.message || "Database sanitized! Test bookings and leads removed.", "success");
+            showToast(data.message || "Database sanitized! Fake leads and test data removed.", "success");
             await forceSyncAllData();
+            if (typeof renderLeadsTable === 'function') renderLeadsTable();
+            if (typeof renderBookingsTable === 'function') renderBookingsTable();
+            if (typeof renderDashboard === 'function') renderDashboard();
           } else {
             showToast(data.message || "Failed to purge test data", "error");
           }
@@ -7258,6 +7325,7 @@
       ]);
       downloadCsv("OneWayTaxi_Bookings_" + new Date().toISOString().slice(0, 10) + ".csv", headers, rows);
     }
+    window.exportBookingsCSV = exportBookingsCsv;
 
     function exportPaymentsCsv() {
       if (_allPayments.length === 0) {
@@ -7315,11 +7383,22 @@
       _pendingActionCallback = null;
     }
 
-    function executeConfirmedAction() {
-      if (typeof _pendingActionCallback === 'function') {
-        _pendingActionCallback();
+    async function executeConfirmedAction() {
+      const cb = _pendingActionCallback;
+      const btn = document.getElementById("confirm-modal-btn");
+      const origText = btn ? btn.textContent : "Confirm";
+      if (btn) { btn.disabled = true; btn.textContent = "Processing..."; }
+      try {
+        if (typeof cb === 'function') {
+          await cb();
+        }
+      } catch (err) {
+        console.error("Action execution error:", err);
+        showToast("Action error: " + (err.message || err), "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = origText; }
+        closeConfirmModal();
       }
-      closeConfirmModal();
     }
 
     // Global Search Debounce

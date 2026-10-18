@@ -5391,14 +5391,21 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
       const roleLower = String(admin.role || '').toLowerCase();
-      if (roleLower !== 'owner') {
-        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can purge test data.' });
+      const isOwnerOrAdmin = ['owner', 'admin', 'superadmin'].includes(roleLower) || String(admin.username || '').toLowerCase() === 'admin';
+      if (!isOwnerOrAdmin) {
+        return sendJson(403, { success: false, message: 'Access Denied: Owner or Administrator privileges required to clean test data.' });
       }
       if (body.confirm !== 'PURGE_TEST_DATA') {
         return sendJson(400, { success: false, message: 'Explicit confirmation required. Send confirm: "PURGE_TEST_DATA"' });
       }
 
-      await dbService.cleanTestData();
+      const purgeOptions = {
+        target: body.target || 'all',
+        includeVisitors: body.includeVisitors !== false,
+        purgeAllLeads: Boolean(body.purgeAllLeads)
+      };
+
+      await dbService.cleanTestData(purgeOptions);
 
       if (!db.audit_logs) db.audit_logs = [];
       db.audit_logs.push({
@@ -5407,14 +5414,16 @@ module.exports = async (req, res) => {
         entityId: 'test_data',
         action: 'PURGE_TEST_DATA',
         actor: admin.username || 'admin',
-        details: 'Owner purged mock & test inquiries/bookings safely using strict non-destructive filters.',
+        details: `Purged mock/test records (Target: ${purgeOptions.target}, Visitors: ${purgeOptions.includeVisitors}) safely.`,
         createdAt: new Date().toISOString()
       });
       await saveDb(db);
 
       return sendJson(200, {
         success: true,
-        message: 'All test bookings, inquiries, and mock data successfully cleared!'
+        message: purgeOptions.target === 'leads'
+          ? 'Fake leads and automated visitor inquiries successfully cleared!'
+          : 'All test bookings, inquiries, and mock data successfully cleared!'
       });
     }
 

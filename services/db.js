@@ -613,12 +613,23 @@ async function deleteBooking(bookingId) {
 async function deleteLead(leadId) {
   if (!leadId) return false;
   const lId = String(leadId).trim();
-  const cleanPhone = lId.replace(/\D/g, '').slice(-10);
   if (!memoryDb) loadLocalDb();
+
+  const found = Array.isArray(memoryDb?.leads) ? memoryDb.leads.find(l => l.id === lId || l.cleanPhone === lId) : null;
+  let cleanPhone = found?.cleanPhone || '';
+  if (!cleanPhone) {
+    if (lId.startsWith('lead_') && lId.includes('_')) {
+      cleanPhone = (lId.split('_')[1] || '').replace(/\D/g, '').slice(-10);
+    } else {
+      cleanPhone = lId.replace(/\D/g, '').slice(-10);
+    }
+  }
+
   if (Array.isArray(memoryDb.leads)) {
     memoryDb.leads = memoryDb.leads.filter(l => 
       l.id !== lId && 
       l.leadId !== lId && 
+      (!found || l.id !== found.id) &&
       (!cleanPhone || cleanPhone.length !== 10 || (l.cleanPhone !== cleanPhone && (l.phone || '').replace(/\D/g, '').slice(-10) !== cleanPhone))
     );
   }
@@ -630,27 +641,44 @@ async function deleteLead(leadId) {
   if (mongoDbInstance) {
     try {
       const orClauses = [{ id: lId }, { leadId: lId }];
+      if (found?.id) orClauses.push({ id: found.id });
       if (cleanPhone && cleanPhone.length === 10) {
-        orClauses.push({ cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }, { customerPhone: `+91 ${cleanPhone}` });
+        orClauses.push(
+          { cleanPhone: cleanPhone },
+          { phone: `+91 ${cleanPhone}` },
+          { rawPhone: cleanPhone },
+          { customerPhone: `+91 ${cleanPhone}` }
+        );
       }
       await mongoDbInstance.collection('leads').deleteMany({ $or: orClauses });
     } catch (e) {
       console.warn('[DB] Failed to delete lead from Atlas:', e.message);
     }
   }
+
+  try {
+    const leadsMod = require('../api/leads.js');
+    if (leadsMod && typeof leadsMod.invalidateCache === 'function') {
+      leadsMod.invalidateCache();
+    }
+  } catch (e) {}
+
   lastHydrationTime = Date.now();
   return true;
 }
 
-
-async function cleanTestData() {
+async function cleanTestData(options = {}) {
   if (!memoryDb) loadLocalDb();
+  const target = options.target || 'all';
+  const includeVisitors = options.includeVisitors !== false;
+  const purgeAllLeads = Boolean(options.purgeAllLeads);
 
+  const testPhones = ['9999999999', '9876543210', '0000000000', '1111111111', '1234567890', '9835012345'];
   const isTestPhone = (p) => {
     const clean = String(p || '').replace(/\D/g, '').slice(-10);
-    return ['9999999999', '9876543210', '0000000000', '1111111111', '1234567890', '9835012345'].includes(clean);
+    return testPhones.includes(clean);
   };
-  const isTestStr = (s) => /test|mock|cypress|sandbox|qa/i.test(String(s || ''));
+  const isTestStr = (s) => /test|mock|cypress|sandbox|qa|demo|temp|fake|sample/i.test(String(s || ''));
 
   const isTestRecord = (item) => {
     if (!item) return false;
@@ -661,30 +689,52 @@ async function cleanTestData() {
     return false;
   };
 
-  // 1. Sanitize In-Memory Cache (Only remove test records)
-  if (Array.isArray(memoryDb.bookings)) {
-    memoryDb.bookings = memoryDb.bookings.filter(b => !isTestRecord(b));
+  const isFakeLead = (item) => {
+    if (!item) return false;
+    if (isTestRecord(item)) return true;
+    if (purgeAllLeads) return !item.bookingId;
+    if (includeVisitors) {
+      const pName = String(item.passengerName || item.name || '').trim();
+      if (/fare check visitor|visitor|guest|valued passenger|passenger/i.test(pName)) return true;
+      const src = String(item.source || '').toLowerCase();
+      if (src.includes('check fares') || src.includes('fare check') || src.includes('availability') || src.includes('website')) return true;
+      const notes = String(item.notes || '').toLowerCase();
+      if (notes.includes('inquiry for') && (!item.status || item.status === 'NEW' || item.status === 'CONTACTED')) {
+        if (!item.bookingId) return true;
+      }
+    }
+    return false;
+  };
+
+  // 1. Sanitize In-Memory Cache
+  if (target === 'all' || target === 'bookings') {
+    if (Array.isArray(memoryDb.bookings)) {
+      memoryDb.bookings = memoryDb.bookings.filter(b => !isTestRecord(b));
+    }
+    if (Array.isArray(memoryDb.notifications)) {
+      memoryDb.notifications = memoryDb.notifications.filter(n => !isTestRecord(n));
+    }
+    if (Array.isArray(memoryDb.payments)) {
+      memoryDb.payments = memoryDb.payments.filter(p => !isTestRecord(p));
+    }
+    if (Array.isArray(memoryDb.wallet_ledger)) {
+      memoryDb.wallet_ledger = memoryDb.wallet_ledger.filter(w => !isTestRecord(w));
+    }
+    if (Array.isArray(memoryDb.driver_applications)) {
+      memoryDb.driver_applications = memoryDb.driver_applications.filter(d => !isTestRecord(d));
+    }
+    if (Array.isArray(memoryDb.drivers)) {
+      memoryDb.drivers = memoryDb.drivers.filter(d => !isTestRecord(d));
+    }
+    if (Array.isArray(memoryDb.users)) {
+      memoryDb.users = memoryDb.users.filter(u => u.role === 'admin' || !isTestRecord(u));
+    }
   }
-  if (Array.isArray(memoryDb.leads)) {
-    memoryDb.leads = memoryDb.leads.filter(l => !isTestRecord(l));
-  }
-  if (Array.isArray(memoryDb.notifications)) {
-    memoryDb.notifications = memoryDb.notifications.filter(n => !isTestRecord(n));
-  }
-  if (Array.isArray(memoryDb.payments)) {
-    memoryDb.payments = memoryDb.payments.filter(p => !isTestRecord(p));
-  }
-  if (Array.isArray(memoryDb.wallet_ledger)) {
-    memoryDb.wallet_ledger = memoryDb.wallet_ledger.filter(w => !isTestRecord(w));
-  }
-  if (Array.isArray(memoryDb.driver_applications)) {
-    memoryDb.driver_applications = memoryDb.driver_applications.filter(d => !isTestRecord(d));
-  }
-  if (Array.isArray(memoryDb.drivers)) {
-    memoryDb.drivers = memoryDb.drivers.filter(d => !isTestRecord(d));
-  }
-  if (Array.isArray(memoryDb.users)) {
-    memoryDb.users = memoryDb.users.filter(u => u.role === 'admin' || !isTestRecord(u));
+
+  if (target === 'all' || target === 'leads') {
+    if (Array.isArray(memoryDb.leads)) {
+      memoryDb.leads = memoryDb.leads.filter(l => !isFakeLead(l));
+    }
   }
 
   try {
@@ -692,10 +742,9 @@ async function cleanTestData() {
     fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
   } catch (e) {}
 
-  // 2. Safe Target Purge in MongoDB Atlas (Never delete production records)
+  // 2. Safe Target Purge in MongoDB Atlas
   if (mongoDbInstance) {
     try {
-      const testPhones = ['9999999999', '9876543210', '0000000000', '1111111111', '1234567890', '9835012345'];
       const testQuery = {
         $or: [
           { isTest: true },
@@ -703,24 +752,48 @@ async function cleanTestData() {
           { phone: { $in: testPhones.map(p => `+91 ${p}`).concat(testPhones) } },
           { passengerPhone: { $in: testPhones.map(p => `+91 ${p}`).concat(testPhones) } },
           { cleanPhone: { $in: testPhones } },
-          { passengerName: { $regex: /test|mock|cypress/i } },
-          { name: { $regex: /test|mock|cypress/i } }
+          { passengerName: { $regex: /test|mock|cypress|sandbox|qa|demo|temp|fake|sample/i } },
+          { name: { $regex: /test|mock|cypress|sandbox|qa|demo|temp|fake|sample/i } }
         ]
       };
 
-      await Promise.allSettled([
-        mongoDbInstance.collection('bookings').deleteMany(testQuery),
-        mongoDbInstance.collection('leads').deleteMany(testQuery),
-        mongoDbInstance.collection('notifications').deleteMany({ $or: [{ isTest: true }, { title: { $regex: /test|mock/i } }] }),
-        mongoDbInstance.collection('payments').deleteMany(testQuery),
-        mongoDbInstance.collection('wallet_ledger').deleteMany(testQuery),
-        mongoDbInstance.collection('driver_applications').deleteMany(testQuery),
-        mongoDbInstance.collection('drivers').deleteMany({ $or: [{ isTest: true }, { name: { $regex: /test|mock/i } }] })
-      ]);
+      const leadPurgeQuery = {
+        $or: [
+          ...testQuery.$or,
+          ...(includeVisitors ? [
+            { passengerName: { $regex: /fare check visitor|visitor|guest|valued passenger|passenger/i } },
+            { source: { $regex: /check fares|fare check|availability|website/i } }
+          ] : [])
+        ]
+      };
+
+      const tasks = [];
+      if (target === 'all' || target === 'leads') {
+        tasks.push(mongoDbInstance.collection('leads').deleteMany(purgeAllLeads ? { bookingId: { $exists: false } } : leadPurgeQuery));
+      }
+      if (target === 'all' || target === 'bookings') {
+        tasks.push(
+          mongoDbInstance.collection('bookings').deleteMany(testQuery),
+          mongoDbInstance.collection('notifications').deleteMany({ $or: [{ isTest: true }, { title: { $regex: /test|mock/i } }] }),
+          mongoDbInstance.collection('payments').deleteMany(testQuery),
+          mongoDbInstance.collection('wallet_ledger').deleteMany(testQuery),
+          mongoDbInstance.collection('driver_applications').deleteMany(testQuery),
+          mongoDbInstance.collection('drivers').deleteMany({ $or: [{ isTest: true }, { name: { $regex: /test|mock/i } }] })
+        );
+      }
+      await Promise.allSettled(tasks);
     } catch (e) {
       console.warn('[DB] Atlas clean error:', e.message);
     }
   }
+
+  try {
+    const leadsMod = require('../api/leads.js');
+    if (leadsMod && typeof leadsMod.invalidateCache === 'function') {
+      leadsMod.invalidateCache();
+    }
+  } catch (e) {}
+
   lastHydrationTime = Date.now();
   return true;
 }

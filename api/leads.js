@@ -82,18 +82,24 @@ function saveLocalLead(newLead) {
 }
 
 function deleteLocalLead(leadId) {
-  try {
-    const fPath = getLocalDbPath();
-    if (fs.existsSync(fPath)) {
-      const db = JSON.parse(fs.readFileSync(fPath, 'utf8').replace(/^\uFEFF/, ''));
-      if (Array.isArray(db.leads)) {
-        const found = db.leads.find(l => l.id === leadId || l.cleanPhone === leadId);
-        const phone = found ? (found.cleanPhone || (found.phone || '').replace(/\D/g, '').slice(-10)) : leadId.replace(/\D/g, '').slice(-10);
-        db.leads = db.leads.filter(l => l.id !== leadId && (!phone || (l.cleanPhone !== phone && (l.phone || '').replace(/\D/g, '').slice(-10) !== phone)));
-        fs.writeFileSync(fPath, JSON.stringify(db, null, 2), 'utf8');
+  const candidates = [
+    path.join(process.cwd(), 'data', 'db.json'),
+    path.join(__dirname, '..', 'data', 'db.json'),
+    '/tmp/db.json'
+  ];
+  for (const fPath of candidates) {
+    try {
+      if (fs.existsSync(fPath)) {
+        const db = JSON.parse(fs.readFileSync(fPath, 'utf8').replace(/^\uFEFF/, ''));
+        if (Array.isArray(db.leads)) {
+          const found = db.leads.find(l => l.id === leadId || l.leadId === leadId || l.cleanPhone === leadId);
+          const phone = found ? (found.cleanPhone || (found.phone || '').replace(/\D/g, '').slice(-10)) : leadId.replace(/\D/g, '').slice(-10);
+          db.leads = db.leads.filter(l => l.id !== leadId && l.leadId !== leadId && (!phone || (l.cleanPhone !== phone && (l.phone || '').replace(/\D/g, '').slice(-10) !== phone)));
+          fs.writeFileSync(fPath, JSON.stringify(db, null, 2), 'utf8');
+        }
       }
-    }
-  } catch (e) {}
+    } catch (e) {}
+  }
 }
 
 const handler = async (req, res) => {
@@ -165,7 +171,7 @@ const handler = async (req, res) => {
           .toArray();
 
         // Sanitize MongoDB _id
-        const cleanDocs = cloudLeads.map(({ _id, ...rest }) => rest);
+        let cleanDocs = cloudLeads.map(({ _id, ...rest }) => rest);
 
         // Also merge any local fallback leads so nothing is ever dropped
         const localLeads = readLocalLeads();
@@ -175,6 +181,14 @@ const handler = async (req, res) => {
             cleanDocs.push(ll);
           }
         });
+
+        // Filter out tombstones if dbService is loaded
+        try {
+          const dbService = require('../services/db.js');
+          if (dbService && typeof dbService.isLeadDeleted === 'function') {
+            cleanDocs = cleanDocs.filter(l => !dbService.isLeadDeleted(l.id) && !dbService.isLeadDeleted(l.leadId) && !dbService.isLeadDeleted(l.cleanPhone));
+          }
+        } catch (e) {}
 
         cleanDocs.sort((a, b) => {
           const tB = Math.max(new Date(b.updatedAt || 0).getTime(), new Date(b.createdAt || 0).getTime());

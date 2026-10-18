@@ -1954,15 +1954,31 @@ module.exports = async (req, res) => {
         }
       }
 
+      // 1. Delete from Atlas, local disk, and global tombstone
       await dbService.deleteBooking(bId);
+
+      // 2. Filter in-memory db.bookings for the current execution context
+      if (db && Array.isArray(db.bookings)) {
+        db.bookings = db.bookings.filter(b => b.bookingId !== bId && b.id !== bId);
+      }
 
       return sendJson(200, {
         success: true,
+        deleted: bId,
         message: `Booking ${bId} permanently deleted from database.`
       });
     }
 
-    if ((pathname === '/leads' || pathname === '/admin/leads') && method === 'DELETE') {
+    if ((
+      pathname === '/leads' ||
+      pathname === '/admin/leads' ||
+      pathname === '/enquiries' ||
+      pathname === '/enquiry' ||
+      pathname === '/admin/enquiries' ||
+      pathname === '/admin/enquiry' ||
+      pathname.startsWith('/leads') ||
+      pathname.startsWith('/admin/leads')
+    ) && method === 'DELETE') {
       const admin = getSessionAdmin(req, db);
       const delPass = (body.deletePassword || body.password || url.searchParams.get('deletePassword') || url.searchParams.get('password') || '').trim();
       const isPassValid = (delPass === 'deleteit' || delPass === 'harharmahadev@3');
@@ -1978,10 +1994,26 @@ module.exports = async (req, res) => {
         return sendJson(400, { success: false, message: 'Lead ID is required for deletion.' });
       }
 
+      // 1. Delete from Atlas, local disk, and global tombstone
       await dbService.deleteLead(leadId);
+
+      // 2. Filter in-memory db.leads for current request
+      if (db && Array.isArray(db.leads)) {
+        const p = leadId.replace(/\D/g, '').slice(-10);
+        db.leads = db.leads.filter(l => l.id !== leadId && l.leadId !== leadId && (!p || l.cleanPhone !== p));
+      }
+
+      // 3. Immediately invalidate api/leads.js cache
+      try {
+        const leadsHandler = require('./leads.js');
+        if (leadsHandler && typeof leadsHandler.invalidateCache === 'function') {
+          leadsHandler.invalidateCache();
+        }
+      } catch (e) {}
 
       return sendJson(200, {
         success: true,
+        deleted: leadId,
         message: `Inquiry lead permanently deleted from database.`
       });
     }

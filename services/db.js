@@ -65,6 +65,10 @@ let isInitializing = false;
 let lastHydrationTime = 0;
 const CACHE_TTL_MS = 3000; // 3 seconds in-memory cache TTL for instant sub-millisecond API response
 
+// Global In-Memory Tombstone Sets to prevent read-lag resurrection across polls
+const deletedBookingIds = new Set();
+const deletedLeadIds = new Set();
+
 function loadLocalDb() {
   try {
     const targetPath = getLocalDbPath();
@@ -275,7 +279,17 @@ async function pullFromRemoteCloud(targetCollection = null) {
           } else {
             const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(500).toArray();
             if (Array.isArray(docs)) {
-              const sanitized = docs.map(({ _id, ...rest }) => rest);
+              let sanitized = docs.map(({ _id, ...rest }) => rest);
+              if (colName === 'bookings') {
+                sanitized = sanitized.filter(b => !deletedBookingIds.has(b.bookingId) && !deletedBookingIds.has(b.id));
+              } else if (colName === 'leads') {
+                sanitized = sanitized.filter(l => {
+                  if (deletedLeadIds.has(l.id) || deletedLeadIds.has(l.leadId)) return false;
+                  const p = (l.cleanPhone || l.phone || '').replace(/\D/g, '').slice(-10);
+                  if (p && deletedLeadIds.has(p)) return false;
+                  return true;
+                });
+              }
               if (colName === 'fares' && sanitized.length === 0) {
                 if (!Array.isArray(memoryDb.fares) || memoryDb.fares.length === 0) {
                   loadLocalDb();
@@ -618,23 +632,56 @@ function getMongoDbInstance() {
   return mongoDbInstance;
 }
 
+function isBookingDeleted(bookingId) {
+  if (!bookingId) return false;
+  return deletedBookingIds.has(String(bookingId).trim());
+}
+
+function isLeadDeleted(leadId) {
+  if (!leadId) return false;
+  const s = String(leadId).trim();
+  const clean = s.replace(/\D/g, '').slice(-10);
+  return deletedLeadIds.has(s) || (clean.length === 10 && deletedLeadIds.has(clean));
+}
+
 async function deleteBooking(bookingId) {
   if (!bookingId) return false;
   const bId = String(bookingId).trim();
+  
+  // 1. Immediately record in-memory tombstone
+  deletedBookingIds.add(bId);
+
   if (!memoryDb) loadLocalDb();
   if (Array.isArray(memoryDb.bookings)) {
-    memoryDb.bookings = memoryDb.bookings.filter(b => b.bookingId !== bId && b.id !== bId);
+    const found = memoryDb.bookings.find(b => b.bookingId === bId || b.id === bId);
+    if (found?.id) deletedBookingIds.add(found.id);
+    if (found?.bookingId) deletedBookingIds.add(found.bookingId);
+    memoryDb.bookings = memoryDb.bookings.filter(b => b.bookingId !== bId && b.id !== bId && (!found?.id || b.id !== found.id));
   }
+
+  // 2. Persist to local disk JSON files
   try {
     const targetPath = getLocalDbPath();
     fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
   } catch (e) {}
+  try {
+    if (fs.existsSync(DB_TMP_PATH)) {
+      fs.writeFileSync(DB_TMP_PATH, JSON.stringify(memoryDb, null, 2), 'utf8');
+    }
+  } catch (e) {}
 
+  // 3. Atomically delete from MongoDB Atlas
   if (mongoDbInstance) {
     try {
-      await mongoDbInstance.collection('bookings').deleteMany({
-        $or: [{ bookingId: bId }, { id: bId }]
-      });
+      const orClauses = [
+        { bookingId: bId },
+        { id: bId },
+        { _id: bId }
+      ];
+      if (bId.length === 24) {
+        try { const { ObjectId } = require('mongodb'); orClauses.push({ _id: new ObjectId(bId) }); } catch (e) {}
+      }
+      await mongoDbInstance.collection('bookings').deleteMany({ $or: orClauses });
     } catch (e) {
       console.warn('[DB] Failed to delete booking from Atlas:', e.message);
     }
@@ -646,39 +693,85 @@ async function deleteBooking(bookingId) {
 async function deleteLead(leadId) {
   if (!leadId) return false;
   const lId = String(leadId).trim();
+
+  // 1. Immediately record in-memory tombstone
+  deletedLeadIds.add(lId);
+
   if (!memoryDb) loadLocalDb();
 
-  const found = Array.isArray(memoryDb?.leads) ? memoryDb.leads.find(l => l.id === lId || l.cleanPhone === lId) : null;
+  let found = Array.isArray(memoryDb?.leads) ? memoryDb.leads.find(l => l.id === lId || l.leadId === lId || l.cleanPhone === lId) : null;
   let cleanPhone = found?.cleanPhone || '';
-  if (!cleanPhone) {
-    if (lId.startsWith('lead_') && lId.includes('_')) {
-      cleanPhone = (lId.split('_')[1] || '').replace(/\D/g, '').slice(-10);
-    } else {
-      cleanPhone = lId.replace(/\D/g, '').slice(-10);
-    }
+  if (!cleanPhone && lId.length === 10 && /^\d{10}$/.test(lId)) {
+    cleanPhone = lId;
+  }
+  if (!cleanPhone && lId.startsWith('lead_') && lId.includes('_')) {
+    cleanPhone = (lId.split('_')[1] || '').replace(/\D/g, '').slice(-10);
   }
 
-  if (Array.isArray(memoryDb.leads)) {
-    memoryDb.leads = memoryDb.leads.filter(l => 
-      l.id !== lId && 
-      l.leadId !== lId && 
-      (!found || l.id !== found.id) &&
-      (!cleanPhone || cleanPhone.length !== 10 || (l.cleanPhone !== cleanPhone && (l.phone || '').replace(/\D/g, '').slice(-10) !== cleanPhone))
-    );
+  // Direct Atlas lookup to disarm all aliases (id, leadId, _id, cleanPhone, formatted phone)
+  if (mongoDbInstance) {
+    try {
+      const orFind = [{ id: lId }, { leadId: lId }, { _id: lId }];
+      if (lId.length === 24) {
+        try { const { ObjectId } = require('mongodb'); orFind.push({ _id: new ObjectId(lId) }); } catch (e) {}
+      }
+      if (cleanPhone) {
+        orFind.push({ cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }, { phone: cleanPhone });
+      }
+      const doc = await mongoDbInstance.collection('leads').findOne({ $or: orFind });
+      if (doc) {
+        if (doc.id) { deletedLeadIds.add(doc.id); if (!found) found = doc; }
+        if (doc.leadId) deletedLeadIds.add(doc.leadId);
+        if (doc.cleanPhone) { cleanPhone = doc.cleanPhone; deletedLeadIds.add(cleanPhone); }
+        else if (doc.phone) { const p = (doc.phone || '').replace(/\D/g, '').slice(-10); if (p) { cleanPhone = p; deletedLeadIds.add(p); } }
+      }
+    } catch (e) {}
   }
+
+  if (cleanPhone) deletedLeadIds.add(cleanPhone);
+
+  // 2. Remove from memoryDb.leads
+  if (Array.isArray(memoryDb.leads)) {
+    memoryDb.leads = memoryDb.leads.filter(l => {
+      if (l.id === lId || l.leadId === lId) return false;
+      if (found && (l.id === found.id || (found.leadId && l.leadId === found.leadId))) return false;
+      if (cleanPhone && cleanPhone.length === 10) {
+        const lPhone = (l.cleanPhone || l.phone || '').replace(/\D/g, '').slice(-10);
+        if (lPhone === cleanPhone) return false;
+      }
+      return true;
+    });
+  }
+
+  // 3. Persist to local JSON files
   try {
     const targetPath = getLocalDbPath();
     fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
   } catch (e) {}
+  try {
+    if (fs.existsSync(DB_TMP_PATH)) {
+      fs.writeFileSync(DB_TMP_PATH, JSON.stringify(memoryDb, null, 2), 'utf8');
+    }
+  } catch (e) {}
 
+  // 4. Atomically delete from MongoDB Atlas
   if (mongoDbInstance) {
     try {
-      const orClauses = [{ id: lId }, { leadId: lId }];
-      if (found?.id) orClauses.push({ id: found.id });
+      const orClauses = [
+        { id: lId },
+        { leadId: lId },
+        { _id: lId }
+      ];
+      if (lId.length === 24) {
+        try { const { ObjectId } = require('mongodb'); orClauses.push({ _id: new ObjectId(lId) }); } catch (e) {}
+      }
+      if (found?.id && found.id !== lId) orClauses.push({ id: found.id });
+      if (found?.leadId && found.leadId !== lId) orClauses.push({ leadId: found.leadId });
       if (cleanPhone && cleanPhone.length === 10) {
         orClauses.push(
           { cleanPhone: cleanPhone },
           { phone: `+91 ${cleanPhone}` },
+          { phone: cleanPhone },
           { rawPhone: cleanPhone },
           { customerPhone: `+91 ${cleanPhone}` }
         );
@@ -689,6 +782,7 @@ async function deleteLead(leadId) {
     }
   }
 
+  // 5. Invalidate api/leads.js cache
   try {
     const leadsMod = require('../api/leads.js');
     if (leadsMod && typeof leadsMod.invalidateCache === 'function') {
@@ -841,6 +935,8 @@ module.exports = {
   createLead,
   deleteBooking,
   deleteLead,
+  isBookingDeleted,
+  isLeadDeleted,
   cleanTestData,
   getMongoDbInstance,
   findBooking,

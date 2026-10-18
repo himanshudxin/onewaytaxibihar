@@ -543,7 +543,7 @@
           if (patnaMatched && tripType === 'oneway') {
             if (fleet.id === 'hatchback') baseFare = patnaMatched.hatchback;
             else if (fleet.id === 'sedan') baseFare = patnaMatched.sedan;
-            else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.15);
+            else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
             else if (fleet.id === 'suv') baseFare = patnaMatched.suv;
             else if (fleet.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
             else baseFare = patnaMatched.sedan;
@@ -659,6 +659,19 @@
       renderFleetCards();
       updateGridBlur();
 
+      // Dynamically synchronize live fares from server
+      if (typeof fetch === 'function') {
+        fetch('/api/fares')
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.success && Array.isArray(d.fares) && d.fares.length > 0) {
+              window.OTB_PATNA_FARES = d.fares;
+              renderFleetCards();
+            }
+          })
+          .catch(() => {});
+      }
+
       // Modal & Gate Controller
       window.openUnlockModal = function (cabId = null) {
         pendingCabId = cabId;
@@ -740,7 +753,7 @@
             if (patnaMatched && tripType === 'oneway') {
               if (matched.id === 'hatchback') baseFare = patnaMatched.hatchback;
               else if (matched.id === 'sedan') baseFare = patnaMatched.sedan;
-              else if (matched.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.15);
+              else if (matched.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
               else if (matched.id === 'suv') baseFare = patnaMatched.suv;
               else if (matched.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
               else baseFare = patnaMatched.sedan;

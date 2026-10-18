@@ -276,7 +276,16 @@ async function pullFromRemoteCloud(targetCollection = null) {
             const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(500).toArray();
             if (Array.isArray(docs)) {
               const sanitized = docs.map(({ _id, ...rest }) => rest);
-              memoryDb[colName] = sanitized;
+              if (colName === 'fares' && sanitized.length === 0) {
+                if (!Array.isArray(memoryDb.fares) || memoryDb.fares.length === 0) {
+                  loadLocalDb();
+                }
+                if (Array.isArray(memoryDb.fares) && memoryDb.fares.length > 0) {
+                  syncCollectionToCloud('fares', memoryDb.fares).catch(() => {});
+                }
+              } else {
+                memoryDb[colName] = sanitized;
+              }
             }
           }
         } catch (colErr) {
@@ -337,6 +346,21 @@ async function syncCollectionToCloud(colName, items) {
   }
 }
 
+function savePatnaFaresJson(fares) {
+  if (!Array.isArray(fares) || fares.length === 0) return;
+  try {
+    const candidatePaths = [
+      path.join(process.cwd(), 'data', 'patna_fares.json'),
+      path.join(__dirname, '..', 'data', 'patna_fares.json')
+    ];
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        fs.writeFileSync(p, JSON.stringify(fares, null, 2), 'utf8');
+      }
+    }
+  } catch (e) {}
+}
+
 async function syncToRemoteCloud(db) {
   try {
     if (activeEngine === 'mongodb' && mongoDbInstance) {
@@ -349,7 +373,8 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('vehicles', db.vehicles),
         syncCollectionToCloud('coupons', db.coupons),
         syncCollectionToCloud('admins', db.admins),
-        syncCollectionToCloud('notifications', db.notifications)
+        syncCollectionToCloud('notifications', db.notifications),
+        syncCollectionToCloud('fares', db.fares)
       ];
       if (db.settings) {
         tasks.push(mongoDbInstance.collection('settings').updateOne(
@@ -402,6 +427,10 @@ function saveDb(data) {
     fs.writeFileSync(targetPath, JSON.stringify(data, null, 2), 'utf8');
   } catch (e) {}
 
+  if (data.fares && Array.isArray(data.fares) && data.fares.length > 0) {
+    savePatnaFaresJson(data.fares);
+  }
+
   syncToRemoteCloud(data).catch(() => {});
 }
 
@@ -414,6 +443,10 @@ async function saveDbAsync(data) {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(targetPath, JSON.stringify(data, null, 2), 'utf8');
   } catch (e) {}
+
+  if (data.fares && Array.isArray(data.fares) && data.fares.length > 0) {
+    savePatnaFaresJson(data.fares);
+  }
 
   await syncToRemoteCloud(data);
 }

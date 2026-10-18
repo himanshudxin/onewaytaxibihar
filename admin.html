@@ -3696,11 +3696,11 @@
           <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Origin City</label>
-              <input type="text" class="form-control" id="conv-origin" required>
+              <input type="text" class="form-control" id="conv-origin" list="cities-data-list" required oninput="recalculateConvertLeadFare()">
             </div>
             <div class="form-group">
               <label class="form-label">Destination City</label>
-              <input type="text" class="form-control" id="conv-dest" required>
+              <input type="text" class="form-control" id="conv-dest" list="cities-data-list" required oninput="recalculateConvertLeadFare()">
             </div>
           </div>
           <div class="form-grid-2" style="margin-bottom:12px;">
@@ -3716,16 +3716,18 @@
           <div class="form-grid-2" style="margin-bottom:12px;">
             <div class="form-group">
               <label class="form-label">Vehicle Tier</label>
-              <select class="form-control" id="conv-cab-tier">
+              <select class="form-control" id="conv-cab-tier" onchange="recalculateConvertLeadFare()">
                 <option value="sedan">Prime Sedan (Dzire / Etios)</option>
                 <option value="hatchback">Go Hatchback (WagonR / Tiago)</option>
+                <option value="sedan_prime">Executive Sedan (Ciaz / City)</option>
                 <option value="suv">Family SUV (Ertiga 6+1)</option>
-                <option value="innova_crysta">Innova Crysta</option>
+                <option value="innova_crysta">Innova Crysta (7+1)</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label">Agreed Total Fare (₹)</label>
-              <input type="number" class="form-control" id="conv-fare" required>
+              <input type="number" class="form-control" id="conv-fare" required oninput="this.dataset.autoCalculated='false'">
+              <div id="conv-fare-match-note" style="margin-top: 4px; font-size: 11.5px;"></div>
             </div>
           </div>
           <div class="form-group">
@@ -3816,7 +3818,8 @@
             </div>
             <div class="form-group">
               <label class="form-label">Total Fare Agreed (₹) *</label>
-              <input type="number" class="form-control" id="man-total-fare" placeholder="2600" required>
+              <input type="number" class="form-control" id="man-total-fare" placeholder="1549" required oninput="this.dataset.autoCalculated='false'">
+              <div id="man-fare-match-note" style="margin-top: 4px; font-size: 11.5px;"></div>
             </div>
             <div class="form-group">
               <label class="form-label">Advance Paid Online / Offline (₹)</label>
@@ -5082,10 +5085,59 @@
       setVal("conv-dest", l.destCity || "Gaya");
       setVal("conv-date", l.pickupDate || new Date().toISOString().slice(0, 10));
       setVal("conv-time", l.pickupTime && l.pickupTime.includes(":") ? l.pickupTime : "10:00");
-      setVal("conv-fare", Number(l.cabPrice || l.estFareSedan || 2198));
       setVal("conv-cab-tier", (l.selectedCab || "sedan").toLowerCase());
       setVal("conv-pickup-addr", "");
+
+      const convFareEl = document.getElementById("conv-fare");
+      if (convFareEl) {
+        convFareEl.dataset.autoCalculated = "true";
+      }
+      recalculateConvertLeadFare(true);
       document.getElementById("modal-convert-lead")?.classList.add("active");
+    }
+
+    function recalculateConvertLeadFare(force = false) {
+      const origin = (document.getElementById("conv-origin")?.value || "").trim();
+      const dest = (document.getElementById("conv-dest")?.value || "").trim();
+      const cabTier = (document.getElementById("conv-cab-tier")?.value || "sedan").toLowerCase();
+      const fareEl = document.getElementById("conv-fare");
+      const noteEl = document.getElementById("conv-fare-match-note");
+
+      if (!fareEl) return;
+
+      const matched = findAdminMatchingRoute(origin, dest);
+      let calculatedFare = 0;
+
+      if (matched) {
+        if (cabTier === "hatchback") calculatedFare = matched.hatchback;
+        else if (cabTier === "sedan") calculatedFare = matched.sedan;
+        else if (cabTier === "sedan_prime") calculatedFare = Math.round(matched.sedan * 1.2);
+        else if (cabTier === "suv") calculatedFare = matched.suv;
+        else if (cabTier === "innova_crysta") calculatedFare = Math.round(matched.suv * 1.35);
+        else calculatedFare = matched.sedan;
+
+        if (noteEl) {
+          noteEl.innerHTML = `<span style="color:#059669; font-weight:700;">✓ Matches Passenger Portal Route: ₹${calculatedFare.toLocaleString('en-IN')}</span>`;
+        }
+      } else {
+        const rates = {
+          hatchback: { perKm: 21, min: 1698 },
+          sedan: { perKm: 25, min: 2198 },
+          sedan_prime: { perKm: 29, min: 2698 },
+          suv: { perKm: 33, min: 3398 },
+          innova_crysta: { perKm: 44, min: 4598 }
+        };
+        const rate = rates[cabTier] || rates.sedan;
+        calculatedFare = rate.min;
+        if (noteEl) {
+          noteEl.innerHTML = `<span style="color:var(--text-muted); font-size:11px;">Standard Base Rate (~₹${calculatedFare.toLocaleString('en-IN')})</span>`;
+        }
+      }
+
+      if (force || !fareEl.value || fareEl.dataset.autoCalculated === "true") {
+        fareEl.value = calculatedFare;
+        fareEl.dataset.autoCalculated = "true";
+      }
     }
 
     function closeConvertLeadModal() {
@@ -5784,7 +5836,11 @@
           (_allDrivers || []).map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${d.vehicleNumber || 'Car'} • ${d.phone}) - ${d.status || 'Available'}</option>`).join("");
       }
 
-      calculateManualBookingFare();
+      if (!_allFares || _allFares.length === 0) {
+        loadAdminFares().then(() => calculateManualBookingFare(true));
+      } else {
+        calculateManualBookingFare();
+      }
       modal.classList.add("active");
     }
 
@@ -5802,33 +5858,88 @@
     window.openManualBookingModal = openManualBookingModal;
     window.closeManualBookingModal = closeManualBookingModal;
 
-    function calculateManualBookingFare() {
+    function findAdminMatchingRoute(origin, dest) {
+      if (!origin && !dest) return null;
+      const o = String(origin || "").toLowerCase().trim();
+      const d = String(dest || "").toLowerCase().trim();
+
+      let targetStr = "";
+      if (o.includes("patna") || o.includes("pnbe") || o === "patna" || !origin) {
+        targetStr = d;
+      } else if (d.includes("patna") || d.includes("pnbe") || d === "patna" || !dest) {
+        targetStr = o;
+      } else {
+        return null;
+      }
+
+      const cleanTarget = targetStr.replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+      if (!cleanTarget) return null;
+
+      const list = Array.isArray(_allFares) && _allFares.length > 0 ? _allFares : [];
+      return list.find(r => {
+        if (r.active === false) return false;
+        const destName = (r.destination || "").toLowerCase();
+        const cleanDest = destName.replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+        if (cleanDest === cleanTarget || destName.includes(cleanTarget) || cleanTarget.includes(cleanDest)) return true;
+        if (r.destCity && (r.destCity.toLowerCase() === cleanTarget || cleanTarget.includes(r.destCity.toLowerCase()))) return true;
+        if (r.district && (r.district.toLowerCase() === cleanTarget || cleanTarget.includes(r.district.toLowerCase()))) return true;
+        if (r.id && r.id.toLowerCase().replace(/[^a-z0-9]/g, '').includes(cleanTarget.replace(/[^a-z0-9]/g, ''))) return true;
+        return false;
+      }) || null;
+    }
+
+    function calculateManualBookingFare(force = false) {
       const origin = (document.getElementById("man-origin-city")?.value || "Patna").trim();
       const dest = (document.getElementById("man-dest-city")?.value || "Gaya").trim();
       const cabTier = document.getElementById("man-cab-tier")?.value || "sedan";
       const distEl = document.getElementById("man-distance-km");
       const fareEl = document.getElementById("man-total-fare");
+      const noteEl = document.getElementById("man-fare-match-note");
 
       if (!fareEl) return;
 
-      let km = Number(distEl?.value);
-      if (!km || km <= 0) {
-        km = 104;
-        if (distEl) distEl.value = km;
+      const matched = findAdminMatchingRoute(origin, dest);
+      let calculatedFare = 0;
+      let calculatedKm = 104;
+
+      if (matched) {
+        calculatedKm = Number(matched.distanceKm !== undefined ? matched.distanceKm : (matched.distance || 104));
+        if (distEl) distEl.value = calculatedKm;
+
+        if (cabTier === "hatchback") calculatedFare = matched.hatchback;
+        else if (cabTier === "sedan") calculatedFare = matched.sedan;
+        else if (cabTier === "sedan_prime") calculatedFare = Math.round(matched.sedan * 1.2);
+        else if (cabTier === "suv") calculatedFare = matched.suv;
+        else if (cabTier === "innova_crysta") calculatedFare = Math.round(matched.suv * 1.35);
+        else calculatedFare = matched.sedan;
+
+        if (noteEl) {
+          noteEl.innerHTML = `<span style="color:#059669; font-weight:700;">✓ Matches Passenger Portal Route: Patna ⇄ ${escapeHtml(matched.destination)} (₹${calculatedFare.toLocaleString('en-IN')})</span>`;
+        }
+      } else {
+        let km = Number(distEl?.value);
+        if (!km || km <= 0) {
+          km = 104;
+          if (distEl) distEl.value = km;
+        }
+
+        const rates = {
+          hatchback: { perKm: 21, min: 1698 },
+          sedan: { perKm: 25, min: 2198 },
+          sedan_prime: { perKm: 29, min: 2698 },
+          suv: { perKm: 33, min: 3398 },
+          innova_crysta: { perKm: 44, min: 4598 }
+        };
+
+        const rate = rates[cabTier] || rates.sedan;
+        calculatedFare = Math.max(rate.min, Math.round(km * rate.perKm));
+        if (noteEl) {
+          noteEl.innerHTML = `<span style="color:var(--text-muted); font-size:11px;">Standard Bihar per-KM rate (~₹${calculatedFare.toLocaleString('en-IN')} for ${km} km)</span>`;
+        }
       }
 
-      const rates = {
-        hatchback: { perKm: 21, min: 1698 },
-        sedan: { perKm: 25, min: 2198 },
-        sedan_prime: { perKm: 29, min: 2698 },
-        suv: { perKm: 33, min: 3398 },
-        innova_crysta: { perKm: 44, min: 4598 }
-      };
-
-      const rate = rates[cabTier] || rates.sedan;
-      const calculated = Math.max(rate.min, Math.round(km * rate.perKm));
-      if (!fareEl.value || fareEl.dataset.autoCalculated === "true") {
-        fareEl.value = calculated;
+      if (force || !fareEl.value || fareEl.dataset.autoCalculated === "true") {
+        fareEl.value = calculatedFare;
         fareEl.dataset.autoCalculated = "true";
       }
     }
@@ -6537,7 +6648,7 @@
         const hb = typeof f.hatchback === 'number' ? '₹' + f.hatchback.toLocaleString('en-IN') : '-';
         const sd = typeof f.sedan === 'number' ? '₹' + f.sedan.toLocaleString('en-IN') : '-';
         const sv = typeof f.suv === 'number' ? '₹' + f.suv.toLocaleString('en-IN') : '-';
-        const dist = f.distance ? f.distance + ' km' : '-';
+        const dist = (f.distanceKm !== undefined ? f.distanceKm : f.distance) ? (f.distanceKm !== undefined ? f.distanceKm : f.distance) + ' km' : '-';
         const comp = f.marketComparison ? '₹' + escapeHtml(f.marketComparison) : '—';
         const safeId = escapeHtml(f.id);
 
@@ -6588,7 +6699,7 @@
       }
       setVal("fare-edit-id", fare.id || "");
       setVal("fare-edit-dest", fare.destination || "");
-      setVal("fare-edit-distance", fare.distance || "");
+      setVal("fare-edit-distance", fare.distanceKm !== undefined ? fare.distanceKm : (fare.distance || ""));
       setVal("fare-edit-hatchback", fare.hatchback || "");
       setVal("fare-edit-sedan", fare.sedan || "");
       setVal("fare-edit-suv", fare.suv || "");

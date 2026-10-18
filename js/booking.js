@@ -166,6 +166,21 @@ class BookingManager {
 
     this.restoreState();
     this.syncPaymentConfig();
+
+    // Dynamically synchronize live fares from server
+    if (typeof fetch === "function") {
+      fetch("/api/fares")
+        .then(r => r.json())
+        .then(d => {
+          if (d && d.success && Array.isArray(d.fares) && d.fares.length > 0) {
+            window.OTB_PATNA_FARES = d.fares;
+            if (this.originCity && this.destCity) {
+              this.renderFleetCards();
+            }
+          }
+        })
+        .catch(() => {});
+    }
   }
 
   saveState() {
@@ -1490,17 +1505,33 @@ class BookingManager {
     const origName = this.originCity ? this.originCity.name : "Patna";
     const destName = this.destCity ? this.destCity.name : "Gaya";
 
-    // Calculate rates for quick quote preview
+    // Calculate rates for quick quote preview matching single source of truth
     const hatchFleet = OTB_FLEET.find(f => f.id === "hatchback") || OTB_FLEET[0];
     const sedanFleet = OTB_FLEET.find(f => f.id === "sedan") || OTB_FLEET[1];
     const suvFleet = OTB_FLEET.find(f => f.id === "suv") || OTB_FLEET[3];
 
-    let hatchPrice = Math.round(this.calculatedDistanceKm * hatchFleet.ratePerKm);
-    hatchPrice = Math.max(hatchPrice, 1698);
-    let sedanPrice = Math.round(this.calculatedDistanceKm * sedanFleet.ratePerKm);
-    sedanPrice = Math.max(sedanPrice, 2198);
-    let suvPrice = Math.round(this.calculatedDistanceKm * suvFleet.ratePerKm);
-    suvPrice = Math.max(suvPrice, 3398);
+    const patnaMatched = (typeof findPatnaRouteFare === 'function')
+      ? findPatnaRouteFare(origName, destName)
+      : null;
+
+    let hatchPrice, sedanPrice, suvPrice;
+    if (patnaMatched && (!this.tripType || this.tripType === 'oneway')) {
+      hatchPrice = patnaMatched.hatchback;
+      sedanPrice = patnaMatched.sedan;
+      suvPrice = patnaMatched.suv;
+    } else {
+      hatchPrice = Math.round(this.calculatedDistanceKm * hatchFleet.ratePerKm);
+      hatchPrice = Math.max(hatchPrice, 1698);
+      sedanPrice = Math.round(this.calculatedDistanceKm * sedanFleet.ratePerKm);
+      sedanPrice = Math.max(sedanPrice, 2198);
+      suvPrice = Math.round(this.calculatedDistanceKm * suvFleet.ratePerKm);
+      suvPrice = Math.max(suvPrice, 3398);
+      if (this.tripType === 'roundtrip') {
+        hatchPrice = Math.round(hatchPrice * 1.88);
+        sedanPrice = Math.round(sedanPrice * 1.88);
+        suvPrice = Math.round(suvPrice * 1.88);
+      }
+    }
 
     const leadData = {
       phone: pFormat,
@@ -1721,11 +1752,24 @@ class BookingManager {
         else finalPrice = Math.round(pkg.baseSuv * 1.4);
         savings = Math.round(finalPrice * 0.25);
       } else {
-        let baseFare = this.calculatedDistanceKm * fleet.ratePerKm;
-        baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
-        
-        if (this.tripType === "roundtrip") {
-          baseFare = (baseFare * 1.88); // 12% discount for roundtrip
+        const patnaMatched = (typeof findPatnaRouteFare === 'function')
+          ? findPatnaRouteFare(this.originCity ? this.originCity.name : '', this.destCity ? this.destCity.name : '')
+          : null;
+
+        let baseFare = 0;
+        if (patnaMatched && (!this.tripType || this.tripType === 'oneway')) {
+          if (fleet.id === 'hatchback') baseFare = patnaMatched.hatchback;
+          else if (fleet.id === 'sedan') baseFare = patnaMatched.sedan;
+          else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
+          else if (fleet.id === 'suv') baseFare = patnaMatched.suv;
+          else if (fleet.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+          else baseFare = patnaMatched.sedan;
+        } else {
+          baseFare = this.calculatedDistanceKm * fleet.ratePerKm;
+          baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
+          if (this.tripType === "roundtrip") {
+            baseFare = (baseFare * 1.88); // 12% discount for roundtrip
+          }
         }
 
         finalPrice = Math.max(1000, Math.round(baseFare));

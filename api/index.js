@@ -241,15 +241,22 @@ function findMatchingRoute(origin, dest, db) {
   const o = String(origin).toLowerCase().trim();
   const d = String(dest).toLowerCase().trim();
 
-  // Route must originate from Patna or Patna Airport
-  if (!o.includes('patna')) return null;
+  // Route must connect with Patna or Patna Airport (bidirectional)
+  let targetStr = '';
+  if (o.includes('patna') || o.includes('pnbe') || o === 'patna') {
+    targetStr = d;
+  } else if (d.includes('patna') || d.includes('pnbe') || d === 'patna') {
+    targetStr = o;
+  } else {
+    return null;
+  }
 
   const currentDb = db || loadDb();
   const faresList = getPatnaFaresList(currentDb);
   if (!faresList || faresList.length === 0) return null;
 
   const cleanStr = (s) => String(s || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
-  const targetClean = cleanStr(d);
+  const targetClean = cleanStr(targetStr);
   if (!targetClean) return null;
 
   for (const f of faresList) {
@@ -275,8 +282,15 @@ function findMatchingRoute(origin, dest, db) {
       (targetClean.includes('sasaram') && fCity === 'sasaram') ||
       (targetClean.includes('bihar sharif') && fCity === 'bihar sharif') ||
       (targetClean.includes('nalanda') && (fCity === 'bihar sharif' || fCity === 'rajgir')) ||
+      (targetClean.includes('rajgir') && (fCity === 'rajgir' || fDest.includes('rajgir'))) ||
       (targetClean.includes('vaishali') && (fCity === 'hajipur' || fDest.includes('hajipur'))) ||
       (targetClean.includes('saran') && (fCity === 'chapra' || fDest.includes('chapra'))) ||
+      (targetClean.includes('chapra') && (fCity === 'chapra' || fDest.includes('chapra'))) ||
+      (targetClean.includes('muzaffarpur') && (fCity === 'muzaffarpur' || fDest.includes('muzaffarpur'))) ||
+      (targetClean.includes('darbhanga') && (fCity === 'darbhanga' || fDest.includes('darbhanga'))) ||
+      (targetClean.includes('bhagalpur') && (fCity === 'bhagalpur' || fDest.includes('bhagalpur'))) ||
+      (targetClean.includes('purnea') && (fCity === 'purnea' || fDest.includes('purnea'))) ||
+      (targetClean.includes('begusarai') && (fCity === 'begusarai' || fDest.includes('begusarai'))) ||
       (targetClean.includes('rohtas') && (fCity === 'sasaram' || fDest.includes('sasaram'))) ||
       (targetClean.includes('kaimur') && (fCity === 'bhabua' || fDest.includes('bhabua')))
     ) {

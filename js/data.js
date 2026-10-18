@@ -974,22 +974,33 @@ const OTB_PATNA_FARES = [
 ];
 
 function findPatnaRouteFare(origin, dest) {
-  if (!dest) return null;
-  const o = String(origin || "").toLowerCase();
-  const isPatnaOrigin = !origin || o.includes("patna") || o.includes("pnbe") || o.includes("pat") || o === "patna";
-  if (!isPatnaOrigin) return null;
+  if (!origin && !dest) return null;
+  const o = String(origin || "").toLowerCase().trim();
+  const d = String(dest || "").toLowerCase().trim();
 
-  const d = String(dest || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").trim();
-  if (!d) return null;
+  let targetStr = "";
+  if (o.includes("patna") || o.includes("pnbe") || o === "patna" || !origin) {
+    targetStr = d;
+  } else if (d.includes("patna") || d.includes("pnbe") || d === "patna" || !dest) {
+    targetStr = o;
+  } else {
+    return null;
+  }
 
-  const list = (typeof window !== "undefined" && window.OTB_PATNA_FARES) ? window.OTB_PATNA_FARES : OTB_PATNA_FARES;
+  const cleanTarget = targetStr.replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+  if (!cleanTarget) return null;
+
+  const list = (typeof window !== "undefined" && Array.isArray(window.OTB_PATNA_FARES) && window.OTB_PATNA_FARES.length > 0)
+    ? window.OTB_PATNA_FARES
+    : OTB_PATNA_FARES;
+
   return list.find(r => {
     if (r.active === false) return false;
     const destName = (r.destination || "").toLowerCase();
-    const cleanDest = destName.replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").trim();
-    if (cleanDest === d || destName.includes(d) || d.includes(cleanDest)) return true;
-    if (r.destCity && r.destCity.toLowerCase().includes(d)) return true;
-    if (r.district && r.district.toLowerCase().includes(d)) return true;
+    const cleanDest = destName.replace(/\(.*?\)/g, "").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim();
+    if (cleanDest === cleanTarget || destName.includes(cleanTarget) || cleanTarget.includes(cleanDest)) return true;
+    if (r.destCity && (r.destCity.toLowerCase() === cleanTarget || cleanTarget.includes(r.destCity.toLowerCase()))) return true;
+    if (r.district && (r.district.toLowerCase() === cleanTarget || cleanTarget.includes(r.district.toLowerCase()))) return true;
     return false;
   }) || null;
 }

@@ -88,14 +88,17 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    html, body {
       font-family: var(--font-sans);
       background: var(--bg-body);
       color: var(--text-main);
       font-size: 13.5px;
       line-height: 1.5;
       overflow-x: hidden;
+      max-width: 100vw;
+      width: 100%;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     /* Scrollbar */
@@ -326,6 +329,10 @@
       display: flex;
       min-height: 100vh;
       background: var(--bg-body);
+      max-width: 100vw;
+      width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
     }
 
     /* SIDEBAR */
@@ -592,16 +599,23 @@
 
     /* MAIN APP AREA */
     .app-main {
-      flex: 1;
+      flex: 1 1 0%;
+      min-width: 0;
+      max-width: calc(100vw - var(--sidebar-width));
+      width: calc(100% - var(--sidebar-width));
       margin-left: var(--sidebar-width);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      transition: margin-left var(--transition);
+      overflow-x: hidden;
+      box-sizing: border-box;
+      transition: margin-left var(--transition), max-width var(--transition), width var(--transition);
     }
 
     .app-sidebar.collapsed ~ .app-main {
       margin-left: var(--sidebar-collapsed-width);
+      max-width: calc(100vw - var(--sidebar-collapsed-width));
+      width: calc(100% - var(--sidebar-collapsed-width));
     }
 
     /* TOPBAR */
@@ -1100,9 +1114,9 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.6);
+      background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(4px);
-      z-index: 10000;
+      z-index: 20000 !important;
       display: none;
       align-items: center;
       justify-content: center;
@@ -1358,14 +1372,14 @@
     /* Common Responsive Layout Helpers */
     .dashboard-split-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
       gap: 20px;
       margin-bottom: 20px;
     }
 
     .dispatch-split-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 20px;
     }
 
@@ -1403,6 +1417,35 @@
       opacity: 0.7;
     }
 
+    /* Breakpoint: Standard Laptops & Scaled High-DPI Displays (<= 1280px) */
+    @media (max-width: 1280px) {
+      .topbar-clock {
+        display: none !important;
+      }
+      .topbar-search input {
+        width: 180px;
+        max-width: 180px;
+      }
+      #emergency-pause-text,
+      #audio-label,
+      #btn-copilot-top span:last-child {
+        display: none !important;
+      }
+      .topbar-btn {
+        padding: 6px 10px;
+      }
+    }
+
+    /* Breakpoint: Compact Laptops (<= 1200px) */
+    @media (max-width: 1200px) {
+      .dashboard-split-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+      .dispatch-split-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+    }
+
     /* Breakpoint: Large Tablets & Small Laptops (<= 1024px) */
     @media (max-width: 1024px) {
       .app-sidebar {
@@ -1418,6 +1461,8 @@
       }
       .app-main {
         margin-left: 0 !important;
+        max-width: 100vw !important;
+        width: 100% !important;
       }
       .topbar-search {
         display: none;
@@ -1755,8 +1800,13 @@
           <button type="button" class="auth-submit-btn" id="btn-verify-otp" onclick="handleAdminVerifyOtp()">
             Verify Code &amp; Log In
           </button>
-          <div style="text-align: center; margin-top: 12px;">
-            <button type="button" style="background:none; border:none; color:#38bdf8; font-size:12px; cursor:pointer;" onclick="backToAdminStep1()">← Change mobile number</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 8px;">
+            <button type="button" id="btn-resend-otp" style="background:none; border:none; color:#38bdf8; font-size:12px; cursor:pointer; text-decoration:underline;" onclick="handleAdminResendOtp()">
+              Resend Code
+            </button>
+            <button type="button" id="btn-back-details" style="background:none; border:none; color:#cbd5e1; font-size:12px; cursor:pointer;" onclick="backToAdminStep1()">
+              ← Back to Details
+            </button>
           </div>
         </div>
       </div>
@@ -1877,6 +1927,12 @@
           <span class="nav-label">Audit Logs</span>
         </button>
 
+        <button type="button" class="nav-item-btn" id="side-tab-support" onclick="switchMainTab('support')">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <span class="nav-label">Support Desk</span>
+          <span class="nav-badge" id="badge-support-count" style="display:none;">0</span>
+        </button>
+
         <button type="button" class="nav-item-btn" id="side-tab-settings" onclick="switchMainTab('settings')">
           <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
           <span class="nav-label">Settings</span>
@@ -1935,6 +1991,12 @@
             <span id="emergency-pause-text">Emergency Pause</span>
           </button>
 
+          <!-- Copilot AI Assistant Button -->
+          <button type="button" class="topbar-btn" id="btn-copilot-top" onclick="openCopilotModal()" title="Ask AI Dispatch Copilot">
+            <span style="font-size:14px;">🤖</span>
+            <span>Copilot</span>
+          </button>
+
           <!-- Notification Bell -->
           <button type="button" class="topbar-btn" id="btn-notif-bell" onclick="switchMainTab('notifications')" title="Notifications">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -1960,15 +2022,18 @@
               <h2>Operations Dashboard</h2>
               <p>Real-time central dispatch metrics &amp; booking lifecycle across Bihar</p>
             </div>
-            <div class="view-actions">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="forceSyncAllData()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                Sync Data
+            <div class="view-actions" style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="switchMainTab('leads')">View Inquiries</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openAddDriverModal()">Onboard Driver</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="switchMainTab('bookings')">View All</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="forceSyncAllData()" title="Sync all database records">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Sync
               </button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="switchMainTab('dispatch')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-                Open Dispatch Room
-              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="switchMainTab('notifications')">Alerts</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAudioAlerts()">Chime</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openCopilotModal()">🤖 Copilot</button>
+              <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="handleAdminLogout()">Logout</button>
             </div>
           </div>
 
@@ -2254,6 +2319,10 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Export CSV
               </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadBookings()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh
+              </button>
               <button type="button" class="btn btn-danger btn-sm" onclick="cleanTestDataAdmin()" title="Purge fake/test bookings and inquiries from database">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 Purge Test Data
@@ -2268,12 +2337,13 @@
           <!-- Status Filter Tabs -->
           <div class="filter-toolbar">
             <div class="tab-pills-row">
-              <button type="button" class="tab-pill active" onclick="setBookingsStatusFilter('all', this)">All Rides</button>
-              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('NEW', this)">New / Requested</button>
+              <button type="button" class="tab-pill active" onclick="setBookingsStatusFilter('all', this)">All</button>
+              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('NEW', this)">Requested</button>
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('CONFIRMED', this)">Confirmed</button>
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('ASSIGNED', this)">Assigned</button>
-              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('ON_TRIP', this)">Active On Trip</button>
+              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('ON_TRIP', this)">Started</button>
               <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('COMPLETED', this)">Completed</button>
+              <button type="button" class="tab-pill" onclick="setBookingsStatusFilter('CANCELLED', this)">Cancelled</button>
               <button type="button" class="tab-pill" id="tab-filter-leads" onclick="setBookingsStatusFilter('LEADS', this)" style="border-color:#0284c7; color:#0284c7; font-weight:700;">💬 Inquiries &amp; Leads <span class="nav-badge info" id="filter-pill-leads-count" style="margin-left:4px; font-size:10.5px; background:#0284c7; color:#fff;">0</span></button>
             </div>
 
@@ -2323,6 +2393,12 @@
               <h2>Customer Directory</h2>
               <p>Passenger profiles, lifetime spending, booking history and wallet loyalty balances</p>
             </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadCustomers()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh
+              </button>
+            </div>
           </div>
 
           <div class="filter-toolbar">
@@ -2363,7 +2439,11 @@
               <h2>Driver Partner Management</h2>
               <p>On-duty status, vehicle attachment, driver ratings and daily shift earnings</p>
             </div>
-            <div class="view-actions">
+            <div class="view-actions" style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadDrivers()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh
+              </button>
               <button type="button" class="btn btn-primary btn-sm" onclick="openAddDriverModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Onboard New Driver
@@ -2437,8 +2517,15 @@
               <h2>Payment Transaction Ledger</h2>
               <p>Audit verified token advances, UPI UTR numbers, driver collections and gateway logs</p>
             </div>
-            <div class="view-actions">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="exportPaymentsCsv()">Export Ledger CSV</button>
+            <div class="view-actions" style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportPaymentsCsv()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="loadPayments()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Ledger
+              </button>
             </div>
           </div>
 
@@ -2721,6 +2808,16 @@
               <h2>Immutable Security Audit Logs</h2>
               <p>Tamper-proof event logging for dispatch actions, status transitions, and user logins</p>
             </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadAuditLogs()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Logs
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="clearAuditLogsAdmin()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Clear Audit Logs
+              </button>
+            </div>
           </div>
 
           <div class="ops-card">
@@ -2737,6 +2834,57 @@
                 </thead>
                 <tbody id="audit-table-body">
                   <tr><td colspan="5" style="text-align:center; padding:32px; color:#94a3b8;">Loading security audit logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             VIEW 14: SUPPORT DESK (Passenger Inquiries & Complaints)
+             ==================================================================== -->
+        <section class="content-view" id="view-support">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h2>Customer Support &amp; Complaint Desk</h2>
+              <p>Resolve passenger inquiries, trip disputes, driver grievances and dispatch tickets</p>
+            </div>
+            <div class="view-actions" style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-primary btn-sm" onclick="loadSupportTickets()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Tickets
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="tab-pills-row">
+              <button type="button" class="tab-pill active" onclick="setSupportFilter('ALL', this)">All Tickets</button>
+              <button type="button" class="tab-pill" onclick="setSupportFilter('OPEN', this)">🚨 Open Tickets</button>
+              <button type="button" class="tab-pill" onclick="setSupportFilter('RESOLVED', this)">✅ Resolved</button>
+            </div>
+            <div class="filter-group">
+              <input type="text" class="filter-input" id="support-search-input" placeholder="Search by phone, booking ID, or keyword..." onkeyup="applySupportFilter()">
+            </div>
+          </div>
+
+          <div class="ops-card">
+            <div class="table-container">
+              <table class="ops-table">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Customer</th>
+                    <th>Booking / Corridor</th>
+                    <th>Category</th>
+                    <th>Message &amp; Issue</th>
+                    <th>Status</th>
+                    <th>Timestamp</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="support-table-body">
+                  <tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading support tickets...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2891,6 +3039,36 @@
 
                 <form id="form-gateway-settings" onsubmit="handleSavePaymentSettings(event)">
                   
+                  <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                    Operational Payment Switches &amp; Checkout Rules
+                  </div>
+                  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-bottom:20px; background:#f8fafc; padding:14px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" id="pay-switch-advance" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Enable Advance Token Booking</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" id="pay-switch-cash" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Enable Cash to Driver Option</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" id="pay-switch-autoconfirm" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Auto-Confirm on Advance Payment</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" id="pay-switch-direct-upi" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Enable Direct UPI &amp; Dynamic QR</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                      <input type="checkbox" id="pay-switch-razorpay" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Enable Razorpay Payment Gateway</span>
+                    </label>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <label style="font-size:12px; font-weight:600; color:#475569; white-space:nowrap;">Default Advance (₹):</label>
+                      <input type="number" class="form-control" id="pay-advance-amount" value="299" min="100" max="5000" style="width:100px; padding:4px 8px; font-size:13px;">
+                    </div>
+                  </div>
+
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px;">1. Direct UPI &amp; PhonePe QR Configuration (0 Documents)</div>
                   <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
@@ -3090,12 +3268,26 @@
               <input type="tel" class="form-control" id="new-drv-phone" required maxlength="10" placeholder="9835012345">
             </div>
             <div class="form-group">
+              <label class="form-label">Driver PIN (4 Digits)</label>
+              <input type="password" class="form-control" id="new-drv-pin" maxlength="6" placeholder="1234" value="1234">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fleet Tier</label>
+              <select class="form-control" id="new-drv-tier">
+                <option value="sedan">Sedan (Dzire / Etios)</option>
+                <option value="hatchback">Hatchback (WagonR / Tiago)</option>
+                <option value="ertiga">Ertiga (6-Seater SUV)</option>
+                <option value="innova">Innova (7-Seater Premium)</option>
+                <option value="crysta">Innova Crysta</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label class="form-label">Vehicle Registration Number</label>
               <input type="text" class="form-control" id="new-drv-car-no" required placeholder="BR 01 PA 1234">
             </div>
             <div class="form-group">
-              <label class="form-label">Vehicle Model &amp; Type</label>
-              <input type="text" class="form-control" id="new-drv-car-model" required placeholder="Maruti Dzire (Sedan)">
+              <label class="form-label">Vehicle Model &amp; Color</label>
+              <input type="text" class="form-control" id="new-drv-car-model" required placeholder="Maruti Dzire (White)">
             </div>
             <div class="form-group">
               <label class="form-label">Base City / District</label>
@@ -3108,7 +3300,7 @@
           </div>
           <div class="ops-modal-footer" style="padding:0; margin-top:16px; border:none; background:transparent;">
             <button type="button" class="btn btn-secondary" onclick="closeAddDriverModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Onboard Chauffeur</button>
+            <button type="submit" class="btn btn-primary">Save &amp; Activate Driver</button>
           </div>
         </form>
       </div>
@@ -3158,10 +3350,14 @@
               <label class="form-label">Fitness Certificate Expiry</label>
               <input type="date" class="form-control" id="new-veh-fit-exp">
             </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">State Permit Expiry Date</label>
+              <input type="date" class="form-control" id="new-veh-permit-exp">
+            </div>
           </div>
           <div class="ops-modal-footer" style="padding:0; margin-top:16px; border:none; background:transparent;">
             <button type="button" class="btn btn-secondary" onclick="closeAddVehicleModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save to Fleet</button>
+            <button type="submit" class="btn btn-primary">Save Fleet Vehicle</button>
           </div>
         </form>
       </div>
@@ -3372,12 +3568,61 @@
               <label class="form-label">Mobile Phone (for 2FA)</label>
               <input type="tel" class="form-control" id="new-usr-phone" required maxlength="10" placeholder="9835012345">
             </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Initial Password (Optional: Leave blank to auto-generate temporary password)</label>
+              <input type="password" class="form-control" id="new-usr-pwd" placeholder="Leave blank to auto-generate or enter min 6 chars">
+            </div>
           </div>
           <div class="ops-modal-footer" style="padding:0; margin-top:16px; border:none; background:transparent;">
             <button type="button" class="btn btn-secondary" onclick="closeAddUserModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">Create Operator</button>
+            <button type="submit" class="btn btn-primary">Create Operator Account</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- COPILOT MODAL & DRAWER -->
+  <div class="modal-backdrop" id="modal-admin-copilot">
+    <div class="ops-modal" style="max-width: 680px; width: 92%;">
+      <div class="ops-modal-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:36px; height:36px; border-radius:8px; background:rgba(37,99,235,0.25); display:flex; align-items:center; justify-content:center; font-size:18px;">
+            🤖
+          </div>
+          <div>
+            <div class="ops-modal-title" style="color:white; font-size:15px; font-weight:800;">OneWayTaxiBihar Dispatch Copilot</div>
+            <div style="font-size:11.5px; color:#94a3b8;">Instant intelligence on live rides, fleet readiness, and cash settlement</div>
+          </div>
+        </div>
+        <button type="button" class="btn-icon" style="color:#94a3b8; background:transparent;" onclick="closeCopilotModal()">✕</button>
+      </div>
+      <div class="ops-modal-body" style="padding: 18px;">
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-bottom: 8px;">
+            Quick Dispatch Questions
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="askCopilotPrompt('Today\'s Revenue')">💰 Today's Revenue</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="askCopilotPrompt('Active Trips')">🚗 Active Trips</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="askCopilotPrompt('Unpaid Payments')">⏳ Unpaid Payments</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="askCopilotPrompt('Fleet Expiry')">🛡️ Fleet Expiry</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="askCopilotPrompt('Popular Corridors')">🛣️ Popular Corridors</button>
+          </div>
+        </div>
+
+        <div id="copilot-conversation" style="min-height: 180px; max-height: 320px; overflow-y: auto; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.55;">
+          <div style="color: #64748b; font-size: 12.5px;">
+            Namaste Dispatcher! Ask any real-time question about today's Bihar trips, corridor volume, driver status, or pending advance reconciliations.
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <input type="text" class="form-control" id="copilot-input" placeholder="Ask Copilot (e.g., How many trips today? What is total revenue?)..." onkeydown="if(event.key==='Enter')handleAskCopilot()">
+          <button type="button" class="btn btn-primary" id="btn-ask-copilot" onclick="handleAskCopilot()" style="white-space:nowrap;">
+            Ask Copilot
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -3858,11 +4103,16 @@
       if (topAvatar) topAvatar.textContent = initials;
 
       // Role-based Access Control visibility
+      const finTabs = ['side-tab-payments', 'side-tab-wallet', 'side-tab-settings'];
       if (role === 'dispatcher') {
-        const finTabs = ['side-tab-payments', 'side-tab-wallet', 'side-tab-settings'];
         finTabs.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.style.opacity = "0.45";
+        });
+      } else {
+        finTabs.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.opacity = "1";
         });
       }
     }
@@ -3972,6 +4222,38 @@
       }
     }
 
+    let _otpResendTimer = null;
+    let _otpResendSeconds = 30;
+
+    function startOtpCountdown() {
+      _otpResendSeconds = 30;
+      const btn = document.getElementById("btn-resend-otp");
+      if (!btn) return;
+      btn.disabled = true;
+      btn.style.color = "#64748b";
+      btn.style.cursor = "not-allowed";
+      btn.textContent = `Resend Code (${_otpResendSeconds}s)`;
+      if (_otpResendTimer) clearInterval(_otpResendTimer);
+      _otpResendTimer = setInterval(() => {
+        _otpResendSeconds--;
+        if (_otpResendSeconds <= 0) {
+          clearInterval(_otpResendTimer);
+          btn.disabled = false;
+          btn.style.color = "#38bdf8";
+          btn.style.cursor = "pointer";
+          btn.textContent = "Resend Code";
+        } else {
+          btn.textContent = `Resend Code (${_otpResendSeconds}s)`;
+        }
+      }, 1000);
+    }
+
+    async function handleAdminResendOtp() {
+      const btn = document.getElementById("btn-resend-otp");
+      if (btn && btn.disabled) return;
+      await handleAdminRequestOtp();
+    }
+
     // 2FA Flow
     async function handleAdminRequestOtp() {
       clearAuthAlerts();
@@ -3997,6 +4279,7 @@
           document.getElementById("step-admin-phone").style.display = "none";
           document.getElementById("step-admin-otp").style.display = "block";
           document.getElementById("otp-d1")?.focus();
+          startOtpCountdown();
         } else {
           if (errEl) { errEl.textContent = data.message || "Failed to dispatch verification code."; errEl.style.display = "block"; }
         }
@@ -4020,6 +4303,7 @@
     function backToAdminStep1() {
       document.getElementById("step-admin-phone").style.display = "block";
       document.getElementById("step-admin-otp").style.display = "none";
+      if (_otpResendTimer) clearInterval(_otpResendTimer);
     }
 
     async function handleAdminVerifyOtp() {
@@ -4104,7 +4388,7 @@
       const allViews = [
         'dashboard', 'dispatch', 'leads', 'bookings', 'customers', 'drivers',
         'vehicles', 'payments', 'wallet', 'coupons', 'fares', 'reports',
-        'notifications', 'audit', 'settings'
+        'notifications', 'audit', 'support', 'settings'
       ];
 
       allViews.forEach(v => {
@@ -4121,6 +4405,10 @@
         renderLeadsTable();
       } else if (tabName === 'fares') {
         loadAdminFares();
+      } else if (tabName === 'support') {
+        loadSupportTickets();
+      } else if (tabName === 'settings') {
+        loadSettings();
       }
 
       // Close mobile sidebar if open
@@ -4155,7 +4443,15 @@
         if (el) el.style.display = s === subName ? "block" : "none";
       });
       document.querySelectorAll("#view-settings .tab-pill").forEach(p => p.classList.remove("active"));
-      if (btn) btn.classList.add("active");
+      const targetBtn = btn || document.querySelector(`#view-settings .tab-pill[onclick*="'${subName}'"]`);
+      if (targetBtn && targetBtn.classList) targetBtn.classList.add("active");
+      if (subName === 'diagnostics') {
+        loadErrorLogsAdmin();
+      } else if (subName === 'rbac') {
+        loadRbacUsers();
+      } else {
+        loadSettings();
+      }
     }
 
     // =========================================================================
@@ -4175,6 +4471,7 @@
         loadReports(),
         loadNotifications(),
         loadAuditLogs(),
+        loadSupportTickets(),
         loadSettings()
       ]);
       renderDashboard();
@@ -4673,7 +4970,7 @@
               <div style="display:inline-flex; gap:6px;">
                 <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert to Ride</button>
                 ${status === 'NEW' ? `<button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>` : ''}
-                <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑</button>
+                <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑️ Delete</button>
               </div>
             </td>
           </tr>
@@ -4927,6 +5224,8 @@
           filtered = filtered.filter(b => ['STARTED', 'ON THE WAY', 'ARRIVED', 'TRIP STARTED'].includes(b.bookingStatus));
         } else if (_currentBookingsStatusFilter === 'NEW') {
           filtered = filtered.filter(b => b.bookingStatus === 'NEW' || b.bookingStatus === 'REQUESTED');
+        } else if (_currentBookingsStatusFilter === 'CANCELLED') {
+          filtered = filtered.filter(b => b.bookingStatus === 'CANCELLED' || b.bookingStatus === 'REJECTED');
         } else {
           filtered = filtered.filter(b => b.bookingStatus === _currentBookingsStatusFilter);
         }
@@ -5292,6 +5591,128 @@
       });
     }
 
+    async function deleteDriverAdmin(driverId) {
+      const drv = (_allDrivers || []).find(d => d.id === driverId || d.driverId === driverId);
+      const name = drv ? drv.name : driverId;
+      openConfirmModal("Delete Driver Partner", `Permanently remove chauffeur "${name}" from the dispatch fleet? Active trip assignments will be unlinked.`, async () => {
+        try {
+          const res = await adminFetch(`/api/admin/drivers?id=${encodeURIComponent(driverId)}`, {
+            method: "DELETE",
+            body: JSON.stringify({ driverId })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast(`Driver partner ${name} removed from fleet`, "success");
+            _allDrivers = _allDrivers.filter(d => d.id !== driverId && d.driverId !== driverId);
+            renderDriversGrid();
+            renderDashboard();
+          } else {
+            showToast(data.message || "Failed to delete driver", "warning");
+          }
+        } catch (e) {
+          showToast("Delete driver failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function deleteVehicleAdmin(vehicleId) {
+      const veh = (_allVehicles || []).find(v => v.id === vehicleId || v.plateNumber === vehicleId || v.carNo === vehicleId || v.vehicleNumber === vehicleId);
+      const plate = veh ? (veh.plateNumber || veh.vehicleNumber || veh.carNo || veh.model) : vehicleId;
+      openConfirmModal("Delete Fleet Vehicle", `Permanently remove vehicle "${plate}" from fleet inventory?`, async () => {
+        try {
+          const res = await adminFetch(`/api/admin/vehicles?id=${encodeURIComponent(vehicleId)}`, {
+            method: "DELETE",
+            body: JSON.stringify({ vehicleId })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast(`Vehicle ${plate} removed from fleet registry`, "success");
+            _allVehicles = _allVehicles.filter(v => v.id !== vehicleId && v.plateNumber !== vehicleId && v.vehicleNumber !== vehicleId && v.carNo !== vehicleId);
+            renderVehiclesTable();
+            renderDashboard();
+          } else {
+            showToast(data.message || "Failed to delete vehicle", "warning");
+          }
+        } catch (e) {
+          showToast("Delete vehicle failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function deleteCouponAdmin(code) {
+      openConfirmModal("Delete Promo Coupon", `Permanently delete promo coupon "${code}"? Customers will no longer be able to claim this discount.`, async () => {
+        try {
+          const res = await adminFetch(`/api/admin/coupons?code=${encodeURIComponent(code)}`, {
+            method: "DELETE",
+            body: JSON.stringify({ code })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast(`Coupon ${code} deleted successfully`, "success");
+            _allCoupons = _allCoupons.filter(c => (c.code || '').toUpperCase() !== code.toUpperCase());
+            renderCouponsTable();
+          } else {
+            showToast(data.message || "Failed to delete coupon", "warning");
+          }
+        } catch (e) {
+          showToast("Delete coupon failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function deleteFareAdmin(routeId) {
+      const f = (_allFares || []).find(x => x.id === routeId);
+      const dest = f ? f.destination : routeId;
+      openConfirmModal("Delete Route Fare", `Permanently delete destination fare chart for "${dest}"?`, async () => {
+        try {
+          const res = await adminFetch(`/api/admin/fares?id=${encodeURIComponent(routeId)}`, {
+            method: "DELETE",
+            body: JSON.stringify({ routeId })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast(`Route ${dest} fare deleted`, "success");
+            _allFares = _allFares.filter(x => x.id !== routeId);
+            renderAdminFaresTable();
+          } else {
+            showToast(data.message || "Failed to delete route fare", "warning");
+          }
+        } catch (e) {
+          showToast("Delete fare failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function deleteUserAdmin(username) {
+      openConfirmModal("Delete Operator Account", `Permanently remove operator "@${username}"? Their access to the console will be revoked immediately.`, async () => {
+        try {
+          const res = await adminFetch(`/api/admin/users?username=${encodeURIComponent(username)}`, {
+            method: "DELETE",
+            body: JSON.stringify({ username })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast(`Operator @${username} removed`, "success");
+            await loadRbacUsers();
+          } else {
+            showToast(data.message || "Failed to remove operator", "warning");
+          }
+        } catch (e) {
+          showToast("Delete operator failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function loadRbacUsers() {
+      try {
+        const usrRes = await adminFetch("/api/admin/users");
+        if (usrRes.ok) {
+          const usrData = await usrRes.json();
+          renderRbacUsersTable(usrData.users || []);
+        }
+      } catch (e) {}
+    }
+
     // =========================================================================
     // MANUAL BOOKING CONTROLLERS
     // =========================================================================
@@ -5571,6 +5992,7 @@
               <div style="display:flex; gap:6px;">
                 <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">📞 Call</a>
                 <a href="https://wa.me/91${phone}" target="_blank" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;">💬 WhatsApp</a>
+                <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteDriverAdmin('${d.id}')" title="Delete driver partner">🗑️ Delete</button>
               </div>
             </div>
           </div>
@@ -5588,18 +6010,25 @@
     async function handleAddDriverSubmit(e) {
       if (e) e.preventDefault();
       const btn = e.target?.querySelector('button[type="submit"]');
-      const name = document.getElementById("new-drv-name")?.value || "";
-      const phone = document.getElementById("new-drv-phone")?.value || "";
-      const carNo = document.getElementById("new-drv-car-no")?.value || "";
-      const carModel = document.getElementById("new-drv-car-model")?.value || "";
-      const city = document.getElementById("new-drv-city")?.value || "Patna";
-      const license = document.getElementById("new-drv-license")?.value || "";
+      const name = (document.getElementById("new-drv-name")?.value || "").trim();
+      const phone = (document.getElementById("new-drv-phone")?.value || "").trim();
+      const pin = (document.getElementById("new-drv-pin")?.value || "1234").trim();
+      const fleetTier = document.getElementById("new-drv-tier")?.value || "sedan";
+      const carNo = (document.getElementById("new-drv-car-no")?.value || "").trim().toUpperCase();
+      const carModel = (document.getElementById("new-drv-car-model")?.value || "").trim();
+      const city = (document.getElementById("new-drv-city")?.value || "Patna").trim();
+      const license = (document.getElementById("new-drv-license")?.value || "").trim();
 
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Onboarding..."; }
         const res = await adminFetch("/api/admin/drivers/add", {
           method: "POST",
-          body: JSON.stringify({ name, phone, carNo, carModel, city, license })
+          body: JSON.stringify({
+            name, phone, pin, fleetTier,
+            vehicleNumber: carNo, carNo,
+            vehicleModel: carModel, carModel,
+            city, license
+          })
         });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -5613,7 +6042,7 @@
       } catch (err) {
         showToast("Error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Onboard Chauffeur"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save & Activate Driver"; }
       }
     }
 
@@ -5661,8 +6090,9 @@
             <td>${insPill}</td>
             <td>${fitPill}</td>
             <td><span class="pill success">${v.permitStatus || 'Active Permit'}</span></td>
-            <td style="text-align:right;">
+            <td style="text-align:right; white-space:nowrap;">
               <button type="button" class="btn btn-secondary btn-sm" onclick="showToast('Vehicle ${v.plateNumber} verified active', 'info')">Verify</button>
+              <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca; margin-left:4px;" onclick="deleteVehicleAdmin('${escapeHtml(v.id || v.plateNumber || v.carNo)}')" title="Delete fleet vehicle">🗑️ Delete</button>
             </td>
           </tr>
         `;
@@ -5679,18 +6109,28 @@
     async function handleAddVehicleSubmit(e) {
       if (e) e.preventDefault();
       const btn = e.target?.querySelector('button[type="submit"]');
-      const plate = document.getElementById("new-veh-plate")?.value || "";
-      const model = document.getElementById("new-veh-model")?.value || "";
+      const plate = (document.getElementById("new-veh-plate")?.value || "").trim().toUpperCase();
+      const model = (document.getElementById("new-veh-model")?.value || "").trim();
       const tier = document.getElementById("new-veh-tier")?.value || "sedan";
       const fuel = document.getElementById("new-veh-fuel")?.value || "CNG + Petrol";
       const insExp = document.getElementById("new-veh-ins-exp")?.value || "";
       const fitExp = document.getElementById("new-veh-fit-exp")?.value || "";
+      const permitExp = document.getElementById("new-veh-permit-exp")?.value || "";
 
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/vehicles/save", {
           method: "POST",
-          body: JSON.stringify({ plateNumber: plate, model, tier, fuelType: fuel, insuranceExpiry: insExp, fitnessExpiry: fitExp })
+          body: JSON.stringify({
+            plateNumber: plate,
+            vehicleNumber: plate,
+            model,
+            tier,
+            fuelType: fuel,
+            insuranceExpiry: insExp,
+            fitnessExpiry: fitExp,
+            permitExpiry: permitExp
+          })
         });
         const data = await res.json();
         if (res.ok && data.success) {
@@ -5704,7 +6144,7 @@
       } catch (err) {
         showToast("Error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save to Fleet"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Save Fleet Vehicle"; }
       }
     }
 
@@ -5926,8 +6366,8 @@
           <td>₹${c.maxDiscount || c.value}</td>
           <td><span class="pill success">${c.usedCount || 0} uses</span></td>
           <td><span class="pill confirmed">ACTIVE</span></td>
-          <td style="text-align:right;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="showToast('Coupon ${c.code} active', 'info')">Active</button>
+          <td style="text-align:right; white-space:nowrap;">
+            <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteCouponAdmin('${escapeHtml(c.code)}')" title="Delete promo coupon">🗑️ Delete</button>
           </td>
         </tr>
       `).join("");
@@ -6065,8 +6505,11 @@
               <button type="button" class="btn btn-secondary btn-sm" onclick="openEditFareModal('${safeId}')" title="Edit Fares & Distance" style="margin-right:4px;">
                 ✏️ Edit
               </button>
-              <button type="button" class="btn ${isActive ? 'btn-danger' : 'btn-secondary'} btn-sm" onclick="toggleAdminFareActive('${safeId}', ${!isActive})" title="${isActive ? 'Deactivate destination' : 'Activate destination'}">
+              <button type="button" class="btn ${isActive ? 'btn-danger' : 'btn-secondary'} btn-sm" onclick="toggleAdminFareActive('${safeId}', ${!isActive})" title="${isActive ? 'Deactivate destination' : 'Activate destination'}" style="margin-right:4px;">
                 ${isActive ? 'Disable' : 'Enable'}
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteFareAdmin('${safeId}')" title="Delete destination fare">
+                🗑️ Delete
               </button>
             </td>
           </tr>
@@ -6394,9 +6837,15 @@
           setVal("set-base-fare", s.baseFare || 2198);
           setVal("set-base-km", s.baseKm || 80);
 
-          if (s.emergencyPause) {
-            document.getElementById("btn-emergency-pause-top")?.classList.add("paused");
-            setText("emergency-pause-text", "PAUSED ACTIVE");
+          const isPaused = s.emergencyPause || s.isPaused || false;
+          const pauseBtn = document.getElementById("btn-emergency-pause-top");
+          const pauseText = document.getElementById("emergency-pause-text");
+          if (isPaused) {
+            if (pauseBtn) pauseBtn.classList.add("paused");
+            if (pauseText) pauseText.textContent = "PAUSED ACTIVE";
+          } else {
+            if (pauseBtn) pauseBtn.classList.remove("paused");
+            if (pauseText) pauseText.textContent = "Emergency Pause";
           }
         }
 
@@ -6413,6 +6862,18 @@
           setVal("pay-account-holder", p.accountHolderName || p.payeeName || "HIMANSHU KUMAR DUBEY");
           setVal("pay-account-number", p.accountNumber || "");
           setVal("pay-ifsc", p.ifscCode || "");
+
+          const swAdv = document.getElementById("pay-switch-advance");
+          if (swAdv) swAdv.checked = p.enableTokenAdvance !== false;
+          const swCash = document.getElementById("pay-switch-cash");
+          if (swCash) swCash.checked = p.enableCashToDriver !== false;
+          const swAuto = document.getElementById("pay-switch-autoconfirm");
+          if (swAuto) swAuto.checked = p.autoConfirmOnAdvance !== false;
+          const swUpi = document.getElementById("pay-switch-direct-upi");
+          if (swUpi) swUpi.checked = p.enableDirectUpi !== false;
+          const swRzp = document.getElementById("pay-switch-razorpay");
+          if (swRzp) swRzp.checked = p.enableRazorpay !== false;
+          setVal("pay-advance-amount", p.defaultAdvanceAmount || 299);
 
           const rzpBadge = document.getElementById("badge-rzp-status");
           if (rzpBadge) {
@@ -6452,8 +6913,10 @@
           <td>${escapeHtml(u.name || '')}</td>
           <td><span class="pill" style="background:#f1f5f9; color:#334155;">${(u.role || 'dispatcher').toUpperCase()}</span></td>
           <td>${u.phone || ''}</td>
-          <td style="text-align:right;">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="showToast('Operator @${u.username} active', 'info')">Active</button>
+          <td style="text-align:right; white-space:nowrap;">
+            ${(u.username || '').toLowerCase() !== 'admin' ? `
+              <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteUserAdmin('${escapeHtml(u.username)}')" title="Delete operator account">🗑️ Delete</button>
+            ` : `<span class="pill" style="background:#e0f2fe; color:#0369a1; font-weight:700;">ROOT ADMIN</span>`}
           </td>
         </tr>
       `).join("");
@@ -6465,8 +6928,8 @@
     }
 
     async function handleSaveGeneralSettings(e) {
-      if (e) e.preventDefault();
-      const btn = e.target?.querySelector('button[type="submit"]');
+      if (e && e.preventDefault) e.preventDefault();
+      const btn = (e && e.target && e.target.tagName === 'BUTTON' ? e.target : e?.target?.querySelector?.('button[type="submit"]')) || document.querySelector('#form-general-settings button[type="submit"]');
       const adminName = (document.getElementById("set-admin-name")?.value || "").trim();
       const adminPhone = (document.getElementById("set-admin-phone")?.value || "").trim();
       const helplinePhone = (document.getElementById("set-helpline-phone")?.value || "").trim();
@@ -6550,8 +7013,8 @@
     }
 
     async function handleSavePaymentSettings(e) {
-      if (e) e.preventDefault();
-      const btn = e.target?.querySelector('button[type="submit"]');
+      if (e && e.preventDefault) e.preventDefault();
+      const btn = (e && e.target && e.target.tagName === 'BUTTON' ? e.target : e?.target?.querySelector?.('button[type="submit"]')) || document.querySelector('#form-gateway-settings button[type="submit"]');
       const upiId = (document.getElementById("pay-upi-id")?.value || "").trim();
       const payeeName = (document.getElementById("pay-payee-name")?.value || "").trim();
       const razorpayKeyId = (document.getElementById("pay-rzp-key-id")?.value || "").trim();
@@ -6561,13 +7024,22 @@
       const accountNumber = (document.getElementById("pay-account-number")?.value || "").trim();
       const ifscCode = (document.getElementById("pay-ifsc")?.value || "").trim();
 
+      const enableTokenAdvance = document.getElementById("pay-switch-advance") ? document.getElementById("pay-switch-advance").checked : true;
+      const enableCashToDriver = document.getElementById("pay-switch-cash") ? document.getElementById("pay-switch-cash").checked : true;
+      const autoConfirmOnAdvance = document.getElementById("pay-switch-autoconfirm") ? document.getElementById("pay-switch-autoconfirm").checked : true;
+      const enableDirectUpi = document.getElementById("pay-switch-direct-upi") ? document.getElementById("pay-switch-direct-upi").checked : true;
+      const enableRazorpay = document.getElementById("pay-switch-razorpay") ? document.getElementById("pay-switch-razorpay").checked : true;
+      const defaultAdvanceAmount = Number(document.getElementById("pay-advance-amount")?.value) || 299;
+
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
         const res = await adminFetch("/api/admin/payment-settings", {
           method: "POST",
           body: JSON.stringify({
             upiId, payeeName, razorpayKeyId, razorpayKeySecret,
-            bankName, accountHolderName, accountNumber, ifscCode
+            bankName, accountHolderName, accountNumber, ifscCode,
+            enableTokenAdvance, enableCashToDriver, autoConfirmOnAdvance,
+            enableDirectUpi, enableRazorpay, defaultAdvanceAmount
           })
         });
         const data = await res.json();
@@ -6627,16 +7099,18 @@
       const name = document.getElementById("new-usr-name")?.value.trim();
       const role = document.getElementById("new-usr-role")?.value;
       const phone = document.getElementById("new-usr-phone")?.value.replace(/\D/g, "");
+      const password = (document.getElementById("new-usr-pwd")?.value || "").trim();
 
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Creating..."; }
         const res = await adminFetch("/api/admin/users", {
           method: "POST",
-          body: JSON.stringify({ username, name, role, phone })
+          body: JSON.stringify({ username, name, role, phone, password: password || undefined })
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast(`Operator @${username} authorized!`, "success");
+          const tempMsg = data.tempPassword ? ` (Temporary Password: ${data.tempPassword})` : '';
+          showToast(`Operator @${username} authorized!${tempMsg}`, "success");
           closeAddUserModal();
           await loadSettings();
         } else {
@@ -6645,26 +7119,20 @@
       } catch (err) {
         showToast("Error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Create Operator"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "Create Operator Account"; }
       }
     }
 
     async function cleanTestDataAdmin() {
-      openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings and test inquiries from MongoDB Atlas and database?", async () => {
+      openConfirmModal("Purge Test Data", "Are you sure you want to clean automated mock bookings and test inquiries from MongoDB Atlas and database? Real customer rides will remain intact.", async () => {
         try {
           const res = await adminFetch("/api/admin/clean-test-data", {
-            method: "POST"
+            method: "POST",
+            body: JSON.stringify({ confirm: "PURGE_TEST_DATA" })
           });
           const data = await res.json();
           if (res.ok && data.success) {
-            _allBookings = [];
-            _allLeads = [];
-            _allNotifications = [];
-            _allPayments = [];
-            showToast("Database & MongoDB Atlas sanitized! Test bookings and leads removed.", "success");
-            renderDashboard();
-            renderBookingsTable();
-            renderLeadsTable();
+            showToast(data.message || "Database sanitized! Test bookings and leads removed.", "success");
             await forceSyncAllData();
           } else {
             showToast(data.message || "Failed to purge test data", "error");
@@ -6675,13 +7143,66 @@
       });
     }
 
-    async function clearErrorLogsAdmin() {
+    async function loadErrorLogsAdmin() {
+      const box = document.getElementById("diag-error-logs-box");
+      if (!box) return;
       try {
-        await adminFetch("/api/admin/errors/clear", { method: "POST" });
-        const box = document.getElementById("diag-error-logs-box");
-        if (box) box.textContent = "Error logs cleared by admin.";
-        showToast("Diagnostics error logs cleared", "info");
-      } catch (e) {}
+        const res = await adminFetch("/api/admin/errors");
+        if (res.ok) {
+          const data = await res.json();
+          const errs = data.errors || [];
+          if (errs.length === 0) {
+            box.innerHTML = '<div style="color:#10b981; font-weight:600;">✓ No system error logs reported. All dispatch services operating normally.</div>';
+          } else {
+            box.innerHTML = errs.map(e => `
+              <div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                <span style="color:#ef4444; font-weight:700;">[${escapeHtml(e.method || 'ERR')}] ${escapeHtml(e.pathname || '')}</span>
+                <span style="color:#94a3b8; font-size:11px; margin-left:8px;">${new Date(e.timestamp || Date.now()).toLocaleTimeString()}</span>
+                <div style="color:#e2e8f0; margin-top:2px;">${escapeHtml(e.message || 'Unknown error')}</div>
+                ${e.stack ? `<pre style="color:#94a3b8; font-size:10px; margin-top:2px; white-space:pre-wrap;">${escapeHtml(e.stack.slice(0, 200))}</pre>` : ''}
+              </div>
+            `).join('');
+          }
+        } else {
+          box.textContent = "Unable to fetch error logs.";
+        }
+      } catch (err) {
+        box.textContent = "Error loading logs: " + err.message;
+      }
+    }
+
+    async function clearErrorLogsAdmin() {
+      openConfirmModal("Clear Server Error Logs", "Are you sure you want to purge all recorded server diagnostics error logs?", async () => {
+        try {
+          const res = await adminFetch("/api/admin/errors/clear", { method: "POST" });
+          if (res.ok) {
+            const box = document.getElementById("diag-error-logs-box");
+            if (box) box.innerHTML = '<div style="color:#10b981; font-weight:600;">✓ Error logs cleared by admin. System log buffer reset.</div>';
+            showToast("Diagnostics error logs cleared successfully", "success");
+          } else {
+            showToast("Failed to clear error logs", "warning");
+          }
+        } catch (e) {
+          showToast("Clear error logs failed: " + e.message, "error");
+        }
+      });
+    }
+
+    async function clearAuditLogsAdmin() {
+      openConfirmModal("Clear Security Audit Logs", "Are you sure you want to purge all security audit log history? This action will reset the audit trail.", async () => {
+        try {
+          const res = await adminFetch("/api/admin/audit-logs/clear", { method: "POST" });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showToast("Security audit logs cleared successfully", "success");
+            await loadAuditLogs();
+          } else {
+            showToast(data.message || "Failed to clear audit logs", "warning");
+          }
+        } catch (e) {
+          showToast("Failed to clear audit logs: " + e.message, "error");
+        }
+      });
     }
 
     async function toggleEmergencyPauseAdmin() {
@@ -6692,10 +7213,19 @@
           });
           const data = await res.json();
           if (res.ok) {
-            const isPaused = data.isPaused;
+            const isPaused = typeof data.isPaused !== 'undefined' ? data.isPaused : data.paused;
             showToast(isPaused ? "🚨 Emergency Pause ACTIVE: Booking engine paused" : "✅ Normal service resumed across Bihar", isPaused ? "warning" : "success");
+            const btn = document.getElementById("btn-emergency-pause-top");
             const btnText = document.getElementById("emergency-pause-text");
-            if (btnText) btnText.textContent = isPaused ? "PAUSED ACTIVE" : "Emergency Pause";
+            if (isPaused) {
+              if (btn) btn.classList.add("paused");
+              if (btnText) btnText.textContent = "PAUSED ACTIVE";
+            } else {
+              if (btn) btn.classList.remove("paused");
+              if (btnText) btnText.textContent = "Emergency Pause";
+            }
+          } else {
+            showToast(data.message || "Failed to toggle emergency pause", "error");
           }
         } catch (e) {
           showToast("Error: " + e.message, "error");
@@ -6836,6 +7366,194 @@
       return 'confirmed';
     }
 
+    // =========================================================================
+    // VIEW 16: SUPPORT DESK & PASSENGER GRIEVANCES
+    // =========================================================================
+    let _currentSupportFilter = 'ALL';
+
+    async function loadSupportTickets() {
+      const tbody = document.getElementById("support-table-body");
+      try {
+        const res = await adminFetch("/api/support/tickets");
+        if (res.ok) {
+          const data = await res.json();
+          _allSupportTickets = data.tickets || [];
+        }
+      } catch (e) {
+        console.error("Error loading support tickets:", e);
+      }
+
+      const openCount = _allSupportTickets.filter(t => (t.status || 'OPEN').toUpperCase() === 'OPEN').length;
+      const badge = document.getElementById("badge-support-count");
+      if (badge) {
+        badge.textContent = openCount;
+        badge.style.display = openCount > 0 ? 'inline-flex' : 'none';
+      }
+
+      renderSupportTable();
+    }
+
+    function setSupportFilter(filter, el) {
+      _currentSupportFilter = filter;
+      const pills = document.querySelectorAll("#view-support .tab-pill");
+      pills.forEach(p => p.classList.remove("active"));
+      if (el) el.classList.add("active");
+      renderSupportTable();
+    }
+
+    function applySupportFilter() {
+      renderSupportTable();
+    }
+
+    function renderSupportTable() {
+      const tbody = document.getElementById("support-table-body");
+      if (!tbody) return;
+
+      const q = (document.getElementById("support-search-input")?.value || "").toLowerCase().trim();
+      let list = _allSupportTickets;
+
+      if (_currentSupportFilter === 'OPEN') {
+        list = list.filter(t => (t.status || 'OPEN').toUpperCase() === 'OPEN');
+      } else if (_currentSupportFilter === 'RESOLVED') {
+        list = list.filter(t => (t.status || '').toUpperCase() === 'RESOLVED');
+      }
+
+      if (q) {
+        list = list.filter(t =>
+          (t.ticketId || t.id || '').toLowerCase().includes(q) ||
+          (t.phone || t.cleanPhone || '').includes(q) ||
+          (t.bookingId || '').toLowerCase().includes(q) ||
+          (t.name || t.passengerName || '').toLowerCase().includes(q) ||
+          (t.category || '').toLowerCase().includes(q) ||
+          (t.message || t.issue || t.subject || '').toLowerCase().includes(q)
+        );
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No support tickets match the selected filter.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(t => {
+        const isResolved = (t.status || '').toUpperCase() === 'RESOLVED';
+        const pillClass = isResolved ? 'confirmed' : 'cancelled';
+        const safeId = escapeHtml(t.ticketId || t.id || 'TCK-0000');
+        const phone = escapeHtml(t.phone || t.cleanPhone || 'N/A');
+        const name = escapeHtml(t.name || t.passengerName || 'Valued Passenger');
+        const booking = t.bookingId ? `<strong style="color:var(--primary); cursor:pointer;" onclick="openBookingDrawer('${escapeHtml(t.bookingId)}')">${escapeHtml(t.bookingId)}</strong>` : '<span style="color:#94a3b8;">General</span>';
+        const cat = escapeHtml(t.category || 'General Inconvenience');
+        const msg = escapeHtml(t.message || t.issue || t.subject || '');
+        const dateStr = new Date(t.createdAt || Date.now()).toLocaleString('en-IN');
+
+        return `
+          <tr>
+            <td><strong style="font-family:var(--font-mono); font-size:12px;">${safeId}</strong></td>
+            <td>
+              <div><strong>${name}</strong></div>
+              <div style="font-size:12px; color:#64748b;">+91 ${phone}</div>
+            </td>
+            <td>${booking}</td>
+            <td><span class="pill" style="background:#f1f5f9; color:#475569; font-size:11px;">${cat}</span></td>
+            <td style="max-width:280px; word-break:break-word;">
+              <div style="font-size:12.5px; line-height:1.4;">${msg}</div>
+              ${t.resolutionNotes ? `<div style="font-size:11px; color:#059669; margin-top:3px;"><strong>Note:</strong> ${escapeHtml(t.resolutionNotes)}</div>` : ''}
+            </td>
+            <td><span class="pill ${pillClass}">${isResolved ? 'RESOLVED' : 'OPEN'}</span></td>
+            <td style="font-size:11.5px; color:#64748b; white-space:nowrap;">${dateStr}</td>
+            <td style="text-align:right; white-space:nowrap;">
+              ${!isResolved ? `
+                <button type="button" class="btn btn-success btn-sm" onclick="handleResolveTicket('${safeId}')" title="Mark ticket as resolved">
+                  ✓ Resolve
+                </button>
+              ` : `<span style="font-size:11px; color:#059669;">Resolved by ${escapeHtml(t.resolvedBy || 'Admin')}</span>`}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function handleResolveTicket(ticketId) {
+      const notes = prompt(`Enter resolution notes for Ticket #${ticketId}:`, "Resolved with customer via call");
+      if (notes === null) return;
+      try {
+        const res = await adminFetch("/api/admin/support/resolve", {
+          method: "POST",
+          body: JSON.stringify({ ticketId, status: "RESOLVED", resolutionNotes: notes || "Resolved" })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(`Ticket #${ticketId} resolved successfully`, "success");
+          await loadSupportTickets();
+        } else {
+          showToast(data.message || "Failed to resolve ticket", "error");
+        }
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    }
+
+    // =========================================================================
+    // COPILOT AI DISPATCH INTELLIGENCE
+    // =========================================================================
+    function openCopilotModal() {
+      document.getElementById("modal-admin-copilot")?.classList.add("active");
+      setTimeout(() => document.getElementById("copilot-input")?.focus(), 150);
+    }
+
+    function closeCopilotModal() {
+      document.getElementById("modal-admin-copilot")?.classList.remove("active");
+    }
+
+    function askCopilotPrompt(promptText) {
+      const input = document.getElementById("copilot-input");
+      if (input) input.value = promptText;
+      handleAskCopilot();
+    }
+
+    async function handleAskCopilot() {
+      const input = document.getElementById("copilot-input");
+      const convo = document.getElementById("copilot-conversation");
+      const btn = document.getElementById("btn-ask-copilot");
+      if (!input || !convo) return;
+      const q = input.value.trim();
+      if (!q) return;
+
+      // Append user bubble
+      const userBubble = document.createElement("div");
+      userBubble.style.cssText = "display:flex; justify-content:flex-end; margin-bottom:10px;";
+      userBubble.innerHTML = `<div style="background:#2563eb; color:white; padding:8px 14px; border-radius:12px 12px 2px 12px; max-width:80%; font-size:12.5px; word-break:break-word;">${escapeHtml(q)}</div>`;
+      convo.appendChild(userBubble);
+      input.value = "";
+
+      // Append loader bubble
+      const botBubble = document.createElement("div");
+      botBubble.style.cssText = "display:flex; justify-content:flex-start; margin-bottom:10px;";
+      botBubble.innerHTML = `<div style="background:white; border:1px solid #e2e8f0; color:#334155; padding:8px 14px; border-radius:12px 12px 12px 2px; max-width:85%; font-size:12.5px; box-shadow:0 1px 3px rgba(0,0,0,0.05);"><span style="color:#64748b;">Analyzing live fleet &amp; bookings...</span></div>`;
+      convo.appendChild(botBubble);
+      convo.scrollTop = convo.scrollHeight;
+
+      try {
+        if (btn) { btn.disabled = true; btn.textContent = "..."; }
+        const res = await adminFetch("/api/admin/copilot", {
+          method: "POST",
+          body: JSON.stringify({ query: q, prompt: q })
+        });
+        const data = await res.json();
+        const contentDiv = botBubble.querySelector("div");
+        if (res.ok && data.success && data.answer) {
+          contentDiv.innerHTML = `<div style="font-weight:700; color:#0f172a; margin-bottom:4px; font-size:11.5px; text-transform:uppercase; letter-spacing:0.5px;">🤖 Copilot Dispatch Intel</div><div>${escapeHtml(data.answer)}</div>`;
+        } else {
+          contentDiv.innerHTML = `<span style="color:#ef4444;">${escapeHtml(data.message || "Could not retrieve copilot response.")}</span>`;
+        }
+      } catch (err) {
+        const contentDiv = botBubble.querySelector("div");
+        if (contentDiv) contentDiv.innerHTML = `<span style="color:#ef4444;">Network error: ${escapeHtml(err.message)}</span>`;
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = "Ask Copilot"; }
+        convo.scrollTop = convo.scrollHeight;
+      }
+    }
+
     // Global keyboard listener (Escape closes modals/drawers)
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -6851,6 +7569,7 @@
         closeAddUserModal();
         closeConvertLeadModal();
         closeConfirmModal();
+        closeCopilotModal();
       }
     });
   </script>

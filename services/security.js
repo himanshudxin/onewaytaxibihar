@@ -350,9 +350,17 @@ const RBAC_ROLES = {
     name: 'Business Owner',
     permissions: ['*']
   },
+  admin: {
+    name: 'Root Administrator',
+    permissions: ['*']
+  },
+  superadmin: {
+    name: 'Super Administrator',
+    permissions: ['*']
+  },
   manager: {
     name: 'Operations Manager',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'reports', 'audit']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'fares', 'reports', 'audit', 'settings']
   },
   dispatcher: {
     name: 'Central Dispatcher',

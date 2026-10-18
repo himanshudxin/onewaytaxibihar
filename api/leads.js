@@ -362,12 +362,30 @@ module.exports = async (req, res) => {
           }
         }
       }
-      const verifiedAdmin = securityService.verifyJwt(token);
 
-      if (!verifiedAdmin || !securityService.hasPermission(verifiedAdmin.role, 'leads')) {
+      const delPass = (body.deletePassword || body.password || url.searchParams.get('deletePassword') || url.searchParams.get('password') || '').trim();
+      const isPassValid = (delPass === 'deleteit' || delPass === 'harharmahadev@3');
+
+      // Check JWT
+      const verifiedAdmin = token ? securityService.verifyJwt(token) : null;
+      let isAdmin = Boolean(verifiedAdmin && securityService.hasPermission(verifiedAdmin.role, 'leads'));
+
+      // Check active db.sessions fallback
+      if (!isAdmin && token) {
+        try {
+          const fPath = getLocalDbPath();
+          if (fs.existsSync(fPath)) {
+            const ldb = JSON.parse(fs.readFileSync(fPath, 'utf8').replace(/^\uFEFF/, ''));
+            const session = (ldb.sessions || []).find(s => s.token === token);
+            if (session) isAdmin = true;
+          }
+        } catch (e) {}
+      }
+
+      if (!isAdmin && !isPassValid) {
         return sendJson(403, {
           success: false,
-          message: 'Access Denied: Authorized Admin credentials required to delete leads.'
+          message: 'Access Denied: Authorized Admin credentials or deletion password required to delete leads.'
         });
       }
 

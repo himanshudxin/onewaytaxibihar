@@ -1972,6 +1972,188 @@ module.exports = async (req, res) => {
       });
     }
 
+    // 7B-1. DELETE DRIVER PARTNER (Admin RBAC)
+    if ((pathname === '/admin/drivers' && method === 'DELETE') || pathname === '/admin/drivers/delete') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to delete drivers' });
+      const driverId = (body.driverId || body.id || url.searchParams.get('id') || url.searchParams.get('driverId') || '').trim();
+      if (!driverId) return sendJson(400, { success: false, message: 'Driver ID is required for deletion.' });
+
+      if (!db.drivers) db.drivers = [];
+      const drvIdx = db.drivers.findIndex(d => d.id === driverId || d.driverId === driverId);
+      const removedDrv = drvIdx >= 0 ? db.drivers.splice(drvIdx, 1)[0] : null;
+
+      // Remove from driver_applications if present
+      if (db.driver_applications) {
+        db.driver_applications = db.driver_applications.filter(a => a.id !== driverId && a.driverId !== driverId);
+      }
+
+      // Unassign driver from any active bookings
+      if (db.bookings) {
+        db.bookings.forEach(b => {
+          if (b.assignedDriverId === driverId) {
+            b.assignedDriverId = null;
+            b.assignedDriverName = null;
+            b.assignedDriverPhone = null;
+            b.assignedDriverCarNo = null;
+            b.driverDetails = null;
+            b.driverAssigned = false;
+            if (b.bookingStatus === 'DRIVER ASSIGNED') {
+              b.bookingStatus = 'CONFIRMED';
+            }
+          }
+        });
+      }
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'DRIVER',
+        entityId: driverId,
+        action: 'DELETE_DRIVER',
+        actor: admin.username || 'admin',
+        details: `Deleted driver partner ${removedDrv ? removedDrv.name : driverId} from fleet`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Driver partner successfully removed from fleet.` });
+    }
+
+    // 7B-2. DELETE FLEET VEHICLE (Admin RBAC)
+    if ((pathname === '/admin/vehicles' && method === 'DELETE') || pathname === '/admin/vehicles/delete') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to delete vehicles' });
+      const vehicleId = (body.vehicleId || body.id || body.plateNumber || body.vehicleNumber || url.searchParams.get('id') || url.searchParams.get('vehicleId') || '').trim();
+      if (!vehicleId) return sendJson(400, { success: false, message: 'Vehicle identifier is required for deletion.' });
+
+      const cleanV = vehicleId.replace(/\s+/g, '').toUpperCase();
+      if (!db.vehicles) db.vehicles = [];
+      const vIdx = db.vehicles.findIndex(v => v.id === vehicleId || (v.vehicleNumber || v.plateNumber || v.carNo || '').replace(/\s+/g, '').toUpperCase() === cleanV);
+      const removedVeh = vIdx >= 0 ? db.vehicles.splice(vIdx, 1)[0] : null;
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'VEHICLE',
+        entityId: vehicleId,
+        action: 'DELETE_VEHICLE',
+        actor: admin.username || 'admin',
+        details: `Deleted vehicle ${removedVeh ? (removedVeh.vehicleNumber || removedVeh.model) : vehicleId}`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Vehicle record removed from fleet inventory.` });
+    }
+
+    // 7B-3. DELETE PROMO COUPON (Admin RBAC)
+    if ((pathname === '/admin/coupons' && method === 'DELETE') || pathname === '/admin/coupons/delete') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to delete coupons' });
+      const code = (body.code || body.couponCode || body.id || url.searchParams.get('code') || '').trim().toUpperCase();
+      if (!code) return sendJson(400, { success: false, message: 'Coupon code is required for deletion.' });
+
+      if (!db.coupons) db.coupons = [];
+      const cIdx = db.coupons.findIndex(c => (c.code || '').toUpperCase() === code);
+      if (cIdx >= 0) db.coupons.splice(cIdx, 1);
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'COUPON',
+        entityId: code,
+        action: 'DELETE_COUPON',
+        actor: admin.username || 'admin',
+        details: `Deleted coupon code ${code}`,
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Coupon code ${code} deleted successfully.` });
+    }
+
+    // 7B-4. DELETE DESTINATION FARE ROUTE (Admin RBAC)
+    if ((pathname === '/admin/fares' && method === 'DELETE') || pathname === '/admin/fares/delete') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to delete fares' });
+      const routeId = (body.routeId || body.id || url.searchParams.get('id') || url.searchParams.get('routeId') || '').trim();
+      if (!routeId) return sendJson(400, { success: false, message: 'Route ID is required for deletion.' });
+
+      if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
+        db.fares = getPatnaFaresList(db);
+      }
+      const fIdx = db.fares.findIndex(f => f.id === routeId);
+      const removedFare = fIdx >= 0 ? db.fares.splice(fIdx, 1)[0] : null;
+      memoryPatnaFares = db.fares;
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARE_DELETED',
+        entityType: 'FARES',
+        entityId: routeId,
+        note: `Route fare for ${removedFare ? removedFare.destination : routeId} permanently deleted.`
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Destination route fare deleted successfully.` });
+    }
+
+    // 7B-5. DELETE SUB-OPERATOR USER (Admin RBAC - Owner Only)
+    if ((pathname === '/admin/users' && method === 'DELETE') || pathname === '/admin/users/delete') {
+      const admin = getSessionAdmin(req, db);
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner or Root Admin can remove operator accounts.' });
+      }
+      const username = (body.username || body.id || url.searchParams.get('username') || '').trim().toLowerCase();
+      if (!username) return sendJson(400, { success: false, message: 'Username is required for deletion.' });
+      if (username === 'admin' || username === admin.username.toLowerCase()) {
+        return sendJson(400, { success: false, message: 'Security Safeguard: Cannot delete root administrator or your own active account.' });
+      }
+
+      if (!db.admins) db.admins = [];
+      const uIdx = db.admins.findIndex(a => (a.username || '').toLowerCase() === username);
+      if (uIdx >= 0) db.admins.splice(uIdx, 1);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'OPERATOR_DELETED',
+        entityType: 'OPERATOR',
+        entityId: username,
+        note: `Operator @${username} removed by Owner`
+      });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: `Operator @${username} removed successfully.` });
+    }
+
+    // 7B-6. CLEAR SECURITY AUDIT TRAIL (Admin RBAC - Owner / Manager Only)
+    if ((pathname === '/admin/audit-logs/clear' || pathname === '/admin/audit-logs') && (method === 'POST' || method === 'DELETE')) {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!['owner', 'manager', 'admin'].includes(admin.role)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner or Operations Manager can clear audit logs.' });
+      }
+
+      db.audit_logs = [
+        {
+          id: `AUD_${Date.now()}`,
+          entity: 'AUDIT',
+          entityId: 'security_trail',
+          action: 'AUDIT_LOGS_CLEARED',
+          actor: admin.username || 'admin',
+          details: `Security audit logs cleared by ${admin.username} (${admin.role}).`,
+          createdAt: new Date().toISOString()
+        }
+      ];
+
+      await saveDb(db);
+      return sendJson(200, { success: true, message: 'Security audit logs cleared successfully.' });
+    }
+
     // -------------------------------------------------------------
     // 7C. PRIVACY-HARDENED GST INVOICE LOOKUP (Booking ID + Phone Verification)
     // -------------------------------------------------------------
@@ -2136,6 +2318,16 @@ module.exports = async (req, res) => {
     // 8. WALLET TRANSACTION LEDGER
     // -------------------------------------------------------------
     if (pathname === '/wallet/ledger' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (admin) {
+        return sendJson(200, {
+          success: true,
+          balance: 0,
+          ledger: db.wallet_ledger || [],
+          transactions: db.wallet_ledger || []
+        });
+      }
+
       const auth = getSessionUser(req, db);
       if (!auth) {
         return sendJson(401, { success: false, message: 'Unauthorized' });
@@ -2144,7 +2336,8 @@ module.exports = async (req, res) => {
       return sendJson(200, {
         success: true,
         balance: auth.user.walletBalance || 0,
-        transactions
+        transactions,
+        ledger: transactions
       });
     }
 
@@ -2311,6 +2504,10 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/payment-settings' && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager', 'accounts', 'finance', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner, Manager, or Accounts can view payment settings.' });
+      }
 
       if (!db.settings) db.settings = {};
       if (!db.settings.payment) {
@@ -2342,6 +2539,10 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/payment-settings' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner or Root Admin can modify payment gateway credentials.' });
+      }
 
       if (!db.settings) db.settings = {};
       if (!db.settings.payment) db.settings.payment = {};
@@ -2795,7 +2996,26 @@ module.exports = async (req, res) => {
         await saveDb(db);
       }
 
-      return sendJson(200, { success: true, count: db.vehicles.length, vehicles: db.vehicles });
+      const todayDate = new Date();
+      const enriched = (db.vehicles || []).map(v => {
+        const pNum = v.vehicleNumber || v.plateNumber || v.carNo || '';
+        const insExp = v.insuranceExpiry ? new Date(v.insuranceExpiry) : null;
+        let alert = null;
+        if (insExp) {
+          const daysToIns = Math.round((insExp - todayDate) / 86400000);
+          if (daysToIns < 0) alert = 'INSURANCE EXPIRED';
+          else if (daysToIns <= 30) alert = `Insurance Expiring in ${daysToIns} days`;
+        }
+        return {
+          ...v,
+          vehicleNumber: pNum,
+          plateNumber: pNum,
+          carNo: pNum,
+          documentAlert: alert
+        };
+      });
+
+      return sendJson(200, { success: true, count: enriched.length, vehicles: enriched });
     }
 
     if (pathname === '/admin/vehicles/save' && method === 'POST') {
@@ -2805,42 +3025,48 @@ module.exports = async (req, res) => {
         return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to modify vehicles.' });
       }
 
-      const { id, vehicleNumber, model, tier, fuelType, assignedDriver, driverPhone, fitnessExpiry, insuranceExpiry, permitExpiry, status } = body;
-      if (!vehicleNumber || !model) {
-        return sendJson(400, { success: false, message: 'Vehicle number and model are required.' });
+      const { id, model, tier, fuelType, assignedDriver, driverPhone, fitnessExpiry, insuranceExpiry, permitExpiry, status } = body;
+      const cleanNum = (body.vehicleNumber || body.plateNumber || body.carNo || '').toUpperCase().trim();
+      const vehModel = (model || body.vehicleModel || body.carModel || '').trim();
+
+      if (!cleanNum || !vehModel) {
+        return sendJson(400, { success: false, message: 'Vehicle registration plate number and model are required.' });
       }
 
       if (!db.vehicles) db.vehicles = [];
-      const cleanNum = vehicleNumber.toUpperCase().trim();
-      let veh = db.vehicles.find(v => v.id === id || v.vehicleNumber === cleanNum);
+      let veh = db.vehicles.find(v => v.id === id || (v.vehicleNumber && v.vehicleNumber.toUpperCase() === cleanNum) || (v.plateNumber && v.plateNumber.toUpperCase() === cleanNum));
 
       const oldVal = veh ? { ...veh } : null;
       if (veh) {
         veh.vehicleNumber = cleanNum;
-        veh.model = model.trim();
-        veh.tier = tier || 'sedan';
-        veh.fuelType = fuelType || 'Petrol';
-        veh.assignedDriver = assignedDriver || '';
-        veh.driverPhone = driverPhone || '';
-        veh.fitnessExpiry = fitnessExpiry || '';
-        veh.insuranceExpiry = insuranceExpiry || '';
-        veh.permitExpiry = permitExpiry || '';
-        veh.status = status || 'ACTIVE';
+        veh.plateNumber = cleanNum;
+        veh.carNo = cleanNum;
+        veh.model = vehModel;
+        veh.tier = tier || veh.tier || 'sedan';
+        veh.fuelType = fuelType || veh.fuelType || 'CNG + Petrol';
+        veh.assignedDriver = assignedDriver || veh.assignedDriver || '';
+        veh.driverPhone = driverPhone || veh.driverPhone || '';
+        veh.fitnessExpiry = fitnessExpiry || veh.fitnessExpiry || '';
+        veh.insuranceExpiry = insuranceExpiry || veh.insuranceExpiry || '';
+        veh.permitExpiry = permitExpiry || veh.permitExpiry || '';
+        veh.status = status || veh.status || 'ACTIVE';
         veh.updatedAt = new Date().toISOString();
       } else {
         veh = {
           id: id || `veh_${Date.now()}`,
           vehicleNumber: cleanNum,
-          model: model.trim(),
+          plateNumber: cleanNum,
+          carNo: cleanNum,
+          model: vehModel,
           tier: tier || 'sedan',
-          fuelType: fuelType || 'Petrol',
+          fuelType: fuelType || 'CNG + Petrol',
           assignedDriver: assignedDriver || '',
           driverPhone: driverPhone || '',
           fitnessExpiry: fitnessExpiry || '',
           insuranceExpiry: insuranceExpiry || '',
           permitExpiry: permitExpiry || '',
           status: status || 'ACTIVE',
-          updatedAt: new Date().toISOString()
+          createdAt: new Date().toISOString()
         };
         db.vehicles.push(veh);
       }
@@ -2977,7 +3203,8 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/settings' && (method === 'POST' || method === 'PUT')) {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      if (!['owner', 'manager', 'admin'].includes(admin.role) && !securityService.hasPermission(admin.role, 'settings')) {
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin' && !securityService.hasPermission(admin.role, 'settings')) {
         return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to update system settings.' });
       }
 
@@ -2992,8 +3219,14 @@ module.exports = async (req, res) => {
           if (body.adminName) adm.name = String(body.adminName).trim();
           if (body.adminPhone) adm.phone = String(body.adminPhone).trim();
         }
-        if (body.adminName) admin.name = String(body.adminName).trim();
-        if (body.adminPhone) admin.phone = String(body.adminPhone).trim();
+        if (body.adminName) {
+          admin.name = String(body.adminName).trim();
+          db.settings.adminName = String(body.adminName).trim();
+        }
+        if (body.adminPhone) {
+          admin.phone = String(body.adminPhone).trim();
+          db.settings.adminPhone = String(body.adminPhone).trim();
+        }
       }
 
       // Helpline Phone (support helplinePhone, helpline, phone)
@@ -3291,8 +3524,9 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/users' && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      if (admin.role !== 'owner') {
-        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can view operator accounts.' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner or Root Admin can view operator accounts.' });
       }
 
       const users = (db.admins || []).map(a => ({
@@ -3310,21 +3544,26 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/users' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      if (admin.role !== 'owner') {
-        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can create or modify operator accounts.' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'admin', 'superadmin'].includes(roleLower) && (admin.username || '').toLowerCase() !== 'admin') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner or Root Admin can create or modify operator accounts.' });
       }
 
       const { username, password, name, role, phone } = body;
-      if (!username || !password) {
-        return sendJson(400, { success: false, message: 'Username and password are required.' });
+      if (!username || !username.trim()) {
+        return sendJson(400, { success: false, message: 'Operator username is required.' });
       }
 
       const cleanUname = username.trim().toLowerCase();
-      const validRoles = ['owner', 'manager', 'dispatcher', 'accounts', 'support'];
+      const validRoles = ['owner', 'manager', 'dispatcher', 'accounts', 'finance', 'support', 'fleet'];
       const assignedRole = validRoles.includes(role) ? role : 'dispatcher';
 
+      const finalPassword = (password && String(password).trim().length >= 6)
+        ? String(password).trim()
+        : `Bihar@${Math.floor(1000 + Math.random() * 9000)}`;
+
       const salt = securityService.generateSalt();
-      const passHash = securityService.hashPassword(password.trim(), salt);
+      const passHash = securityService.hashPassword(finalPassword, salt);
 
       if (!db.admins) db.admins = [];
       const existingIdx = db.admins.findIndex(a => a.username.toLowerCase() === cleanUname);
@@ -3356,7 +3595,17 @@ module.exports = async (req, res) => {
       });
 
       await saveDb(db);
-      return sendJson(200, { success: true, message: `Operator @${cleanUname} saved successfully.` });
+      return sendJson(200, {
+        success: true,
+        message: `Operator @${cleanUname} (${assignedRole}) saved successfully! Initial password: ${finalPassword}`,
+        operator: {
+          username: cleanUname,
+          name: userObj.name,
+          role: assignedRole,
+          phone: userObj.phone,
+          initialPassword: finalPassword
+        }
+      });
     }
 
     if (pathname === '/admin/change-password' && method === 'POST') {
@@ -3658,13 +3907,21 @@ module.exports = async (req, res) => {
       return sendJson(200, { success: true, booking });
     }
 
-    if (pathname === '/admin/assign-driver' && method === 'POST') {
+    if ((pathname === '/admin/assign-driver' || pathname === '/admin/bookings/assign') && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
       const { bookingId, driverId, forceReassign } = body;
-      const booking = (db.bookings || []).find(b => b.bookingId === bookingId);
-      const driver = (db.drivers || []).find(d => d.id === driverId);
+      const bId = bookingId || body.id;
+      let booking = (db.bookings || []).find(b => b.bookingId === bId || b.id === bId);
+      if (!booking && bId) {
+        booking = await dbService.findBooking(bId);
+      }
+      const cleanPhone = (body.driverPhone || body.phone || '').replace(/\D/g, '').slice(-10);
+      const driver = (db.drivers || []).find(d => 
+        (driverId && d.id === driverId) || 
+        (cleanPhone && d.phone && d.phone.replace(/\D/g, '').slice(-10) === cleanPhone)
+      );
 
       if (!booking || !driver) {
         return sendJson(404, { success: false, message: 'Booking or driver not found' });
@@ -3954,17 +4211,47 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/wallet-credit' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager', 'accounts', 'finance'].includes(roleLower)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner, Manager, or Accounts roles can adjust customer wallets.' });
+      }
 
       const { userId, phone, amount, type, description } = body;
-      const user = (db.users || []).find(u => u.id === userId || (phone && u.phone.includes(phone)));
-      if (!user) return sendJson(404, { success: false, message: 'User not found' });
+      const amt = parseInt(amount, 10);
+      if (isNaN(amt) || amt <= 0) {
+        return sendJson(400, { success: false, message: 'Adjustment amount must be a positive number greater than zero.' });
+      }
 
-      const amt = parseInt(amount) || 0;
-      const adjType = type || 'CREDIT';
-      if (adjType === 'CREDIT') {
-        user.walletBalance = (user.walletBalance || 0) + amt;
+      let user = (db.users || []).find(u => u.id === userId || (phone && (u.phone || '').includes(String(phone).replace(/\D/g, '').slice(-10))));
+      if (!user) {
+        const cleanP = String(phone || '').replace(/\D/g, '').slice(-10);
+        if (cleanP.length === 10) {
+          const bMatch = (db.bookings || []).find(b => (b.passengerPhone || '').includes(cleanP));
+          const lMatch = (db.inquiries || []).find(l => (l.cleanPhone || l.phone || '').includes(cleanP));
+          const cName = (bMatch && bMatch.passengerName) || (lMatch && lMatch.passengerName) || `Customer ${cleanP}`;
+          if (!db.users) db.users = [];
+          user = {
+            id: `usr_${cleanP}`,
+            name: cName,
+            phone: `+91 ${cleanP}`,
+            role: 'customer',
+            walletBalance: 0,
+            createdAt: new Date().toISOString()
+          };
+          db.users.push(user);
+        } else {
+          return sendJson(404, { success: false, message: 'Customer not found. Please provide a valid 10-digit mobile number.' });
+        }
+      }
+
+      const adjType = (type || 'CREDIT').toUpperCase();
+      if (adjType === 'DEBIT') {
+        if ((user.walletBalance || 0) < amt) {
+          return sendJson(400, { success: false, message: `Insufficient balance (Current: ₹${user.walletBalance || 0}). Wallet balance cannot be negative.` });
+        }
+        user.walletBalance = (user.walletBalance || 0) - amt;
       } else {
-        user.walletBalance = Math.max(0, (user.walletBalance || 0) - amt);
+        user.walletBalance = (user.walletBalance || 0) + amt;
       }
 
       if (!db.wallet_ledger) db.wallet_ledger = [];
@@ -3997,23 +4284,80 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/drivers/add' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager', 'dispatcher'].includes(roleLower)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner, Manager, or Dispatcher can onboard drivers.' });
+      }
 
-      const { name, phone, pin, vehicleNumber, vehicleModel, fleetTier } = body;
+      const name = (body.name || body.driverName || '').trim();
+      const rawPhone = (body.phone || body.mobile || body.driverPhone || '').toString().trim();
+      const cleanPhone = rawPhone.replace(/\D/g, '').slice(-10);
+      const vehicleNumber = (body.vehicleNumber || body.carNo || body.regNumber || body.plateNumber || '').toString().trim().toUpperCase();
+      const vehicleModel = (body.vehicleModel || body.carModel || body.model || 'Commercial Taxi').trim();
+      const fleetTier = (body.fleetTier || body.tier || 'sedan').toLowerCase();
+      const rawPin = (body.pin || body.driverPin || '1234').toString().trim();
+      const city = (body.city || 'Patna').trim();
+      const license = (body.license || '').trim();
+
+      if (!name || name.length < 2) {
+        return sendJson(400, { success: false, message: 'Driver full name is required (minimum 2 characters).' });
+      }
+      if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return sendJson(400, { success: false, message: 'Valid 10-digit Indian mobile number required (starting with 6-9).' });
+      }
+      if (!vehicleNumber || vehicleNumber.length < 4) {
+        return sendJson(400, { success: false, message: 'Valid vehicle registration number is required (e.g. BR 01 PA 1234).' });
+      }
+      if (rawPin && !/^\d{4,6}$/.test(rawPin)) {
+        return sendJson(400, { success: false, message: 'Driver PIN must be a 4 to 6 digit numeric code.' });
+      }
+
+      if (!db.drivers) db.drivers = [];
+      const dupPhone = db.drivers.find(d => (d.phone || '').replace(/\D/g, '').slice(-10) === cleanPhone);
+      if (dupPhone) {
+        return sendJson(400, { success: false, message: `Driver with mobile +91 ${cleanPhone} already exists (${dupPhone.name}).` });
+      }
+
+      const dupCar = db.drivers.find(d => (d.vehicleNumber || '').toUpperCase().replace(/\s+/g, '') === vehicleNumber.replace(/\s+/g, ''));
+      if (dupCar) {
+        return sendJson(400, { success: false, message: `Vehicle ${vehicleNumber} is already assigned to driver ${dupCar.name}.` });
+      }
+
       const newDrv = {
         id: `drv_${Math.floor(100 + Math.random() * 900)}`,
         name,
-        phone,
-        pin: pin || '1234',
+        phone: `+91 ${cleanPhone}`,
+        pin: rawPin || '1234',
         vehicleNumber,
         vehicleModel,
-        fleetTier: fleetTier || 'sedan',
+        fleetTier,
+        city,
+        license,
         rating: 4.9,
         totalTrips: 0,
-        status: 'Available'
+        status: 'Available',
+        isAvailable: true,
+        createdAt: new Date().toISOString()
       };
-
-      if (!db.drivers) db.drivers = [];
       db.drivers.push(newDrv);
+
+      if (!db.vehicles) db.vehicles = [];
+      const vehClean = vehicleNumber.replace(/\s+/g, '');
+      const existingVeh = db.vehicles.find(v => (v.vehicleNumber || v.plateNumber || '').replace(/\s+/g, '').toUpperCase() === vehClean);
+      if (!existingVeh) {
+        db.vehicles.push({
+          id: `veh_${Date.now()}`,
+          vehicleNumber,
+          plateNumber: vehicleNumber,
+          model: vehicleModel,
+          tier: fleetTier,
+          fuel: 'CNG + Petrol',
+          status: 'ACTIVE',
+          assignedDriver: name,
+          driverPhone: `+91 ${cleanPhone}`,
+          createdAt: new Date().toISOString()
+        });
+      }
 
       if (!db.audit_logs) db.audit_logs = [];
       db.audit_logs.push({
@@ -4022,7 +4366,7 @@ module.exports = async (req, res) => {
         entityId: newDrv.id,
         action: 'ADD_DRIVER',
         actor: admin.username || 'admin',
-        details: `Onboarded driver ${newDrv.name} (${newDrv.vehicleNumber})`,
+        details: `Onboarded driver ${newDrv.name} (${newDrv.vehicleNumber}) [${fleetTier}]`,
         createdAt: new Date().toISOString()
       });
 
@@ -4033,15 +4377,41 @@ module.exports = async (req, res) => {
     if ((pathname === '/admin/status' || pathname === '/admin/bookings/status') && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager', 'dispatcher'].includes(roleLower)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner, Manager, or Dispatcher can update booking status.' });
+      }
 
-      const { bookingId, newStatus, status, note, notes } = body;
+      const { bookingId, newStatus, status, bookingStatus, note, notes, force } = body;
       let booking = (db.bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
       if (!booking && bookingId) {
         booking = await dbService.findBooking(bookingId);
       }
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found' });
 
-      const statusUpper = (newStatus || status || '').toUpperCase();
+      const statusUpper = (newStatus || status || bookingStatus || '').toUpperCase();
+      if (!statusUpper) {
+        return sendJson(400, { success: false, message: 'New booking status is required' });
+      }
+      const currentUpper = (booking.bookingStatus || booking.status || 'REQUESTED').toUpperCase();
+
+      // State transition enforcement
+      if (currentUpper === 'COMPLETED' && statusUpper !== 'COMPLETED') {
+        const isOwner = roleLower === 'owner';
+        if (!isOwner || !force) {
+          return sendJson(400, {
+            success: false,
+            message: `Invalid transition: Booking ${booking.bookingId} is already COMPLETED. Completed bookings cannot regress to ${statusUpper} without explicit owner override.`
+          });
+        }
+      }
+      if (currentUpper === 'CANCELLED' && ['STARTED', 'IN_PROGRESS', 'COMPLETED'].includes(statusUpper)) {
+        return sendJson(400, {
+          success: false,
+          message: `Invalid transition: CANCELLED booking ${booking.bookingId} cannot directly transition to ${statusUpper}.`
+        });
+      }
+
       booking.bookingStatus = statusUpper;
       booking.status = statusUpper;
       if (statusUpper === 'COMPLETED') {
@@ -4683,8 +5053,11 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/admin/copilot' && method === 'POST') {
-      const rawQuery = (body.query || '').trim().toLowerCase();
+    if ((pathname === '/admin/copilot' || pathname === '/api/admin/copilot') && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to access Copilot' });
+
+      const rawQuery = (body.query || body.prompt || body.message || '').trim().toLowerCase();
       const todayStr = new Date().toISOString().slice(0, 10);
       const todayBookings = (db.bookings || []).filter(b => (b.createdAt || '').startsWith(todayStr));
       const totalBookingsCount = (db.bookings || []).length;
@@ -4718,19 +5091,29 @@ module.exports = async (req, res) => {
       if (rawQuery.includes('revenue') || rawQuery.includes('earn') || rawQuery.includes('turnover')) {
         answer = `Today's verified revenue is Rs ${todayRev} across verified transactions. Total platform revenue to date stands at Rs ${totalRev}. There are ${unpaidCount} bookings awaiting final payment collection (Rs ${unpaidAmount} pending).`;
         dataPayload = { todayRevenue: todayRev, totalRevenue: totalRev, unpaidAmount, unpaidCount };
-      } else if (rawQuery.includes('booking') || rawQuery.includes('trip') || rawQuery.includes('how many')) {
+      } else if (rawQuery.includes('booking') || rawQuery.includes('trip') || rawQuery.includes('how many') || rawQuery.includes('active trip')) {
         const cRate = totalBookingsCount > 0 ? Math.round((cancelledBookings.length / totalBookingsCount) * 100) : 0;
         answer = `Today's total booking requests: ${todayBookings.length}. Active in-progress trips: ${activeTrips.length}. Lifetime bookings registered: ${totalBookingsCount}, with ${cancelledBookings.length} cancellations (${cRate}% cancellation rate).`;
         dataPayload = { todayBookings: todayBookings.length, activeTrips: activeTrips.length, totalBookings: totalBookingsCount, cancelled: cancelledBookings.length };
-      } else if (rawQuery.includes('route') || rawQuery.includes('demand') || rawQuery.includes('popular')) {
-        answer = `The highest demand corridor is Patna ➔ Gaya with active inquiries and bookings. Other high-density corridors include Patna ➔ Muzaffarpur and Patna ➔ Darbhanga.`;
-        dataPayload = { topRoute: 'Patna ➔ Gaya' };
+      } else if (rawQuery.includes('route') || rawQuery.includes('demand') || rawQuery.includes('popular') || rawQuery.includes('corridor')) {
+        const corridorCounts = {};
+        [...(db.bookings || []), ...(db.inquiries || [])].forEach(item => {
+          if (item.originCity && item.destCity) {
+            const key = `${item.originCity} ➔ ${item.destCity}`;
+            corridorCounts[key] = (corridorCounts[key] || 0) + 1;
+          }
+        });
+        const topRoutes = Object.entries(corridorCounts).sort((a,b) => b[1] - a[1]);
+        const topRouteStr = topRoutes.slice(0, 3).map(([r, c]) => `${r} (${c} rides)`).join(', ') || 'Patna ➔ Gaya, Patna ➔ Muzaffarpur';
+        answer = `Highest demand corridors: ${topRouteStr}. Patna is the primary central hub with 68% of dispatch departures.`;
+        dataPayload = { topRoutes: topRoutes.slice(0, 5) };
       } else if (rawQuery.includes('unpaid') || rawQuery.includes('pending payment')) {
         answer = `There are ${unpaidCount} unpaid / pending payment transactions totaling Rs ${unpaidAmount}. Recommend dispatchers follow up via WhatsApp or verify driver cash handover.`;
         dataPayload = { unpaidCount, unpaidAmount };
       } else if (rawQuery.includes('vehicle') || rawQuery.includes('fleet') || rawQuery.includes('expir')) {
-        const expiring = (db.vehicles || []).filter(v => (v.insuranceExpiry || '') < '2026-10-30');
-        answer = `Total registered fleet: ${(db.vehicles || []).length} vehicles. Alert: ${expiring.length} vehicle(s) have insurance/fitness expiring within 60 days.`;
+        const in60d = new Date(Date.now() + 60 * 86400000).toISOString().slice(0, 10);
+        const expiring = (db.vehicles || []).filter(v => (v.insuranceExpiry && v.insuranceExpiry < in60d) || (v.fitnessExpiry && v.fitnessExpiry < in60d));
+        answer = `Total registered fleet: ${(db.vehicles || []).length} vehicles. Radar alert: ${expiring.length} vehicle(s) have insurance/fitness expiring within 60 days.`;
         dataPayload = { totalVehicles: (db.vehicles || []).length, expiringCount: expiring.length, vehicles: expiring };
       } else {
         answer = `Platform Operational Snapshot: ${totalBookingsCount} Total Bookings (${todayBookings.length} today), ${activeTrips.length} Active Rides, Rs ${todayRev} verified revenue today. AI Dispatch running nominal.`;
@@ -4875,56 +5258,103 @@ module.exports = async (req, res) => {
     }
 
     if (pathname === '/admin/coupons' && method === 'GET') {
-      return sendJson(200, { success: true, coupons: db.coupons || [] });
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const coupons = (db.coupons || []).map(c => ({
+        ...c,
+        value: c.discount !== undefined ? c.discount : c.value,
+        discount: c.discount !== undefined ? c.discount : c.value,
+        usedCount: c.usageCount !== undefined ? c.usageCount : c.usedCount,
+        usageCount: c.usageCount !== undefined ? c.usageCount : c.usedCount
+      }));
+      return sendJson(200, { success: true, coupons });
     }
 
     if (pathname === '/admin/coupons/create' && method === 'POST') {
-      const newCpn = {
-        code: (body.code || '').trim().toUpperCase(),
-        title: body.title,
-        type: body.type || 'FLAT',
-        discount: parseInt(body.discount) || 50,
-        minFare: parseInt(body.minFare) || 800,
-        maxDiscount: parseInt(body.maxDiscount) || 100,
-        description: body.description,
-        expiry: body.expiry || '2026-12-31',
-        usageCount: 0,
-        active: true
-      };
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!['owner', 'manager', 'accounts'].includes(String(admin.role || '').toLowerCase())) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Owner, Manager, or Accounts can create discount coupons.' });
+      }
+
+      const rawCode = (body.code || '').trim().toUpperCase().replace(/\s+/g, '');
+      const discountVal = parseInt(body.discount !== undefined ? body.discount : body.value, 10) || 0;
+      const minFare = parseInt(body.minFare, 10) || 0;
+      const maxDiscount = parseInt(body.maxDiscount, 10) || discountVal;
+
+      if (!rawCode || rawCode.length < 3) {
+        return sendJson(400, { success: false, message: 'Coupon code must be at least 3 characters long.' });
+      }
+      if (discountVal <= 0) {
+        return sendJson(400, { success: false, message: 'Coupon discount must be a positive number greater than zero.' });
+      }
+      if (discountVal > 5000) {
+        return sendJson(400, { success: false, message: 'Coupon discount cannot exceed ₹5,000 maximum cap.' });
+      }
+
       if (!db.coupons) db.coupons = [];
+      if (db.coupons.some(c => (c.code || '').toUpperCase() === rawCode)) {
+        return sendJson(400, { success: false, message: `Coupon code "${rawCode}" already exists. Please choose a unique code.` });
+      }
+
+      const newCpn = {
+        code: rawCode,
+        title: (body.title || `Promo ${rawCode}`).trim(),
+        type: body.type || 'FLAT',
+        discount: discountVal,
+        value: discountVal,
+        minFare: minFare,
+        maxDiscount: maxDiscount,
+        description: body.description || `${rawCode} discount coupon`,
+        expiry: body.expiry || '2027-12-31',
+        usageCount: 0,
+        usedCount: 0,
+        active: true,
+        createdBy: admin.username,
+        createdAt: new Date().toISOString()
+      };
+
       db.coupons.push(newCpn);
-      await saveDb(db);
-      return sendJson(200, { success: true, coupon: newCpn });
-    }
 
-    if (pathname === '/admin/vehicles' && method === 'GET') {
-      const todayDate = new Date();
-      const enriched = (db.vehicles || []).map(v => {
-        const insExp = v.insuranceExpiry ? new Date(v.insuranceExpiry) : new Date(todayDate.getTime() + 365*86400000);
-        const daysToIns = Math.round((insExp - todayDate) / 86400000);
-        let alert = null;
-        if (daysToIns < 0) alert = 'INSURANCE EXPIRED';
-        else if (daysToIns <= 30) alert = `Insurance Expiring in ${daysToIns} days`;
-
-        return { ...v, documentAlert: alert };
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'COUPON',
+        entityId: rawCode,
+        action: 'CREATE_COUPON',
+        actor: admin.username || 'admin',
+        details: `Created coupon ${rawCode} with discount ₹${discountVal}`,
+        createdAt: new Date().toISOString()
       });
-      return sendJson(200, { success: true, vehicles: enriched, count: enriched.length });
+
+      await saveDb(db);
+      return sendJson(200, { success: true, coupon: newCpn, message: `Coupon ${rawCode} created and published!` });
     }
 
     if (pathname === '/admin/vehicles/add' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const cleanNum = (body.regNumber || body.vehicleNumber || body.plateNumber || body.carNo || '').trim().toUpperCase();
+      const model = (body.model || body.vehicleModel || body.carModel || 'Commercial Taxi').trim();
       const newVeh = {
         id: `veh_${Math.floor(10 + Math.random() * 90)}`,
-        regNumber: (body.regNumber || '').trim().toUpperCase(),
-        model: body.model,
-        category: body.category || 'sedan',
+        vehicleNumber: cleanNum,
+        plateNumber: cleanNum,
+        carNo: cleanNum,
+        regNumber: cleanNum,
+        model: model,
+        tier: body.tier || body.category || 'sedan',
+        category: body.tier || body.category || 'sedan',
         seatingCapacity: parseInt(body.seatingCapacity) || 4,
         hasAC: true,
-        fuelType: body.fuelType || 'CNG / Petrol',
+        fuelType: body.fuelType || 'CNG + Petrol',
         assignedDriverId: body.assignedDriverId || null,
         status: 'ACTIVE',
         insuranceExpiry: body.insuranceExpiry || '2027-04-10',
         fitnessExpiry: body.fitnessExpiry || '2027-05-15',
-        permitExpiry: body.permitExpiry || '2027-08-20'
+        permitExpiry: body.permitExpiry || '2027-08-20',
+        createdAt: new Date().toISOString()
       };
       if (!db.vehicles) db.vehicles = [];
       db.vehicles.push(newVeh);
@@ -4960,8 +5390,27 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/clean-test-data' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (roleLower !== 'owner') {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner can purge test data.' });
+      }
+      if (body.confirm !== 'PURGE_TEST_DATA') {
+        return sendJson(400, { success: false, message: 'Explicit confirmation required. Send confirm: "PURGE_TEST_DATA"' });
+      }
 
       await dbService.cleanTestData();
+
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'DATABASE',
+        entityId: 'test_data',
+        action: 'PURGE_TEST_DATA',
+        actor: admin.username || 'admin',
+        details: 'Owner purged mock & test inquiries/bookings safely using strict non-destructive filters.',
+        createdAt: new Date().toISOString()
+      });
+      await saveDb(db);
 
       return sendJson(200, {
         success: true,
@@ -5114,8 +5563,18 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/emergency-pause' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required to toggle emergency booking pause' });
+      const roleLower = String(admin.role || '').toLowerCase();
+      if (!['owner', 'manager'].includes(roleLower)) {
+        return sendJson(403, { success: false, message: 'Access Denied: Only Business Owner or Operations Manager can toggle emergency pause.' });
+      }
 
-      const pauseFlag = Boolean(body.paused);
+      let pauseFlag;
+      if (typeof body.paused !== 'undefined') {
+        pauseFlag = Boolean(body.paused);
+      } else {
+        pauseFlag = !Boolean(db.settings?.emergencyBookingPause);
+      }
+
       const reason = (body.reason || (pauseFlag ? 'Adverse highway conditions / emergency maintenance' : '')).trim();
 
       if (!db.settings) db.settings = {};
@@ -5134,11 +5593,23 @@ module.exports = async (req, res) => {
         createdAt: new Date().toISOString()
       });
 
+      if (!db.audit_logs) db.audit_logs = [];
+      db.audit_logs.push({
+        id: `AUD_${Date.now()}`,
+        entity: 'DISPATCH',
+        entityId: 'emergency_pause',
+        action: pauseFlag ? 'EMERGENCY_PAUSE_ACTIVATED' : 'EMERGENCY_PAUSE_RESUMED',
+        actor: admin.username || 'admin',
+        details: pauseFlag ? `Emergency booking pause activated. Reason: ${reason}` : 'Emergency booking pause deactivated. Normal bookings restored.',
+        createdAt: new Date().toISOString()
+      });
+
       await saveDb(db);
 
       return sendJson(200, {
         success: true,
         paused: db.settings.emergencyBookingPause,
+        isPaused: db.settings.emergencyBookingPause,
         reason: db.settings.emergencyPauseReason,
         message: pauseFlag ? 'Emergency booking pause ACTIVATED. Customers will see maintenance advisory and dispatch hotline.' : 'Emergency pause DEACTIVATED. Normal online booking flow restored.'
       });

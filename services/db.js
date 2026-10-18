@@ -613,9 +613,14 @@ async function deleteBooking(bookingId) {
 async function deleteLead(leadId) {
   if (!leadId) return false;
   const lId = String(leadId).trim();
+  const cleanPhone = lId.replace(/\D/g, '').slice(-10);
   if (!memoryDb) loadLocalDb();
   if (Array.isArray(memoryDb.leads)) {
-    memoryDb.leads = memoryDb.leads.filter(l => l.id !== lId && l.leadId !== lId);
+    memoryDb.leads = memoryDb.leads.filter(l => 
+      l.id !== lId && 
+      l.leadId !== lId && 
+      (!cleanPhone || cleanPhone.length !== 10 || (l.cleanPhone !== cleanPhone && (l.phone || '').replace(/\D/g, '').slice(-10) !== cleanPhone))
+    );
   }
   try {
     const targetPath = getLocalDbPath();
@@ -624,9 +629,11 @@ async function deleteLead(leadId) {
 
   if (mongoDbInstance) {
     try {
-      await mongoDbInstance.collection('leads').deleteMany({
-        $or: [{ id: lId }, { leadId: lId }]
-      });
+      const orClauses = [{ id: lId }, { leadId: lId }];
+      if (cleanPhone && cleanPhone.length === 10) {
+        orClauses.push({ cleanPhone: cleanPhone }, { phone: `+91 ${cleanPhone}` }, { customerPhone: `+91 ${cleanPhone}` });
+      }
+      await mongoDbInstance.collection('leads').deleteMany({ $or: orClauses });
     } catch (e) {
       console.warn('[DB] Failed to delete lead from Atlas:', e.message);
     }
@@ -635,36 +642,80 @@ async function deleteLead(leadId) {
   return true;
 }
 
+
 async function cleanTestData() {
   if (!memoryDb) loadLocalDb();
-  memoryDb.bookings = [];
-  memoryDb.leads = [];
-  memoryDb.notifications = [];
-  memoryDb.payments = [];
-  memoryDb.wallet_ledger = [];
-  memoryDb.driver_applications = [];
+
+  const isTestPhone = (p) => {
+    const clean = String(p || '').replace(/\D/g, '').slice(-10);
+    return ['9999999999', '9876543210', '0000000000', '1111111111', '1234567890', '9835012345'].includes(clean);
+  };
+  const isTestStr = (s) => /test|mock|cypress|sandbox|qa/i.test(String(s || ''));
+
+  const isTestRecord = (item) => {
+    if (!item) return false;
+    if (item.isTest || item.isMock) return true;
+    if (isTestPhone(item.phone || item.passengerPhone || item.customerPhone)) return true;
+    if (isTestStr(item.name || item.passengerName || item.customerName || item.notes || item.reason)) return true;
+    if (String(item.id || item.bookingId || '').startsWith('test_') || String(item.id || item.bookingId || '').startsWith('mock_')) return true;
+    return false;
+  };
+
+  // 1. Sanitize In-Memory Cache (Only remove test records)
+  if (Array.isArray(memoryDb.bookings)) {
+    memoryDb.bookings = memoryDb.bookings.filter(b => !isTestRecord(b));
+  }
+  if (Array.isArray(memoryDb.leads)) {
+    memoryDb.leads = memoryDb.leads.filter(l => !isTestRecord(l));
+  }
+  if (Array.isArray(memoryDb.notifications)) {
+    memoryDb.notifications = memoryDb.notifications.filter(n => !isTestRecord(n));
+  }
+  if (Array.isArray(memoryDb.payments)) {
+    memoryDb.payments = memoryDb.payments.filter(p => !isTestRecord(p));
+  }
+  if (Array.isArray(memoryDb.wallet_ledger)) {
+    memoryDb.wallet_ledger = memoryDb.wallet_ledger.filter(w => !isTestRecord(w));
+  }
+  if (Array.isArray(memoryDb.driver_applications)) {
+    memoryDb.driver_applications = memoryDb.driver_applications.filter(d => !isTestRecord(d));
+  }
   if (Array.isArray(memoryDb.drivers)) {
-    memoryDb.drivers = memoryDb.drivers.filter(d => !d.id.startsWith('drv_98'));
+    memoryDb.drivers = memoryDb.drivers.filter(d => !isTestRecord(d));
   }
   if (Array.isArray(memoryDb.users)) {
-    memoryDb.users = memoryDb.users.filter(u => u.role === 'admin' || u.phone === '+91 6206494214');
+    memoryDb.users = memoryDb.users.filter(u => u.role === 'admin' || !isTestRecord(u));
   }
+
   try {
     const targetPath = getLocalDbPath();
     fs.writeFileSync(targetPath, JSON.stringify(memoryDb, null, 2), 'utf8');
   } catch (e) {}
 
+  // 2. Safe Target Purge in MongoDB Atlas (Never delete production records)
   if (mongoDbInstance) {
     try {
+      const testPhones = ['9999999999', '9876543210', '0000000000', '1111111111', '1234567890', '9835012345'];
+      const testQuery = {
+        $or: [
+          { isTest: true },
+          { isMock: true },
+          { phone: { $in: testPhones.map(p => `+91 ${p}`).concat(testPhones) } },
+          { passengerPhone: { $in: testPhones.map(p => `+91 ${p}`).concat(testPhones) } },
+          { cleanPhone: { $in: testPhones } },
+          { passengerName: { $regex: /test|mock|cypress/i } },
+          { name: { $regex: /test|mock|cypress/i } }
+        ]
+      };
+
       await Promise.allSettled([
-        mongoDbInstance.collection('bookings').deleteMany({}),
-        mongoDbInstance.collection('leads').deleteMany({}),
-        mongoDbInstance.collection('notifications').deleteMany({}),
-        mongoDbInstance.collection('payments').deleteMany({}),
-        mongoDbInstance.collection('wallet_ledger').deleteMany({}),
-        mongoDbInstance.collection('driver_applications').deleteMany({}),
-        mongoDbInstance.collection('drivers').deleteMany({ id: { $regex: /^drv_98/ } }),
-        mongoDbInstance.collection('users').deleteMany({ role: { $ne: 'admin' }, phone: { $ne: '+91 6206494214' } })
+        mongoDbInstance.collection('bookings').deleteMany(testQuery),
+        mongoDbInstance.collection('leads').deleteMany(testQuery),
+        mongoDbInstance.collection('notifications').deleteMany({ $or: [{ isTest: true }, { title: { $regex: /test|mock/i } }] }),
+        mongoDbInstance.collection('payments').deleteMany(testQuery),
+        mongoDbInstance.collection('wallet_ledger').deleteMany(testQuery),
+        mongoDbInstance.collection('driver_applications').deleteMany(testQuery),
+        mongoDbInstance.collection('drivers').deleteMany({ $or: [{ isTest: true }, { name: { $regex: /test|mock/i } }] })
       ]);
     } catch (e) {
       console.warn('[DB] Atlas clean error:', e.message);

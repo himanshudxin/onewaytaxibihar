@@ -1446,9 +1446,13 @@ class BookingManager {
       phone: tripPayload.phone
     });
 
+    try {
+      sessionStorage.setItem("otb_pickup_time", tripPayload.pickupTime);
+    } catch (e) {}
+
     const currentPath = window.location.pathname.toLowerCase();
     if (!currentPath.endsWith("cabs.html") && !currentPath.endsWith("/cabs")) {
-      window.location.href = `cabs.html?${searchParams.toString()}`;
+      window.location.href = `cabs?${searchParams.toString()}`;
       return true;
     }
 

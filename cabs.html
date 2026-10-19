@@ -415,9 +415,9 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="js/brand-logo.js?v=20261017_fares_v3"></script>
-  <script src="js/data.js?v=20261017_fares_v3"></script>
-  <script src="js/calculator.js?v=20261017_fares_v3"></script>
+  <script src="js/brand-logo.js?v=20261019_v6"></script>
+  <script src="js/data.js?v=20261019_v6"></script>
+  <script src="js/calculator.js?v=20261019_v6"></script>
   <script>
     (function () {
       // 1. Theme toggle initialization
@@ -446,7 +446,16 @@
       const tripType = trip?.tripType || urlParams.get('type') || 'oneway';
       const pickupDate = urlParams.get('date') || trip?.pickupDate || new Date().toISOString().split('T')[0];
       const displayDate = urlParams.get('displayDate') || trip?.displayDate || pickupDate;
-      const pickupTime = urlParams.get('time') || trip?.pickupTime || sessionStorage.getItem('otb_pickup_time') || '10:00 AM';
+
+      let paramTime = urlParams.get('time');
+      if (paramTime) {
+        paramTime = decodeURIComponent(paramTime).replace(/\+/g, ' ').trim();
+      }
+      const sessionTime = sessionStorage.getItem('otb_pickup_time');
+      const pickupTime = (paramTime && paramTime.includes(':'))
+        ? paramTime
+        : ((sessionTime && sessionTime.includes(':')) ? sessionTime : (trip?.pickupTime || '10:00 AM'));
+      try { sessionStorage.setItem('otb_pickup_time', pickupTime); } catch (e) {}
 
       // Check phone number existence & validity (Mandatory gate to view fares)
       let rawPhone = (trip?.phone || urlParams.get('phone') || '').replace(/\D/g, '');

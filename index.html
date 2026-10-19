@@ -1776,15 +1776,15 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261017_wa_v4"></script>
-  <script src="/js/data.js?v=20261017_wa_v4"></script>
-  <script src="/js/calculator.js?v=20261017_wa_v4"></script>
-  <script src="/js/map.js?v=20261017_wa_v4"></script>
-  <script src="/js/api.js?v=20261017_wa_v4"></script>
-  <script src="/js/datetime-picker.js?v=20261017_wa_v4"></script>
-  <script src="/js/firebase-otp.js?v=20261017_wa_v4"></script>
-  <script src="/js/booking.js?v=20261017_wa_v4"></script>
-  <script src="/js/app.js?v=20261017_wa_v4"></script>
+  <script src="/js/brand-logo.js?v=20261019_v6"></script>
+  <script src="/js/data.js?v=20261019_v6"></script>
+  <script src="/js/calculator.js?v=20261019_v6"></script>
+  <script src="/js/map.js?v=20261019_v6"></script>
+  <script src="/js/api.js?v=20261019_v6"></script>
+  <script src="/js/datetime-picker.js?v=20261019_v6"></script>
+  <script src="/js/firebase-otp.js?v=20261019_v6"></script>
+  <script src="/js/booking.js?v=20261019_v6"></script>
+  <script src="/js/app.js?v=20261019_v6"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
@@ -1881,6 +1881,7 @@
 
       try {
         sessionStorage.setItem('otb_trip', JSON.stringify(tripData));
+        sessionStorage.setItem('otb_pickup_time', pickupTime);
       } catch (e) {}
 
       const query = new URLSearchParams({
@@ -1895,7 +1896,7 @@
         phone: phoneVal
       });
 
-      window.location.href = 'cabs.html?' + query.toString();
+      window.location.href = '/cabs?' + query.toString();
     };
 
     // Live phone validation & button state synchronizer on homepage

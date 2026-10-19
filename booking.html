@@ -894,9 +894,9 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="js/brand-logo.js?v=20261016_v1"></script>
-  <script src="js/data.js?v=20261015_multipage_v3"></script>
-  <script src="js/api.js?v=20261015_multipage_v3"></script>
+  <script src="js/brand-logo.js?v=20261019_v6"></script>
+  <script src="js/data.js?v=20261019_v6"></script>
+  <script src="js/api.js?v=20261019_v6"></script>
   <script>
     (function () {
       // 1. Theme toggle
@@ -920,6 +920,8 @@
         if (storedCab) cab = JSON.parse(storedCab);
       } catch (e) {}
 
+      const sessionTime = sessionStorage.getItem('otb_pickup_time');
+
       // Fallback defaults
       if (!trip) {
         trip = {
@@ -929,14 +931,11 @@
           duration: "2h 15m",
           pickupDate: new Date().toISOString().split("T")[0],
           displayDate: "Today",
-          pickupTime: sessionStorage.getItem('otb_pickup_time') || "10:00 AM",
+          pickupTime: (sessionTime && sessionTime.includes(':')) ? sessionTime : "10:00 AM",
           phone: ""
         };
-      } else {
-        const storedTime = sessionStorage.getItem('otb_pickup_time');
-        if (storedTime && storedTime.includes(':') && (!trip.pickupTime || trip.pickupTime === '10:00 AM')) {
-          trip.pickupTime = storedTime;
-        }
+      } else if (sessionTime && sessionTime.includes(':')) {
+        trip.pickupTime = sessionTime;
       }
       if (!cab) {
         cab = {

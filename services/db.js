@@ -290,12 +290,24 @@ async function pullFromRemoteCloud(targetCollection = null) {
                   return true;
                 });
               }
-              if (colName === 'fares' && sanitized.length === 0) {
-                if (!Array.isArray(memoryDb.fares) || memoryDb.fares.length === 0) {
-                  loadLocalDb();
-                }
-                if (Array.isArray(memoryDb.fares) && memoryDb.fares.length > 0) {
-                  syncCollectionToCloud('fares', memoryDb.fares).catch(() => {});
+              if (colName === 'fares') {
+                if (sanitized.length < 90) {
+                  let masterFares = null;
+                  try {
+                    const pFaresPath = path.join(process.cwd(), 'data', 'patna_fares.json');
+                    if (fs.existsSync(pFaresPath)) {
+                      masterFares = JSON.parse(fs.readFileSync(pFaresPath, 'utf8').replace(/^\uFEFF/, ''));
+                    }
+                  } catch (e) {}
+
+                  if (Array.isArray(masterFares) && masterFares.length >= 90) {
+                    memoryDb.fares = masterFares;
+                    syncCollectionToCloud('fares', masterFares).catch(() => {});
+                  } else {
+                    memoryDb.fares = sanitized;
+                  }
+                } else {
+                  memoryDb.fares = sanitized;
                 }
               } else {
                 memoryDb[colName] = sanitized;

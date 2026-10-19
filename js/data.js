@@ -938,6 +938,36 @@ const OTB_CORPORATE_DATA = {
 // 10. Official Patna Master Costing & Fixed Fare Matrix (98 Destinations)
 const OTB_PATNA_FARES = [
   {
+    "id": "patna-araria",
+    "origin": "Patna",
+    "destination": "Araria",
+    "destCity": "Araria",
+    "district": "Araria",
+    "region": "Bihar districts",
+    "distanceKm": 300,
+    "hatchback": 3799,
+    "sedan": 3999,
+    "execSedan": 4249,
+    "suv": 4399,
+    "luxSuv": 4699,
+    "twoWay": {
+      "hatchback": 7198,
+      "sedan": 7598,
+      "execSedan": 8098,
+      "suv": 8398,
+      "luxSuv": 8998
+    },
+    "perKm": {
+      "hatchback": 12.66,
+      "sedan": 13.33,
+      "suv": 14.66
+    },
+    "marketComparison": "7198–8798",
+    "note": "Planning estimate; verify with live route planner",
+    "active": true,
+    "updatedAt": "2026-10-19T07:27:58.134Z"
+  },
+  {
     "id": "patna-arwal",
     "origin": "Patna",
     "destination": "Arwal",
@@ -947,14 +977,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 90,
     "hatchback": 1599,
     "sedan": 1799,
-    "suv": 2199,
     "execSedan": 2049,
+    "suv": 2199,
     "luxSuv": 2499,
     "twoWay": {
       "hatchback": 2798,
       "sedan": 3198,
-      "suv": 3998,
       "execSedan": 3698,
+      "suv": 3998,
       "luxSuv": 4598
     },
     "perKm": {
@@ -962,10 +992,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 24.43
     },
-    "marketComparison": "3200–4000",
+    "marketComparison": "3238–3958",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.837Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-aurangabad",
@@ -977,14 +1007,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 140,
     "hatchback": 2599,
     "sedan": 2799,
-    "suv": 3199,
     "execSedan": 3049,
+    "suv": 3199,
     "luxSuv": 3499,
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
-      "suv": 5998,
       "execSedan": 5698,
+      "suv": 5998,
       "luxSuv": 6598
     },
     "perKm": {
@@ -992,10 +1022,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 22.85
     },
-    "marketComparison": "5000–6200",
+    "marketComparison": "5038–6158",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-banka",
@@ -1007,14 +1037,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 250,
     "hatchback": 3099,
     "sedan": 3299,
-    "suv": 3699,
     "execSedan": 3549,
+    "suv": 3699,
     "luxSuv": 3999,
     "twoWay": {
       "hatchback": 5798,
       "sedan": 6198,
-      "suv": 6998,
       "execSedan": 6698,
+      "suv": 6998,
       "luxSuv": 7598
     },
     "perKm": {
@@ -1022,10 +1052,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.2,
       "suv": 14.8
     },
-    "marketComparison": "5900–7300",
+    "marketComparison": "5938–7258",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-begusarai",
@@ -1037,14 +1067,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 125,
     "hatchback": 2399,
     "sedan": 2599,
-    "suv": 2999,
     "execSedan": 2849,
+    "suv": 2999,
     "luxSuv": 3299,
     "twoWay": {
       "hatchback": 4398,
       "sedan": 4798,
-      "suv": 5598,
       "execSedan": 5298,
+      "suv": 5598,
       "luxSuv": 6198
     },
     "perKm": {
@@ -1052,10 +1082,10 @@ const OTB_PATNA_FARES = [
       "sedan": 20.79,
       "suv": 23.99
     },
-    "marketComparison": "4700–5700",
+    "marketComparison": "4678–5718",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-bhagalpur",
@@ -1067,14 +1097,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 235,
     "hatchback": 3299,
     "sedan": 3499,
-    "suv": 3899,
     "execSedan": 3749,
+    "suv": 3899,
     "luxSuv": 4199,
     "twoWay": {
       "hatchback": 6198,
       "sedan": 6598,
-      "suv": 7398,
       "execSedan": 7098,
+      "suv": 7398,
       "luxSuv": 7998
     },
     "perKm": {
@@ -1082,13 +1112,13 @@ const OTB_PATNA_FARES = [
       "sedan": 14.89,
       "suv": 16.59
     },
-    "marketComparison": "6300–7700",
+    "marketComparison": "6298–7698",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
-    "id": "patna-bhojpur-ara",
+    "id": "patna-bhojpur",
     "origin": "Patna",
     "destination": "Bhojpur (Ara)",
     "destCity": "Bhojpur",
@@ -1097,14 +1127,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 60,
     "hatchback": 1600,
     "sedan": 1800,
-    "suv": 2200,
     "execSedan": 2050,
+    "suv": 2200,
     "luxSuv": 2500,
     "twoWay": {
       "hatchback": 2800,
       "sedan": 3200,
-      "suv": 4000,
       "execSedan": 3700,
+      "suv": 4000,
       "luxSuv": 4600
     },
     "perKm": {
@@ -1112,10 +1142,10 @@ const OTB_PATNA_FARES = [
       "sedan": 30,
       "suv": 36.67
     },
-    "marketComparison": "3200–4000",
+    "marketComparison": "3240–3960",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-buxar",
@@ -1127,14 +1157,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 125,
     "hatchback": 2599,
     "sedan": 2799,
-    "suv": 3199,
     "execSedan": 3049,
+    "suv": 3199,
     "luxSuv": 3499,
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
-      "suv": 5998,
       "execSedan": 5698,
+      "suv": 5998,
       "luxSuv": 6598
     },
     "perKm": {
@@ -1142,10 +1172,10 @@ const OTB_PATNA_FARES = [
       "sedan": 22.39,
       "suv": 25.59
     },
-    "marketComparison": "5000–6200",
+    "marketComparison": "5038–6158",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
     "id": "patna-darbhanga",
@@ -1157,14 +1187,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 145,
     "hatchback": 2399,
     "sedan": 2599,
-    "suv": 2999,
     "execSedan": 2849,
+    "suv": 2999,
     "luxSuv": 3299,
     "twoWay": {
       "hatchback": 4398,
       "sedan": 4798,
-      "suv": 5598,
       "execSedan": 5298,
+      "suv": 5598,
       "luxSuv": 6198
     },
     "perKm": {
@@ -1172,13 +1202,13 @@ const OTB_PATNA_FARES = [
       "sedan": 17.92,
       "suv": 20.68
     },
-    "marketComparison": "4700–5700",
+    "marketComparison": "4678–5718",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
-    "id": "patna-east-champaran-motihari",
+    "id": "patna-eastchamparan",
     "origin": "Patna",
     "destination": "East Champaran (Motihari)",
     "destCity": "East Champaran",
@@ -1187,14 +1217,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 160,
     "hatchback": 2399,
     "sedan": 2599,
-    "suv": 2999,
     "execSedan": 2849,
+    "suv": 2999,
     "luxSuv": 3299,
     "twoWay": {
       "hatchback": 4398,
       "sedan": 4798,
-      "suv": 5598,
       "execSedan": 5298,
+      "suv": 5598,
       "luxSuv": 6198
     },
     "perKm": {
@@ -1202,10 +1232,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.24,
       "suv": 18.74
     },
-    "marketComparison": "4700–5700",
+    "marketComparison": "4678–5718",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-gaya",
@@ -1217,14 +1247,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 120,
     "hatchback": 1799,
     "sedan": 1999,
-    "suv": 2399,
     "execSedan": 2249,
+    "suv": 2399,
     "luxSuv": 2699,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
-      "suv": 4398,
       "execSedan": 4098,
+      "suv": 4398,
       "luxSuv": 4998
     },
     "perKm": {
@@ -1232,10 +1262,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.66,
       "suv": 19.99
     },
-    "marketComparison": "3600–4400",
+    "marketComparison": "3598–4398",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-gopalganj",
@@ -1247,14 +1277,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 165,
     "hatchback": 2599,
     "sedan": 2799,
-    "suv": 3199,
     "execSedan": 3049,
+    "suv": 3199,
     "luxSuv": 3499,
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
-      "suv": 5998,
       "execSedan": 5698,
+      "suv": 5998,
       "luxSuv": 6598
     },
     "perKm": {
@@ -1262,10 +1292,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.96,
       "suv": 19.39
     },
-    "marketComparison": "5000–6200",
+    "marketComparison": "5038–6158",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-jamui",
@@ -1277,14 +1307,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 185,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
@@ -1292,10 +1322,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.21,
       "suv": 18.37
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-jehanabad",
@@ -1307,14 +1337,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 55,
     "hatchback": 1499,
     "sedan": 1699,
-    "suv": 2099,
     "execSedan": 1949,
+    "suv": 2099,
     "luxSuv": 2399,
     "twoWay": {
       "hatchback": 2598,
       "sedan": 2998,
-      "suv": 3798,
       "execSedan": 3498,
+      "suv": 3798,
       "luxSuv": 4398
     },
     "perKm": {
@@ -1322,13 +1352,13 @@ const OTB_PATNA_FARES = [
       "sedan": 30.89,
       "suv": 38.16
     },
-    "marketComparison": "3100–3700",
+    "marketComparison": "3058–3738",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-kaimur-bhabua",
+    "id": "patna-kaimur",
     "origin": "Patna",
     "destination": "Kaimur (Bhabua)",
     "destCity": "Kaimur",
@@ -1337,25 +1367,25 @@ const OTB_PATNA_FARES = [
     "distanceKm": 200,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
-      "hatchback": 14,
-      "sedan": 15,
+      "hatchback": 13.99,
+      "sedan": 14.99,
       "suv": 17
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-katihar",
@@ -1367,14 +1397,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 4299,
     "sedan": 4499,
-    "suv": 4899,
     "execSedan": 4749,
+    "suv": 4899,
     "luxSuv": 5199,
     "twoWay": {
       "hatchback": 8198,
       "sedan": 8598,
-      "suv": 9398,
       "execSedan": 9098,
+      "suv": 9398,
       "luxSuv": 9998
     },
     "perKm": {
@@ -1382,10 +1412,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15,
       "suv": 16.33
     },
-    "marketComparison": "8100–9900",
+    "marketComparison": "8098–9898",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-khagaria",
@@ -1397,14 +1427,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 180,
     "hatchback": 3099,
     "sedan": 3299,
-    "suv": 3699,
     "execSedan": 3549,
+    "suv": 3699,
     "luxSuv": 3999,
     "twoWay": {
       "hatchback": 5798,
       "sedan": 6198,
-      "suv": 6998,
       "execSedan": 6698,
+      "suv": 6998,
       "luxSuv": 7598
     },
     "perKm": {
@@ -1412,10 +1442,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18.33,
       "suv": 20.55
     },
-    "marketComparison": "5900–7300",
+    "marketComparison": "5938–7258",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-kishanganj",
@@ -1427,14 +1457,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 400,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -1442,10 +1472,10 @@ const OTB_PATNA_FARES = [
       "sedan": 12.5,
       "suv": 13.5
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-lakhisarai",
@@ -1457,14 +1487,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 125,
     "hatchback": 2299,
     "sedan": 2499,
-    "suv": 2899,
     "execSedan": 2749,
+    "suv": 2899,
     "luxSuv": 3199,
     "twoWay": {
       "hatchback": 4198,
       "sedan": 4598,
-      "suv": 5398,
       "execSedan": 5098,
+      "suv": 5398,
       "luxSuv": 5998
     },
     "perKm": {
@@ -1472,10 +1502,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 23.19
     },
-    "marketComparison": "4500–5500",
+    "marketComparison": "4498–5498",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.846Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-madhepura",
@@ -1487,14 +1517,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 230,
     "hatchback": 3299,
     "sedan": 3499,
-    "suv": 3899,
     "execSedan": 3749,
+    "suv": 3899,
     "luxSuv": 4199,
     "twoWay": {
       "hatchback": 6198,
       "sedan": 6598,
-      "suv": 7398,
       "execSedan": 7098,
+      "suv": 7398,
       "luxSuv": 7998
     },
     "perKm": {
@@ -1502,10 +1532,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.21,
       "suv": 16.95
     },
-    "marketComparison": "6300–7700",
+    "marketComparison": "6298–7698",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-madhubani",
@@ -1517,14 +1547,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 185,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
@@ -1532,10 +1562,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.21,
       "suv": 18.37
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-munger",
@@ -1547,14 +1577,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 190,
     "hatchback": 2699,
     "sedan": 2899,
-    "suv": 3299,
     "execSedan": 3149,
+    "suv": 3299,
     "luxSuv": 3599,
     "twoWay": {
       "hatchback": 4998,
       "sedan": 5398,
-      "suv": 6198,
       "execSedan": 5898,
+      "suv": 6198,
       "luxSuv": 6798
     },
     "perKm": {
@@ -1562,10 +1592,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.26,
       "suv": 17.36
     },
-    "marketComparison": "5200–6400",
+    "marketComparison": "5218–6378",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-muzaffarpur",
@@ -1577,14 +1607,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 78,
     "hatchback": 1600,
     "sedan": 1800,
-    "suv": 2200,
     "execSedan": 2050,
+    "suv": 2200,
     "luxSuv": 2500,
     "twoWay": {
       "hatchback": 2800,
       "sedan": 3200,
-      "suv": 4000,
       "execSedan": 3700,
+      "suv": 4000,
       "luxSuv": 4600
     },
     "perKm": {
@@ -1592,13 +1622,13 @@ const OTB_PATNA_FARES = [
       "sedan": 23.08,
       "suv": 28.21
     },
-    "marketComparison": "3200–4000",
+    "marketComparison": "3240–3960",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-nalanda-bihar-sharif",
+    "id": "patna-nalanda",
     "origin": "Patna",
     "destination": "Nalanda (Bihar Sharif)",
     "destCity": "Nalanda",
@@ -1607,14 +1637,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 95,
     "hatchback": 1799,
     "sedan": 1999,
-    "suv": 2399,
     "execSedan": 2249,
+    "suv": 2399,
     "luxSuv": 2699,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
-      "suv": 4398,
       "execSedan": 4098,
+      "suv": 4398,
       "luxSuv": 4998
     },
     "perKm": {
@@ -1622,10 +1652,10 @@ const OTB_PATNA_FARES = [
       "sedan": 21.04,
       "suv": 25.25
     },
-    "marketComparison": "3600–4400",
+    "marketComparison": "3598–4398",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-nawada",
@@ -1637,14 +1667,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 110,
     "hatchback": 2399,
     "sedan": 2599,
-    "suv": 2999,
     "execSedan": 2849,
+    "suv": 2999,
     "luxSuv": 3299,
     "twoWay": {
       "hatchback": 4398,
       "sedan": 4798,
-      "suv": 5598,
       "execSedan": 5298,
+      "suv": 5598,
       "luxSuv": 6198
     },
     "perKm": {
@@ -1652,10 +1682,10 @@ const OTB_PATNA_FARES = [
       "sedan": 23.63,
       "suv": 27.26
     },
-    "marketComparison": "4700–5700",
+    "marketComparison": "4678–5718",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-patna",
@@ -1664,28 +1694,28 @@ const OTB_PATNA_FARES = [
     "destCity": "Patna",
     "district": "Patna",
     "region": "Bihar districts",
-    "distanceKm": 0,
-    "hatchback": 0,
-    "sedan": 0,
-    "suv": 0,
-    "execSedan": 0,
-    "luxSuv": 0,
+    "distanceKm": 50,
+    "hatchback": 999,
+    "sedan": 1199,
+    "execSedan": 1449,
+    "suv": 1599,
+    "luxSuv": 1899,
     "twoWay": {
-      "hatchback": 0,
-      "sedan": 0,
-      "suv": 0,
-      "execSedan": 0,
-      "luxSuv": 0
+      "hatchback": 1598,
+      "sedan": 1998,
+      "execSedan": 2498,
+      "suv": 2798,
+      "luxSuv": 3398
     },
     "perKm": {
-      "hatchback": 0,
-      "sedan": 0,
-      "suv": 0
+      "hatchback": 19.98,
+      "sedan": 23.98,
+      "suv": 31.98
     },
-    "marketComparison": "0–0",
+    "marketComparison": "2158–2638",
     "note": "Quotation required; per-km rate not calculated",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-purnia",
@@ -1697,14 +1727,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -1712,13 +1742,13 @@ const OTB_PATNA_FARES = [
       "sedan": 13.33,
       "suv": 14.66
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-rohtas-sasaram",
+    "id": "patna-rohtas",
     "origin": "Patna",
     "destination": "Rohtas (Sasaram)",
     "destCity": "Rohtas",
@@ -1727,14 +1757,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 152,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
@@ -1742,10 +1772,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.73,
       "suv": 22.36
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-saharsa",
@@ -1757,14 +1787,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 220,
     "hatchback": 3299,
     "sedan": 3499,
-    "suv": 3899,
     "execSedan": 3749,
+    "suv": 3899,
     "luxSuv": 4199,
     "twoWay": {
       "hatchback": 6198,
       "sedan": 6598,
-      "suv": 7398,
       "execSedan": 7098,
+      "suv": 7398,
       "luxSuv": 7998
     },
     "perKm": {
@@ -1772,10 +1802,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.9,
       "suv": 17.72
     },
-    "marketComparison": "6300–7700",
+    "marketComparison": "6298–7698",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-samastipur",
@@ -1787,14 +1817,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 100,
     "hatchback": 1699,
     "sedan": 1899,
-    "suv": 2299,
     "execSedan": 2149,
+    "suv": 2299,
     "luxSuv": 2599,
     "twoWay": {
       "hatchback": 2998,
       "sedan": 3398,
-      "suv": 4198,
       "execSedan": 3898,
+      "suv": 4198,
       "luxSuv": 4798
     },
     "perKm": {
@@ -1802,13 +1832,13 @@ const OTB_PATNA_FARES = [
       "sedan": 18.99,
       "suv": 22.99
     },
-    "marketComparison": "3400–4200",
+    "marketComparison": "3418–4178",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-saran-chapra",
+    "id": "patna-saran",
     "origin": "Patna",
     "destination": "Saran (Chapra)",
     "destCity": "Saran",
@@ -1817,14 +1847,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 70,
     "hatchback": 1600,
     "sedan": 1800,
-    "suv": 2200,
     "execSedan": 2050,
+    "suv": 2200,
     "luxSuv": 2500,
     "twoWay": {
       "hatchback": 2800,
       "sedan": 3200,
-      "suv": 4000,
       "execSedan": 3700,
+      "suv": 4000,
       "luxSuv": 4600
     },
     "perKm": {
@@ -1832,10 +1862,10 @@ const OTB_PATNA_FARES = [
       "sedan": 25.71,
       "suv": 31.43
     },
-    "marketComparison": "3200–4000",
+    "marketComparison": "3240–3960",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-sheikhpura",
@@ -1847,14 +1877,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 115,
     "hatchback": 2099,
     "sedan": 2299,
-    "suv": 2699,
     "execSedan": 2549,
+    "suv": 2699,
     "luxSuv": 2999,
     "twoWay": {
       "hatchback": 3798,
       "sedan": 4198,
-      "suv": 4998,
       "execSedan": 4698,
+      "suv": 4998,
       "luxSuv": 5598
     },
     "perKm": {
@@ -1862,10 +1892,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 23.47
     },
-    "marketComparison": "4100–5100",
+    "marketComparison": "4138–5058",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-sheohar",
@@ -1877,14 +1907,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 125,
     "hatchback": 2299,
     "sedan": 2499,
-    "suv": 2899,
     "execSedan": 2749,
+    "suv": 2899,
     "luxSuv": 3199,
     "twoWay": {
       "hatchback": 4198,
       "sedan": 4598,
-      "suv": 5398,
       "execSedan": 5098,
+      "suv": 5398,
       "luxSuv": 5998
     },
     "perKm": {
@@ -1892,10 +1922,10 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 23.19
     },
-    "marketComparison": "4500–5500",
+    "marketComparison": "4498–5498",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-sitamarhi",
@@ -1907,14 +1937,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 135,
     "hatchback": 2299,
     "sedan": 2499,
-    "suv": 2899,
     "execSedan": 2749,
+    "suv": 2899,
     "luxSuv": 3199,
     "twoWay": {
       "hatchback": 4198,
       "sedan": 4598,
-      "suv": 5398,
       "execSedan": 5098,
+      "suv": 5398,
       "luxSuv": 5998
     },
     "perKm": {
@@ -1922,10 +1952,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18.51,
       "suv": 21.47
     },
-    "marketComparison": "4500–5500",
+    "marketComparison": "4498–5498",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-siwan",
@@ -1937,14 +1967,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 135,
     "hatchback": 2299,
     "sedan": 2499,
-    "suv": 2899,
     "execSedan": 2749,
+    "suv": 2899,
     "luxSuv": 3199,
     "twoWay": {
       "hatchback": 4198,
       "sedan": 4598,
-      "suv": 5398,
       "execSedan": 5098,
+      "suv": 5398,
       "luxSuv": 5998
     },
     "perKm": {
@@ -1952,10 +1982,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18.51,
       "suv": 21.47
     },
-    "marketComparison": "4500–5500",
+    "marketComparison": "4498–5498",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
     "id": "patna-supaul",
@@ -1967,14 +1997,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 225,
     "hatchback": 3499,
     "sedan": 3699,
-    "suv": 4099,
     "execSedan": 3949,
+    "suv": 4099,
     "luxSuv": 4399,
     "twoWay": {
       "hatchback": 6598,
       "sedan": 6998,
-      "suv": 7798,
       "execSedan": 7498,
+      "suv": 7798,
       "luxSuv": 8398
     },
     "perKm": {
@@ -1982,13 +2012,13 @@ const OTB_PATNA_FARES = [
       "sedan": 16.44,
       "suv": 18.22
     },
-    "marketComparison": "6700–8100",
+    "marketComparison": "6658–8138",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-vaishali-hajipur",
+    "id": "patna-vaishali",
     "origin": "Patna",
     "destination": "Vaishali (Hajipur)",
     "destCity": "Vaishali",
@@ -1997,14 +2027,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 25,
     "hatchback": 1299,
     "sedan": 1499,
-    "suv": 1899,
     "execSedan": 1749,
+    "suv": 1899,
     "luxSuv": 2199,
     "twoWay": {
       "hatchback": 2198,
       "sedan": 2598,
-      "suv": 3398,
       "execSedan": 3098,
+      "suv": 3398,
       "luxSuv": 3998
     },
     "perKm": {
@@ -2012,13 +2042,13 @@ const OTB_PATNA_FARES = [
       "sedan": 59.96,
       "suv": 75.96
     },
-    "marketComparison": "2700–3300",
+    "marketComparison": "2698–3298",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-west-champaran-bettiah",
+    "id": "patna-westchamparan",
     "origin": "Patna",
     "destination": "West Champaran (Bettiah)",
     "destCity": "West Champaran",
@@ -2027,14 +2057,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 240,
     "hatchback": 3099,
     "sedan": 3299,
-    "suv": 3699,
     "execSedan": 3549,
+    "suv": 3699,
     "luxSuv": 3999,
     "twoWay": {
       "hatchback": 5798,
       "sedan": 6198,
-      "suv": 6998,
       "execSedan": 6698,
+      "suv": 6998,
       "luxSuv": 7598
     },
     "perKm": {
@@ -2042,10 +2072,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.75,
       "suv": 15.41
     },
-    "marketComparison": "5900–7300",
+    "marketComparison": "5938–7258",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-rajgir",
@@ -2057,14 +2087,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 110,
     "hatchback": 1799,
     "sedan": 1999,
-    "suv": 2399,
     "execSedan": 2249,
+    "suv": 2399,
     "luxSuv": 2699,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
-      "suv": 4398,
       "execSedan": 4098,
+      "suv": 4398,
       "luxSuv": 4998
     },
     "perKm": {
@@ -2072,13 +2102,13 @@ const OTB_PATNA_FARES = [
       "sedan": 18.17,
       "suv": 21.81
     },
-    "marketComparison": "3600–4400",
+    "marketComparison": "3598–4398",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-bodh-gaya",
+    "id": "patna-bodhgaya",
     "origin": "Patna",
     "destination": "Bodh Gaya",
     "destCity": "Bodh Gaya",
@@ -2087,14 +2117,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 135,
     "hatchback": 1999,
     "sedan": 2199,
-    "suv": 2599,
     "execSedan": 2449,
+    "suv": 2599,
     "luxSuv": 2899,
     "twoWay": {
       "hatchback": 3598,
       "sedan": 3998,
-      "suv": 4798,
       "execSedan": 4498,
+      "suv": 4798,
       "luxSuv": 5398
     },
     "perKm": {
@@ -2102,10 +2132,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.29,
       "suv": 19.25
     },
-    "marketComparison": "4000–4800",
+    "marketComparison": "3958–4838",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-pawapuri",
@@ -2117,14 +2147,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 90,
     "hatchback": 1599,
     "sedan": 1799,
-    "suv": 2199,
     "execSedan": 2049,
+    "suv": 2199,
     "luxSuv": 2499,
     "twoWay": {
       "hatchback": 2798,
       "sedan": 3198,
-      "suv": 3998,
       "execSedan": 3698,
+      "suv": 3998,
       "luxSuv": 4598
     },
     "perKm": {
@@ -2132,13 +2162,13 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 24.43
     },
-    "marketComparison": "3200–4000",
+    "marketComparison": "3238–3958",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-nalanda-university",
+    "id": "patna-nalandauniversity",
     "origin": "Patna",
     "destination": "Nalanda University",
     "destCity": "Nalanda University",
@@ -2147,14 +2177,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 95,
     "hatchback": 1799,
     "sedan": 1999,
-    "suv": 2399,
     "execSedan": 2249,
+    "suv": 2399,
     "luxSuv": 2699,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
-      "suv": 4398,
       "execSedan": 4098,
+      "suv": 4398,
       "luxSuv": 4998
     },
     "perKm": {
@@ -2162,13 +2192,13 @@ const OTB_PATNA_FARES = [
       "sedan": 21.04,
       "suv": 25.25
     },
-    "marketComparison": "3600–4400",
+    "marketComparison": "3598–4398",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-vaishali-stupa",
+    "id": "patna-vaishalistupa",
     "origin": "Patna",
     "destination": "Vaishali Stupa",
     "destCity": "Vaishali Stupa",
@@ -2177,14 +2207,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 56,
     "hatchback": 1299,
     "sedan": 1499,
-    "suv": 1899,
     "execSedan": 1749,
+    "suv": 1899,
     "luxSuv": 2199,
     "twoWay": {
       "hatchback": 2198,
       "sedan": 2598,
-      "suv": 3398,
       "execSedan": 3098,
+      "suv": 3398,
       "luxSuv": 3998
     },
     "perKm": {
@@ -2192,13 +2222,13 @@ const OTB_PATNA_FARES = [
       "sedan": 26.77,
       "suv": 33.91
     },
-    "marketComparison": "2700–3300",
+    "marketComparison": "2698–3298",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-kesaria-stupa",
+    "id": "patna-kesariastupa",
     "origin": "Patna",
     "destination": "Kesaria Stupa",
     "destCity": "Kesaria Stupa",
@@ -2207,14 +2237,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 125,
     "hatchback": 2599,
     "sedan": 2799,
-    "suv": 3199,
     "execSedan": 3049,
+    "suv": 3199,
     "luxSuv": 3499,
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
-      "suv": 5998,
       "execSedan": 5698,
+      "suv": 5998,
       "luxSuv": 6598
     },
     "perKm": {
@@ -2222,13 +2252,13 @@ const OTB_PATNA_FARES = [
       "sedan": 22.39,
       "suv": 25.59
     },
-    "marketComparison": "5000–6200",
+    "marketComparison": "5038–6158",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-valmiki-tiger-reserve",
+    "id": "patna-valmikitigerreserve",
     "origin": "Patna",
     "destination": "Valmiki Tiger Reserve",
     "destCity": "Valmiki Tiger Reserve",
@@ -2237,14 +2267,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 310,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -2252,13 +2282,13 @@ const OTB_PATNA_FARES = [
       "sedan": 12.9,
       "suv": 14.19
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-kakolat-waterfall",
+    "id": "patna-kakolatwaterfall",
     "origin": "Patna",
     "destination": "Kakolat Waterfall",
     "destCity": "Kakolat Waterfall",
@@ -2267,14 +2297,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 150,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
@@ -2282,13 +2312,13 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 22.66
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-barabar-caves",
+    "id": "patna-barabarcaves",
     "origin": "Patna",
     "destination": "Barabar Caves",
     "destCity": "Barabar Caves",
@@ -2297,14 +2327,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 100,
     "hatchback": 1799,
     "sedan": 1999,
-    "suv": 2399,
     "execSedan": 2249,
+    "suv": 2399,
     "luxSuv": 2699,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
-      "suv": 4398,
       "execSedan": 4098,
+      "suv": 4398,
       "luxSuv": 4998
     },
     "perKm": {
@@ -2312,13 +2342,13 @@ const OTB_PATNA_FARES = [
       "sedan": 19.99,
       "suv": 23.99
     },
-    "marketComparison": "3600–4400",
+    "marketComparison": "3598–4398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-vikramshila-university",
+    "id": "patna-vikramshilauniversity",
     "origin": "Patna",
     "destination": "Vikramshila University",
     "destCity": "Vikramshila University",
@@ -2327,14 +2357,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 260,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -2342,10 +2372,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.38,
       "suv": 16.92
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-simultala",
@@ -2357,14 +2387,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 220,
     "hatchback": 3099,
     "sedan": 3299,
-    "suv": 3699,
     "execSedan": 3549,
+    "suv": 3699,
     "luxSuv": 3999,
     "twoWay": {
       "hatchback": 5798,
       "sedan": 6198,
-      "suv": 6998,
       "execSedan": 6698,
+      "suv": 6998,
       "luxSuv": 7598
     },
     "perKm": {
@@ -2372,10 +2402,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15,
       "suv": 16.81
     },
-    "marketComparison": "5900–7300",
+    "marketComparison": "5938–7258",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-sonepur",
@@ -2387,14 +2417,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 30,
     "hatchback": 1299,
     "sedan": 1499,
-    "suv": 1899,
     "execSedan": 1749,
+    "suv": 1899,
     "luxSuv": 2199,
     "twoWay": {
       "hatchback": 2198,
       "sedan": 2598,
-      "suv": 3398,
       "execSedan": 3098,
+      "suv": 3398,
       "luxSuv": 3998
     },
     "perKm": {
@@ -2402,13 +2432,13 @@ const OTB_PATNA_FARES = [
       "sedan": 49.97,
       "suv": 63.3
     },
-    "marketComparison": "2700–3300",
+    "marketComparison": "2698–3298",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-maner-sharif",
+    "id": "patna-manersharif",
     "origin": "Patna",
     "destination": "Maner Sharif",
     "destCity": "Maner Sharif",
@@ -2417,14 +2447,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 30,
     "hatchback": 999,
     "sedan": 1199,
-    "suv": 1599,
     "execSedan": 1449,
+    "suv": 1599,
     "luxSuv": 1899,
     "twoWay": {
       "hatchback": 1598,
       "sedan": 1998,
-      "suv": 2798,
       "execSedan": 2498,
+      "suv": 2798,
       "luxSuv": 3398
     },
     "perKm": {
@@ -2432,13 +2462,13 @@ const OTB_PATNA_FARES = [
       "sedan": 39.97,
       "suv": 53.3
     },
-    "marketComparison": "2200–2600",
+    "marketComparison": "2158–2638",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-mundeshwari-temple",
+    "id": "patna-mundeshwaritemple",
     "origin": "Patna",
     "destination": "Mundeshwari Temple",
     "destCity": "Mundeshwari Temple",
@@ -2447,28 +2477,28 @@ const OTB_PATNA_FARES = [
     "distanceKm": 200,
     "hatchback": 2799,
     "sedan": 2999,
-    "suv": 3399,
     "execSedan": 3249,
+    "suv": 3399,
     "luxSuv": 3699,
     "twoWay": {
       "hatchback": 5198,
       "sedan": 5598,
-      "suv": 6398,
       "execSedan": 6098,
+      "suv": 6398,
       "luxSuv": 6998
     },
     "perKm": {
-      "hatchback": 14,
-      "sedan": 15,
+      "hatchback": 13.99,
+      "sedan": 14.99,
       "suv": 17
     },
-    "marketComparison": "5400–6600",
+    "marketComparison": "5398–6598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-dehri-on-sone",
+    "id": "patna-dehrionsone",
     "origin": "Patna",
     "destination": "Dehri-on-Sone",
     "destCity": "Dehri-on-Sone",
@@ -2477,14 +2507,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 145,
     "hatchback": 2599,
     "sedan": 2799,
-    "suv": 3199,
     "execSedan": 3049,
+    "suv": 3199,
     "luxSuv": 3499,
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
-      "suv": 5998,
       "execSedan": 5698,
+      "suv": 5998,
       "luxSuv": 6598
     },
     "perKm": {
@@ -2492,40 +2522,40 @@ const OTB_PATNA_FARES = [
       "sedan": 19.3,
       "suv": 22.06
     },
-    "marketComparison": "5000–6200",
+    "marketComparison": "5038–6158",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-patna-sahib-gurudwara",
+    "id": "patna-patnasahibgurudwara",
     "origin": "Patna",
     "destination": "Patna Sahib Gurudwara",
     "destCity": "Patna Sahib Gurudwara",
     "district": "Patna Sahib Gurudwara",
     "region": "Bihar tourist destinations",
     "distanceKm": 10,
-    "hatchback": 0,
-    "sedan": 0,
-    "suv": 0,
-    "execSedan": 0,
-    "luxSuv": 0,
+    "hatchback": 999,
+    "sedan": 1199,
+    "execSedan": 1449,
+    "suv": 1599,
+    "luxSuv": 1899,
     "twoWay": {
-      "hatchback": 0,
-      "sedan": 0,
-      "suv": 0,
-      "execSedan": 0,
-      "luxSuv": 0
+      "hatchback": 1598,
+      "sedan": 1998,
+      "execSedan": 2498,
+      "suv": 2798,
+      "luxSuv": 3398
     },
     "perKm": {
-      "hatchback": 0,
-      "sedan": 0,
-      "suv": 0
+      "hatchback": 99.9,
+      "sedan": 119.9,
+      "suv": 159.9
     },
-    "marketComparison": "0–0",
+    "marketComparison": "2158–2638",
     "note": "Quotation required; per-km rate not calculated",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-varanasi",
@@ -2537,14 +2567,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 246,
     "hatchback": 3299,
     "sedan": 3499,
-    "suv": 3899,
     "execSedan": 3749,
+    "suv": 3899,
     "luxSuv": 4199,
     "twoWay": {
       "hatchback": 6198,
       "sedan": 6598,
-      "suv": 7398,
       "execSedan": 7098,
+      "suv": 7398,
       "luxSuv": 7998
     },
     "perKm": {
@@ -2552,10 +2582,10 @@ const OTB_PATNA_FARES = [
       "sedan": 14.22,
       "suv": 15.85
     },
-    "marketComparison": "6300–7700",
+    "marketComparison": "6298–7698",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-sarnath",
@@ -2567,14 +2597,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 260,
     "hatchback": 3299,
     "sedan": 3499,
-    "suv": 3899,
     "execSedan": 3749,
+    "suv": 3899,
     "luxSuv": 4199,
     "twoWay": {
       "hatchback": 6198,
       "sedan": 6598,
-      "suv": 7398,
       "execSedan": 7098,
+      "suv": 7398,
       "luxSuv": 7998
     },
     "perKm": {
@@ -2582,10 +2612,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.46,
       "suv": 15
     },
-    "marketComparison": "6300–7700",
+    "marketComparison": "6298–7698",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-gorakhpur",
@@ -2597,14 +2627,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 290,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -2612,10 +2642,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.79,
       "suv": 15.17
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-ayodhya",
@@ -2627,14 +2657,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 430,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -2642,10 +2672,10 @@ const OTB_PATNA_FARES = [
       "sedan": 11.63,
       "suv": 12.56
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-prayagraj",
@@ -2657,14 +2687,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 370,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -2672,10 +2702,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.51,
       "suv": 14.59
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-lucknow",
@@ -2687,14 +2717,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 540,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
@@ -2702,10 +2732,10 @@ const OTB_PATNA_FARES = [
       "sedan": 12.96,
       "suv": 13.7
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-kanpur",
@@ -2717,14 +2747,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 620,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -2732,10 +2762,10 @@ const OTB_PATNA_FARES = [
       "sedan": 14.51,
       "suv": 15.16
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-agra",
@@ -2747,14 +2777,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 900,
     "hatchback": 11799,
     "sedan": 11999,
-    "suv": 12399,
     "execSedan": 12249,
+    "suv": 12399,
     "luxSuv": 12699,
     "twoWay": {
       "hatchback": 23198,
       "sedan": 23598,
-      "suv": 24398,
       "execSedan": 24098,
+      "suv": 24398,
       "luxSuv": 24998
     },
     "perKm": {
@@ -2762,10 +2792,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.33,
       "suv": 13.78
     },
-    "marketComparison": "21600–26400",
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-mathura",
@@ -2777,14 +2807,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 1000,
     "hatchback": 12799,
     "sedan": 12999,
-    "suv": 13399,
     "execSedan": 13249,
+    "suv": 13399,
     "luxSuv": 13699,
     "twoWay": {
       "hatchback": 25198,
       "sedan": 25598,
-      "suv": 26398,
       "execSedan": 26098,
+      "suv": 26398,
       "luxSuv": 26998
     },
     "perKm": {
@@ -2792,10 +2822,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13,
       "suv": 13.4
     },
-    "marketComparison": "23400–28600",
+    "marketComparison": "23398–28598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-vrindavan",
@@ -2807,14 +2837,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 1000,
     "hatchback": 12799,
     "sedan": 12999,
-    "suv": 13399,
     "execSedan": 13249,
+    "suv": 13399,
     "luxSuv": 13699,
     "twoWay": {
       "hatchback": 25198,
       "sedan": 25598,
-      "suv": 26398,
       "execSedan": 26098,
+      "suv": 26398,
       "luxSuv": 26998
     },
     "perKm": {
@@ -2822,10 +2852,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13,
       "suv": 13.4
     },
-    "marketComparison": "23400–28600",
+    "marketComparison": "23398–28598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-chitrakoot",
@@ -2837,14 +2867,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 450,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
@@ -2852,10 +2882,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.55,
       "suv": 16.44
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-vindhyachal",
@@ -2867,14 +2897,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -2882,10 +2912,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.33,
       "suv": 14.66
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-kushinagar",
@@ -2897,14 +2927,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -2912,10 +2942,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.66,
       "suv": 18
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-shravasti",
@@ -2927,25 +2957,25 @@ const OTB_PATNA_FARES = [
     "distanceKm": 520,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
-      "hatchback": 13.08,
+      "hatchback": 13.07,
       "sedan": 13.46,
       "suv": 14.23
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-noida",
@@ -2957,14 +2987,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 1000,
     "hatchback": 11799,
     "sedan": 11999,
-    "suv": 12399,
     "execSedan": 12249,
+    "suv": 12399,
     "luxSuv": 12699,
     "twoWay": {
       "hatchback": 23198,
       "sedan": 23598,
-      "suv": 24398,
       "execSedan": 24098,
+      "suv": 24398,
       "luxSuv": 24998
     },
     "perKm": {
@@ -2972,10 +3002,10 @@ const OTB_PATNA_FARES = [
       "sedan": 12,
       "suv": 12.4
     },
-    "marketComparison": "21600–26400",
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-ranchi",
@@ -2987,14 +3017,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 335,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -3002,10 +3032,10 @@ const OTB_PATNA_FARES = [
       "sedan": 14.92,
       "suv": 16.12
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-deoghar",
@@ -3017,14 +3047,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 270,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -3032,10 +3062,10 @@ const OTB_PATNA_FARES = [
       "sedan": 14.81,
       "suv": 16.29
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-dhanbad",
@@ -3047,14 +3077,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -3062,13 +3092,13 @@ const OTB_PATNA_FARES = [
       "sedan": 13.33,
       "suv": 14.66
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-bokaro-steel-city",
+    "id": "patna-bokarosteelcity",
     "origin": "Patna",
     "destination": "Bokaro Steel City",
     "destCity": "Bokaro Steel City",
@@ -3077,14 +3107,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 320,
     "hatchback": 4299,
     "sedan": 4499,
-    "suv": 4899,
     "execSedan": 4749,
+    "suv": 4899,
     "luxSuv": 5199,
     "twoWay": {
       "hatchback": 8198,
       "sedan": 8598,
-      "suv": 9398,
       "execSedan": 9098,
+      "suv": 9398,
       "luxSuv": 9998
     },
     "perKm": {
@@ -3092,10 +3122,10 @@ const OTB_PATNA_FARES = [
       "sedan": 14.06,
       "suv": 15.31
     },
-    "marketComparison": "8100–9900",
+    "marketComparison": "8098–9898",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-jamshedpur",
@@ -3107,14 +3137,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 440,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
@@ -3122,10 +3152,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.91,
       "suv": 16.82
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-hazaribagh",
@@ -3137,14 +3167,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 260,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -3152,10 +3182,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15.38,
       "suv": 16.92
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-giridih",
@@ -3167,14 +3197,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 260,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -3182,13 +3212,13 @@ const OTB_PATNA_FARES = [
       "sedan": 15.38,
       "suv": 16.92
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-parasnath-hills",
+    "id": "patna-parasnathhills",
     "origin": "Patna",
     "destination": "Parasnath Hills",
     "destCity": "Parasnath Hills",
@@ -3197,14 +3227,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 280,
     "hatchback": 4299,
     "sedan": 4499,
-    "suv": 4899,
     "execSedan": 4749,
+    "suv": 4899,
     "luxSuv": 5199,
     "twoWay": {
       "hatchback": 8198,
       "sedan": 8598,
-      "suv": 9398,
       "execSedan": 9098,
+      "suv": 9398,
       "luxSuv": 9998
     },
     "perKm": {
@@ -3212,10 +3242,10 @@ const OTB_PATNA_FARES = [
       "sedan": 16.07,
       "suv": 17.5
     },
-    "marketComparison": "8100–9900",
+    "marketComparison": "8098–9898",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-netarhat",
@@ -3227,14 +3257,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 430,
     "hatchback": 7799,
     "sedan": 7999,
-    "suv": 8399,
     "execSedan": 8249,
+    "suv": 8399,
     "luxSuv": 8699,
     "twoWay": {
       "hatchback": 15198,
       "sedan": 15598,
-      "suv": 16398,
       "execSedan": 16098,
+      "suv": 16398,
       "luxSuv": 16998
     },
     "perKm": {
@@ -3242,13 +3272,13 @@ const OTB_PATNA_FARES = [
       "sedan": 18.6,
       "suv": 19.53
     },
-    "marketComparison": "14400–17600",
+    "marketComparison": "14398–17598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-betla-national-park",
+    "id": "patna-betlanationalpark",
     "origin": "Patna",
     "destination": "Betla National Park",
     "destCity": "Betla National Park",
@@ -3257,14 +3287,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 400,
     "hatchback": 7799,
     "sedan": 7999,
-    "suv": 8399,
     "execSedan": 8249,
+    "suv": 8399,
     "luxSuv": 8699,
     "twoWay": {
       "hatchback": 15198,
       "sedan": 15598,
-      "suv": 16398,
       "execSedan": 16098,
+      "suv": 16398,
       "luxSuv": 16998
     },
     "perKm": {
@@ -3272,10 +3302,10 @@ const OTB_PATNA_FARES = [
       "sedan": 20,
       "suv": 21
     },
-    "marketComparison": "14400–17600",
+    "marketComparison": "14398–17598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-dumka",
@@ -3287,14 +3317,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 4299,
     "sedan": 4499,
-    "suv": 4899,
     "execSedan": 4749,
+    "suv": 4899,
     "luxSuv": 5199,
     "twoWay": {
       "hatchback": 8198,
       "sedan": 8598,
-      "suv": 9398,
       "execSedan": 9098,
+      "suv": 9398,
       "luxSuv": 9998
     },
     "perKm": {
@@ -3302,10 +3332,10 @@ const OTB_PATNA_FARES = [
       "sedan": 15,
       "suv": 16.33
     },
-    "marketComparison": "8100–9900",
+    "marketComparison": "8098–9898",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-ramgarh",
@@ -3317,14 +3347,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 300,
     "hatchback": 4299,
     "sedan": 4499,
-    "suv": 4899,
     "execSedan": 4749,
+    "suv": 4899,
     "luxSuv": 5199,
     "twoWay": {
       "hatchback": 8198,
       "sedan": 8598,
-      "suv": 9398,
       "execSedan": 9098,
+      "suv": 9398,
       "luxSuv": 9998
     },
     "perKm": {
@@ -3332,13 +3362,13 @@ const OTB_PATNA_FARES = [
       "sedan": 15,
       "suv": 16.33
     },
-    "marketComparison": "8100–9900",
+    "marketComparison": "8098–9898",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-patratu-valley",
+    "id": "patna-patratuvalley",
     "origin": "Patna",
     "destination": "Patratu Valley",
     "destCity": "Patratu Valley",
@@ -3347,14 +3377,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 320,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -3362,13 +3392,13 @@ const OTB_PATNA_FARES = [
       "sedan": 15.62,
       "suv": 16.87
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-baidyanath-dham",
+    "id": "patna-baidyanathdham",
     "origin": "Patna",
     "destination": "Baidyanath Dham",
     "destCity": "Baidyanath Dham",
@@ -3377,14 +3407,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 270,
     "hatchback": 3799,
     "sedan": 3999,
-    "suv": 4399,
     "execSedan": 4249,
+    "suv": 4399,
     "luxSuv": 4699,
     "twoWay": {
       "hatchback": 7198,
       "sedan": 7598,
-      "suv": 8398,
       "execSedan": 8098,
+      "suv": 8398,
       "luxSuv": 8998
     },
     "perKm": {
@@ -3392,13 +3422,13 @@ const OTB_PATNA_FARES = [
       "sedan": 14.81,
       "suv": 16.29
     },
-    "marketComparison": "7200–8800",
+    "marketComparison": "7198–8798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-hundru-falls",
+    "id": "patna-hundrufalls",
     "origin": "Patna",
     "destination": "Hundru Falls",
     "destCity": "Hundru Falls",
@@ -3407,14 +3437,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 360,
     "hatchback": 4799,
     "sedan": 4999,
-    "suv": 5399,
     "execSedan": 5249,
+    "suv": 5399,
     "luxSuv": 5699,
     "twoWay": {
       "hatchback": 9198,
       "sedan": 9598,
-      "suv": 10398,
       "execSedan": 10098,
+      "suv": 10398,
       "luxSuv": 10998
     },
     "perKm": {
@@ -3422,10 +3452,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.89,
       "suv": 15
     },
-    "marketComparison": "9000–11000",
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-kolkata",
@@ -3437,14 +3467,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 653,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -3452,10 +3482,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.78,
       "suv": 14.39
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Source-checked reference; route may vary",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-howrah",
@@ -3467,14 +3497,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 658,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -3482,10 +3512,10 @@ const OTB_PATNA_FARES = [
       "sedan": 13.68,
       "suv": 14.28
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-durgapur",
@@ -3497,14 +3527,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 400,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
@@ -3512,10 +3542,10 @@ const OTB_PATNA_FARES = [
       "sedan": 17.5,
       "suv": 18.5
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-asansol",
@@ -3527,14 +3557,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 330,
     "hatchback": 5799,
     "sedan": 5999,
-    "suv": 6399,
     "execSedan": 6249,
+    "suv": 6399,
     "luxSuv": 6699,
     "twoWay": {
       "hatchback": 11198,
       "sedan": 11598,
-      "suv": 12398,
       "execSedan": 12098,
+      "suv": 12398,
       "luxSuv": 12998
     },
     "perKm": {
@@ -3542,10 +3572,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18.18,
       "suv": 19.39
     },
-    "marketComparison": "10800–13200",
+    "marketComparison": "10798–13198",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-siliguri",
@@ -3557,14 +3587,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 560,
     "hatchback": 11799,
     "sedan": 11999,
-    "suv": 12399,
     "execSedan": 12249,
+    "suv": 12399,
     "luxSuv": 12699,
     "twoWay": {
       "hatchback": 23198,
       "sedan": 23598,
-      "suv": 24398,
       "execSedan": 24098,
+      "suv": 24398,
       "luxSuv": 24998
     },
     "perKm": {
@@ -3572,10 +3602,10 @@ const OTB_PATNA_FARES = [
       "sedan": 21.43,
       "suv": 22.14
     },
-    "marketComparison": "21600–26400",
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-darjeeling",
@@ -3587,14 +3617,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 650,
     "hatchback": 14799,
     "sedan": 14999,
-    "suv": 15399,
     "execSedan": 15249,
+    "suv": 15399,
     "luxSuv": 15699,
     "twoWay": {
       "hatchback": 29198,
       "sedan": 29598,
-      "suv": 30398,
       "execSedan": 30098,
+      "suv": 30398,
       "luxSuv": 30998
     },
     "perKm": {
@@ -3602,10 +3632,10 @@ const OTB_PATNA_FARES = [
       "sedan": 23.08,
       "suv": 23.69
     },
-    "marketComparison": "27000–33000",
+    "marketComparison": "26998–32998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-digha",
@@ -3617,14 +3647,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 650,
     "hatchback": 11799,
     "sedan": 11999,
-    "suv": 12399,
     "execSedan": 12249,
+    "suv": 12399,
     "luxSuv": 12699,
     "twoWay": {
       "hatchback": 23198,
       "sedan": 23598,
-      "suv": 24398,
       "execSedan": 24098,
+      "suv": 24398,
       "luxSuv": 24998
     },
     "perKm": {
@@ -3632,10 +3662,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18.46,
       "suv": 19.08
     },
-    "marketComparison": "21600–26400",
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-shantiniketan",
@@ -3647,14 +3677,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 500,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -3662,10 +3692,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18,
       "suv": 18.8
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-malda",
@@ -3677,14 +3707,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 350,
     "hatchback": 7799,
     "sedan": 7999,
-    "suv": 8399,
     "execSedan": 8249,
+    "suv": 8399,
     "luxSuv": 8699,
     "twoWay": {
       "hatchback": 15198,
       "sedan": 15598,
-      "suv": 16398,
       "execSedan": 16098,
+      "suv": 16398,
       "luxSuv": 16998
     },
     "perKm": {
@@ -3692,10 +3722,10 @@ const OTB_PATNA_FARES = [
       "sedan": 22.85,
       "suv": 24
     },
-    "marketComparison": "14400–17600",
+    "marketComparison": "14398–17598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-murshidabad",
@@ -3707,14 +3737,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 400,
     "hatchback": 7799,
     "sedan": 7999,
-    "suv": 8399,
     "execSedan": 8249,
+    "suv": 8399,
     "luxSuv": 8699,
     "twoWay": {
       "hatchback": 15198,
       "sedan": 15598,
-      "suv": 16398,
       "execSedan": 16098,
+      "suv": 16398,
       "luxSuv": 16998
     },
     "perKm": {
@@ -3722,10 +3752,10 @@ const OTB_PATNA_FARES = [
       "sedan": 20,
       "suv": 21
     },
-    "marketComparison": "14400–17600",
+    "marketComparison": "14398–17598",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-tarapith",
@@ -3737,14 +3767,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 350,
     "hatchback": 6799,
     "sedan": 6999,
-    "suv": 7399,
     "execSedan": 7249,
+    "suv": 7399,
     "luxSuv": 7699,
     "twoWay": {
       "hatchback": 13198,
       "sedan": 13598,
-      "suv": 14398,
       "execSedan": 14098,
+      "suv": 14398,
       "luxSuv": 14998
     },
     "perKm": {
@@ -3752,10 +3782,10 @@ const OTB_PATNA_FARES = [
       "sedan": 20,
       "suv": 21.14
     },
-    "marketComparison": "12600–15400",
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-bishnupur",
@@ -3767,14 +3797,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 500,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -3782,10 +3812,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18,
       "suv": 18.8
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-mayapur",
@@ -3797,14 +3827,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 500,
     "hatchback": 8799,
     "sedan": 8999,
-    "suv": 9399,
     "execSedan": 9249,
+    "suv": 9399,
     "luxSuv": 9699,
     "twoWay": {
       "hatchback": 17198,
       "sedan": 17598,
-      "suv": 18398,
       "execSedan": 18098,
+      "suv": 18398,
       "luxSuv": 18998
     },
     "perKm": {
@@ -3812,10 +3842,10 @@ const OTB_PATNA_FARES = [
       "sedan": 18,
       "suv": 18.8
     },
-    "marketComparison": "16200–19800",
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
     "id": "patna-kalimpong",
@@ -3827,14 +3857,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 650,
     "hatchback": 14799,
     "sedan": 14999,
-    "suv": 15399,
     "execSedan": 15249,
+    "suv": 15399,
     "luxSuv": 15699,
     "twoWay": {
       "hatchback": 29198,
       "sedan": 29598,
-      "suv": 30398,
       "execSedan": 30098,
+      "suv": 30398,
       "luxSuv": 30998
     },
     "perKm": {
@@ -3842,13 +3872,13 @@ const OTB_PATNA_FARES = [
       "sedan": 23.08,
       "suv": 23.69
     },
-    "marketComparison": "27000–33000",
+    "marketComparison": "26998–32998",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-new-jalpaiguri",
+    "id": "patna-newjalpaiguri",
     "origin": "Patna",
     "destination": "New Jalpaiguri",
     "destCity": "New Jalpaiguri",
@@ -3857,14 +3887,14 @@ const OTB_PATNA_FARES = [
     "distanceKm": 560,
     "hatchback": 11799,
     "sedan": 11999,
-    "suv": 12399,
     "execSedan": 12249,
+    "suv": 12399,
     "luxSuv": 12699,
     "twoWay": {
       "hatchback": 23198,
       "sedan": 23598,
-      "suv": 24398,
       "execSedan": 24098,
+      "suv": 24398,
       "luxSuv": 24998
     },
     "perKm": {
@@ -3872,10 +3902,10 @@ const OTB_PATNA_FARES = [
       "sedan": 21.43,
       "suv": 22.14
     },
-    "marketComparison": "21600–26400",
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "active": true,
-    "updatedAt": "2026-10-19T06:30:26.847Z"
+    "updatedAt": "2026-10-19T07:27:58.138Z"
   }
 ];
 

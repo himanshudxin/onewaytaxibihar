@@ -892,6 +892,28 @@
   border-color: rgba(52, 211, 153, 0.3);
 }
 
+.autocomplete-type-pill.badge-locality {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="dark"] .autocomplete-type-pill.badge-locality {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.autocomplete-item-icon.locality {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+[data-theme="dark"] .autocomplete-item-icon.locality {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
 /* Category Icons */
 .autocomplete-item-icon.airport {
   background: rgba(124, 58, 237, 0.1);

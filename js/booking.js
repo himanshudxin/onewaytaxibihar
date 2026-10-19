@@ -4,6 +4,16 @@
  * Dynamic All-Inclusive Fares, Passenger Checkout, and Ticket Confirmation.
  */
 
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 class BookingManager {
   constructor() {
     this.tripType = "oneway"; // "oneway" | "roundtrip" | "local" | "airport"
@@ -46,6 +56,12 @@ class BookingManager {
     this.paymentMethod = "Cash / UPI to Driver";
     this.appliedCouponCode = "";
     this.appliedCouponDiscount = 0;
+
+    // High-Accuracy Geocoding & Routing Cache
+    this._liveLocationCache = new Map();
+    this._liveResults = [];
+    this._osrmCache = new Map();
+    this._liveDebounceTimer = null;
   }
 
   init() {
@@ -615,18 +631,56 @@ class BookingManager {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         const nearest = this.findNearestDistrict(lat, lng) || OTB_CITIES.find(c => c.id === "patna") || OTB_CITIES[0];
-        this.originCity = nearest;
+
+        let formattedName = `${nearest.name} (${nearest.hindiName || ''}), ${nearest.state}`;
+        let resolvedLocation = nearest;
+
+        // Doorstep street-level reverse geocoding (Uber / Ola accuracy)
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2400);
+          const r = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (r.ok) {
+            const geo = await r.json();
+            if (geo && geo.features && geo.features.length > 0) {
+              const p = geo.features[0].properties || {};
+              const street = p.name || p.street;
+              const city = p.city || p.district || p.county || nearest.name;
+              const state = p.state || "Bihar";
+              const postcode = p.postcode ? ` (${p.postcode})` : "";
+              if (street && street !== city) {
+                formattedName = `${street}, ${city}, ${state}${postcode}`;
+                resolvedLocation = {
+                  id: `gps_${Math.floor(lat * 10000)}_${Math.floor(lng * 10000)}`,
+                  name: street,
+                  displayName: formattedName,
+                  district: city,
+                  state: state,
+                  lat: lat,
+                  lng: lng,
+                  type: "locality",
+                  typeLabel: "Current Location"
+                };
+              }
+            }
+          }
+        } catch (e) {
+          // Gracefully fallback to nearest district on network delay
+        }
+
+        this.originCity = resolvedLocation;
 
         if (pickupInput) {
-          pickupInput.value = `${nearest.name} (${nearest.hindiName}), ${nearest.state}`;
+          pickupInput.value = formattedName;
         }
         if (pickupDropdown) pickupDropdown.style.display = "none";
         this.clearGpsLocatingUI();
-        window.showToast(`Location detected: ${nearest.name} (${nearest.hindiName})`, "success");
+        window.showToast(`📍 Location: ${resolvedLocation.name}`, "success");
 
         this.calculateAndRenderFares();
 
@@ -708,19 +762,23 @@ class BookingManager {
       if (c.type === "subdivision" || c.type === "town") {
         return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>`;
       }
+      if (c.type === "locality") {
+        return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+      }
       // Default: Official District Seat
       return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-3M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1"/></svg>`;
     };
 
     // Category Type Badge Helper
     const getTypeBadge = (c) => {
-      const label = c.typeLabel || (c.type === "subdivision" ? "Sub-Division" : (c.type === "district" ? "District HQ" : c.state));
+      const label = c.typeLabel || (c.type === "subdivision" ? "Sub-Division" : (c.type === "district" ? "District HQ" : (c.type === "locality" ? "Locality" : c.state)));
       let cls = "badge-district";
       if (c.type === "airport") cls = "badge-airport";
       else if (c.type === "railway") cls = "badge-railway";
       else if (c.type === "subdivision") cls = "badge-subdivision";
       else if (c.type === "town") cls = "badge-town";
       else if (c.type === "outstation") cls = "badge-outstation";
+      else if (c.type === "locality") cls = "badge-locality";
       return `<span class="autocomplete-type-pill ${cls}">${label}</span>`;
     };
 
@@ -857,6 +915,21 @@ class BookingManager {
       const matches = scoredMatches.map(s => s.item);
 
       if (matches.length === 0) {
+        if (cleanLower.length >= 2) {
+          dropdownEl.innerHTML = `
+            <div class="autocomplete-group-header">
+              <span>SEARCHING DOORSTEP STREETS &amp; LOCALITIES</span>
+            </div>
+            <div style="padding: 16px; font-size: 13px; color: var(--owc-text-muted); display:flex; align-items:center; gap:10px;">
+              <span class="pro-spinner-sm" style="display:inline-block; width:14px; height:14px; border:2px solid #009af4; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite;"></span>
+              <span>Finding exact streets or landmarks for "${escapeHtml(query)}"...</span>
+            </div>
+          `;
+          dropdownEl.style.display = "block";
+          this.searchLivePhoton(query, type, dropdownEl, null);
+          return;
+        }
+
         dropdownEl.innerHTML = `
           <div class="autocomplete-no-match">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin: 0 auto 8px; color: var(--owc-text-muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
@@ -870,10 +943,10 @@ class BookingManager {
 
       dropdownEl.innerHTML = `
         <div class="autocomplete-group-header">
-          <span>MATCHING LOCATIONS (${matches.length})</span>
+          <span>MATCHING CITIES &amp; HUBS (${matches.length})</span>
           <span style="font-size: 10px; opacity: 0.8;">Use ↑ ↓ keys to navigate</span>
         </div>
-        ${matches.slice(0, 15).map((c, idx) => {
+        ${matches.slice(0, 10).map((c, idx) => {
           const meta = type === "drop" ? getRouteMeta(c) : { dist: null, duration: null };
           const districtLine = c.district && c.district !== c.name 
             ? `${c.typeLabel || 'Sub-Division'} • ${c.district} District`
@@ -905,6 +978,10 @@ class BookingManager {
         }).join("")}
       `;
       dropdownEl.style.display = "block";
+
+      if (cleanLower.length >= 2) {
+        this.searchLivePhoton(query, type, dropdownEl, dropdownEl.innerHTML);
+      }
       return;
     }
 
@@ -1203,6 +1280,192 @@ class BookingManager {
     this.updateCheckFareButtonState();
   }
 
+  selectCustomLocation(type, idx) {
+    const loc = (this._liveResults || [])[idx];
+    if (!loc) return;
+
+    const formattedName = loc.displayName || loc.name;
+
+    if (type === "pickup") {
+      this.originCity = loc;
+      const input = document.getElementById("input-pickup");
+      if (input) input.value = formattedName;
+      const dd = document.getElementById("pickup-dropdown");
+      if (dd) dd.style.display = "none";
+      this.clearGpsLocatingUI();
+
+      // Smoothly transition to Drop if drop is currently empty
+      const dropInput = document.getElementById("input-drop");
+      if (dropInput && !dropInput.value.trim()) {
+        setTimeout(() => {
+          dropInput.focus();
+          const dropDropdown = document.getElementById("drop-dropdown");
+          this.handleCitySearch("drop", "", dropDropdown, true);
+        }, 150);
+      }
+    } else {
+      this.destCity = loc;
+      const input = document.getElementById("input-drop");
+      if (input) input.value = formattedName;
+      const dd = document.getElementById("drop-dropdown");
+      if (dd) dd.style.display = "none";
+
+      const phoneInput = document.getElementById("input-fare-phone");
+      if (phoneInput && !phoneInput.value.trim()) {
+        setTimeout(() => {
+          phoneInput.focus();
+        }, 200);
+      }
+    }
+
+    const phoneInput = document.getElementById("input-fare-phone");
+    const rawPhone = (phoneInput?.value || this.userPhone || "").replace(/\D/g, "");
+    const hasValidPhone = rawPhone.length === 10 && /^[6-9]\d{9}$/.test(rawPhone);
+
+    if (this.originCity && this.destCity && hasValidPhone) {
+      this.isFareUnlocked = true;
+      const section = document.getElementById("cab-selection-section");
+      const mapSection = document.getElementById("route-map-section");
+      if (section) {
+        section.classList.remove("fare-section-closed");
+        section.classList.add("fare-section-open");
+      }
+      if (mapSection) {
+        mapSection.classList.remove("fare-section-closed");
+        mapSection.classList.add("fare-section-open");
+      }
+      this.calculateAndRenderFares();
+    } else {
+      this.calculateAndRenderFares();
+    }
+    this.updateCheckFareButtonState();
+  }
+
+  searchLivePhoton(query, type, dropdownEl, baseMatchesHtml) {
+    const trimmed = (query || "").trim();
+    if (trimmed.length < 2) return;
+
+    const cacheKey = trimmed.toLowerCase();
+    if (this._liveLocationCache && this._liveLocationCache.has(cacheKey)) {
+      this.renderLiveResults(this._liveLocationCache.get(cacheKey), type, dropdownEl, baseMatchesHtml, query);
+      return;
+    }
+
+    clearTimeout(this._liveDebounceTimer);
+    this._liveDebounceTimer = setTimeout(async () => {
+      try {
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(trimmed)}&lat=25.5941&lon=85.1376&limit=6&lang=en`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2800);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data || !data.features || !data.features.length) {
+          if (!baseMatchesHtml) {
+            dropdownEl.innerHTML = `
+              <div class="autocomplete-no-match">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin: 0 auto 8px; color: var(--owc-text-muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                <div class="no-match-title">No location matching "${escapeHtml(query)}"</div>
+                <div class="no-match-sub">Try searching with a colony name, landmark (e.g. Boring Road, Kankarbagh, AIIMS, Zero Mile) or district.</div>
+              </div>
+            `;
+          }
+          return;
+        }
+
+        const formatted = [];
+        for (const f of data.features) {
+          const p = f.properties || {};
+          const coords = f.geometry?.coordinates;
+          if (!coords || coords.length < 2) continue;
+
+          const name = p.name || p.street;
+          if (!name) continue;
+
+          if (p.countrycode && p.countrycode.toUpperCase() !== "IN") continue;
+
+          const city = p.city || p.district || p.county || (p.state === "Bihar" ? "Patna" : "");
+          const state = p.state || "Bihar";
+          const postcode = p.postcode || "";
+
+          const displayParts = [name];
+          if (city && city.toLowerCase() !== name.toLowerCase()) displayParts.push(city);
+          if (state && state.toLowerCase() !== name.toLowerCase() && state.toLowerCase() !== city.toLowerCase()) displayParts.push(state);
+          if (postcode) displayParts.push(postcode);
+          const displayName = displayParts.join(", ");
+
+          formatted.push({
+            id: `photon_${p.osm_id || Math.floor(Math.random() * 100000)}`,
+            name: name,
+            displayName: displayName,
+            district: city || name,
+            state: state,
+            lat: coords[1],
+            lng: coords[0],
+            tag: p.osm_value ? p.osm_value.replace(/_/g, ' ') : 'Doorstep Locality',
+            type: 'locality',
+            typeLabel: 'Locality'
+          });
+        }
+
+        if (formatted.length > 0) {
+          if (!this._liveLocationCache) this._liveLocationCache = new Map();
+          this._liveLocationCache.set(cacheKey, formatted);
+          this.renderLiveResults(formatted, type, dropdownEl, baseMatchesHtml, query);
+        } else if (!baseMatchesHtml) {
+          dropdownEl.innerHTML = `
+            <div class="autocomplete-no-match">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin: 0 auto 8px; color: var(--owc-text-muted);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <div class="no-match-title">No location matching "${escapeHtml(query)}"</div>
+              <div class="no-match-sub">Try searching with a colony name, landmark (e.g. Boring Road, Kankarbagh, AIIMS, Zero Mile) or district.</div>
+            </div>
+          `;
+        }
+      } catch (err) {
+        // Keep existing results cleanly on network timeout
+      }
+    }, 220);
+  }
+
+  renderLiveResults(results, type, dropdownEl, baseMatchesHtml, query) {
+    if (!dropdownEl || dropdownEl.style.display === "none") return;
+    this._liveResults = results;
+
+    const liveHtml = `
+      <div class="autocomplete-group-header" style="border-top: 1px solid var(--owc-border-light); background: rgba(16, 185, 129, 0.05); color: #059669;">
+        <span>DOORSTEP LOCALITIES &amp; STREETS (${results.length})</span>
+        <span style="font-size: 10px; opacity: 0.85;">GPS Verified</span>
+      </div>
+      ${results.map((loc, idx) => `
+        <div class="autocomplete-item" onclick="window.bookingManager.selectCustomLocation('${type}', ${idx})">
+          <div class="autocomplete-item-left">
+            <div class="autocomplete-item-icon locality">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <div class="autocomplete-item-meta">
+              <div class="autocomplete-item-name">${escapeHtml(loc.name)}</div>
+              <div class="autocomplete-item-state">${escapeHtml(loc.displayName)}</div>
+            </div>
+          </div>
+          <div class="autocomplete-item-right">
+            <span class="autocomplete-type-pill badge-locality">Locality</span>
+          </div>
+        </div>
+      `).join("")}
+    `;
+
+    if (baseMatchesHtml) {
+      dropdownEl.innerHTML = baseMatchesHtml + liveHtml;
+    } else {
+      dropdownEl.innerHTML = liveHtml;
+    }
+  }
+
   /* ==========================================================================
      EVENT LISTENERS & TAB CONTROLLERS
      ========================================================================== */
@@ -1416,8 +1679,22 @@ class BookingManager {
 
     const tripPayload = {
       tripType: this.tripType || "oneway",
-      origin: { id: this.originCity.id, name: this.originCity.name },
-      dest: { id: this.destCity.id, name: this.destCity.name },
+      origin: {
+        id: this.originCity.id,
+        name: this.originCity.name,
+        displayName: this.originCity.displayName || this.originCity.name,
+        type: this.originCity.type || "district",
+        lat: this.originCity.lat,
+        lng: this.originCity.lng
+      },
+      dest: {
+        id: this.destCity.id,
+        name: this.destCity.name,
+        displayName: this.destCity.displayName || this.destCity.name,
+        type: this.destCity.type || "district",
+        lat: this.destCity.lat,
+        lng: this.destCity.lng
+      },
       distanceKm: this.calculatedDistanceKm || 104,
       duration: this.calculatedDuration || "2h 15m",
       pickupDate: this.pickupDate || new Date().toISOString().split("T")[0],
@@ -1740,8 +2017,77 @@ class BookingManager {
     }
     this.updateCheckFareButtonState();
 
+    // High-Accuracy OSRM Road Distance Calculation (Real driving highway route)
+    if (this.originCity && this.destCity && this.originCity.lat && this.destCity.lat) {
+      this.fetchExactRoadDistance(this.originCity, this.destCity);
+    }
+
     // Fetch and display 2026 AI Mobility Intelligence
     this.fetchAiIntelligence();
+  }
+
+  async fetchExactRoadDistance(origin, dest) {
+    if (!origin || !dest || !origin.lat || !origin.lng || !dest.lat || !dest.lng) return;
+    if (this.tripType === "local") return; // Local hourly packages use standard 80 KM allowance
+
+    const cacheKey = `${Number(origin.lat).toFixed(4)},${Number(origin.lng).toFixed(4)}_${Number(dest.lat).toFixed(4)},${Number(dest.lng).toFixed(4)}`;
+    if (this._osrmCache && this._osrmCache.has(cacheKey)) {
+      const cached = this._osrmCache.get(cacheKey);
+      this.applyExactRoadMetrics(cached.distanceKm, cached.duration, cached.toll);
+      return;
+    }
+
+    try {
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${dest.lng},${dest.lat}?overview=false`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const res = await fetch(osrmUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.routes && data.routes[0]) {
+          const r = data.routes[0];
+          const roadKm = Math.max(25, Math.round(r.distance / 1000));
+          const totalSec = Math.round(r.duration);
+          const hrs = Math.floor(totalSec / 3600);
+          const mins = Math.round((totalSec % 3600) / 60);
+          const duration = `${hrs > 0 ? hrs + "h " : ""}${mins}m`;
+          const toll = Math.round(roadKm * 1.1);
+
+          if (!this._osrmCache) this._osrmCache = new Map();
+          this._osrmCache.set(cacheKey, { distanceKm: roadKm, duration, toll });
+
+          this.applyExactRoadMetrics(roadKm, duration, toll);
+        }
+      }
+    } catch (e) {
+      // Gracefully maintain preliminary distance on network timeout or offline
+    }
+  }
+
+  applyExactRoadMetrics(roadKm, duration, toll) {
+    if (Math.abs(this.calculatedDistanceKm - roadKm) >= 1) {
+      this.calculatedDistanceKm = roadKm;
+      this.calculatedDuration = duration;
+      this.calculatedToll = toll;
+
+      const distBadge = document.getElementById("rf-dist-badge");
+      const timeBadge = document.getElementById("rf-time-badge");
+      const tollBadge = document.getElementById("rf-toll-badge");
+      if (distBadge) distBadge.textContent = this.tripType === "local" ? "80 KM Package" : `${this.calculatedDistanceKm} KM Highway Route`;
+      if (timeBadge) timeBadge.textContent = this.tripType === "local" ? "8 Hours" : `~${this.calculatedDuration}`;
+      if (tollBadge) tollBadge.textContent = "Tolls, Fastag & GST Included";
+
+      if (window.onewayMap && typeof window.onewayMap.updateRoute === "function") {
+        try {
+          window.onewayMap.updateRoute(this.originCity, this.destCity, this.calculatedDistanceKm);
+        } catch (e) {}
+      }
+
+      this.renderFleetCards();
+      this.updateStickyBarFare();
+    }
   }
 
   async fetchAiIntelligence() {

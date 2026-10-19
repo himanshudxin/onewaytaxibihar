@@ -958,6 +958,20 @@
       document.getElementById('txt-base-fare').textContent = `₹${(cab.price - Math.round(cab.price * 0.05)).toLocaleString('en-IN')}`;
       document.getElementById('txt-total-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
 
+      // Pre-fill Doorstep Addresses if custom location was selected
+      const pickupAddrInput = document.getElementById('input-pickup-addr');
+      if (pickupAddrInput && !pickupAddrInput.value && trip.origin) {
+        if (trip.origin.displayName && trip.origin.type === 'locality') {
+          pickupAddrInput.value = trip.origin.displayName;
+        }
+      }
+      const dropAddrInput = document.getElementById('input-drop-addr');
+      if (dropAddrInput && !dropAddrInput.value && trip.dest) {
+        if (trip.dest.displayName && trip.dest.type === 'locality') {
+          dropAddrInput.value = trip.dest.displayName;
+        }
+      }
+
       // Pre-fill phone if provided
       const phoneInput = document.getElementById('input-rider-phone');
       const phoneValidBadge = document.getElementById('rider-phone-valid-indicator');

@@ -441,11 +441,15 @@
 
       const originName = trip?.origin?.name || urlParams.get('from') || 'Patna';
       const destName = trip?.dest?.name || urlParams.get('to') || 'Gaya';
-      const originId = trip?.origin?.id || urlParams.get('fromId') || 'patna';
-      const destId = trip?.dest?.id || urlParams.get('toId') || 'gaya';
       const tripType = trip?.tripType || urlParams.get('type') || 'oneway';
       const pickupDate = urlParams.get('date') || trip?.pickupDate || new Date().toISOString().split('T')[0];
       const displayDate = urlParams.get('displayDate') || trip?.displayDate || pickupDate;
+
+      // Accurately resolve city objects from names or IDs
+      const originObj = (typeof resolveCity === 'function') ? resolveCity(originName) : null;
+      const destObj = (typeof resolveCity === 'function') ? resolveCity(destName) : null;
+      const originId = originObj?.id || trip?.origin?.id || urlParams.get('fromId') || 'patna';
+      const destId = destObj?.id || trip?.dest?.id || urlParams.get('toId') || 'gaya';
 
       let paramTime = urlParams.get('time');
       if (paramTime) {
@@ -472,43 +476,50 @@
       document.getElementById('badge-date').textContent = `${displayDate} at ${pickupTime}`;
       document.getElementById('badge-trip-type').textContent = tripType === 'roundtrip' ? 'Round-Trip' : (tripType === 'local' ? 'Local Package' : 'One-Way');
 
-      // 3. Compute Distance
+      // 3. Compute Distance (Direct Highway Route • Zero Return Dead-Mileage)
       let distanceKm = Number(trip?.distanceKm || urlParams.get('distance')) || 0;
       let duration = trip?.duration || urlParams.get('duration') || '';
 
-      // 3. Resolve Distance & Duration (Check explicit Patna fare first, fallback to coordinates/routes)
-      const patnaMatchedRoute = (typeof findPatnaRouteFare === 'function')
-        ? findPatnaRouteFare(originName, destName)
+      // Check direct calculation helper from single source of truth
+      const directCalculation = (typeof calculateDirectDistance === 'function')
+        ? calculateDirectDistance(originName, destName)
         : null;
+
+      const patnaMatchedRoute = (directCalculation && directCalculation.isExcelRate)
+        ? directCalculation.matchedRoute
+        : ((typeof findPatnaRouteFare === 'function') ? findPatnaRouteFare(originName, destName) : null);
 
       if (patnaMatchedRoute && patnaMatchedRoute.distanceKm) {
         distanceKm = patnaMatchedRoute.distanceKm;
         const totalMin = Math.round((distanceKm / 45) * 60);
         duration = `${Math.floor(totalMin / 60)}h ${totalMin % 60}m`;
-      } else if (!distanceKm) {
-        const originObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === originId || c.name.toLowerCase() === originName.toLowerCase());
-        const destObj = (typeof OTB_CITIES !== 'undefined' ? OTB_CITIES : []).find(c => c.id === destId || c.name.toLowerCase() === destName.toLowerCase());
-
-        const knownRoute = (typeof OTB_POPULAR_ROUTES !== 'undefined' ? OTB_POPULAR_ROUTES : []).find(r => 
-          (r.fromId === originId && r.toId === destId) || (r.fromId === destId && r.toId === originId)
-        );
-
-        if (knownRoute) {
-          distanceKm = knownRoute.distanceKm;
-          duration = knownRoute.duration;
-        } else if (originObj && destObj && originObj.lat && destObj.lat) {
-          const dLat = (destObj.lat - originObj.lat) * Math.PI / 180;
-          const dLng = (destObj.lng - originObj.lng) * Math.PI / 180;
-          const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(originObj.lat * Math.PI / 180) * Math.cos(destObj.lat * Math.PI / 180) *
-                    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          distanceKm = Math.max(40, Math.round(6371 * c * 1.30));
+      } else if (!distanceKm || distanceKm <= 0) {
+        if (directCalculation && directCalculation.distanceKm) {
+          distanceKm = directCalculation.distanceKm;
           const totalMin = Math.round((distanceKm / 48) * 60);
           duration = `${Math.floor(totalMin / 60)}h ${totalMin % 60}m`;
         } else {
-          distanceKm = 104;
-          duration = '2h 15m';
+          const knownRoute = (typeof OTB_POPULAR_ROUTES !== 'undefined' ? OTB_POPULAR_ROUTES : []).find(r => 
+            (r.fromId === originId && r.toId === destId) || (r.fromId === destId && r.toId === originId)
+          );
+
+          if (knownRoute) {
+            distanceKm = knownRoute.distanceKm;
+            duration = knownRoute.duration;
+          } else if (originObj && destObj && originObj.lat && destObj.lat) {
+            const dLat = (destObj.lat - originObj.lat) * Math.PI / 180;
+            const dLng = (destObj.lng - originObj.lng) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(originObj.lat * Math.PI / 180) * Math.cos(destObj.lat * Math.PI / 180) *
+                      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            distanceKm = Math.max(30, Math.round(6371 * c * 1.30));
+            const totalMin = Math.round((distanceKm / 48) * 60);
+            duration = `${Math.floor(totalMin / 60)}h ${totalMin % 60}m`;
+          } else {
+            distanceKm = 80;
+            duration = '1h 45m';
+          }
         }
       }
 
@@ -552,9 +563,9 @@
           if (patnaMatched && tripType === 'oneway') {
             if (fleet.id === 'hatchback') baseFare = patnaMatched.hatchback;
             else if (fleet.id === 'sedan') baseFare = patnaMatched.sedan;
-            else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
+            else if (fleet.id === 'sedan_prime') baseFare = patnaMatched.execSedan || Math.round(patnaMatched.sedan + 250);
             else if (fleet.id === 'suv') baseFare = patnaMatched.suv;
-            else if (fleet.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+            else if (fleet.id === 'innova_crysta') baseFare = patnaMatched.luxSuv || Math.round(patnaMatched.suv + 700);
             else baseFare = patnaMatched.sedan;
 
             if (patnaMatched.marketComparison) {
@@ -563,9 +574,13 @@
               savingsLabel = `Saved ~₹${Math.round(baseFare * 0.95).toLocaleString('en-IN')} vs Return Taxi`;
             }
           } else {
+            // Direct route distance calculation for custom non-Patna routes
             baseFare = distanceKm * fleet.ratePerKm;
-            baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
-            if (tripType === 'roundtrip') baseFare *= 1.88;
+            const minFloor = fleet.id === 'hatchback' ? 1698 : (fleet.id === 'sedan' ? 2198 : (fleet.id === 'sedan_prime' ? 2698 : (fleet.id === 'suv' ? 3398 : 4598)));
+            baseFare = Math.max(baseFare, minFloor);
+            if (tripType === 'roundtrip') {
+              baseFare = (baseFare * 2) - 400; // Guaranteed ₹400 savings on two-way
+            }
             savingsLabel = `Saved ~₹${Math.round(baseFare * 0.95).toLocaleString('en-IN')} vs Return Taxi`;
           }
           const finalPrice = Math.round(baseFare);
@@ -762,14 +777,15 @@
             if (patnaMatched && tripType === 'oneway') {
               if (matched.id === 'hatchback') baseFare = patnaMatched.hatchback;
               else if (matched.id === 'sedan') baseFare = patnaMatched.sedan;
-              else if (matched.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
+              else if (matched.id === 'sedan_prime') baseFare = patnaMatched.execSedan || Math.round(patnaMatched.sedan + 250);
               else if (matched.id === 'suv') baseFare = patnaMatched.suv;
-              else if (matched.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+              else if (matched.id === 'innova_crysta') baseFare = patnaMatched.luxSuv || Math.round(patnaMatched.suv + 700);
               else baseFare = patnaMatched.sedan;
             } else {
               baseFare = distanceKm * matched.ratePerKm;
-              baseFare = Math.max(baseFare, matched.id === 'hatchback' ? 1698 : matched.id === 'sedan' ? 2198 : 3398);
-              if (tripType === 'roundtrip') baseFare *= 1.88;
+              const minFloor = matched.id === 'hatchback' ? 1698 : (matched.id === 'sedan' ? 2198 : (matched.id === 'sedan_prime' ? 2698 : (matched.id === 'suv' ? 3398 : 4598)));
+              baseFare = Math.max(baseFare, minFloor);
+              if (tripType === 'roundtrip') baseFare = (baseFare * 2) - 400;
             }
             selectCabAndProceed(matched.id, matched.category, matched.models, Math.round(baseFare));
             return;

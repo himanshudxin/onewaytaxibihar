@@ -131,6 +131,7 @@ const BIHAR_COORDS = {
   "sheikhpura": [25.1333, 85.8500],
   "begusarai": [25.4182, 86.1272],
   "purnia": [25.7771, 87.4753],
+  "purnea": [25.7771, 87.4753],
   "katihar": [25.5394, 87.5661],
   "araria": [26.1500, 87.5167],
   "kishanganj": [26.0744, 87.9400],
@@ -323,6 +324,84 @@ function findMatchingRoute(origin, dest, db) {
   return null;
 }
 
+function applyPromoDiscount(baseAmount, matchedRoute = null, db = null) {
+  let promoDiscount = 0;
+  let promoInfo = null;
+
+  const numBase = Number(baseAmount) || 0;
+  if (numBase <= 0) {
+    return { originalAmount: numBase, discountAmount: 0, finalAmount: numBase, promoInfo: null };
+  }
+
+  const currentDb = db || (typeof loadDb === 'function' ? loadDb() : null);
+  const globalCampaign = currentDb?.settings?.fareDiscountCampaign;
+
+  // 1. Route-specific discount (First Priority)
+  if (matchedRoute && matchedRoute.discount && matchedRoute.discount.active && Number(matchedRoute.discount.value) > 0) {
+    const dVal = Number(matchedRoute.discount.value);
+    const dType = (matchedRoute.discount.type === 'percent' || matchedRoute.discount.type === 'percentage') ? 'percent' : 'flat';
+    if (dType === 'percent') {
+      promoDiscount = Math.round((numBase * dVal) / 100);
+    } else {
+      promoDiscount = Math.round(dVal);
+    }
+    // Safety floor: discount cannot reduce fare below ₹499
+    promoDiscount = Math.min(promoDiscount, Math.max(0, numBase - 499));
+    if (promoDiscount > 0) {
+      promoInfo = {
+        type: dType,
+        value: dVal,
+        amount: promoDiscount,
+        badgeText: matchedRoute.discount.badgeText || (dType === 'percent' ? `${dVal}% OFF` : `₹${dVal} OFF`),
+        isRouteDiscount: true,
+        source: 'route'
+      };
+    }
+  } else if (globalCampaign && globalCampaign.active && Number(globalCampaign.value) > 0) {
+    // 2. Global / Regional Campaign
+    const scope = (globalCampaign.scope || 'all').toLowerCase();
+    const routeReg = (matchedRoute?.region || matchedRoute?.group || '').toLowerCase();
+    let matchesScope = scope === 'all';
+    if (!matchesScope) {
+      if (scope.includes('bihar') && !scope.includes('tourist') && routeReg.includes('bihar') && !routeReg.includes('tourist')) matchesScope = true;
+      else if (scope.includes('tourist') && routeReg.includes('tourist')) matchesScope = true;
+      else if (scope.includes('pradesh') && routeReg.includes('pradesh')) matchesScope = true;
+      else if (scope.includes('jharkhand') && routeReg.includes('jharkhand')) matchesScope = true;
+      else if (scope.includes('bengal') && routeReg.includes('bengal')) matchesScope = true;
+    }
+
+    if (matchesScope) {
+      const gVal = Number(globalCampaign.value);
+      const gType = (globalCampaign.type === 'percent' || globalCampaign.type === 'percentage') ? 'percent' : 'flat';
+      if (gType === 'percent') {
+        promoDiscount = Math.round((numBase * gVal) / 100);
+      } else {
+        promoDiscount = Math.round(gVal);
+      }
+      promoDiscount = Math.min(promoDiscount, Math.max(0, numBase - 499));
+      if (promoDiscount > 0) {
+        promoInfo = {
+          name: globalCampaign.name || 'Festive Offer',
+          type: gType,
+          value: gVal,
+          amount: promoDiscount,
+          badgeText: globalCampaign.badgeText || (gType === 'percent' ? `${gVal}% OFF` : `₹${gVal} OFF`),
+          isGlobalCampaign: true,
+          source: 'campaign'
+        };
+      }
+    }
+  }
+
+  const finalAmount = promoDiscount > 0 ? Math.max(499, numBase - promoDiscount) : numBase;
+  return {
+    originalAmount: numBase,
+    discountAmount: promoDiscount,
+    finalAmount: Math.round(finalAmount),
+    promoInfo
+  };
+}
+
 function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTypeOrCabTier = 'oneway', originOrTripType = '', destParam = '') {
   let dist = 50;
   let cabTier = 'sedan';
@@ -343,12 +422,16 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
     dest = cabTierOrDest;
     cabTier = tripTypeOrCabTier || 'sedan';
     tripType = originOrTripType || 'oneway';
+    dist = getRouteDistance(origin, dest);
   } else {
-    dist = Math.max(25, Number(distanceKmOrOrigin) || 50);
-    cabTier = cabTierOrDest || 'sedan';
-    tripType = tripTypeOrCabTier || 'oneway';
+    dist = Number(distanceKmOrOrigin) || 0;
     origin = originOrTripType || '';
     dest = destParam || '';
+    if (!dist || dist <= 25) {
+      dist = (origin && dest) ? getRouteDistance(origin, dest) : Math.max(25, dist || 50);
+    }
+    cabTier = cabTierOrDest || 'sedan';
+    tripType = tripTypeOrCabTier || 'oneway';
   }
 
   const cleanTier = normalizeCabTier(cabTier || 'sedan');
@@ -384,9 +467,15 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
       roundTripDiscount = 400;
     }
 
+    // Apply promotional discount (Route-specific discount or Global campaign)
+    const discountRes = applyPromoDiscount(totalFare, matchedRoute);
+    const finalCalculatedFare = discountRes.finalAmount;
+    const promoDiscount = discountRes.discountAmount;
+    const promoInfo = discountRes.promoInfo;
+
     const tollEst = Math.round((routeDist / 70) * 55);
-    const taxableAmount = Math.round(totalFare / 1.05);
-    const gstAmount = totalFare - taxableAmount;
+    const taxableAmount = Math.round(finalCalculatedFare / 1.05);
+    const gstAmount = finalCalculatedFare - taxableAmount;
 
     const hours = Math.floor(routeDist / 45);
     const mins = Math.round((routeDist % 45) * 1.3);
@@ -399,14 +488,17 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
       tierName: tier.name,
       tierModel: tier.model,
       seats: tier.seats,
-      baseFare: totalFare,
-      perKmRate: Math.round(explicitFare / routeDist),
-      distanceCharge: totalFare,
+      baseFare: finalCalculatedFare,
+      perKmRate: Math.round(finalCalculatedFare / routeDist),
+      distanceCharge: finalCalculatedFare,
       driverAllowance: 0,
       roundTripDiscount,
+      originalFare: Math.round(totalFare),
+      promoDiscount,
+      promoInfo,
       tollFastag: tollEst,
       gst: gstAmount,
-      totalFare: Math.round(totalFare),
+      totalFare: Math.round(finalCalculatedFare),
       isExplicitRouteFare: true,
       routeId: matchedRoute.id,
       marketComparison: matchedRoute.marketComparison,
@@ -443,10 +535,17 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
   }
 
   const baseFare = tier.minFare;
-  const totalFare = Math.max(baseFare, distanceCharge);
+  const rawTotalFare = Math.max(baseFare, distanceCharge);
+
+  // Apply promotional discount to fallback calculation
+  const fallbackDiscountRes = applyPromoDiscount(rawTotalFare, null);
+  const finalCalculatedFare = fallbackDiscountRes.finalAmount;
+  const promoDiscount = fallbackDiscountRes.discountAmount;
+  const promoInfo = fallbackDiscountRes.promoInfo;
+
   const tollEst = Math.round((dist / 70) * 55);
-  const taxableAmount = Math.round(totalFare / 1.05);
-  const gstAmount = totalFare - taxableAmount;
+  const taxableAmount = Math.round(finalCalculatedFare / 1.05);
+  const gstAmount = finalCalculatedFare - taxableAmount;
 
   const hours = Math.floor(dist / 45);
   const mins = Math.round((dist % 45) * 1.3);
@@ -464,9 +563,12 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
     distanceCharge,
     driverAllowance,
     roundTripDiscount,
+    originalFare: Math.round(rawTotalFare),
+    promoDiscount,
+    promoInfo,
     tollFastag: tollEst,
     gst: gstAmount,
-    totalFare: Math.round(totalFare),
+    totalFare: Math.round(finalCalculatedFare),
     isExplicitRouteFare: false,
     inclusions: [
       "Fuel for the quoted one-way journey",
@@ -1089,7 +1191,8 @@ module.exports = async (req, res) => {
       const dest = body.dest || body.destCity || body.drop || body.dropCity;
       const cabTier = body.cabTier || body.cabType || 'sedan';
       const tripType = body.tripType || 'oneway';
-      const distanceKm = getRouteDistance(origin, dest);
+      const rawDistance = Number(body.distanceKm || body.distance);
+      const distanceKm = (rawDistance && rawDistance > 10) ? rawDistance : getRouteDistance(origin, dest);
       const fareData = calculateServerFare(distanceKm, cabTier, tripType, origin, dest);
       return sendJson(200, {
         success: true,
@@ -1116,16 +1219,86 @@ module.exports = async (req, res) => {
 
       let filtered = activeFares;
       if (region && region !== 'all') {
-        filtered = filtered.filter(f => (f.group || '').toLowerCase() === region || (f.state || '').toLowerCase() === region);
+        filtered = filtered.filter(f => (f.group || '').toLowerCase() === region || (f.state || '').toLowerCase() === region || (f.region || '').toLowerCase() === region);
       }
       if (q) {
         filtered = filtered.filter(f =>
           f.destination.toLowerCase().includes(q) ||
           f.destCity.toLowerCase().includes(q) ||
           (f.district || '').toLowerCase().includes(q) ||
-          (f.state || '').toLowerCase().includes(q)
+          (f.state || '').toLowerCase().includes(q) ||
+          (f.region || '').toLowerCase().includes(q)
         );
       }
+
+      const globalCampaign = db.settings?.fareDiscountCampaign || null;
+
+      // Enhance fares with computed discounts
+      const enhancedFares = filtered.map(f => {
+        const distKm = f.distanceKm || f.distance || 50;
+        const sedanPrice = typeof f.sedan === 'number' ? f.sedan : 1199;
+        const hatchPrice = typeof f.hatchback === 'number' ? f.hatchback : (sedanPrice - 200);
+        const execPrice = typeof f.execSedan === 'number' ? f.execSedan : (sedanPrice + 250);
+        const suvPrice = typeof f.suv === 'number' ? f.suv : (sedanPrice + 400);
+        const luxPrice = typeof f.luxSuv === 'number' ? f.luxSuv : (sedanPrice + 700);
+
+        const dHatch = applyPromoDiscount(hatchPrice, f, db);
+        const dSedan = applyPromoDiscount(sedanPrice, f, db);
+        const dExec = applyPromoDiscount(execPrice, f, db);
+        const dSuv = applyPromoDiscount(suvPrice, f, db);
+        const dLux = applyPromoDiscount(luxPrice, f, db);
+
+        const hasDiscount = Boolean(dSedan.promoInfo);
+        const discountBadge = dSedan.promoInfo?.badgeText || null;
+
+        // Two-way discounts
+        const twSedan = f.twoWay?.sedan || ((sedanPrice * 2) - 400);
+        const twHatch = f.twoWay?.hatchback || ((hatchPrice * 2) - 400);
+        const twExec = f.twoWay?.execSedan || ((execPrice * 2) - 400);
+        const twSuv = f.twoWay?.suv || ((suvPrice * 2) - 400);
+        const twLux = f.twoWay?.luxSuv || ((luxPrice * 2) - 400);
+
+        const dTwSedan = applyPromoDiscount(twSedan, f, db);
+        const dTwHatch = applyPromoDiscount(twHatch, f, db);
+        const dTwExec = applyPromoDiscount(twExec, f, db);
+        const dTwSuv = applyPromoDiscount(twSuv, f, db);
+        const dTwLux = applyPromoDiscount(twLux, f, db);
+
+        return {
+          ...f,
+          hasDiscount,
+          discountBadge,
+          discountInfo: dSedan.promoInfo,
+          discounted: {
+            hatchback: dHatch.finalAmount,
+            sedan: dSedan.finalAmount,
+            execSedan: dExec.finalAmount,
+            suv: dSuv.finalAmount,
+            luxSuv: dLux.finalAmount,
+            twoWay: {
+              hatchback: dTwHatch.finalAmount,
+              sedan: dTwSedan.finalAmount,
+              execSedan: dTwExec.finalAmount,
+              suv: dTwSuv.finalAmount,
+              luxSuv: dTwLux.finalAmount
+            }
+          },
+          originalPrices: {
+            hatchback: hatchPrice,
+            sedan: sedanPrice,
+            execSedan: execPrice,
+            suv: suvPrice,
+            luxSuv: luxPrice,
+            twoWay: {
+              hatchback: twHatch,
+              sedan: twSedan,
+              execSedan: twExec,
+              suv: twSuv,
+              luxSuv: twLux
+            }
+          }
+        };
+      });
 
       return sendJson(200, {
         success: true,
@@ -1134,9 +1307,10 @@ module.exports = async (req, res) => {
         subtitle: "Accurate Intercity Costing Matrix Across Bihar, UP, Jharkhand & West Bengal",
         startingFrom: 699,
         currency: "INR",
-        count: filtered.length,
+        count: enhancedFares.length,
         totalCount: activeFares.length,
-        fares: filtered,
+        globalCampaign: (globalCampaign && globalCampaign.active) ? globalCampaign : null,
+        fares: enhancedFares,
         categories: {
           hatchback: { name: "Go Hatchback", label: "WagonR / Tiago / Celerio", capacity: "4 Passengers + 2 Bags", baseFormula: "Sedan - ₹200" },
           sedan: { name: "Prime Sedan", label: "Dzire / Etios / Aura", capacity: "4 Passengers + 3-4 Bags", baseFormula: "Base Costing" },
@@ -3472,7 +3646,123 @@ module.exports = async (req, res) => {
       return sendJson(200, {
         success: true,
         count: faresList.length,
+        campaign: db.settings?.fareDiscountCampaign || null,
         fares: faresList
+      });
+    }
+
+    // GET Global Fare Chart Promotional Campaign
+    if (pathname === '/admin/fares/campaign' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const campaign = db.settings?.fareDiscountCampaign || {
+        active: false,
+        name: "Festive Season Discount",
+        type: "flat",
+        value: 200,
+        scope: "all",
+        badgeText: "FESTIVE SALE",
+        bannerMsg: "Special Promotional Offer: Flat ₹200 OFF on all rides!",
+        validUntil: ""
+      };
+      return sendJson(200, { success: true, campaign });
+    }
+
+    // POST / Update Global Fare Chart Promotional Campaign
+    if (pathname === '/admin/fares/campaign' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { active, name, type, value, scope, badgeText, bannerMsg, validUntil } = body;
+      if (!db.settings) db.settings = {};
+
+      const numVal = Math.max(0, Number(value) || 0);
+      const cleanType = (type === 'percent' || type === 'percentage') ? 'percent' : 'flat';
+
+      db.settings.fareDiscountCampaign = {
+        active: Boolean(active),
+        name: String(name || 'Promotional Offer').trim(),
+        type: cleanType,
+        value: numVal,
+        scope: String(scope || 'all').trim(),
+        badgeText: String(badgeText || (cleanType === 'percent' ? `${numVal}% OFF` : `₹${numVal} OFF`)).trim(),
+        bannerMsg: String(bannerMsg || '').trim(),
+        validUntil: String(validUntil || '').trim(),
+        updatedAt: new Date().toISOString(),
+        updatedBy: admin.username
+      };
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARE_CAMPAIGN_UPDATED',
+        entityType: 'FARES',
+        entityId: 'global_campaign',
+        newValue: db.settings.fareDiscountCampaign,
+        note: `Global fare chart discount campaign updated: ${db.settings.fareDiscountCampaign.active ? 'ACTIVE' : 'INACTIVE'} (${db.settings.fareDiscountCampaign.name}, ${cleanType === 'percent' ? numVal + '%' : '₹' + numVal})`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Fare chart discount campaign ${db.settings.fareDiscountCampaign.active ? 'activated' : 'saved'} successfully!`,
+        campaign: db.settings.fareDiscountCampaign
+      });
+    }
+
+    // POST / Update Route-Specific Discount
+    if (pathname === '/admin/fares/discount' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { id, discount } = body;
+      if (!id) return sendJson(400, { success: false, message: 'Route ID required' });
+
+      if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
+        db.fares = getPatnaFaresList(db);
+      }
+
+      const item = db.fares.find(f => f.id === id);
+      if (!item) return sendJson(404, { success: false, message: 'Route fare not found' });
+
+      if (!discount || discount.active === false || Number(discount.value) <= 0) {
+        item.discount = { active: false, value: 0 };
+      } else {
+        const dVal = Number(discount.value) || 0;
+        const dType = (discount.type === 'percent' || discount.type === 'percentage') ? 'percent' : 'flat';
+        item.discount = {
+          active: true,
+          type: dType,
+          value: dVal,
+          badgeText: String(discount.badgeText || (dType === 'percent' ? `${dVal}% OFF` : `₹${dVal} OFF`)).trim(),
+          note: String(discount.note || '').trim(),
+          updatedAt: new Date().toISOString(),
+          updatedBy: admin.username
+        };
+      }
+
+      item.updatedAt = new Date().toISOString();
+      item.updatedBy = admin.username;
+
+      memoryPatnaFares = db.fares;
+      faresExcelService.syncFaresToFiles(db.fares);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'ROUTE_DISCOUNT_UPDATED',
+        entityType: 'FARES',
+        entityId: id,
+        newValue: item.discount,
+        note: `Route discount for ${item.destination}: ${item.discount.active ? 'ACTIVE (' + item.discount.badgeText + ')' : 'DISABLED'}`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Discount for ${item.destination} ${item.discount.active ? 'activated' : 'removed'} successfully.`,
+        fare: item
       });
     }
 
@@ -3480,7 +3770,7 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      const { id, destination, destCity, district, region, distanceKm, distance, hatchback, sedan, execSedan, suv, luxSuv, twoWay, marketComparison, active } = body;
+      const { id, destination, destCity, district, region, distanceKm, distance, hatchback, sedan, execSedan, suv, luxSuv, twoWay, marketComparison, active, discount } = body;
 
       if (!destination || typeof destination !== 'string' || !destination.trim()) {
         return sendJson(400, { success: false, message: 'Destination name is required' });
@@ -3562,6 +3852,12 @@ module.exports = async (req, res) => {
         updatedAt: new Date().toISOString(),
         updatedBy: admin.username
       };
+
+      if (discount !== undefined) {
+        fareItem.discount = discount;
+      } else if (existingIdx >= 0 && db.fares[existingIdx].discount) {
+        fareItem.discount = db.fares[existingIdx].discount;
+      }
 
       let oldItem = null;
       if (existingIdx >= 0) {

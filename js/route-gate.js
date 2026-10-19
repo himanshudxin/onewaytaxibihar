@@ -51,8 +51,10 @@
     document.body.insertAdjacentHTML('beforeend', modalHtml);
   }
 
-  window.openRouteFareUnlockModal = function (origin = 'Patna', dest = 'Gaya', cabTier = 'sedan', cabName = 'Prime Sedan') {
-    activeRouteData = { origin, dest, cabTier, cabName };
+  window.openRouteFareUnlockModal = function (origin = 'Patna', dest = 'Gaya', cabTier = 'sedan', tripType = 'oneway', cabName = 'Prime Sedan') {
+    const resolvedTripType = (tripType === 'twoway' || tripType === 'roundtrip') ? 'roundtrip' : 'oneway';
+    const resolvedCabName = (cabName && cabName !== 'oneway' && cabName !== 'twoway') ? cabName : (cabTier === 'hatchback' ? 'Go Hatchback' : (cabTier === 'suv' ? 'Family SUV' : (cabTier === 'luxSuv' ? 'Luxury SUV' : 'Prime Sedan')));
+    activeRouteData = { origin, dest, cabTier, tripType: resolvedTripType, cabName: resolvedCabName };
     ensureModalExists();
 
     const title = document.getElementById('route-unlock-title');
@@ -62,7 +64,7 @@
     const errorBox = document.getElementById('route-unlock-error');
 
     if (title) title.textContent = `Unlock Fares (${origin} → ${dest})`;
-    if (desc) desc.textContent = `Please enter your 10-digit mobile number to view guaranteed all-inclusive fares for ${origin} to ${dest} (${cabName}).`;
+    if (desc) desc.textContent = `Please enter your 10-digit mobile number to view guaranteed all-inclusive fares for ${origin} to ${dest} (${resolvedCabName}${resolvedTripType === 'roundtrip' ? ' • Round-Trip' : ''}).`;
     if (errorBox) errorBox.style.display = 'none';
 
     // Pre-fill if stored previously
@@ -121,7 +123,7 @@
         originCity: activeRouteData.origin,
         destCity: activeRouteData.dest,
         cabTier: activeRouteData.cabTier,
-        tripType: 'oneway',
+        tripType: activeRouteData.tripType || 'oneway',
         source: `${activeRouteData.origin} to ${activeRouteData.dest} Route Page Gate`
       })
     }).catch(() => {});
@@ -129,17 +131,18 @@
     // Save trip config to session
     try {
       sessionStorage.setItem('otb_trip', JSON.stringify({
-        tripType: 'oneway',
+        tripType: activeRouteData.tripType || 'oneway',
         origin: { id: activeRouteData.origin.toLowerCase(), name: activeRouteData.origin },
         dest: { id: activeRouteData.dest.toLowerCase(), name: activeRouteData.dest },
         phone: raw
       }));
     } catch (err) {}
 
-    // Redirect to cabs.html with verified phone parameter
+    // Redirect to cabs.html with verified phone parameter and tripType
     const params = new URLSearchParams({
       from: activeRouteData.origin,
       to: activeRouteData.dest,
+      type: activeRouteData.tripType || 'oneway',
       phone: raw,
       cab: activeRouteData.cabTier
     });

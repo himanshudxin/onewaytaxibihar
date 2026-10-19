@@ -248,7 +248,7 @@ const OTB_CITIES = [
   // ============================================================================
   // 32. PURNIA DISTRICT
   // ============================================================================
-  { id: "purnia", name: "Purnia", hindiName: "पूर्णिया", type: "district", typeLabel: "District HQ", district: "Purnia", districtId: "purnia", division: "Purnia", state: "Bihar", lat: 25.7771, lng: 87.4753, popular: true, keywords: ["purnia", "seemanchal", "medical hub", "line bazar", "makhana"], tag: "Heart of Seemanchal & Premier Medical Hub", airport: "Bagdogra / Darbhanga Airport", tollEst: 230 },
+  { id: "purnia", name: "Purnia", hindiName: "पूर्णिया", type: "district", typeLabel: "District HQ", district: "Purnia", districtId: "purnia", division: "Purnia", state: "Bihar", lat: 25.7771, lng: 87.4753, popular: true, keywords: ["purnia", "purnea", "seemanchal", "medical hub", "line bazar", "makhana"], tag: "Heart of Seemanchal & Premier Medical Hub", airport: "Bagdogra / Darbhanga Airport", tollEst: 230 },
   { id: "banmankhi", name: "Banmankhi", hindiName: "बनमनखी", type: "subdivision", typeLabel: "Sub-Division", district: "Purnia", districtId: "purnia", division: "Purnia", state: "Bihar", lat: 25.9000, lng: 87.1667, popular: false, keywords: ["banmankhi", "sugar mill", "prahlad stambh", "subdivision"], tag: "Prahlad Stambh & Sugar Mill Center", tollEst: 215 },
   { id: "baisi", name: "Baisi", hindiName: "बायसी", type: "subdivision", typeLabel: "Sub-Division", district: "Purnia", districtId: "purnia", division: "Purnia", state: "Bihar", lat: 25.8333, lng: 87.7333, popular: false, keywords: ["baisi", "nh31", "mahananda", "subdivision"], tag: "Mahananda River NH-31 Gateway to Bengal", tollEst: 245 },
 
@@ -3941,6 +3941,89 @@ function findPatnaRouteFare(origin, dest) {
   }) || null;
 }
 
+function resolveCity(query) {
+  if (!query) return null;
+  if (typeof query === "object" && query.lat && query.lng) return query;
+  const s = String(query).trim().toLowerCase();
+  const clean = s.replace(/\(.*?\)/g, "").replace(/[^a-z0-9]/g, " ").replace(/\s+/g, " ").trim();
+  const firstWord = clean.split(" ")[0];
+  const list = (typeof window !== "undefined" && Array.isArray(window.OTB_CITIES)) ? window.OTB_CITIES : OTB_CITIES;
+
+  // Exact id or name
+  let matched = list.find(c => c.id.toLowerCase() === clean || c.name.toLowerCase() === clean || c.id.toLowerCase() === s || c.name.toLowerCase() === s);
+  if (matched) return matched;
+
+  // Keywords match
+  matched = list.find(c => c.keywords && (c.keywords.includes(clean) || c.keywords.includes(firstWord) || c.keywords.includes(s)));
+  if (matched) return matched;
+
+  // Word boundary match
+  try {
+    const re = new RegExp("\\b" + clean + "\\b", "i");
+    matched = list.find(c => re.test(c.name));
+    if (matched) return matched;
+  } catch (e) {}
+
+  // Starts with or includes
+  matched = list.find(c => c.name.toLowerCase().startsWith(clean) || (firstWord.length >= 4 && c.name.toLowerCase().startsWith(firstWord)));
+  if (matched) return matched;
+
+  matched = list.find(c => clean.includes(c.name.toLowerCase()) || (c.district && clean.includes(c.district.toLowerCase())));
+  if (matched) return matched;
+
+  // Hindi name match
+  matched = list.find(c => c.hindiName && s.includes(c.hindiName));
+  return matched || null;
+}
+
+function calculateDirectDistance(originQuery, destQuery) {
+  const o = resolveCity(originQuery);
+  const d = resolveCity(destQuery);
+
+  const origName = o ? o.name : String(originQuery || "");
+  const destName = d ? d.name : String(destQuery || "");
+
+  // 1. If connecting with Patna and exists in official Excel matrix, return verified Excel data
+  const isPatnaRoute = origName.toLowerCase().includes("patna") || destName.toLowerCase().includes("patna");
+  if (isPatnaRoute && typeof findPatnaRouteFare === "function") {
+    const patnaMatched = findPatnaRouteFare(origName, destName);
+    if (patnaMatched && patnaMatched.distanceKm) {
+      return {
+        distanceKm: patnaMatched.distanceKm,
+        isExcelRate: true,
+        matchedRoute: patnaMatched,
+        originCity: o || { name: origName },
+        destCity: d || { name: destName }
+      };
+    }
+  }
+
+  // 2. Direct highway route distance (no routing via Patna center)
+  if (o && d && o.lat && d.lat) {
+    if (o.id === d.id) {
+      return { distanceKm: 25, isExcelRate: false, matchedRoute: null, originCity: o, destCity: d };
+    }
+    const R = 6371;
+    const dLat = (d.lat - o.lat) * Math.PI / 180;
+    const dLon = (d.lng - o.lng) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(o.lat * Math.PI / 180) * Math.cos(d.lat * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const rawKm = R * c;
+    const highwayKm = Math.max(30, Math.round(rawKm * 1.30)); // 1.30x Bihar highway road tortuosity factor
+    return {
+      distanceKm: highwayKm,
+      isExcelRate: false,
+      matchedRoute: null,
+      originCity: o,
+      destCity: d
+    };
+  }
+
+  return { distanceKm: 80, isExcelRate: false, matchedRoute: null, originCity: o, destCity: d };
+}
+
 // Export to window
 if (typeof window !== "undefined") {
   window.OTB_CITIES = OTB_CITIES;
@@ -3954,6 +4037,8 @@ if (typeof window !== "undefined") {
   window.OTB_CORPORATE_DATA = OTB_CORPORATE_DATA;
   window.OTB_PATNA_FARES = OTB_PATNA_FARES;
   window.findPatnaRouteFare = findPatnaRouteFare;
+  window.resolveCity = resolveCity;
+  window.calculateDirectDistance = calculateDirectDistance;
 }
 
 if (typeof module !== "undefined" && module.exports) {
@@ -3968,7 +4053,9 @@ if (typeof module !== "undefined" && module.exports) {
     OTB_FAQS,
     OTB_CORPORATE_DATA,
     OTB_PATNA_FARES,
-    findPatnaRouteFare
+    findPatnaRouteFare,
+    resolveCity,
+    calculateDirectDistance
   };
 }
 

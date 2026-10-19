@@ -15,6 +15,7 @@ const dbService = require('../services/db.js');
 const paymentService = require('../services/payment.js');
 const notificationService = require('../services/notification.js');
 const securityService = require('../services/security.js');
+const faresExcelService = require('../services/fares-excel.js');
 
 // Auto-initialize Enterprise DB (MongoDB Atlas / PostgreSQL / Local Cache)
 dbService.initDatabase().catch(err => {
@@ -3431,13 +3432,34 @@ module.exports = async (req, res) => {
     }
 
     // =============================================================
-    // 9C. ADMIN FARE MANAGEMENT MODULE (CRUD, Toggle, CSV Import/Export)
+    // 9C. ADMIN FARE MANAGEMENT MODULE (CRUD, 5 Tiers, Excel Import/Export)
     // =============================================================
     if (pathname === '/admin/fares' && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      const faresList = getPatnaFaresList(db);
+      let faresList = getPatnaFaresList(db);
+      const q = (url.searchParams.get('q') || url.searchParams.get('search') || '').toLowerCase().trim();
+      const region = (url.searchParams.get('region') || '').toLowerCase().trim();
+      const status = (url.searchParams.get('status') || '').toUpperCase().trim();
+
+      if (region && region !== 'all') {
+        faresList = faresList.filter(f => (f.region || f.group || '').toLowerCase() === region);
+      }
+      if (status === 'ACTIVE') {
+        faresList = faresList.filter(f => f.active !== false);
+      } else if (status === 'INACTIVE') {
+        faresList = faresList.filter(f => f.active === false);
+      }
+      if (q) {
+        faresList = faresList.filter(f =>
+          (f.destination || '').toLowerCase().includes(q) ||
+          (f.destCity || '').toLowerCase().includes(q) ||
+          (f.district || '').toLowerCase().includes(q) ||
+          (f.region || '').toLowerCase().includes(q)
+        );
+      }
+
       return sendJson(200, {
         success: true,
         count: faresList.length,
@@ -3449,38 +3471,83 @@ module.exports = async (req, res) => {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
-      const { id, destination, destCity, district, distanceKm, distance, hatchback, sedan, suv, marketComparison, active } = body;
+      const { id, destination, destCity, district, region, distanceKm, distance, hatchback, sedan, execSedan, suv, luxSuv, twoWay, marketComparison, active } = body;
 
       if (!destination || typeof destination !== 'string' || !destination.trim()) {
         return sendJson(400, { success: false, message: 'Destination name is required' });
       }
 
       const numDist = Number(distanceKm !== undefined ? distanceKm : distance);
-      const numHatch = Number(hatchback);
       const numSedan = Number(sedan);
-      const numSuv = Number(suv);
 
-      if (isNaN(numDist) || numDist <= 0 || isNaN(numHatch) || numHatch <= 0 || isNaN(numSedan) || numSedan <= 0 || isNaN(numSuv) || numSuv <= 0) {
-        return sendJson(400, { success: false, message: 'Distance and fares must be valid positive numeric values' });
+      if (isNaN(numDist) || numDist <= 0 || isNaN(numSedan) || numSedan <= 0) {
+        return sendJson(400, { success: false, message: 'Distance and Sedan base fare must be valid positive numbers' });
       }
 
       if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
         db.fares = getPatnaFaresList(db);
       }
 
-      const routeId = id || `patna-${(destCity || destination).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-      const existingIdx = db.fares.findIndex(f => f.id === routeId || f.destination.toLowerCase() === destination.toLowerCase());
+      const derived = faresExcelService.computeDerivedTiers(numSedan, numDist);
+
+      const numHatch = hatchback !== undefined && hatchback !== null && !isNaN(Number(hatchback)) && Number(hatchback) > 0
+        ? Number(hatchback)
+        : derived.hatchback;
+
+      const numExec = execSedan !== undefined && execSedan !== null && !isNaN(Number(execSedan)) && Number(execSedan) > 0
+        ? Number(execSedan)
+        : derived.execSedan;
+
+      const numSuv = suv !== undefined && suv !== null && !isNaN(Number(suv)) && Number(suv) > 0
+        ? Number(suv)
+        : derived.suv;
+
+      const numLuxSuv = luxSuv !== undefined && luxSuv !== null && !isNaN(Number(luxSuv)) && Number(luxSuv) > 0
+        ? Number(luxSuv)
+        : derived.luxSuv;
+
+      const finalTwoWay = (twoWay && typeof twoWay === 'object') ? {
+        hatchback: Number(twoWay.hatchback) || derived.twoWay.hatchback,
+        sedan: Number(twoWay.sedan) || derived.twoWay.sedan,
+        execSedan: Number(twoWay.execSedan) || derived.twoWay.execSedan,
+        suv: Number(twoWay.suv) || derived.twoWay.suv,
+        luxSuv: Number(twoWay.luxSuv) || derived.twoWay.luxSuv
+      } : {
+        hatchback: (numHatch * 2) - 400,
+        sedan: (numSedan * 2) - 400,
+        execSedan: (numExec * 2) - 400,
+        suv: (numSuv * 2) - 400,
+        luxSuv: (numLuxSuv * 2) - 400
+      };
+
+      const finalPerKm = {
+        hatchback: parseFloat((numHatch / numDist).toFixed(2)),
+        sedan: parseFloat((numSedan / numDist).toFixed(2)),
+        suv: parseFloat((numSuv / numDist).toFixed(2)),
+        execSedan: parseFloat((numExec / numDist).toFixed(2)),
+        luxSuv: parseFloat((numLuxSuv / numDist).toFixed(2))
+      };
+
+      const cleanDest = destination.trim();
+      const city = (destCity || cleanDest.split('(')[0]).trim();
+      const routeId = id || `patna-${city.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+      const existingIdx = db.fares.findIndex(f => f.id === routeId || f.destination.toLowerCase() === cleanDest.toLowerCase());
 
       const fareItem = {
         id: routeId,
         origin: "Patna",
-        destination: destination.trim(),
-        destCity: (destCity || destination.split('(')[0]).trim(),
-        district: (district || '').trim(),
+        destination: cleanDest,
+        destCity: city,
+        district: (district || (cleanDest.includes('(') ? cleanDest.split('(')[1].replace(')', '') : city)).trim(),
+        region: (region || 'Bihar districts').trim(),
         distanceKm: Math.round(numDist),
         hatchback: Math.round(numHatch),
         sedan: Math.round(numSedan),
+        execSedan: Math.round(numExec),
         suv: Math.round(numSuv),
+        luxSuv: Math.round(numLuxSuv),
+        twoWay: finalTwoWay,
+        perKm: finalPerKm,
         marketComparison: marketComparison || `${Math.round(numSedan * 1.8)}–${Math.round(numSedan * 2.2)}`,
         active: active !== undefined ? Boolean(active) : true,
         updatedAt: new Date().toISOString(),
@@ -3496,6 +3563,7 @@ module.exports = async (req, res) => {
       }
 
       memoryPatnaFares = db.fares;
+      faresExcelService.syncFaresToFiles(db.fares);
 
       await securityService.recordAuditLog(db, {
         actor: admin.username,
@@ -3505,13 +3573,13 @@ module.exports = async (req, res) => {
         entityId: routeId,
         oldValue: oldItem,
         newValue: fareItem,
-        note: `Fare chart for ${destination} updated (Hatch: ₹${numHatch}, Sedan: ₹${numSedan}, SUV: ₹${numSuv})`
+        note: `Fare chart for ${cleanDest} saved (Sedan: ₹${numSedan}, Hatch: ₹${numHatch}, SUV: ₹${numSuv}, Exec: ₹${numExec}, Lux: ₹${numLuxSuv})`
       });
 
       await saveDb(db);
       return sendJson(200, {
         success: true,
-        message: `Fare for ${destination} saved successfully.`,
+        message: `Fare for ${cleanDest} saved successfully.`,
         fare: fareItem
       });
     }
@@ -3535,6 +3603,7 @@ module.exports = async (req, res) => {
       item.updatedBy = admin.username;
 
       memoryPatnaFares = db.fares;
+      faresExcelService.syncFaresToFiles(db.fares);
 
       await securityService.recordAuditLog(db, {
         actor: admin.username,
@@ -3554,14 +3623,132 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (pathname === '/admin/fares/export' && method === 'GET') {
+    if ((pathname === '/admin/fares/delete' && method === 'POST') || (pathname === '/admin/fares' && method === 'DELETE')) {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const routeId = body.id || url.searchParams.get('id');
+      if (!routeId) return sendJson(400, { success: false, message: 'Route ID required' });
+
+      if (!db.fares || !Array.isArray(db.fares) || db.fares.length === 0) {
+        db.fares = getPatnaFaresList(db);
+      }
+
+      const idx = db.fares.findIndex(f => f.id === routeId);
+      if (idx === -1) return sendJson(404, { success: false, message: 'Route not found' });
+
+      const deleted = db.fares.splice(idx, 1)[0];
+      memoryPatnaFares = db.fares;
+      faresExcelService.syncFaresToFiles(db.fares);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARE_DELETED',
+        entityType: 'FARES',
+        entityId: routeId,
+        oldValue: deleted,
+        note: `Deleted route ${deleted.destination}`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Route ${deleted.destination} deleted successfully.`
+      });
+    }
+
+    // Export Excel (.xlsx)
+    if (pathname === '/admin/fares/export-excel' && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
 
       const faresList = getPatnaFaresList(db);
-      const csvHeader = 'ID,Pickup City,Destination,District,Distance (km),Hatchback,Sedan,SUV / 6-Seater,Market Comparison,Active\n';
+      const excelBuf = faresExcelService.generateFaresExcelBuffer(faresList);
+
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename="OnewayTaxiBihar_OneWay_TwoWay_PerKM_Costing.xlsx"',
+        'Content-Length': excelBuf.length
+      });
+      res.end(excelBuf);
+      return;
+    }
+
+    // Upload & Ingest Excel (.xlsx)
+    if (pathname === '/admin/fares/upload-excel' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const { fileBase64, overwrite } = body;
+      if (!fileBase64) {
+        return sendJson(400, { success: false, message: 'Excel file base64 payload is required' });
+      }
+
+      let parsedFares;
+      try {
+        parsedFares = faresExcelService.parseFaresFromExcel(fileBase64);
+      } catch (parseErr) {
+        return sendJson(400, { success: false, message: `Failed to parse Excel file: ${parseErr.message}` });
+      }
+
+      if (!parsedFares || parsedFares.length === 0) {
+        return sendJson(400, { success: false, message: 'No valid destination rows found in the uploaded sheet' });
+      }
+
+      if (overwrite) {
+        db.fares = parsedFares;
+      } else {
+        if (!db.fares || !Array.isArray(db.fares)) db.fares = [];
+        for (const item of parsedFares) {
+          const idx = db.fares.findIndex(f => f.id === item.id || f.destination.toLowerCase() === item.destination.toLowerCase());
+          if (idx >= 0) db.fares[idx] = item;
+          else db.fares.push(item);
+        }
+      }
+
+      memoryPatnaFares = db.fares;
+      faresExcelService.syncFaresToFiles(db.fares);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'FARES_EXCEL_UPLOAD',
+        entityType: 'FARES',
+        entityId: 'excel_upload',
+        note: `Ingested ${parsedFares.length} destinations from Excel workbook (Overwrite: ${Boolean(overwrite)})`
+      });
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: `Successfully updated ${parsedFares.length} destinations from Excel sheet!`,
+        count: db.fares.length,
+        importedCount: parsedFares.length
+      });
+    }
+
+    if (pathname === '/admin/fares/export' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+
+      const format = url.searchParams.get('format') || 'csv';
+      const faresList = getPatnaFaresList(db);
+
+      if (format === 'excel' || format === 'xlsx') {
+        const excelBuf = faresExcelService.generateFaresExcelBuffer(faresList);
+        res.writeHead(200, {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': 'attachment; filename="OnewayTaxiBihar_Costing_Matrix.xlsx"',
+          'Content-Length': excelBuf.length
+        });
+        res.end(excelBuf);
+        return;
+      }
+
+      const csvHeader = 'ID,Region,Pickup City,Destination,District,Distance (km),Hatchback,Sedan,Executive Sedan,SUV,Luxury SUV,TwoWay Sedan,Market Comparison,Active\n';
       const csvRows = faresList.map(f =>
-        `"${f.id}","${f.origin}","${f.destination}","${f.district || ''}",${f.distanceKm},${f.hatchback},${f.sedan},${f.suv},"${f.marketComparison}",${f.active !== false}`
+        `"${f.id}","${f.region || 'Bihar districts'}","Patna","${f.destination}","${f.district || ''}",${f.distanceKm},${f.hatchback},${f.sedan},${f.execSedan || f.sedan + 250},${f.suv},${f.luxSuv || f.sedan + 700},${f.twoWay?.sedan || ((f.sedan * 2) - 400)},"${f.marketComparison}",${f.active !== false}`
       ).join('\n');
 
       res.writeHead(200, {
@@ -3570,63 +3757,6 @@ module.exports = async (req, res) => {
       });
       res.end(csvHeader + csvRows);
       return;
-    }
-
-    if (pathname === '/admin/fares/import' && method === 'POST') {
-      const admin = getSessionAdmin(req, db);
-      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-
-      const incoming = Array.isArray(body.fares) ? body.fares : null;
-      if (!incoming || incoming.length === 0) {
-        return sendJson(400, { success: false, message: 'Invalid payload: fares array expected' });
-      }
-
-      if (!db.fares || !Array.isArray(db.fares)) {
-        db.fares = [];
-      }
-
-      let importedCount = 0;
-      for (const row of incoming) {
-        if (!row.destination || !row.distanceKm) continue;
-        const routeId = row.id || `patna-${(row.destCity || row.destination).toLowerCase().replace(/[^a-z0-9]/g, '')}`;
-        const existingIdx = db.fares.findIndex(f => f.id === routeId);
-        const item = {
-          id: routeId,
-          origin: "Patna",
-          destination: String(row.destination).trim(),
-          destCity: (row.destCity || row.destination.split('(')[0]).trim(),
-          district: (row.district || '').trim(),
-          distanceKm: Number(row.distanceKm) || 50,
-          hatchback: Number(row.hatchback) || 999,
-          sedan: Number(row.sedan) || 1199,
-          suv: Number(row.suv) || 1699,
-          marketComparison: row.marketComparison || `${Math.round((row.sedan || 1199) * 1.8)}–${Math.round((row.sedan || 1199) * 2.2)}`,
-          active: row.active !== undefined ? Boolean(row.active) : true,
-          updatedAt: new Date().toISOString(),
-          updatedBy: admin.username
-        };
-        if (existingIdx >= 0) db.fares[existingIdx] = item;
-        else db.fares.push(item);
-        importedCount++;
-      }
-
-      memoryPatnaFares = db.fares;
-
-      await securityService.recordAuditLog(db, {
-        actor: admin.username,
-        role: admin.role,
-        action: 'FARES_BULK_IMPORT',
-        entityType: 'FARES',
-        entityId: 'batch',
-        note: `Imported ${importedCount} fares via admin panel`
-      });
-
-      await saveDb(db);
-      return sendJson(200, {
-        success: true,
-        message: `Successfully imported ${importedCount} destination fares.`,
-        count: importedCount
-      });
     }
 
     // Public Platform Settings Endpoint (No auth required for passenger website)

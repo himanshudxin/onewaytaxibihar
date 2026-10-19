@@ -2691,39 +2691,53 @@
         </section>
 
         <!-- ====================================================================
-             VIEW 15: PATNA ONE-WAY TAXI FARE CHART MANAGEMENT
+             VIEW 15: MASTER COSTING & INTERCITY FARE CHART (98 DESTINATIONS)
              ==================================================================== -->
         <section class="content-view" id="view-fares">
           <div class="view-header">
             <div class="view-title-group">
-              <h2>Patna One-Way Taxi Fare Management</h2>
-              <p>Configure fixed route fares, distances, Hatchback, Sedan, SUV pricing and market comparisons</p>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <h2>Master Costing &amp; Intercity Fare Matrix</h2>
+                <span class="badge" style="background:#059669; color:#fff; font-weight:700; font-size:11px; padding:2px 8px; border-radius:12px;" id="badge-master-fares-count">98 Routes</span>
+              </div>
+              <p>Manage 98-destination pricing sheet, edit route fares, auto-compute vehicle tiers, or add new destinations</p>
             </div>
             <div class="view-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="exportAdminFaresCsv()">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportAdminFaresExcel()" style="border-color:#10b981; color:#059669; font-weight:600;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
+                Export Excel (.xlsx)
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="openImportFaresModal()">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openUploadExcelModal()" style="border-color:#0284c7; color:#0284c7; font-weight:600;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                Import CSV
+                Upload Excel Sheet
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="exportAdminFaresCsv()">
+                Export CSV
               </button>
               <button type="button" class="btn btn-primary btn-sm" onclick="openAddFareModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add Destination
+                Add Location
               </button>
             </div>
           </div>
 
-          <!-- Toolbar Search & Filter -->
-          <div class="ops-card" style="margin-bottom:16px; padding:12px 16px;">
+          <!-- Toolbar Search & Filters -->
+          <div class="ops-card" style="margin-bottom:16px; padding:14px 16px;">
             <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
               <div style="flex:1; min-width:240px; position:relative;">
-                <input type="text" id="admin-fares-search" class="form-control" placeholder="Search destination, city, or district..." oninput="filterAdminFares()" style="padding-left:34px;">
+                <input type="text" id="admin-fares-search" class="form-control" placeholder="Search destination, city, or district (e.g. Gaya, Varanasi, Ranchi, Rajgir)..." oninput="filterAdminFares()" style="padding-left:34px;">
                 <svg style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:#94a3b8; pointer-events:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               </div>
-              <div style="display:flex; gap:8px;">
-                <select id="admin-fares-status-filter" class="form-control" style="width:140px;" onchange="filterAdminFares()">
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <select id="admin-fares-region-filter" class="form-control" style="width:190px;" onchange="filterAdminFares()">
+                  <option value="ALL">All Regions (98)</option>
+                  <option value="Bihar districts">Bihar Districts (37)</option>
+                  <option value="Bihar tourist destinations">Tourist &amp; Pilgrim (16)</option>
+                  <option value="Uttar Pradesh">Uttar Pradesh (15)</option>
+                  <option value="Jharkhand">Jharkhand (15)</option>
+                  <option value="West Bengal">West Bengal (15)</option>
+                </select>
+                <select id="admin-fares-status-filter" class="form-control" style="width:130px;" onchange="filterAdminFares()">
                   <option value="ALL">All Status</option>
                   <option value="ACTIVE" selected>Active Only</option>
                   <option value="INACTIVE">Inactive Only</option>
@@ -2737,22 +2751,24 @@
 
           <!-- Fares Table -->
           <div class="ops-card">
-            <div class="table-container">
+            <div class="table-container" style="overflow-x:auto;">
               <table class="ops-table">
                 <thead>
                   <tr>
-                    <th>Destination (From Patna)</th>
-                    <th>Distance</th>
-                    <th>Hatchback (₹)</th>
-                    <th>Sedan (₹)</th>
-                    <th>SUV / 6-Seater (₹)</th>
-                    <th>Market Comparison</th>
-                    <th>Status</th>
-                    <th style="text-align: right;">Action</th>
+                    <th style="min-width:180px;">Destination (From Patna)</th>
+                    <th style="min-width:85px;">Distance</th>
+                    <th style="min-width:105px;">Hatchback (₹)</th>
+                    <th style="min-width:105px;">Prime Sedan (₹)</th>
+                    <th style="min-width:115px;">Exec Sedan (₹)</th>
+                    <th style="min-width:110px;">SUV Ertiga (₹)</th>
+                    <th style="min-width:115px;">Innova Crysta (₹)</th>
+                    <th style="min-width:125px;">Two-Way (Sedan)</th>
+                    <th style="min-width:80px;">Status</th>
+                    <th style="text-align: right; min-width:140px;">Action</th>
                   </tr>
                 </thead>
                 <tbody id="admin-fares-table-body">
-                  <tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading fare chart...</td></tr>
+                  <tr><td colspan="10" style="text-align:center; padding:32px; color:#94a3b8;">Loading master fare chart...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -3511,9 +3527,9 @@
     </div>
   </div>
 
-  <!-- EDIT / ADD PATNA FARE MODAL -->
+  <!-- EDIT / ADD PATNA FARE MODAL (5 Tiers & AI Costing Auto-Pilot) -->
   <div class="modal-backdrop" id="modal-edit-fare">
-    <div class="ops-modal" style="max-width:540px;">
+    <div class="ops-modal" style="max-width:620px;">
       <div class="ops-modal-header">
         <div class="ops-modal-title" id="fare-modal-title">Edit Route Fare</div>
         <button type="button" class="btn-icon btn-secondary" onclick="closeEditFareModal()">✕</button>
@@ -3521,76 +3537,145 @@
       <div class="ops-modal-body">
         <form id="form-edit-fare" onsubmit="handleSaveFareSubmit(event)">
           <input type="hidden" id="fare-edit-id" value="">
+          
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:10px 14px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:16px;">🤖</span>
+              <span style="font-size:12.5px; font-weight:700; color:#065f46;">Master Formula Auto-Pilot:</span>
+            </div>
+            <label style="font-size:12px; font-weight:700; color:#047857; display:flex; align-items:center; gap:6px; cursor:pointer; margin:0;">
+              <input type="checkbox" id="fare-edit-autocompute" checked onchange="onAutoComputeToggle()">
+              <span>Auto-derive tiers from Sedan fare</span>
+            </label>
+          </div>
+
           <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Pickup Hub</label>
+              <input type="text" class="form-control" value="Patna (City / Airport / Stn)" readonly style="background:#f8fafc; font-weight:600;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Region / State *</label>
+              <select class="form-control" id="fare-edit-region" required>
+                <option value="Bihar districts">Bihar Districts</option>
+                <option value="Bihar tourist destinations">Bihar Tourist &amp; Pilgrimage</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Other">Other Region</option>
+              </select>
+            </div>
             <div class="form-group" style="grid-column: span 2;">
-              <label class="form-label">Pickup City</label>
-              <input type="text" class="form-control" value="Patna" readonly style="background:#f8fafc; font-weight:600;">
-            </div>
-            <div class="form-group" style="grid-column: span 2;">
-              <label class="form-label">Destination City / District *</label>
-              <input type="text" class="form-control" id="fare-edit-dest" required placeholder="e.g. Hajipur (Vaishali)">
+              <label class="form-label">Destination Name (with District) *</label>
+              <input type="text" class="form-control" id="fare-edit-dest" required placeholder="e.g. Deoghar (Baba Dham) or Varanasi">
             </div>
             <div class="form-group">
-              <label class="form-label">Approx Distance (km) *</label>
-              <input type="number" class="form-control" id="fare-edit-distance" required min="1" max="2000" placeholder="e.g. 25">
+              <label class="form-label">Destination City / Core Name</label>
+              <input type="text" class="form-control" id="fare-edit-city" placeholder="e.g. Deoghar">
             </div>
             <div class="form-group">
-              <label class="form-label">Hatchback Fare (₹) *</label>
-              <input type="number" class="form-control" id="fare-edit-hatchback" required min="100" max="50000" placeholder="e.g. 699">
+              <label class="form-label">Road Distance (km) *</label>
+              <input type="number" class="form-control" id="fare-edit-distance" required min="1" max="2500" placeholder="e.g. 246" oninput="onSedanOrDistanceChanged()">
             </div>
+
+            <!-- Vehicle Tiers -->
+            <div class="form-group" style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:6px;">
+              <label class="form-label" style="color:#15803d; font-weight:800;">Prime Sedan Base Fare (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-sedan" required min="100" max="90000" placeholder="e.g. 3499" oninput="onSedanOrDistanceChanged()" style="font-weight:700; font-size:15px; border-color:#22c55e;">
+              <span style="font-size:11px; color:#166534; display:block; margin-top:3px;">Dzire / Etios / Aura (Master Base)</span>
+            </div>
+
             <div class="form-group">
-              <label class="form-label">Sedan Fare (₹) *</label>
-              <input type="number" class="form-control" id="fare-edit-sedan" required min="100" max="50000" placeholder="e.g. 799">
+              <label class="form-label">Go Hatchback (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-hatchback" required min="100" max="90000" placeholder="e.g. 3299">
+              <span style="font-size:11px; color:#64748b; display:block; margin-top:3px;">Sedan − ₹200 (WagonR / Tiago)</span>
             </div>
+
             <div class="form-group">
-              <label class="form-label">SUV / 6-Seater Fare (₹) *</label>
-              <input type="number" class="form-control" id="fare-edit-suv" required min="100" max="50000" placeholder="e.g. 1199">
+              <label class="form-label">Executive Sedan (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-execsedan" required min="100" max="90000" placeholder="e.g. 3749">
+              <span style="font-size:11px; color:#64748b; display:block; margin-top:3px;">Sedan + ₹250 (Honda City / Ciaz)</span>
             </div>
+
             <div class="form-group">
-              <label class="form-label">Market Comparison (Round-Trip)</label>
-              <input type="text" class="form-control" id="fare-edit-market" placeholder="e.g. 1500–1800">
+              <label class="form-label">Family SUV 6+1 (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-suv" required min="100" max="90000" placeholder="e.g. 3899">
+              <span style="font-size:11px; color:#64748b; display:block; margin-top:3px;">Sedan + ₹400 (Ertiga / Triber)</span>
             </div>
+
+            <div class="form-group">
+              <label class="form-label">Luxury SUV 7+1 (₹) *</label>
+              <input type="number" class="form-control" id="fare-edit-luxsuv" required min="100" max="90000" placeholder="e.g. 4199">
+              <span style="font-size:11px; color:#64748b; display:block; margin-top:3px;">Sedan + ₹700 (Innova Crysta)</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Round-Trip Two-Way (Sedan) (₹)</label>
+              <input type="number" class="form-control" id="fare-edit-twoway-sedan" placeholder="Auto-calculated">
+              <span style="font-size:11px; color:#059669; font-weight:700; display:block; margin-top:3px;">Formula: (OneWay × 2) − ₹400</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Market Comparison (Traditional)</label>
+              <input type="text" class="form-control" id="fare-edit-market" placeholder="e.g. 6300–7700">
+            </div>
+
             <div class="form-group">
               <label class="form-label">Route Status</label>
               <select class="form-control" id="fare-edit-active">
-                <option value="true">Active (Visible)</option>
+                <option value="true">Active (Live in Booking &amp; Chart)</option>
                 <option value="false">Inactive (Hidden)</option>
               </select>
             </div>
           </div>
+
+          <div id="fare-edit-summary-badge" style="background:#f1f5f9; border-radius:6px; padding:8px 12px; margin-top:10px; font-size:12px; color:#334155; display:flex; justify-content:space-between; align-items:center;">
+            <span>Effective Rate: <strong id="fare-preview-perkm">—</strong></span>
+            <span>Two-Way Savings: <strong style="color:#059669;">₹400 Guaranteed</strong></span>
+          </div>
+
           <div class="ops-modal-footer" style="padding:0; margin-top:20px; border:none; background:transparent; display:flex; justify-content:flex-end; gap:8px;">
             <button type="button" class="btn btn-secondary" onclick="closeEditFareModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="btn-save-fare">Save Fare</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-fare">Save Destination Fare</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- IMPORT FARES CSV MODAL -->
-  <div class="modal-backdrop" id="modal-import-fares">
+  <!-- UPLOAD / SYNC EXCEL WORKBOOK MODAL -->
+  <div class="modal-backdrop" id="modal-upload-excel">
     <div class="ops-modal" style="max-width:580px;">
       <div class="ops-modal-header">
-        <div class="ops-modal-title">Import Fare Chart (CSV)</div>
-        <button type="button" class="btn-icon btn-secondary" onclick="closeImportFaresModal()">✕</button>
+        <div class="ops-modal-title">Upload Excel Costing Sheet (.xlsx)</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeUploadExcelModal()">✕</button>
       </div>
       <div class="ops-modal-body">
-        <form id="form-import-fares" onsubmit="handleImportFaresSubmit(event)">
-          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
-            Paste CSV text below or upload a file. Expected header format:<br>
-            <code style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-size:12px;">Destination,Distance,Hatchback,Sedan,SUV,MarketRate</code>
+        <form id="form-upload-excel" onsubmit="handleUploadExcelSubmit(event)">
+          <p style="font-size:13px; color:#64748b; margin-bottom:14px; line-height:1.5;">
+            Upload your complete master workbook (e.g. <code>OnewayTaxiBihar_OneWay_TwoWay_PerKM_Costing.xlsx</code>). The engine will automatically parse all 98 destinations, vehicle tiers, two-way formulas, and synchronize both local JSON and cloud databases.
           </p>
-          <div class="form-group" style="margin-bottom:12px;">
-            <label class="form-label">Upload CSV File</label>
-            <input type="file" id="import-fares-file" accept=".csv,text/csv" class="form-control" onchange="handleCsvFileSelected(event)">
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label class="form-label">Select Excel File (.xlsx, .xls, .csv)</label>
+            <input type="file" id="upload-excel-file-input" accept=".xlsx,.xls,.csv" class="form-control" onchange="handleExcelFileSelected(event)" required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Or Paste CSV Content</label>
-            <textarea id="import-fares-csv-text" class="form-control" rows="8" placeholder="Destination,Distance,Hatchback,Sedan,SUV,MarketRate&#10;Hajipur (Vaishali),25,699,799,1199,1500–1800&#10;Arrah (Bhojpur),55,899,999,1399,2000–2200" style="font-family:var(--font-mono); font-size:12px;"></textarea>
+
+          <div id="excel-file-preview-wrap" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-bottom:16px;">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:4px;" id="excel-file-preview-name">Selected File</div>
+            <div style="font-size:12px; color:#64748b;" id="excel-file-preview-info">Size: 0 KB</div>
           </div>
+
+          <div class="form-group" style="margin-bottom:16px;">
+            <label style="font-size:13px; font-weight:600; color:#334155; display:flex; align-items:center; gap:8px; cursor:pointer;">
+              <input type="checkbox" id="upload-excel-overwrite" checked>
+              <span>Overwrite / synchronize all matching destinations in database</span>
+            </label>
+          </div>
+
           <div class="ops-modal-footer" style="padding:0; margin-top:20px; border:none; background:transparent; display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" class="btn btn-secondary" onclick="closeImportFaresModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="btn-import-fares">Import Fares</button>
+            <button type="button" class="btn btn-secondary" onclick="closeUploadExcelModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-upload-excel-submit">Upload &amp; Sync Master Costing</button>
           </div>
         </form>
       </div>
@@ -6963,10 +7048,14 @@
     // =========================================================================
     // VIEW 15: PATNA ONE-WAY TAXI FARE CHART MANAGEMENT
     // =========================================================================
+    // VIEW 15: MASTER COSTING & INTERCITY FARE MATRIX (98 DESTINATIONS)
+    // =========================================================================
+    let _selectedExcelBase64 = null;
+
     async function loadAdminFares(force = false) {
       const tbody = document.getElementById("admin-fares-table-body");
       if (tbody && (!Array.isArray(_allFares) || _allFares.length === 0)) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading fare chart...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:#94a3b8;">Loading master fare matrix...</td></tr>`;
       }
       try {
         const res = await adminFetch("/api/admin/fares");
@@ -6993,6 +7082,7 @@
 
       const activeCount = _allFares.filter(f => f.active !== false).length;
       setText("badge-fares-count", activeCount);
+      setText("badge-master-fares-count", `${_allFares.length} Routes`);
 
       filterAdminFares();
     }
@@ -7000,10 +7090,14 @@
     function filterAdminFares() {
       const searchVal = (document.getElementById("admin-fares-search")?.value || "").toLowerCase().trim();
       const statusFilter = document.getElementById("admin-fares-status-filter")?.value || "ACTIVE";
+      const regionFilter = document.getElementById("admin-fares-region-filter")?.value || "ALL";
 
       let filtered = _allFares.filter(f => {
         const matchSearch = !searchVal ||
           (f.destination && f.destination.toLowerCase().includes(searchVal)) ||
+          (f.destCity && f.destCity.toLowerCase().includes(searchVal)) ||
+          (f.district && f.district.toLowerCase().includes(searchVal)) ||
+          (f.region && f.region.toLowerCase().includes(searchVal)) ||
           (f.id && f.id.toLowerCase().includes(searchVal));
 
         const isActive = f.active !== false;
@@ -7011,7 +7105,13 @@
         if (statusFilter === "ACTIVE") matchStatus = isActive;
         else if (statusFilter === "INACTIVE") matchStatus = !isActive;
 
-        return matchSearch && matchStatus;
+        let matchRegion = true;
+        if (regionFilter !== "ALL") {
+          const fReg = (f.region || f.group || "").toLowerCase();
+          matchRegion = fReg === regionFilter.toLowerCase();
+        }
+
+        return matchSearch && matchStatus && matchRegion;
       });
 
       renderAdminFaresTable(filtered);
@@ -7023,42 +7123,79 @@
 
       const list = faresList !== undefined ? faresList : _allFares;
       if (!list || list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No destinations match your search or filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:32px; color:#94a3b8;">No destinations match your search or filter criteria.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = list.map(f => {
         const isActive = f.active !== false;
-        const hb = typeof f.hatchback === 'number' ? '₹' + f.hatchback.toLocaleString('en-IN') : '-';
-        const sd = typeof f.sedan === 'number' ? '₹' + f.sedan.toLocaleString('en-IN') : '-';
-        const sv = typeof f.suv === 'number' ? '₹' + f.suv.toLocaleString('en-IN') : '-';
-        const dist = (f.distanceKm !== undefined ? f.distanceKm : f.distance) ? (f.distanceKm !== undefined ? f.distanceKm : f.distance) + ' km' : '-';
-        const comp = f.marketComparison ? '₹' + escapeHtml(f.marketComparison) : '—';
-        const safeId = escapeHtml(f.id);
+        const distKm = f.distanceKm !== undefined ? f.distanceKm : (f.distance || 50);
+
+        const sedanPrice = typeof f.sedan === 'number' ? f.sedan : 1199;
+        const hatchPrice = typeof f.hatchback === 'number' ? f.hatchback : (sedanPrice - 200);
+        const execPrice = typeof f.execSedan === 'number' ? f.execSedan : (sedanPrice + 250);
+        const suvPrice = typeof f.suv === 'number' ? f.suv : (sedanPrice + 400);
+        const luxPrice = typeof f.luxSuv === 'number' ? f.luxSuv : (sedanPrice + 700);
+
+        const twoWaySedan = f.twoWay?.sedan || ((sedanPrice * 2) - 400);
+
+        const hb = '₹' + hatchPrice.toLocaleString('en-IN');
+        const sd = '₹' + sedanPrice.toLocaleString('en-IN');
+        const ex = '₹' + execPrice.toLocaleString('en-IN');
+        const sv = '₹' + suvPrice.toLocaleString('en-IN');
+        const lx = '₹' + luxPrice.toLocaleString('en-IN');
+        const tw = '₹' + twoWaySedan.toLocaleString('en-IN');
+
+        const hbPerKm = distKm ? `₹${(hatchPrice / distKm).toFixed(1)}/km` : '';
+        const sdPerKm = distKm ? `₹${(sedanPrice / distKm).toFixed(1)}/km` : '';
+
+        let regColor = '#0284c7'; // default blue
+        let regBg = '#e0f2fe';
+        const reg = f.region || 'Bihar districts';
+        if (reg.includes('tourist')) { regColor = '#059669'; regBg = '#d1fae5'; }
+        else if (reg.includes('Pradesh')) { regColor = '#d97706'; regBg = '#fef3c7'; }
+        else if (reg.includes('Jharkhand')) { regColor = '#7c3aed'; regBg = '#ede9fe'; }
+        else if (reg.includes('Bengal')) { regColor = '#dc2626'; regBg = '#fee2e2'; }
+
+        const safeId = escapeHtml(f.id || `patna-${(f.destCity || f.destination).toLowerCase().replace(/[^a-z0-9]/g, '')}`);
 
         return `
           <tr>
             <td>
-              <div style="font-weight:600; color:var(--text-primary); font-size:14px;">${escapeHtml(f.destination)}</div>
-              <div style="font-size:11.5px; color:#64748b;">Pickup: Patna (One-Way)</div>
+              <div style="font-weight:700; color:var(--text-primary); font-size:13.5px;">${escapeHtml(f.destination)}</div>
+              <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                <span style="font-size:10.5px; font-weight:700; padding:1px 6px; border-radius:4px; background:${regBg}; color:${regColor};">${escapeHtml(reg)}</span>
+                <span style="font-size:11px; color:#64748b;">${escapeHtml(f.district || f.destCity || '')}</span>
+              </div>
             </td>
-            <td><span style="font-family:var(--font-mono); font-weight:600;">${dist}</span></td>
-            <td><strong style="font-family:var(--font-mono); color:#0284c7;">${hb}</strong></td>
-            <td><strong style="font-family:var(--font-mono); color:#059669;">${sd}</strong></td>
-            <td><strong style="font-family:var(--font-mono); color:#7c3aed;">${sv}</strong></td>
-            <td><span style="font-family:var(--font-mono); font-size:12.5px; color:#64748b;">${comp}</span></td>
+            <td><span style="font-family:var(--font-mono); font-weight:700; font-size:12.5px;">${distKm} km</span></td>
+            <td>
+              <strong style="font-family:var(--font-mono); color:#0284c7; font-size:13px;">${hb}</strong>
+              <div style="font-size:10px; color:#64748b;">${hbPerKm}</div>
+            </td>
+            <td>
+              <strong style="font-family:var(--font-mono); color:#059669; font-size:13px;">${sd}</strong>
+              <div style="font-size:10px; color:#047857;">${sdPerKm}</div>
+            </td>
+            <td><strong style="font-family:var(--font-mono); color:#0891b2; font-size:13px;">${ex}</strong></td>
+            <td><strong style="font-family:var(--font-mono); color:#7c3aed; font-size:13px;">${sv}</strong></td>
+            <td><strong style="font-family:var(--font-mono); color:#9333ea; font-size:13px;">${lx}</strong></td>
+            <td>
+              <strong style="font-family:var(--font-mono); color:#15803d; font-size:13px;">${tw}</strong>
+              <div style="font-size:10px; color:#059669; font-weight:700;">Save ₹400</div>
+            </td>
             <td>
               <span class="pill ${isActive ? 'confirmed' : 'cancelled'}">${isActive ? 'ACTIVE' : 'INACTIVE'}</span>
             </td>
             <td style="text-align:right; white-space:nowrap;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="openEditFareModal('${safeId}')" title="Edit Fares & Distance" style="margin-right:4px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openEditFareModal('${safeId}')" title="Edit Pricing & Distance" style="margin-right:4px;">
                 ✏️ Edit
               </button>
               <button type="button" class="btn ${isActive ? 'btn-danger' : 'btn-secondary'} btn-sm" onclick="toggleAdminFareActive('${safeId}', ${!isActive})" title="${isActive ? 'Deactivate destination' : 'Activate destination'}" style="margin-right:4px;">
                 ${isActive ? 'Disable' : 'Enable'}
               </button>
               <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteFareAdmin('${safeId}')" title="Delete destination fare">
-                🗑️ Delete
+                🗑️
               </button>
             </td>
           </tr>
@@ -7066,30 +7203,80 @@
       }).join("");
     }
 
+    function onAutoComputeToggle() {
+      onSedanOrDistanceChanged();
+    }
+
+    function onSedanOrDistanceChanged() {
+      const autoCompute = document.getElementById("fare-edit-autocompute")?.checked;
+      const sedanVal = Number(document.getElementById("fare-edit-sedan")?.value) || 0;
+      const distVal = Number(document.getElementById("fare-edit-distance")?.value) || 1;
+
+      if (autoCompute && sedanVal > 0) {
+        setVal("fare-edit-hatchback", Math.max(499, sedanVal - 200));
+        setVal("fare-edit-execsedan", sedanVal + 250);
+        setVal("fare-edit-suv", sedanVal + 400);
+        setVal("fare-edit-luxsuv", sedanVal + 700);
+        setVal("fare-edit-twoway-sedan", Math.max(998, (sedanVal * 2) - 400));
+        setVal("fare-edit-market", `${Math.round(sedanVal * 1.8)}–${Math.round(sedanVal * 2.2)}`);
+      }
+
+      // Update summary preview
+      if (sedanVal > 0 && distVal > 0) {
+        const perKmRate = (sedanVal / distVal).toFixed(2);
+        setText("fare-preview-perkm", `₹${perKmRate}/km (Sedan)`);
+      } else {
+        setText("fare-preview-perkm", "—");
+      }
+    }
+
     function openAddFareModal() {
       const form = document.getElementById("form-edit-fare");
       if (form) form.reset();
       setVal("fare-edit-id", "");
       setVal("fare-edit-active", "true");
-      setText("fare-modal-title", "Add Destination Fare (From Patna)");
+      setVal("fare-edit-region", "Bihar districts");
+      const chk = document.getElementById("fare-edit-autocompute");
+      if (chk) chk.checked = true;
+      setText("fare-modal-title", "Add New Location / Route (From Patna)");
+      setText("fare-preview-perkm", "—");
       document.getElementById("modal-edit-fare")?.classList.add("active");
     }
 
     function openEditFareModal(id) {
       if (!id) return openAddFareModal();
-      const fare = _allFares.find(f => f.id === id);
-      if (!fare) {
-        return openAddFareModal();
-      }
+      const fare = _allFares.find(f => f.id === id || (f.destCity && `patna-${f.destCity.toLowerCase().replace(/[^a-z0-9]/g, '')}` === id));
+      if (!fare) return openAddFareModal();
+
+      const dist = fare.distanceKm !== undefined ? fare.distanceKm : (fare.distance || "");
+      const sedan = fare.sedan || "";
+      const hatch = fare.hatchback || (sedan ? sedan - 200 : "");
+      const exec = fare.execSedan || (sedan ? sedan + 250 : "");
+      const suv = fare.suv || (sedan ? sedan + 400 : "");
+      const lux = fare.luxSuv || (sedan ? sedan + 700 : "");
+      const twoWaySedan = fare.twoWay?.sedan || (sedan ? (sedan * 2) - 400 : "");
+
       setVal("fare-edit-id", fare.id || "");
       setVal("fare-edit-dest", fare.destination || "");
-      setVal("fare-edit-distance", fare.distanceKm !== undefined ? fare.distanceKm : (fare.distance || ""));
-      setVal("fare-edit-hatchback", fare.hatchback || "");
-      setVal("fare-edit-sedan", fare.sedan || "");
-      setVal("fare-edit-suv", fare.suv || "");
+      setVal("fare-edit-city", fare.destCity || "");
+      setVal("fare-edit-region", fare.region || fare.group || "Bihar districts");
+      setVal("fare-edit-distance", dist);
+      setVal("fare-edit-sedan", sedan);
+      setVal("fare-edit-hatchback", hatch);
+      setVal("fare-edit-execsedan", exec);
+      setVal("fare-edit-suv", suv);
+      setVal("fare-edit-luxsuv", lux);
+      setVal("fare-edit-twoway-sedan", twoWaySedan);
       setVal("fare-edit-market", fare.marketComparison || "");
       setVal("fare-edit-active", fare.active !== false ? "true" : "false");
+
+      const chk = document.getElementById("fare-edit-autocompute");
+      if (chk) chk.checked = false; // Preserve explicit values on initial edit open
+
       setText("fare-modal-title", `Edit Route Fare: Patna ➔ ${fare.destination}`);
+      if (sedan && dist) {
+        setText("fare-preview-perkm", `₹${(sedan / dist).toFixed(2)}/km (Sedan)`);
+      }
       document.getElementById("modal-edit-fare")?.classList.add("active");
     }
 
@@ -7102,19 +7289,24 @@
       const btn = document.getElementById("btn-save-fare");
       const id = document.getElementById("fare-edit-id")?.value.trim();
       const destination = document.getElementById("fare-edit-dest")?.value.trim();
-      const distance = Number(document.getElementById("fare-edit-distance")?.value);
-      const hatchback = Number(document.getElementById("fare-edit-hatchback")?.value);
+      const destCity = document.getElementById("fare-edit-city")?.value.trim() || destination.split('(')[0].trim();
+      const region = document.getElementById("fare-edit-region")?.value.trim() || "Bihar districts";
+      const distanceKm = Number(document.getElementById("fare-edit-distance")?.value);
       const sedan = Number(document.getElementById("fare-edit-sedan")?.value);
+      const hatchback = Number(document.getElementById("fare-edit-hatchback")?.value);
+      const execSedan = Number(document.getElementById("fare-edit-execsedan")?.value);
       const suv = Number(document.getElementById("fare-edit-suv")?.value);
+      const luxSuv = Number(document.getElementById("fare-edit-luxsuv")?.value);
+      const twoWaySedan = Number(document.getElementById("fare-edit-twoway-sedan")?.value);
       const marketComparison = document.getElementById("fare-edit-market")?.value.trim();
       const active = document.getElementById("fare-edit-active")?.value === "true";
 
       if (!destination) {
-        showToast("Please provide a destination name", "error");
+        showToast("Please provide destination name", "error");
         return;
       }
-      if (!distance || distance <= 0 || !hatchback || hatchback <= 0 || !sedan || sedan <= 0 || !suv || suv <= 0) {
-        showToast("Distance and vehicle fares must be positive numbers", "error");
+      if (!distanceKm || distanceKm <= 0 || !sedan || sedan <= 0) {
+        showToast("Distance and Sedan base fare must be positive numbers", "error");
         return;
       }
 
@@ -7125,10 +7317,21 @@
           body: JSON.stringify({
             id: id || undefined,
             destination,
-            distance,
-            hatchback,
+            destCity,
+            region,
+            distanceKm,
             sedan,
+            hatchback,
+            execSedan,
             suv,
+            luxSuv,
+            twoWay: {
+              sedan: twoWaySedan || ((sedan * 2) - 400),
+              hatchback: (hatchback * 2) - 400,
+              execSedan: (execSedan * 2) - 400,
+              suv: (suv * 2) - 400,
+              luxSuv: (luxSuv * 2) - 400
+            },
             marketComparison,
             active
           })
@@ -7144,7 +7347,7 @@
       } catch (err) {
         showToast("Network error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Save Fare"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Save Destination Fare"; }
       }
     }
 
@@ -7174,9 +7377,55 @@
       );
     }
 
+    async function deleteFareAdmin(id) {
+      const fare = _allFares.find(f => f.id === id);
+      openConfirmModal(
+        "Delete Route Fare",
+        `Are you sure you want to permanently remove "${fare?.destination || id}" from the pricing matrix?`,
+        async () => {
+          try {
+            const res = await adminFetch("/api/admin/fares/delete", {
+              method: "POST",
+              body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              showToast(`Route "${fare?.destination || id}" deleted successfully`, "success");
+              await loadAdminFares(true);
+            } else {
+              showToast(data.message || "Failed to delete route", "error");
+            }
+          } catch (err) {
+            showToast("Network error: " + err.message, "error");
+          }
+        }
+      );
+    }
+
+    // Direct Excel (.xlsx) Download
+    async function exportAdminFaresExcel() {
+      try {
+        showToast("Generating Excel costing workbook...", "info");
+        const res = await adminFetch("/api/admin/fares/export-excel");
+        if (!res.ok) throw new Error("Excel export returned status " + res.status);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `OnewayTaxiBihar_Costing_Matrix_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Master Excel workbook downloaded successfully!", "success");
+      } catch (err) {
+        showToast("Excel export error: " + err.message, "error");
+      }
+    }
+
     async function exportAdminFaresCsv() {
       try {
-        const res = await adminFetch("/api/admin/fares/export");
+        const res = await adminFetch("/api/admin/fares/export?format=csv");
         if (!res.ok) throw new Error("CSV export request returned " + res.status);
         const csvBlob = await res.blob();
         const url = URL.createObjectURL(csvBlob);
@@ -7187,60 +7436,75 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast("Patna fare chart exported successfully", "success");
+        showToast("Fare chart CSV exported successfully", "success");
       } catch (err) {
         showToast("Export failed: " + err.message, "error");
       }
     }
 
-    function openImportFaresModal() {
-      const form = document.getElementById("form-import-fares");
+    function openUploadExcelModal() {
+      const form = document.getElementById("form-upload-excel");
       if (form) form.reset();
-      document.getElementById("modal-import-fares")?.classList.add("active");
+      _selectedExcelBase64 = null;
+      const preview = document.getElementById("excel-file-preview-wrap");
+      if (preview) preview.style.display = "none";
+      document.getElementById("modal-upload-excel")?.classList.add("active");
     }
 
-    function closeImportFaresModal() {
-      document.getElementById("modal-import-fares")?.classList.remove("active");
+    function closeUploadExcelModal() {
+      document.getElementById("modal-upload-excel")?.classList.remove("active");
     }
 
-    function handleCsvFileSelected(e) {
+    function handleExcelFileSelected(e) {
       const file = e.target?.files?.[0];
       if (!file) return;
+
+      const preview = document.getElementById("excel-file-preview-wrap");
+      const nameEl = document.getElementById("excel-file-preview-name");
+      const infoEl = document.getElementById("excel-file-preview-info");
+
+      if (nameEl) nameEl.textContent = file.name;
+      if (infoEl) infoEl.textContent = `Size: ${(file.size / 1024).toFixed(1)} KB • Type: ${file.name.endsWith('.xlsx') ? 'Excel Workbook (.xlsx)' : 'Spreadsheet'}`;
+      if (preview) preview.style.display = "block";
+
       const reader = new FileReader();
       reader.onload = function(evt) {
-        const textarea = document.getElementById("import-fares-csv-text");
-        if (textarea) textarea.value = evt.target.result;
+        _selectedExcelBase64 = evt.target.result;
       };
-      reader.readAsText(file);
+      reader.readAsDataURL(file);
     }
 
-    async function handleImportFaresSubmit(e) {
+    async function handleUploadExcelSubmit(e) {
       if (e) e.preventDefault();
-      const btn = document.getElementById("btn-import-fares");
-      const csvContent = document.getElementById("import-fares-csv-text")?.value.trim();
-      if (!csvContent) {
-        showToast("Please paste CSV content or select a CSV file", "error");
+      const btn = document.getElementById("btn-upload-excel-submit");
+      if (!_selectedExcelBase64) {
+        showToast("Please select an Excel workbook (.xlsx) to upload", "error");
         return;
       }
 
+      const overwrite = document.getElementById("upload-excel-overwrite")?.checked;
+
       try {
-        if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = "Importing..."; }
-        const res = await adminFetch("/api/admin/fares/import", {
+        if (btn) { btn.disabled = true; btn.dataset.orig = btn.textContent; btn.textContent = "Processing & Syncing..."; }
+        const res = await adminFetch("/api/admin/fares/upload-excel", {
           method: "POST",
-          body: JSON.stringify({ csvContent })
+          body: JSON.stringify({
+            fileBase64: _selectedExcelBase64,
+            overwrite: Boolean(overwrite)
+          })
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast(`Successfully imported ${data.count || 0} routes!`, "success");
-          closeImportFaresModal();
+          showToast(data.message || `Successfully synchronized ${data.importedCount || 0} destinations!`, "success");
+          closeUploadExcelModal();
           await loadAdminFares(true);
         } else {
-          showToast(data.message || "Failed to import fares CSV", "error");
+          showToast(data.message || "Failed to process Excel workbook", "error");
         }
       } catch (err) {
-        showToast("Import error: " + err.message, "error");
+        showToast("Upload error: " + err.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Import Fares"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.orig || "Upload & Sync Master Costing"; }
       }
     }
 

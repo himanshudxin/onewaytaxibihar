@@ -942,6 +942,7 @@ module.exports = {
   updateBooking,
   recordPayment,
   addAuditLog,
-  getDatabaseStatus
+  getDatabaseStatus,
+  savePatnaFaresJson
 };
 

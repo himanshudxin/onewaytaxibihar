@@ -1519,11 +1519,14 @@ module.exports = async (req, res) => {
 
       // Concurrency & double-tap deduplication protection (15 seconds)
       const now = Date.now();
-      const recentDuplicate = (db.bookings || []).find(b => {
+      const currentBookingsList = (db.bookings && db.bookings.length > 0) ? db.bookings : (dbService.getDb().bookings || []);
+      const recentDuplicate = currentBookingsList.find(b => {
         if (!b.createdAt) return false;
-        const bPhone = (b.passengerPhone || '').replace(/\D/g, '').slice(-10);
+        const bPhone = (b.passengerPhone || b.customerPhone || '').replace(/\D/g, '').slice(-10);
         if (bPhone !== cleanPhone) return false;
-        if (b.originCity !== (originCity || 'Patna') || b.destCity !== (destCity || 'Gaya')) return false;
+        const matchOrigin = b.originCity === originCity || b.pickupCity === originCity;
+        const matchDest = b.destCity === destCity || b.dropCity === destCity;
+        if (!matchOrigin || !matchDest) return false;
         const bTime = new Date(b.createdAt).getTime();
         return (now - bTime) >= 0 && (now - bTime) < 15000;
       });
@@ -2299,7 +2302,10 @@ module.exports = async (req, res) => {
       }
 
       const admin = getSessionAdmin(req, db);
-      const booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
+      let booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
+      if (!booking) {
+        booking = await dbService.findBooking(bId);
+      }
 
       if (!booking) {
         return sendJson(404, { success: false, message: `No booking found matching ID "${bId}". Please check your booking reference.` });
@@ -2390,7 +2396,10 @@ module.exports = async (req, res) => {
 
       const admin = getSessionAdmin(req, db);
       const driverAuth = getSessionDriver(req, db);
-      const booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
+      let booking = (db.bookings || []).find(b => (b.bookingId || '').toUpperCase() === bId || (b.id || '').toUpperCase() === bId);
+      if (!booking) {
+        booking = await dbService.findBooking(bId);
+      }
 
       if (!booking) {
         return sendJson(404, { success: false, message: `Trip ${bId} not found in central dispatch.` });
@@ -5494,9 +5503,10 @@ module.exports = async (req, res) => {
     }
 
     if (pathname === '/coupons/apply' && method === 'POST') {
-      const codeInput = (body.code || '').trim().toUpperCase();
-      const fareAmount = parseInt(body.fareAmount) || 1500;
-      const cpn = (db.coupons || []).find(c => c.code.toUpperCase() === codeInput && c.active);
+      const codeInput = (body.code || body.couponCode || body.coupon || '').trim().toUpperCase();
+      const fareAmount = parseInt(body.fareAmount || body.fare || body.totalFare) || 1500;
+      const cpnList = (db.coupons && db.coupons.length > 0) ? db.coupons : (dbService.getDb().coupons || []);
+      const cpn = cpnList.find(c => c.code.toUpperCase() === codeInput && c.active);
 
       if (!cpn) return sendJson(404, { success: false, message: `Invalid or expired coupon code: '${codeInput}'` });
       if (fareAmount < cpn.minFare) return sendJson(400, { success: false, message: `Coupon '${codeInput}' requires a minimum fare of Rs ${cpn.minFare}.` });

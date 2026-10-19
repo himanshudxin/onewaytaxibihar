@@ -282,12 +282,22 @@ const handler = async (req, res) => {
       const leadId = `lead_${cleanPhone}_${Date.now().toString().slice(-4)}`;
       const now = new Date().toISOString();
 
-      const selectedCab = (body.selectedCab || body.cabTier || 'sedan').toLowerCase();
+      function normTier(t) {
+        if (!t) return 'sedan';
+        const s = String(t).toLowerCase().trim();
+        if (s.includes('innova') || s.includes('crysta')) return 'innova_crysta';
+        if (s.includes('suv') || s.includes('ertiga') || s.includes('carens') || s.includes('6+1')) return 'suv';
+        if (s.includes('hatch') || s.includes('wagon') || s.includes('tiago') || s.includes('celerio')) return 'hatchback';
+        if (s.includes('executive') || s.includes('city') || s.includes('ciaz') || s.includes('sedan_prime')) return 'sedan_prime';
+        return 'sedan';
+      }
+
+      const selectedCab = normTier(body.selectedCab || body.cabTier || body.cabType || 'sedan');
       const cabNameMap = {
         hatchback: 'Go Hatchback',
         sedan: 'Prime Sedan',
         sedan_prime: 'Executive Sedan',
-        suv: 'Family SUV (Ertiga 6+1)',
+        suv: 'Family SUV (6+1)',
         innova_crysta: 'Toyota Innova Crysta'
       };
 
@@ -298,8 +308,9 @@ const handler = async (req, res) => {
       const duration = body.duration || '2h 15m';
 
       const estFareHatch = Number(body.estFareHatch || 1698);
-      const estFareSedan = Number(body.estFareSedan || body.cabPrice || body.totalFare || 2198);
+      const estFareSedan = Number(body.estFareSedan || 2198);
       const estFareSuv = Number(body.estFareSuv || 3398);
+      const exactFare = Number(body.cabPrice != null ? body.cabPrice : (body.totalFare != null ? body.totalFare : (body.fare != null ? body.fare : (selectedCab === 'suv' ? estFareSuv : (selectedCab === 'hatchback' ? estFareHatch : estFareSedan)))));
 
       const newLead = {
         id: leadId,
@@ -315,10 +326,13 @@ const handler = async (req, res) => {
         distanceKm: distanceKm,
         duration: duration,
         selectedCab: selectedCab,
-        cabName: cabNameMap[selectedCab] || 'Prime Sedan',
-        cabPrice: estFareSedan,
+        cabTier: selectedCab,
+        cabType: body.cabName || body.cabType || cabNameMap[selectedCab] || 'Prime Sedan',
+        cabName: body.cabName || body.cabType || cabNameMap[selectedCab] || 'Prime Sedan',
+        cabPrice: exactFare,
+        totalFare: exactFare,
         estFareHatch: estFareHatch,
-        estFareSedan: estFareSedan,
+        estFareSedan: exactFare,
         estFareSuv: estFareSuv,
         source: body.source || 'Website Fare Check',
         status: body.status || 'NEW',

@@ -222,6 +222,28 @@ const FLEET_RATES = {
   innova_crysta: { perKm: 44.0, minFare: 4598, minKm: 50, name: "Toyota Innova Crysta", model: "Innova Crysta", seats: 7 }
 };
 
+function normalizeCabTier(tierInput) {
+  if (!tierInput) return 'sedan';
+  const str = String(tierInput).toLowerCase().trim();
+  if (str.includes('innova') || str.includes('crysta')) return 'innova_crysta';
+  if (str.includes('suv') || str.includes('ertiga') || str.includes('carens') || str.includes('6+1') || str.includes('7 seat') || str.includes('6 seater')) return 'suv';
+  if (str.includes('hatch') || str.includes('wagon') || str.includes('tiago') || str.includes('celerio')) return 'hatchback';
+  if (str.includes('executive') || str.includes('city') || str.includes('ciaz') || str.includes('sedan_prime')) return 'sedan_prime';
+  if (str.includes('sedan') || str.includes('dzire') || str.includes('etios') || str.includes('amaze') || str.includes('prime')) return 'sedan';
+  return FLEET_RATES[str] ? str : 'sedan';
+}
+
+function getCabDisplayName(tierInput) {
+  const norm = normalizeCabTier(tierInput);
+  return FLEET_RATES[norm]?.name || 'Prime Sedan';
+}
+
+function getCabDisplayModel(tierInput) {
+  const norm = normalizeCabTier(tierInput);
+  return FLEET_RATES[norm]?.model || 'Dzire, Etios, Amaze';
+}
+
+
 let memoryPatnaFares = null;
 function getPatnaFaresList(db) {
   if (db && Array.isArray(db.fares) && db.fares.length > 0) {
@@ -328,7 +350,7 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
     dest = destParam || '';
   }
 
-  const cleanTier = (cabTier || 'sedan').toLowerCase();
+  const cleanTier = normalizeCabTier(cabTier || 'sedan');
   const tier = FLEET_RATES[cleanTier] || FLEET_RATES.sedan;
 
   // 1. Check explicit destination route fare from single source of truth
@@ -337,9 +359,11 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
     const routeDist = matchedRoute.distanceKm;
     let explicitFare = matchedRoute[cleanTier];
     if (!explicitFare) {
-      if (cleanTier === 'sedan_prime') explicitFare = Math.round(matchedRoute.sedan * 1.2);
-      else if (cleanTier === 'innova_crysta') explicitFare = Math.round(matchedRoute.suv * 1.35);
-      else explicitFare = matchedRoute.sedan;
+      if (cleanTier === 'sedan_prime') explicitFare = Math.round((matchedRoute.sedan || 2198) * 1.2);
+      else if (cleanTier === 'innova_crysta') explicitFare = Math.round((matchedRoute.suv || 3398) * 1.35);
+      else if (cleanTier === 'suv') explicitFare = matchedRoute.suv || Math.round((matchedRoute.sedan || 2198) * 1.4);
+      else if (cleanTier === 'hatchback') explicitFare = matchedRoute.hatchback || Math.round((matchedRoute.sedan || 2198) * 0.82);
+      else explicitFare = matchedRoute.sedan || 2198;
     }
 
     let totalFare = explicitFare;
@@ -1434,7 +1458,9 @@ module.exports = async (req, res) => {
 
       const originCity = body.originCity || body.origin || body.pickupCity || body.pickup || 'Patna';
       const destCity = body.destCity || body.destination || body.dropCity || body.drop || 'Gaya';
-      const cabTier = body.cabTier || body.cabType || body.cab || 'sedan';
+      const rawCabTier = body.cabTier || body.cabType || body.cab || 'sedan';
+      const normalizedCabTier = normalizeCabTier(rawCabTier);
+      const cabTier = normalizedCabTier;
       const pickupAddress = body.pickupAddress || body.pickup || `${originCity} City`;
       const dropAddress = body.dropAddress || body.drop || `${destCity} City`;
       const passengerPhone = body.passengerPhone || body.customerPhone || body.phone || body.mobile || body.contact || '';
@@ -1485,8 +1511,16 @@ module.exports = async (req, res) => {
 
       // Server-side distance and fare recalculation (Anti-tamper: server is sole authority)
       const distanceKm = getRouteDistance(originCity, destCity);
-      const serverFare = calculateServerFare(distanceKm, cabTier || 'sedan', body.tripType || 'oneway', originCity, destCity);
-      const baseTotal = serverFare.totalFare;
+      const serverFare = calculateServerFare(distanceKm, normalizedCabTier, body.tripType || 'oneway', originCity, destCity);
+      const serverBaseTotal = serverFare.totalFare;
+
+      // Authoritative Client Quoted Fare preservation:
+      // If the passenger was quoted and booked a valid fare (>= ₹400), honor the exact client fare
+      // so Admin Portal, customer booking ticket, and driver dispatch display the exact booked amount!
+      const rawClientFare = Number(body.fare != null ? body.fare : (body.totalFare != null ? body.totalFare : (body.finalPayable != null ? body.finalPayable : (body.cabPrice != null ? body.cabPrice : body.amount))));
+      const hasClientFare = !isNaN(rawClientFare) && rawClientFare >= 400;
+
+      const baseTotal = hasClientFare ? rawClientFare : serverBaseTotal;
 
       // Find or create customer
       if (!db.users) db.users = [];
@@ -1546,7 +1580,13 @@ module.exports = async (req, res) => {
         }
       }
 
-      const finalPayable = Math.max(serverFare.baseFare, baseTotal - walletDeducted - couponDiscount);
+      const clientCouponDiscount = Number(body.couponDiscount) || 0;
+      const finalCouponDiscount = clientCouponDiscount > 0 ? clientCouponDiscount : couponDiscount;
+      const finalPayable = hasClientFare ? rawClientFare : Math.max(serverFare.baseFare, baseTotal - walletDeducted - couponDiscount);
+      const originalFare = (body.originalFare && Number(body.originalFare) >= finalPayable)
+        ? Number(body.originalFare)
+        : (finalPayable + finalCouponDiscount + walletDeducted);
+
       const bookingId = `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const txnId = (body.paymentTxnId || body.razorpayPaymentId || body.upiUtr || '').toString().trim() || `TXN_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
       const tripOtp = `${Math.floor(1000 + Math.random() * 9000)}`;
@@ -1651,15 +1691,21 @@ module.exports = async (req, res) => {
         pickupTime: pickupTime || '10:00 AM',
         distanceKm,
         duration: serverFare.duration,
-        fleetClass: serverFare.tierName,
-        fleetModel: serverFare.tierModel,
+        cabTier: normalizedCabTier,
+        cabType: body.cabType || getCabDisplayName(normalizedCabTier),
+        cabName: body.cabType || getCabDisplayName(normalizedCabTier),
+        cabModel: body.cabModel || serverFare.tierModel,
+        vehicleModel: body.cabModel || serverFare.tierModel,
+        fleetClass: body.cabType || getCabDisplayName(normalizedCabTier),
+        fleetModel: body.cabModel || serverFare.tierModel,
         fareBreakdown: serverFare,
         fare: finalPayable,
         totalFare: finalPayable,
-        originalFare: baseTotal,
+        cabPrice: finalPayable,
+        originalFare: originalFare,
         walletUsed: walletDeducted,
-        couponCode: cpnCode,
-        couponDiscount,
+        couponCode: cpnCode || body.couponCode || '',
+        couponDiscount: finalCouponDiscount,
         advancePaid,
         balanceDue,
         paymentMethod: payMethodStr,
@@ -1676,7 +1722,7 @@ module.exports = async (req, res) => {
             status: initialBookingStatus,
             timestamp: new Date().toISOString(),
             actor: 'Customer',
-            note: 'Booking request placed. Availability verification in progress.'
+            note: `Booking request placed for ${body.cabType || getCabDisplayName(normalizedCabTier)} at ₹${finalPayable}.`
           }
         ],
         createdAt: new Date().toISOString()
@@ -1691,7 +1737,7 @@ module.exports = async (req, res) => {
         id: `NOTIF_BOOK_${Date.now()}`,
         type: 'NEW_BOOKING_REQUEST',
         title: `New Cab Booking: ${bookingId}`,
-        message: `${safePassengerName} (+91 ${cleanPhone}) requested ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'} (${serverFare.tierName}). Total Fare: ₹${finalPayable}.`,
+        message: `${safePassengerName} (+91 ${cleanPhone}) requested ${originCity || 'Patna'} ➔ ${destCity || 'Gaya'} (${newBooking.cabType}). Total Fare: ₹${finalPayable}.`,
         bookingId,
         createdAt: new Date().toISOString()
       });
@@ -1702,6 +1748,13 @@ module.exports = async (req, res) => {
       if (leadIdx >= 0) {
         db.leads[leadIdx].status = 'CONVERTED';
         db.leads[leadIdx].bookingId = bookingId;
+        db.leads[leadIdx].selectedCab = normalizedCabTier;
+        db.leads[leadIdx].cabTier = normalizedCabTier;
+        db.leads[leadIdx].cabName = newBooking.cabType;
+        db.leads[leadIdx].cabType = newBooking.cabType;
+        db.leads[leadIdx].cabPrice = finalPayable;
+        db.leads[leadIdx].totalFare = finalPayable;
+        db.leads[leadIdx].estFareSedan = finalPayable;
         db.leads[leadIdx].updatedAt = new Date().toISOString();
       } else {
         db.leads.unshift({
@@ -1711,10 +1764,16 @@ module.exports = async (req, res) => {
           passengerName: safePassengerName,
           originCity: originCity || 'Patna',
           destCity: destCity || 'Gaya',
-          tripType: 'oneway',
-          pickupDate: pickupDate || new Date().toISOString().split('T')[0],
+          tripType: body.tripType || 'oneway',
+          pickupDate: safePickupDate,
           pickupTime: pickupTime || '10:00 AM',
           distanceKm,
+          selectedCab: normalizedCabTier,
+          cabTier: normalizedCabTier,
+          cabName: newBooking.cabType,
+          cabType: newBooking.cabType,
+          cabPrice: finalPayable,
+          totalFare: finalPayable,
           estFareSedan: finalPayable,
           status: 'CONVERTED',
           bookingId,

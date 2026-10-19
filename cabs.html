@@ -794,6 +794,31 @@
           price
         };
         sessionStorage.setItem('otb_selected_cab', JSON.stringify(selected));
+
+        // Sync lead with selected cab & exact quoted fare
+        if (currentPhone) {
+          fetch('/api/leads', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              cleanPhone: currentPhone,
+              phone: '+91 ' + currentPhone,
+              passengerName: 'Passenger (' + category + ')',
+              originCity: cleanOrigin,
+              destCity: cleanDest,
+              tripType: tripType,
+              pickupDate: pickupDate,
+              pickupTime: pickupTime,
+              distanceKm: distanceKm,
+              selectedCab: cabId,
+              cabName: category,
+              cabPrice: price,
+              totalFare: price,
+              source: 'Cab Selected: ' + category
+            })
+          }).catch(() => {});
+        }
+
         window.location.href = 'booking.html';
       };
     })();

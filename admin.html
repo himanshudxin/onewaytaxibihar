@@ -5221,6 +5221,9 @@
           pickupDate: date,
           pickupTime: time,
           cabTier: cabTier,
+          cabType: cabTier,
+          fare: fare,
+          totalFare: fare,
           finalPayable: fare,
           pickupAddress: pickupAddress,
           dropAddress: `${dest} Main Area`,
@@ -5399,7 +5402,7 @@
 
       // Cab class filter
       if (cabFilter) {
-        filtered = filtered.filter(b => (b.cabType || '').toLowerCase().includes(cabFilter));
+        filtered = filtered.filter(b => (b.cabType || b.fleetClass || b.cabName || b.cabTier || '').toLowerCase().includes(cabFilter));
       }
 
       if (filtered.length === 0) {
@@ -5469,10 +5472,10 @@
               <div style="font-size:11px; color:#64748b;">${b.pickupTime || ''}</div>
             </td>
             <td>
-              <span style="font-size:12px; font-weight:600; text-transform:capitalize;">${escapeHtml(b.cabType || 'Sedan')}</span>
+              <span style="font-size:12px; font-weight:600; text-transform:capitalize;">${escapeHtml(b.cabType || b.fleetClass || b.cabName || b.cabTier || 'Sedan')}</span>
             </td>
             <td>
-              <div style="font-weight:700; font-family:var(--font-mono);">₹${(b.totalFare || b.fare || 0).toLocaleString('en-IN')}</div>
+              <div style="font-weight:700; font-family:var(--font-mono);">₹${Number(b.totalFare != null ? b.totalFare : (b.fare != null ? b.fare : (b.cabPrice || 0))).toLocaleString('en-IN')}</div>
               <div style="font-size:10.5px; color:#059669;">${b.paymentStatus || 'Pay on Ride'}</div>
             </td>
             <td>${statusBadge}</td>
@@ -5563,9 +5566,10 @@
           <div class="ops-card" style="margin-bottom:16px;">
             <div class="ops-card-header"><strong style="font-size:13px;">Fare &amp; Billing Breakdown</strong></div>
             <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Total Agreed Fare:</span> <strong>₹${booking.totalFare || booking.fare || 0}</strong></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Advance Paid Online:</span> <strong style="color:#059669;">₹${booking.advancePaid || 0}</strong></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Balance Due to Driver:</span> <strong style="color:#dc2626;">₹${booking.balanceDue || (booking.totalFare - (booking.advancePaid||0)) || 0}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Vehicle Category:</span> <strong>${escapeHtml(booking.cabType || booking.fleetClass || booking.cabName || booking.cabTier || 'Prime Sedan')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Total Agreed Fare:</span> <strong style="font-size:14px; color:var(--primary);">₹${Number(booking.totalFare != null ? booking.totalFare : (booking.fare || booking.cabPrice || 0)).toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Advance Paid Online:</span> <strong style="color:#059669;">₹${Number(booking.advancePaid || 0).toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Balance Due to Driver:</span> <strong style="color:#dc2626;">₹${Number(booking.balanceDue != null ? booking.balanceDue : (Math.max(0, (booking.totalFare || booking.fare || 0) - (booking.advancePaid || 0)))).toLocaleString('en-IN')}</strong></div>
               <div style="display:flex; justify-content:space-between;"><span>Payment Status:</span> <strong>${booking.paymentStatus || 'Payable to Driver'}</strong></div>
             </div>
           </div>

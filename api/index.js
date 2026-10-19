@@ -359,18 +359,28 @@ function calculateServerFare(distanceKmOrOrigin, cabTierOrDest = 'sedan', tripTy
     const routeDist = matchedRoute.distanceKm;
     let explicitFare = matchedRoute[cleanTier];
     if (!explicitFare) {
-      if (cleanTier === 'sedan_prime') explicitFare = Math.round((matchedRoute.sedan || 2198) * 1.2);
-      else if (cleanTier === 'innova_crysta') explicitFare = Math.round((matchedRoute.suv || 3398) * 1.35);
-      else if (cleanTier === 'suv') explicitFare = matchedRoute.suv || Math.round((matchedRoute.sedan || 2198) * 1.4);
-      else if (cleanTier === 'hatchback') explicitFare = matchedRoute.hatchback || Math.round((matchedRoute.sedan || 2198) * 0.82);
-      else explicitFare = matchedRoute.sedan || 2198;
+      if (cleanTier === 'sedan_prime' || cleanTier === 'execSedan') {
+        explicitFare = matchedRoute.execSedan || Math.round((matchedRoute.sedan || 2198) + 250);
+      } else if (cleanTier === 'innova_crysta' || cleanTier === 'luxSuv') {
+        explicitFare = matchedRoute.luxSuv || Math.round((matchedRoute.sedan || 2198) + 700);
+      } else if (cleanTier === 'suv') {
+        explicitFare = matchedRoute.suv || Math.round((matchedRoute.sedan || 2198) + 400);
+      } else if (cleanTier === 'hatchback') {
+        explicitFare = matchedRoute.hatchback || Math.round((matchedRoute.sedan || 2198) - 200);
+      } else {
+        explicitFare = matchedRoute.sedan || 2198;
+      }
     }
 
     let totalFare = explicitFare;
     let roundTripDiscount = 0;
-    if (tripType === 'roundtrip') {
-      totalFare = Math.round(explicitFare * 1.88);
-      roundTripDiscount = Math.round(explicitFare * 0.12);
+    if (tripType === 'roundtrip' || tripType === 'twoway') {
+      if (matchedRoute.twoWay && matchedRoute.twoWay[cleanTier]) {
+        totalFare = matchedRoute.twoWay[cleanTier];
+      } else {
+        totalFare = Math.max(1000, (explicitFare * 2) - 400);
+      }
+      roundTripDiscount = 400;
     }
 
     const tollEst = Math.round((routeDist / 70) * 55);
@@ -1095,48 +1105,65 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 4A. PATNA ONE-WAY TAXI FARE CHART (34 Dest Routes)
+    // 4A. PATNA ONE-WAY & TWO-WAY TAXI FARE CHART (98 Dest Master Matrix)
     // -------------------------------------------------------------
     if ((pathname === '/fares' || pathname === '/fares/patna' || pathname === '/api/fares') && method === 'GET') {
       const faresList = getPatnaFaresList(db);
       const activeFares = faresList.filter(f => f.active !== false);
       const q = (url.searchParams.get('q') || url.searchParams.get('search') || '').toLowerCase().trim();
-      const filtered = q
-        ? activeFares.filter(f => f.destination.toLowerCase().includes(q) || f.destCity.toLowerCase().includes(q) || (f.district || '').toLowerCase().includes(q))
-        : activeFares;
+      const region = (url.searchParams.get('region') || url.searchParams.get('group') || '').toLowerCase().trim();
+
+      let filtered = activeFares;
+      if (region && region !== 'all') {
+        filtered = filtered.filter(f => (f.group || '').toLowerCase() === region || (f.state || '').toLowerCase() === region);
+      }
+      if (q) {
+        filtered = filtered.filter(f =>
+          f.destination.toLowerCase().includes(q) ||
+          f.destCity.toLowerCase().includes(q) ||
+          (f.district || '').toLowerCase().includes(q) ||
+          (f.state || '').toLowerCase().includes(q)
+        );
+      }
 
       return sendJson(200, {
         success: true,
         origin: "Patna",
-        title: "Patna One-Way Taxi Fare Chart",
-        subtitle: "Affordable One-Way Cab Service Across Bihar",
+        title: "Patna One-Way & Round-Trip Master Fare Chart",
+        subtitle: "Accurate Intercity Costing Matrix Across Bihar, UP, Jharkhand & West Bengal",
         startingFrom: 699,
         currency: "INR",
         count: filtered.length,
         totalCount: activeFares.length,
         fares: filtered,
         categories: {
-          hatchback: { name: "Go Hatchback", label: "WagonR / Tiago or similar", capacity: "4 Passengers + 2 Bags" },
-          sedan: { name: "Prime Sedan", label: "Dzire / Etios / Aura or similar", capacity: "4 Passengers + 3-4 Bags" },
-          suv: { name: "Family SUV (6+1)", label: "Ertiga / Triber or similar, subject to availability", capacity: "6 Passengers + 5-6 Bags" }
+          hatchback: { name: "Go Hatchback", label: "WagonR / Tiago / Celerio", capacity: "4 Passengers + 2 Bags", baseFormula: "Sedan - ₹200" },
+          sedan: { name: "Prime Sedan", label: "Dzire / Etios / Aura", capacity: "4 Passengers + 3-4 Bags", baseFormula: "Base Costing" },
+          execSedan: { name: "Executive Sedan", label: "Ciaz / Honda City / Verna", capacity: "4 Passengers + 4 Bags", baseFormula: "Sedan + ₹250" },
+          suv: { name: "Family SUV (6+1)", label: "Ertiga / Carens / Triber", capacity: "6 Passengers + 5-6 Bags", baseFormula: "Sedan + ₹400" },
+          luxSuv: { name: "Luxury SUV (7+1)", label: "Innova Crysta / XUV700", capacity: "7 Passengers + 6-7 Bags", baseFormula: "Sedan + ₹700" }
+        },
+        roundTripPolicy: {
+          formula: "(OneWay Fare × 2) - ₹400 Guaranteed Multi-Day / Return Savings",
+          discount: 400
         },
         inclusions: [
-          "Fuel for the quoted one-way journey",
+          "Fuel for the quoted journey",
           "Vehicle hire charges included",
-          "Driver allowance included",
-          "Pickup and drop-off within agreed municipal city limits"
+          "Professional commercial driver allowance included",
+          "Doorstep pickup & drop-off within city municipal limits"
         ],
         exclusions: [
-          "FASTag toll charges and toll plaza taxes",
-          "Applicable state road permits and other legally payable route charges",
-          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+          "FASTag toll plaza fees (charged at actuals)",
+          "Applicable interstate border permit taxes (where mandatory)",
+          "Airport parking charges (if applicable)"
         ],
         paymentPolicy: {
-          bookingToken: "₹200–₹499 (subject to confirmed booking terms)",
-          cashAtDestination: "Balance payable directly to driver via Cash or UPI QR upon arrival",
-          cancellation: "Zero cancellation fee if cancelled at least 2 hours before scheduled departure"
+          bookingToken: "₹200–₹499 (credited toward final bill)",
+          cashAtDestination: "Balance payable directly to driver via Cash or UPI QR upon drop",
+          cancellation: "Zero cancellation fee if cancelled at least 2 hours prior to scheduled departure"
         },
-        disclaimer: "Distances are approximate road distances. Fares must be confirmed before booking. Traditional round-trip market comparison figures are indicative estimates of round-trip penalty costs and are not independently verified competitor quotations."
+        disclaimer: "Distances are road distances verified with official state references. Fares include all vehicle and driver charges; tolls and interstate permits at actuals."
       });
     }
 

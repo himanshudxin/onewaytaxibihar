@@ -186,7 +186,7 @@ const handler = async (req, res) => {
         try {
           const dbService = require('../services/db.js');
           if (dbService && typeof dbService.isLeadDeleted === 'function') {
-            cleanDocs = cleanDocs.filter(l => !dbService.isLeadDeleted(l.id) && !dbService.isLeadDeleted(l.leadId) && !dbService.isLeadDeleted(l.cleanPhone));
+            cleanDocs = cleanDocs.filter(l => !dbService.isLeadDeleted(l.id) && !dbService.isLeadDeleted(l.leadId));
           }
         } catch (e) {}
 

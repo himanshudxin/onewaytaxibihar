@@ -467,6 +467,8 @@ async function saveDbAsync(data) {
 
 // Instant Atomic Lead Creation (<15ms)
 async function createLead(lead) {
+  if (lead.id) deletedLeadIds.delete(lead.id);
+  if (lead.leadId) deletedLeadIds.delete(lead.leadId);
   const db = await getDbAsync();
   if (!db.leads) db.leads = [];
 
@@ -493,6 +495,8 @@ async function createLead(lead) {
 
 // Instant Atomic Booking Creation (<15ms)
 async function createBooking(booking) {
+  if (booking.bookingId) deletedBookingIds.delete(booking.bookingId);
+  if (booking.id) deletedBookingIds.delete(booking.id);
   const db = await getDbAsync();
   if (!db.bookings) db.bookings = [];
   
@@ -640,8 +644,7 @@ function isBookingDeleted(bookingId) {
 function isLeadDeleted(leadId) {
   if (!leadId) return false;
   const s = String(leadId).trim();
-  const clean = s.replace(/\D/g, '').slice(-10);
-  return deletedLeadIds.has(s) || (clean.length === 10 && deletedLeadIds.has(clean));
+  return deletedLeadIds.has(s);
 }
 
 async function deleteBooking(bookingId) {
@@ -722,13 +725,9 @@ async function deleteLead(leadId) {
       if (doc) {
         if (doc.id) { deletedLeadIds.add(doc.id); if (!found) found = doc; }
         if (doc.leadId) deletedLeadIds.add(doc.leadId);
-        if (doc.cleanPhone) { cleanPhone = doc.cleanPhone; deletedLeadIds.add(cleanPhone); }
-        else if (doc.phone) { const p = (doc.phone || '').replace(/\D/g, '').slice(-10); if (p) { cleanPhone = p; deletedLeadIds.add(p); } }
       }
     } catch (e) {}
   }
-
-  if (cleanPhone) deletedLeadIds.add(cleanPhone);
 
   // 2. Remove from memoryDb.leads
   if (Array.isArray(memoryDb.leads)) {

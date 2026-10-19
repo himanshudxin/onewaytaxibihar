@@ -1516,13 +1516,13 @@ try {
                     continue
                 }
 
-                if ($urlPath -eq "/api/admin/leads" -and $httpMethod -eq "GET") {
+                if (($urlPath -eq "/api/leads" -or $urlPath -eq "/api/admin/leads") -and $httpMethod -eq "GET") {
                     if (-not $db.leads) { $db.leads = @() }
                     Send-JsonResponse $response 200 @{ success = $true; leads = $db.leads; count = $db.leads.Count }
                     continue
                 }
 
-                if ($urlPath -eq "/api/admin/leads/status" -and $httpMethod -eq "POST") {
+                if (($urlPath -eq "/api/leads/status" -or $urlPath -eq "/api/admin/leads/status") -and ($httpMethod -eq "POST" -or $httpMethod -eq "PUT")) {
                     $body = Read-RequestBody $request
                     $targetLead = $db.leads | Where-Object { $_.id -eq $body.leadId } | Select-Object -First 1
                     if ($targetLead) {
@@ -1541,7 +1541,7 @@ try {
                     continue
                 }
 
-                if ($urlPath -eq "/api/admin/leads" -and $httpMethod -eq "DELETE") {
+                if (($urlPath -eq "/api/leads" -or $urlPath -eq "/api/admin/leads") -and $httpMethod -eq "DELETE") {
                     $body = Read-RequestBody $request
                     if ($body.leadId) {
                         $db.leads = @($db.leads | Where-Object { $_.id -ne $body.leadId })

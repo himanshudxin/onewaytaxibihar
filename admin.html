@@ -3266,6 +3266,21 @@
     </div>
   </aside>
 
+  <!-- LEAD / ENQUIRY DETAILS SLIDE-OVER DRAWER -->
+  <div class="drawer-backdrop" id="lead-drawer-backdrop" onclick="closeLeadDrawer()"></div>
+  <aside class="ops-drawer" id="lead-details-drawer">
+    <div class="ops-drawer-header">
+      <div>
+        <h3 style="font-size:16px; font-weight:800; color:var(--navy-900);" id="drawer-lead-id">LEAD-0000</h3>
+        <span style="font-size:11.5px; color:#64748b;" id="drawer-lead-date">Inquiry Date</span>
+      </div>
+      <button type="button" class="btn-icon btn-secondary" onclick="closeLeadDrawer()">✕</button>
+    </div>
+    <div class="ops-drawer-body" id="drawer-lead-content">
+      <!-- Injected via JavaScript -->
+    </div>
+  </aside>
+
   <!-- DRIVER ASSIGNMENT MODAL -->
   <div class="modal-backdrop" id="modal-assign-driver">
     <div class="ops-modal">
@@ -3952,12 +3967,29 @@
     let _deletedBookingIds = new Set(JSON.parse(sessionStorage.getItem("otb_deleted_bookings") || "[]"));
     let _deletedLeadIds = new Set(JSON.parse(sessionStorage.getItem("otb_deleted_leads") || "[]"));
 
+    // Sanitize any 10-digit phone numbers that were mistakenly saved in deleted lead tombstones
+    [..._deletedLeadIds].forEach(id => {
+      const s = String(id || '').trim();
+      if (/^\d{10}$/.test(s) || /^\+?91\d{10}$/.test(s)) {
+        _deletedLeadIds.delete(id);
+      }
+    });
+
     function persistDeletedTombstones() {
       try {
         sessionStorage.setItem("otb_deleted_bookings", JSON.stringify([..._deletedBookingIds]));
         sessionStorage.setItem("otb_deleted_leads", JSON.stringify([..._deletedLeadIds]));
       } catch (e) {}
     }
+    persistDeletedTombstones();
+
+    window.resetAdminTombstones = function() {
+      _deletedBookingIds.clear();
+      _deletedLeadIds.clear();
+      persistDeletedTombstones();
+      forceSyncAllData();
+      showToast("Tombstone filters reset. All records reloaded.", "success");
+    };
     let _isFirstLoad = true;
     let _pendingActionCallback = null;
 
@@ -4463,6 +4495,10 @@
         setTimeout(() => initDispatchMap(), 150);
       } else if (tabName === 'leads') {
         renderLeadsTable();
+        loadLeads();
+      } else if (tabName === 'bookings') {
+        renderBookingsTable();
+        loadBookings();
       } else if (tabName === 'fares') {
         loadAdminFares();
       } else if (tabName === 'support') {
@@ -4572,19 +4608,16 @@
           let freshLeads = (data.leads || []).filter(l => {
             if (!l) return false;
             if (_deletedLeadIds.has(l.id) || _deletedLeadIds.has(l.leadId)) return false;
-            const p = cleanPhone(l.cleanPhone || l.phone);
-            if (p && _deletedLeadIds.has(p)) return false;
             return true;
           });
 
           if (!_isFirstLoad) {
             freshLeads.forEach(l => {
               const lId = (l.id || l.cleanPhone) + '_' + (l.updatedAt || l.createdAt || '');
-              const p = cleanPhone(l.cleanPhone || l.phone);
-              if (lId && !_knownLeadIds.has(lId) && !_deletedLeadIds.has(l.id) && !_deletedLeadIds.has(l.leadId) && (!p || !_deletedLeadIds.has(p))) {
+              if (lId && !_knownLeadIds.has(lId) && !_deletedLeadIds.has(l.id) && !_deletedLeadIds.has(l.leadId)) {
                 _knownLeadIds.add(lId);
                 playExecutiveChime();
-                showToast(`💬 New Passenger Inquiry: ${l.originCity} ➔ ${l.destCity} (+91 ${l.cleanPhone || l.phone})`, "info");
+                showToast(`💬 New Passenger Inquiry: ${l.originCity} ➔ ${l.destCity} (+91 ${cleanPhone(l.cleanPhone || l.phone)})`, "info");
               }
             });
           } else {
@@ -4933,6 +4966,7 @@
     // VIEW: LIVE INQUIRIES & PASSENGER LEADS CONTROLLER
     // =========================================================================
     async function loadLeads() {
+      const tbody = document.getElementById("leads-table-body");
       try {
         const res = await adminFetch("/api/leads?t=" + Date.now());
         if (res.ok) {
@@ -4940,8 +4974,6 @@
           const filtered = (data.leads || []).filter(l => {
             if (!l) return false;
             if (_deletedLeadIds.has(l.id) || _deletedLeadIds.has(l.leadId)) return false;
-            const p = cleanPhone(l.cleanPhone || l.phone);
-            if (p && _deletedLeadIds.has(p)) return false;
             return true;
           });
           _allLeads = filtered.sort((a, b) => {
@@ -4954,9 +4986,23 @@
           if (_currentBookingsStatusFilter === 'LEADS') {
             renderBookingsTable();
           }
+        } else {
+          console.warn("loadLeads HTTP error:", res.status);
+          if (tbody && _allLeads.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:#ef4444;">
+              Failed to fetch live inquiries (${res.status}).<br/>
+              <button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="loadLeads()">Retry Fetch</button>
+            </td></tr>`;
+          }
         }
       } catch (e) {
-        console.warn("loadLeads note:", e.message);
+        console.warn("loadLeads error:", e.message);
+        if (tbody && _allLeads.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:32px; color:#ef4444;">
+            Network issue fetching inquiries: ${escapeHtml(e.message)}.<br/>
+            <button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="loadLeads()">Retry</button>
+          </td></tr>`;
+        }
       }
     }
 
@@ -5019,14 +5065,14 @@
         return `
           <tr>
             <td>
-              <strong style="color:var(--primary); font-family:var(--font-mono); font-size:12.5px;">${escapeHtml(l.id || 'LEAD')}</strong>
+              <strong style="color:var(--primary); font-family:var(--font-mono); font-size:12.5px; cursor:pointer;" onclick="openLeadDrawer('${escapeHtml(l.id || '')}')" title="Click to view complete inquiry details">${escapeHtml(l.id || 'LEAD')}</strong>
               <div style="font-size:11px; color:#64748b;">${new Date(l.createdAt || Date.now()).toLocaleDateString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</div>
             </td>
             <td>
               <div style="font-weight:700;">${escapeHtml(l.passengerName || 'Fare Visitor')}</div>
               <div style="display:flex; gap:6px; margin-top:3px;">
-                <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;">📞 ${phone}</a>
-                <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px; color:#059669; font-weight:700;">💬 WA</a>
+                ${phone ? `<a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px;">📞 ${phone}</a>
+                <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 8px; color:#059669; font-weight:700;">💬 WA</a>` : `<span style="font-size:11px; color:#94a3b8;">No phone</span>`}
               </div>
             </td>
             <td>
@@ -5044,9 +5090,10 @@
             <td><span class="pill ${pillClass}">${status}</span></td>
             <td style="text-align:right;">
               <div style="display:inline-flex; gap:6px;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert to Ride</button>
-                ${status === 'NEW' ? `<button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>` : ''}
-                <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑️ Delete</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openLeadDrawer('${escapeHtml(l.id || '')}')">View Details</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${escapeHtml(l.id || '')}')">Convert to Ride</button>
+                ${status === 'NEW' ? `<button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${escapeHtml(l.id || '')}', 'CONTACTED')">Contacted</button>` : ''}
+                <button type="button" class="btn btn-secondary btn-sm" style="color:var(--danger); border-color:#fecaca;" onclick="deleteLeadAdmin('${escapeHtml(l.id || '')}')" title="Delete lead">🗑️ Delete</button>
               </div>
             </td>
           </tr>
@@ -5063,6 +5110,9 @@
         if (res.ok) {
           showToast(`Lead marked as ${newStatus}`, "success");
           await loadLeads();
+          if (document.getElementById("lead-details-drawer")?.classList.contains("active")) {
+            openLeadDrawer(leadId);
+          }
         }
       } catch (e) {
         showToast("Error updating lead status: " + e.message, "error");
@@ -5079,11 +5129,10 @@
         `Are you sure you want to permanently delete lead inquiry for "${name}" (${leadId})?`,
         async () => {
           try {
-            // 1. Immediately record in-memory and persistent tombstone so background polling CANNOT restore it
+            // 1. Record in-memory tombstone for this exact record ID
             _deletedLeadIds.add(leadId);
             if (l && l.id) _deletedLeadIds.add(l.id);
             if (l && l.leadId) _deletedLeadIds.add(l.leadId);
-            if (targetPhone) _deletedLeadIds.add(targetPhone);
             persistDeletedTombstones();
 
             _knownLeadIds.delete(leadId);
@@ -5092,11 +5141,12 @@
               if (lIdKey) _knownLeadIds.delete(lIdKey);
             }
 
-            _allLeads = _allLeads.filter(x => x.id !== leadId && x.leadId !== leadId && (!targetPhone || x.cleanPhone !== targetPhone));
+            _allLeads = _allLeads.filter(x => x.id !== leadId && x.leadId !== leadId);
+            closeLeadDrawer();
             renderLeadsTable();
             renderDashboard();
 
-            // 2. Dispatch network deletion passing leadId & phone in BOTH query params and JSON body
+            // 2. Dispatch network deletion passing leadId in query params and body
             const delUrl = `/api/leads?id=${encodeURIComponent(leadId)}&leadId=${encodeURIComponent(leadId)}&phone=${encodeURIComponent(targetPhone)}&action=delete`;
             const res = await adminFetch(delUrl, {
               method: "DELETE",
@@ -5105,16 +5155,13 @@
             const data = await res.json().catch(() => ({}));
 
             if (res.ok && data.success !== false) {
-              showToast("Inquiry lead permanently removed", "success");
+              showToast("Lead inquiry permanently deleted.", "success");
             } else {
-              _deletedLeadIds.delete(leadId);
-              if (targetPhone) _deletedLeadIds.delete(targetPhone);
-              persistDeletedTombstones();
-              showToast(data.message || "Failed to delete lead", "warning");
-              await loadLeads();
+              showToast(data.message || "Lead removed from active view.", "info");
             }
+            await loadLeads();
           } catch (e) {
-            showToast("Delete error: " + e.message, "error");
+            showToast("Network note during delete: " + e.message, "warning");
           }
         }
       );
@@ -5281,6 +5328,7 @@
     // VIEW 3: BOOKINGS MANAGEMENT & SLIDE-OVER DRAWER
     // =========================================================================
     async function loadBookings() {
+      const tbody = document.getElementById("bookings-table-body");
       try {
         const res = await adminFetch("/api/admin/bookings");
         if (res.ok) {
@@ -5290,9 +5338,23 @@
           );
           renderBookingsTable();
           renderDashboard();
+        } else {
+          console.warn("loadBookings HTTP error:", res.status);
+          if (tbody && _allBookings.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:#ef4444;">
+              Failed to fetch bookings database (${res.status}).<br/>
+              <button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="loadBookings()">Retry Fetch</button>
+            </td></tr>`;
+          }
         }
       } catch (e) {
-        console.warn("loadBookings note:", e.message);
+        console.warn("loadBookings error:", e.message);
+        if (tbody && _allBookings.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:#ef4444;">
+            Network issue fetching bookings: ${escapeHtml(e.message)}.<br/>
+            <button type="button" class="btn btn-secondary btn-sm" style="margin-top:10px;" onclick="loadBookings()">Retry</button>
+          </td></tr>`;
+        }
       }
     }
 
@@ -5339,12 +5401,12 @@
 
           return `
             <tr>
-              <td><strong style="color:var(--primary); font-family:var(--font-mono);">${escapeHtml(l.id || 'LEAD')}</strong></td>
+              <td><strong style="color:var(--primary); font-family:var(--font-mono); cursor:pointer;" onclick="openLeadDrawer('${escapeHtml(l.id || '')}')" title="Click to view complete inquiry details">${escapeHtml(l.id || 'LEAD')}</strong></td>
               <td>
                 <div style="font-weight:700;">${escapeHtml(l.passengerName || 'Fare Visitor')}</div>
                 <div style="display:flex; gap:6px; margin-top:2px;">
-                  <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px;">📞 ${phone}</a>
-                  <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px; color:#059669;">💬 WA</a>
+                  ${phone ? `<a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px;">📞 ${phone}</a>
+                  <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; padding:2px 6px; color:#059669;">💬 WA</a>` : `<span style="font-size:11px; color:#94a3b8;">No phone</span>`}
                 </div>
               </td>
               <td>
@@ -5363,9 +5425,10 @@
               <td><span class="pill ${pillClass}">${status}</span></td>
               <td style="text-align:right;">
                 <div style="display:inline-flex; gap:4px;">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${l.id}')">Convert</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${l.id}', 'CONTACTED')">Contacted</button>
-                  <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteLeadAdmin('${l.id}')" title="Delete lead">🗑</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="openLeadDrawer('${escapeHtml(l.id || '')}')">View Details</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openConvertLeadModal('${escapeHtml(l.id || '')}')">Convert</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${escapeHtml(l.id || '')}', 'CONTACTED')">Contacted</button>
+                  <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteLeadAdmin('${escapeHtml(l.id || '')}')" title="Delete lead">🗑</button>
                 </div>
               </td>
             </tr>
@@ -5449,45 +5512,51 @@
           drvInfo = `<span style="color:#ef4444; font-weight:600; font-size:11.5px;">Unassigned</span>`;
         }
 
-        const phone = cleanPhone(b.passengerPhone);
+        const phone = cleanPhone(b.passengerPhone || b.customerPhone || b.phone);
+        const passName = b.passengerName || b.customerName || b.name || 'Valued Passenger';
+        const originName = b.originCity || b.pickupCity || b.origin || 'Patna';
+        const destName = b.destCity || b.dropCity || b.destination || b.dest || 'Gaya';
+        const tripDate = b.pickupDate || 'Today';
+        const tripTime = b.pickupTime || 'Immediate';
+        const bId = b.bookingId || b.id || 'BOOKING';
 
         return `
           <tr>
             <td>
-              <strong style="color:var(--primary); cursor:pointer;" onclick="openBookingDrawer('${b.bookingId}')">${b.bookingId}</strong>
+              <strong style="color:var(--primary); cursor:pointer;" onclick="openBookingDrawer('${escapeHtml(bId)}')" title="Click to view complete booking details">${escapeHtml(bId)}</strong>
             </td>
             <td>
-              <div style="font-weight:700;">${escapeHtml(b.passengerName || 'Guest')}</div>
+              <div style="font-weight:700; color:var(--navy-900);">${escapeHtml(passName)}</div>
               <div style="display:flex; gap:6px; margin-top:2px;">
-                <a href="tel:${phone}" style="color:#2563eb; font-size:11.5px; text-decoration:none;">📞 ${phone}</a>
-                <a href="https://wa.me/91${phone}" target="_blank" style="color:#059669; font-size:11.5px; text-decoration:none;">💬 WA</a>
+                ${phone ? `<a href="tel:${phone}" style="color:#2563eb; font-size:11.5px; text-decoration:none;">📞 ${phone}</a>
+                <a href="https://wa.me/91${phone}?text=${encodeURIComponent('Namaste ' + passName + '! OneWayTaxiBihar here regarding your booking ' + bId + '.')}" target="_blank" style="color:#059669; font-size:11.5px; text-decoration:none;">💬 WA</a>` : `<span style="font-size:11px; color:#94a3b8;">No phone</span>`}
               </div>
             </td>
             <td>
-              <div style="font-weight:600;">${escapeHtml(b.originCity || b.origin || '')} ➔ ${escapeHtml(b.destCity || b.dest || '')}</div>
-              <div style="font-size:11px; color:#64748b;">${b.tripType || 'One-Way'} • ${b.distanceKm ? b.distanceKm + ' KM' : ''}</div>
+              <div style="font-weight:600;">${escapeHtml(originName)} ➔ ${escapeHtml(destName)}</div>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(b.tripType || 'One-Way')} • ${b.distanceKm ? b.distanceKm + ' KM' : ''}</div>
             </td>
             <td>
-              <div>${b.pickupDate || ''}</div>
-              <div style="font-size:11px; color:#64748b;">${b.pickupTime || ''}</div>
+              <div>${escapeHtml(tripDate)}</div>
+              <div style="font-size:11px; color:#64748b;">${escapeHtml(tripTime)}</div>
             </td>
             <td>
-              <span style="font-size:12px; font-weight:600; text-transform:capitalize;">${escapeHtml(b.cabType || b.fleetClass || b.cabName || b.cabTier || 'Sedan')}</span>
+              <span style="font-size:12px; font-weight:600; text-transform:capitalize;">${escapeHtml(b.cabType || b.fleetClass || b.cabName || b.cabTier || 'Prime Sedan')}</span>
             </td>
             <td>
               <div style="font-weight:700; font-family:var(--font-mono);">₹${Number(b.totalFare != null ? b.totalFare : (b.fare != null ? b.fare : (b.cabPrice || 0))).toLocaleString('en-IN')}</div>
-              <div style="font-size:10.5px; color:#059669;">${b.paymentStatus || 'Pay on Ride'}</div>
+              <div style="font-size:10.5px; color:#059669;">${escapeHtml(b.paymentStatus || 'Pay on Ride')}</div>
             </td>
             <td>${statusBadge}</td>
             <td>${drvInfo}</td>
             <td style="text-align:right;">
               <div style="display:inline-flex; gap:4px; align-items:center; justify-content:flex-end;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="openBookingDrawer('${b.bookingId}')">View</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openBookingDrawer('${escapeHtml(bId)}')">View Details</button>
                 ${!isCancelled ? `
-                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">${isDriverAssigned ? 'Reassign' : 'Assign'}</button>
-                  <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:11px;" onclick="cancelRideAdmin('${b.bookingId}')" title="Cancel this ride">Cancel</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${escapeHtml(bId)}')">${isDriverAssigned ? 'Reassign' : 'Assign'}</button>
+                  <button type="button" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:11px;" onclick="cancelRideAdmin('${escapeHtml(bId)}')" title="Cancel this ride">Cancel</button>
                 ` : ''}
-                <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b; padding:4px 8px; font-size:11px;" onclick="deleteBookingAdmin('${b.bookingId}')" title="Permanently delete booking">Delete</button>
+                <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b; padding:4px 8px; font-size:11px;" onclick="deleteBookingAdmin('${escapeHtml(bId)}')" title="Permanently delete booking">Delete</button>
               </div>
             </td>
           </tr>
@@ -5495,7 +5564,9 @@
       }).join("");
     }
 
-    // Booking Slide-Over Drawer
+    // =========================================================================
+    // BOOKING SLIDE-OVER DRAWER (Comprehensive Passenger & Trip Breakdown)
+    // =========================================================================
     function openBookingDrawer(bookingId) {
       const booking = _allBookings.find(b => b.bookingId === bookingId || b.id === bookingId);
       if (!booking) return;
@@ -5506,10 +5577,30 @@
       const dateEl = document.getElementById("drawer-booking-date");
       const content = document.getElementById("drawer-booking-content");
 
-      if (idEl) idEl.textContent = booking.bookingId;
-      if (dateEl) dateEl.textContent = `Created: ${new Date(booking.createdAt || Date.now()).toLocaleString('en-IN')}`;
+      const bId = booking.bookingId || booking.id || 'BOOKING';
+      if (idEl) idEl.textContent = bId;
+      if (dateEl) dateEl.textContent = `Booked: ${new Date(booking.createdAt || Date.now()).toLocaleString('en-IN')}`;
 
-      const phone = cleanPhone(booking.passengerPhone);
+      const phone = cleanPhone(booking.passengerPhone || booking.customerPhone || booking.phone);
+      const passName = booking.passengerName || booking.customerName || booking.name || 'Valued Passenger';
+      const email = booking.passengerEmail || booking.customerEmail || booking.email || 'None on file';
+      const originCity = booking.originCity || booking.pickupCity || 'Patna';
+      const destCity = booking.destCity || booking.dropCity || 'Gaya';
+      const pickupAddress = booking.pickupAddress || booking.originAddress || originCity;
+      const dropAddress = booking.dropAddress || booking.destAddress || booking.destinationAddress || destCity;
+      const pickupDate = booking.pickupDate || 'Today';
+      const pickupTime = booking.pickupTime || 'Immediate';
+      const tripType = booking.tripType || 'One-Way Intercity';
+      const distance = booking.distanceKm ? `${booking.distanceKm} KM` : 'Approx. 100+ KM';
+      const duration = booking.duration || 'Standard Duration';
+      const vehicleTier = booking.cabType || booking.fleetClass || booking.cabName || booking.cabTier || 'Prime Sedan';
+      const vehicleModel = booking.fleetModel || booking.cabModel || booking.vehicleModel || (booking.fareBreakdown?.tierModel || 'Dzire, Etios, Amaze');
+      const totalFare = Number(booking.totalFare != null ? booking.totalFare : (booking.fare != null ? booking.fare : (booking.cabPrice || 0)));
+      const advancePaid = Number(booking.advancePaid || 0);
+      const balanceDue = Number(booking.balanceDue != null ? booking.balanceDue : Math.max(0, totalFare - advancePaid));
+      const payStatus = booking.paymentStatus || 'PAYABLE TO DRIVER (Cash on Ride)';
+      const payMethod = booking.paymentMethod || 'Cash to Driver';
+
       const rawStatus = (booking.bookingStatus || booking.status || 'CONFIRMED').toUpperCase();
       const isCancelled = rawStatus === 'CANCELLED' || rawStatus === 'REJECTED';
       const isDriverAssigned = Boolean(booking.assignedDriverId || booking.driverDetails?.id || booking.assignedDriverName || rawStatus === 'DRIVER ASSIGNED');
@@ -5521,14 +5612,14 @@
       } else if (isDriverAccepted) {
         statusBadge = `<span class="pill confirmed" style="background:#d1fae5; color:#059669; border:1px solid #6ee7b7; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🟢 Accepted by Driver</span>`;
       } else if (isDriverAssigned) {
-        statusBadge = `<span class="pill assigned" style="background:#fef3c7; color:#d97706; border:1px solid #fcd34d; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🟡 Assigned (Not Accepted Yet)</span>`;
+        statusBadge = `<span class="pill assigned" style="background:#fef3c7; color:#d97706; border:1px solid #fcd34d; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">🟡 Assigned (Pending Acceptance)</span>`;
       } else {
         statusBadge = `<span class="pill new" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; font-weight:800; font-size:12px; padding:4px 10px; border-radius:9999px;">⏳ Pending Driver</span>`;
       }
 
       const drvName = booking.assignedDriverName || booking.driverDetails?.name || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.name) : '');
       const drvCar = booking.assignedDriverCarNo || booking.driverDetails?.vehicleNumber || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.vehicleNumber) : '');
-      const drvPhone = booking.assignedDriverPhone || booking.driverDetails?.phone || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.phone) : '');
+      const drvPhone = cleanPhone(booking.assignedDriverPhone || booking.driverDetails?.phone || (booking.assignedDriverId ? (_allDrivers.find(d => d.id === booking.assignedDriverId)?.phone) : ''));
 
       let chauffeurStatusHtml = '';
       if (isCancelled) {
@@ -5536,73 +5627,160 @@
       } else if (drvName) {
         chauffeurStatusHtml = `
           <div style="font-size:12px; font-weight:800; margin-top:6px; color:${isDriverAccepted ? '#059669' : '#d97706'}; display:flex; align-items:center; gap:6px;">
-            <span>${isDriverAccepted ? '🟢 Driver Status: Accepted & Confirmed' : '🟡 Driver Status: Assigned (Not Accepted Yet)'}</span>
+            <span>${isDriverAccepted ? '🟢 Driver Status: Accepted & Confirmed' : '🟡 Driver Status: Assigned (Pending Acceptance)'}</span>
           </div>
         `;
       } else {
         chauffeurStatusHtml = `<div style="font-size:12px; color:#ef4444; font-weight:700; margin-top:4px;">Chauffeur not assigned yet</div>`;
       }
 
+      let timelineHtml = '';
+      if (Array.isArray(booking.statusHistory) && booking.statusHistory.length > 0) {
+        timelineHtml = `
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">Trip Audit &amp; Status Timeline</strong></div>
+            <div class="ops-card-body" style="padding:12px 14px; font-size:12px;">
+              ${booking.statusHistory.map(h => `
+                <div style="padding:6px 0; border-bottom:1px dashed #e2e8f0; display:flex; flex-direction:column; gap:2px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:var(--primary);">${escapeHtml(h.status || 'UPDATE')}</strong>
+                    <span style="color:#64748b; font-size:11px;">${new Date(h.timestamp || Date.now()).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' })}</span>
+                  </div>
+                  <div style="color:#334155;">${escapeHtml(h.note || '')}</div>
+                  <div style="color:#94a3b8; font-size:10.5px;">By: ${escapeHtml(h.actor || 'System')}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
       content.innerHTML = `
         <div style="margin-bottom:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             ${statusBadge}
-            <span style="font-size:12px; font-weight:600; color:#64748b;">Trip OTP: <strong style="color:var(--navy-900); font-family:var(--font-mono); font-size:14px;">${booking.tripOtp || '----'}</strong></span>
+            <span style="font-size:12px; font-weight:600; color:#64748b;">Trip OTP: <strong style="color:var(--navy-900); font-family:var(--font-mono); font-size:14px; letter-spacing:1px;">${escapeHtml(booking.tripOtp || '----')}</strong></span>
           </div>
 
+          <!-- Passenger Details Card -->
           <div class="ops-card" style="margin-bottom:16px;">
-            <div class="ops-card-header"><strong style="font-size:13px;">Passenger Information</strong></div>
-            <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
-              <div>Name: <strong>${escapeHtml(booking.passengerName)}</strong></div>
-              <div>Phone: <strong>${escapeHtml(booking.passengerPhone)}</strong></div>
-              <div>Pickup Address: <strong>${escapeHtml(booking.pickupAddress || booking.originCity)}</strong></div>
-              <div style="margin-top:8px; display:flex; gap:8px;">
-                <a href="tel:${phone}" class="btn btn-secondary btn-sm">📞 Call Passenger</a>
-                <a href="https://wa.me/91${phone}" target="_blank" class="btn btn-secondary btn-sm">💬 WhatsApp Message</a>
+            <div class="ops-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:13px;">👤 Passenger Information</strong>
+              <span class="pill ${booking.phoneVerified ? 'confirmed' : 'new'}" style="font-size:10.5px; padding:2px 8px;">${booking.phoneVerified ? '✓ Phone Verified' : 'Unverified'}</span>
+            </div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+              <div>Passenger Name: <strong style="color:var(--navy-900); font-size:13.5px;">${escapeHtml(passName)}</strong></div>
+              <div>Contact Mobile: <strong style="color:var(--navy-900); font-family:var(--font-mono); font-size:13px;">+91 ${escapeHtml(phone || 'N/A')}</strong></div>
+              <div>Email Address: <span style="color:#475569;">${escapeHtml(email)}</span></div>
+              ${phone ? `
+                <div style="margin-top:8px; display:flex; gap:8px;">
+                  <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-weight:700;">📞 Call Passenger</a>
+                  <a href="https://wa.me/91${phone}?text=${encodeURIComponent('Namaste ' + passName + '! OneWayTaxiBihar here regarding your booking ' + bId + ' (' + originCity + ' to ' + destCity + ').')}" target="_blank" class="btn btn-secondary btn-sm" style="color:#059669; font-weight:700;">💬 WhatsApp</a>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Trip Corridor & Schedule Card -->
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">📍 Corridor &amp; Journey Schedule</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+              <div style="font-size:14px; font-weight:800; color:var(--primary); margin-bottom:2px;">
+                ${escapeHtml(originCity)} ➔ ${escapeHtml(destCity)}
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Trip Type:</span>
+                <strong style="text-transform:capitalize;">${escapeHtml(tripType)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Scheduled Date:</span>
+                <strong style="color:var(--navy-900);">${escapeHtml(pickupDate)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Scheduled Pickup Time:</span>
+                <strong style="color:var(--navy-900);">${escapeHtml(pickupTime)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Route Distance &amp; Time:</span>
+                <span>${escapeHtml(distance)} • ${escapeHtml(duration)}</span>
+              </div>
+              <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e2e8f0;">
+                <div style="font-size:11.5px; color:#64748b; margin-bottom:2px;">Exact Pickup Address:</div>
+                <div style="font-weight:600; color:var(--navy-900);">${escapeHtml(pickupAddress)}</div>
+              </div>
+              <div style="margin-top:4px;">
+                <div style="font-size:11.5px; color:#64748b; margin-bottom:2px;">Exact Drop Address:</div>
+                <div style="font-weight:600; color:var(--navy-900);">${escapeHtml(dropAddress)}</div>
               </div>
             </div>
           </div>
 
+          <!-- Vehicle Category Card -->
           <div class="ops-card" style="margin-bottom:16px;">
-            <div class="ops-card-header"><strong style="font-size:13px;">Fare &amp; Billing Breakdown</strong></div>
-            <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Vehicle Category:</span> <strong>${escapeHtml(booking.cabType || booking.fleetClass || booking.cabName || booking.cabTier || 'Prime Sedan')}</strong></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Total Agreed Fare:</span> <strong style="font-size:14px; color:var(--primary);">₹${Number(booking.totalFare != null ? booking.totalFare : (booking.fare || booking.cabPrice || 0)).toLocaleString('en-IN')}</strong></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Advance Paid Online:</span> <strong style="color:#059669;">₹${Number(booking.advancePaid || 0).toLocaleString('en-IN')}</strong></div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Balance Due to Driver:</span> <strong style="color:#dc2626;">₹${Number(booking.balanceDue != null ? booking.balanceDue : (Math.max(0, (booking.totalFare || booking.fare || 0) - (booking.advancePaid || 0)))).toLocaleString('en-IN')}</strong></div>
-              <div style="display:flex; justify-content:space-between;"><span>Payment Status:</span> <strong>${booking.paymentStatus || 'Payable to Driver'}</strong></div>
+            <div class="ops-card-header"><strong style="font-size:13px;">🚗 Vehicle Allocation</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between;">
+                <span>Vehicle Tier:</span>
+                <strong style="color:var(--primary); text-transform:capitalize;">${escapeHtml(vehicleTier)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Fleet Models:</span>
+                <span>${escapeHtml(vehicleModel)}</span>
+              </div>
             </div>
           </div>
 
+          <!-- Fare Breakdown & Billing Card -->
           <div class="ops-card" style="margin-bottom:16px;">
-            <div class="ops-card-header"><strong style="font-size:13px;">Assigned Chauffeur</strong></div>
+            <div class="ops-card-header"><strong style="font-size:13px;">💰 Agreed Fare &amp; Billing Breakdown</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Total Agreed Fare:</span> <strong style="font-size:15px; color:var(--primary); font-family:var(--font-mono);">₹${totalFare.toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Advance Paid Online:</span> <strong style="color:#059669; font-family:var(--font-mono);">₹${advancePaid.toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Balance Due to Driver:</span> <strong style="color:#dc2626; font-size:13.5px; font-family:var(--font-mono);">₹${balanceDue.toLocaleString('en-IN')}</strong></div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Payment Method:</span> <strong>${escapeHtml(payMethod)}</strong></div>
+              <div style="display:flex; justify-content:space-between;"><span>Payment Status:</span> <strong style="color:#059669;">${escapeHtml(payStatus)}</strong></div>
+              ${booking.paymentTxnId ? `<div style="display:flex; justify-content:space-between; margin-top:4px; font-size:11px; color:#64748b;"><span>Transaction ID:</span> <span style="font-family:var(--font-mono);">${escapeHtml(booking.paymentTxnId)}</span></div>` : ''}
+            </div>
+          </div>
+
+          <!-- Assigned Chauffeur Card -->
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">👨‍✈️ Assigned Chauffeur</strong></div>
             <div class="ops-card-body" style="padding:14px; font-size:12.5px;">
               ${isCancelled ? `
                 <div style="background:#fee2e2; border:1px solid #fca5a5; border-radius:8px; padding:10px 12px; color:#ef4444; font-weight:700;">
-                  🔴 Ride Cancelled — Dispatch aborted and chauffeur released back to available fleet pool.
+                  🔴 Ride Cancelled — Dispatch aborted and chauffeur released back to fleet.
                 </div>
               ` : `
                 <div>Driver: <strong>${escapeHtml(drvName || 'Not Assigned')}</strong></div>
                 <div>Vehicle: <strong>${escapeHtml(drvCar || 'N/A')}</strong></div>
                 <div>Phone: <strong>${escapeHtml(drvPhone || 'N/A')}</strong></div>
+                ${drvPhone ? `
+                  <div style="margin-top:6px; display:flex; gap:6px;">
+                    <a href="tel:${drvPhone}" class="btn btn-secondary btn-sm" style="font-size:11px;">📞 Call Driver</a>
+                    <a href="https://wa.me/91${drvPhone}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; color:#059669;">💬 WhatsApp Driver</a>
+                  </div>
+                ` : ''}
                 ${chauffeurStatusHtml}
                 <div style="margin-top:10px;">
-                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${booking.bookingId}')">${drvName ? 'Reassign Driver' : 'Assign Driver'}</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${bId}')">${drvName ? 'Reassign Driver' : 'Assign Driver'}</button>
                 </div>
               `}
             </div>
           </div>
 
+          ${timelineHtml}
+
           <!-- Status Action Buttons -->
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;">
             ${isCancelled ? `
-              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'CONFIRMED')">Re-Open / Confirm Ride</button>
+              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${bId}', 'CONFIRMED')">Re-Open / Confirm Ride</button>
             ` : `
-              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'CONFIRMED')">Confirm Ride</button>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="updateBookingStatusAdmin('${booking.bookingId}', 'COMPLETED')">Mark Completed</button>
-              <button type="button" class="btn btn-danger btn-sm" onclick="cancelRideAdmin('${booking.bookingId}')">Cancel Ride</button>
+              <button type="button" class="btn btn-success btn-sm" onclick="updateBookingStatusAdmin('${bId}', 'CONFIRMED')">Confirm Ride</button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="updateBookingStatusAdmin('${bId}', 'COMPLETED')">Mark Completed</button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="cancelRideAdmin('${bId}')">Cancel Ride</button>
             `}
-            <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b;" onclick="deleteBookingAdmin('${booking.bookingId}')" title="Permanently delete from database">Delete Ride</button>
+            <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b;" onclick="deleteBookingAdmin('${bId}')" title="Permanently delete from database">Delete Ride</button>
           </div>
         </div>
       `;
@@ -5614,6 +5792,137 @@
     function closeBookingDrawer() {
       document.getElementById("booking-drawer-backdrop")?.classList.remove("active");
       document.getElementById("booking-details-drawer")?.classList.remove("active");
+    }
+
+    // =========================================================================
+    // INQUIRY / LEAD SLIDE-OVER DRAWER (Complete Passenger Enquiry Details)
+    // =========================================================================
+    function openLeadDrawer(leadId) {
+      const lead = _allLeads.find(l => l.id === leadId || l.leadId === leadId || l.cleanPhone === leadId);
+      if (!lead) return;
+
+      const backdrop = document.getElementById("lead-drawer-backdrop");
+      const drawer = document.getElementById("lead-details-drawer");
+      const idEl = document.getElementById("drawer-lead-id");
+      const dateEl = document.getElementById("drawer-lead-date");
+      const content = document.getElementById("drawer-lead-content");
+
+      const lId = lead.id || 'INQUIRY';
+      if (idEl) idEl.textContent = lId;
+      if (dateEl) dateEl.textContent = `Received: ${new Date(lead.createdAt || Date.now()).toLocaleString('en-IN')}`;
+
+      const phone = cleanPhone(lead.cleanPhone || lead.phone);
+      const passName = lead.passengerName || lead.customerName || lead.name || 'Fare Visitor';
+      const originCity = lead.originCity || 'Patna';
+      const destCity = lead.destCity || 'Gaya';
+      const tripType = lead.tripType || 'One-Way';
+      const pickupDate = lead.pickupDate || 'Today';
+      const pickupTime = lead.pickupTime || 'Immediate';
+      const distance = lead.distanceKm ? `${lead.distanceKm} KM` : '—';
+      const duration = lead.duration || '—';
+      const cabName = lead.cabName || lead.selectedCab || 'Prime Sedan';
+      const estFare = Number(lead.cabPrice || lead.estFareSedan || 2198);
+      const status = (lead.status || 'NEW').toUpperCase();
+      const pillClass = status === 'NEW' ? 'new' : (status === 'CONTACTED' ? 'assigned' : (status === 'CONVERTED' ? 'confirmed' : 'cancelled'));
+      const waMsg = encodeURIComponent(`Namaste ${passName}! OneWayTaxiBihar here regarding your cab enquiry from ${originCity} to ${destCity}. Would you like to confirm your ride?`);
+
+      content.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="pill ${pillClass}" style="font-size:12px; font-weight:800; padding:4px 10px; border-radius:9999px;">${status}</span>
+            <span style="font-size:12px; color:#64748b;">Source: <strong style="color:var(--navy-900);">${escapeHtml(lead.source || 'Website Fare Check')}</strong></span>
+          </div>
+
+          <!-- Passenger Contact Card -->
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">👤 Passenger Information</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+              <div>Name: <strong style="color:var(--navy-900); font-size:13.5px;">${escapeHtml(passName)}</strong></div>
+              <div>Phone: <strong style="color:var(--navy-900); font-family:var(--font-mono); font-size:13px;">+91 ${escapeHtml(phone || 'N/A')}</strong></div>
+              ${phone ? `
+                <div style="margin-top:8px; display:flex; gap:8px;">
+                  <a href="tel:${phone}" class="btn btn-secondary btn-sm" style="font-weight:700;">📞 Call Passenger</a>
+                  <a href="https://wa.me/91${phone}?text=${waMsg}" target="_blank" class="btn btn-secondary btn-sm" style="color:#059669; font-weight:700;">💬 WhatsApp</a>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Corridor & Schedule Card -->
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">📍 Corridor &amp; Schedule</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+              <div style="font-size:14px; font-weight:800; color:var(--primary); margin-bottom:2px;">
+                ${escapeHtml(originCity)} ➔ ${escapeHtml(destCity)}
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Trip Type:</span>
+                <strong style="text-transform:capitalize;">${escapeHtml(tripType)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Preferred Date:</span>
+                <strong style="color:var(--navy-900);">${escapeHtml(pickupDate)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Preferred Time:</span>
+                <strong style="color:var(--navy-900);">${escapeHtml(pickupTime)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Distance &amp; Duration:</span>
+                <span>${escapeHtml(distance)} • ${escapeHtml(duration)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vehicle Preference & Fare Estimate Card -->
+          <div class="ops-card" style="margin-bottom:16px;">
+            <div class="ops-card-header"><strong style="font-size:13px;">🚗 Vehicle &amp; Fare Quotation</strong></div>
+            <div class="ops-card-body" style="padding:14px; font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Selected Vehicle:</span>
+                <strong style="color:var(--primary); font-size:13px;">${escapeHtml(cabName)}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Quoted Fare:</span>
+                <strong style="font-size:16px; color:#059669; font-family:var(--font-mono);">₹${estFare.toLocaleString('en-IN')}</strong>
+              </div>
+              ${lead.estFareHatch || lead.estFareSedan || lead.estFareSuv ? `
+                <div style="margin-top:8px; padding-top:8px; border-top:1px dashed #e2e8f0; font-size:11.5px; display:flex; justify-content:space-between;">
+                  <span>Hatch: ₹${Number(lead.estFareHatch || 1698).toLocaleString('en-IN')}</span>
+                  <span>Sedan: ₹${Number(lead.estFareSedan || 2198).toLocaleString('en-IN')}</span>
+                  <span>SUV: ₹${Number(lead.estFareSuv || 3398).toLocaleString('en-IN')}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <!-- Notes Card (if present) -->
+          ${lead.notes ? `
+            <div class="ops-card" style="margin-bottom:16px;">
+              <div class="ops-card-header"><strong style="font-size:13px;">📝 Notes / Requirements</strong></div>
+              <div class="ops-card-body" style="padding:14px; font-size:12.5px; color:#334155;">
+                ${escapeHtml(lead.notes)}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Action Buttons -->
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeLeadDrawer(); openConvertLeadModal('${lId}');">🚗 Convert to Ride</button>
+            ${status === 'NEW' ? `<button type="button" class="btn btn-secondary btn-sm" onclick="markLeadStatus('${lId}', 'CONTACTED')">Mark Contacted</button>` : ''}
+            ${status !== 'CONVERTED' ? `<button type="button" class="btn btn-success btn-sm" onclick="markLeadStatus('${lId}', 'CONVERTED')">Mark Converted</button>` : ''}
+            <button type="button" class="btn btn-danger btn-sm" style="background:#b91c1c; border-color:#991b1b;" onclick="deleteLeadAdmin('${lId}')" title="Permanently delete lead">Delete</button>
+          </div>
+        </div>
+      `;
+
+      backdrop.classList.add("active");
+      drawer.classList.add("active");
+    }
+
+    function closeLeadDrawer() {
+      document.getElementById("lead-drawer-backdrop")?.classList.remove("active");
+      document.getElementById("lead-details-drawer")?.classList.remove("active");
     }
 
     // =========================================================================

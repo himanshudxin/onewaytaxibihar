@@ -2689,3 +2689,6 @@ main.site-main {
   line-height: 1.55;
   margin: 0;
 }
+
+/* Hidden section utility */
+.hidden-section { display: none; }

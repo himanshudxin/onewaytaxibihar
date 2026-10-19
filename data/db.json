@@ -901,7 +901,33 @@
     }
   ],
   "wallet_ledger": [],
-  "leads": [],
+  "leads": [
+    {
+      "id": "lead_9876543210_0031",
+      "phone": "+91 9876543210",
+      "rawPhone": "9876543210",
+      "cleanPhone": "9876543210",
+      "passengerName": "Fare Check Visitor",
+      "originCity": "Patna",
+      "destCity": "Gaya",
+      "tripType": "oneway",
+      "pickupDate": "2026-10-19",
+      "pickupTime": "10:00 AM",
+      "distanceKm": 104,
+      "duration": "2h 15m",
+      "selectedCab": "sedan",
+      "cabName": "Prime Sedan",
+      "cabPrice": 1549,
+      "estFareHatch": 1399,
+      "estFareSedan": 1549,
+      "estFareSuv": 2149,
+      "source": "Check Fares & Availability Button",
+      "status": "NEW",
+      "notes": "Inquiry for Patna ➔ Gaya",
+      "createdAt": "2026-10-19T01:43:30.031Z",
+      "updatedAt": "2026-10-19T01:43:30.212Z"
+    }
+  ],
   "notifications": [
     {
       "id": "NOTIF_BOOK_1792319883276",

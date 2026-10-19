@@ -140,13 +140,23 @@
     if (pickupTimeSelect) {
       let exists = Array.from(pickupTimeSelect.options).some(opt => opt.value === formattedTime);
       if (!exists) {
-        const newOpt = new Option(formattedTime, formattedTime, true, true);
-        pickupTimeSelect.add(newOpt);
+        pickupTimeSelect.add(new Option(formattedTime, formattedTime));
       }
-      if (pickupTimeSelect.value !== formattedTime) {
-        pickupTimeSelect.value = formattedTime;
-        pickupTimeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      pickupTimeSelect.value = formattedTime;
+      pickupTimeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      pickupTimeSelect.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    try {
+      sessionStorage.setItem('otb_pickup_time', formattedTime);
+      const rawTrip = sessionStorage.getItem('otb_trip');
+      if (rawTrip) {
+        const parsedTrip = JSON.parse(rawTrip);
+        parsedTrip.pickupTime = formattedTime;
+        sessionStorage.setItem('otb_trip', JSON.stringify(parsedTrip));
       }
+    } catch (e) {}
+    if (window.bookingManager) {
+      window.bookingManager.pickupTime = formattedTime;
     }
 
     // 3. Return Date Card (Round Trip)
@@ -424,6 +434,7 @@
           e.preventDefault();
           state.pickupHour = h;
           renderClockPicker();
+          updateScheduleCards();
         });
         hoursGrid.appendChild(btn);
       }
@@ -445,6 +456,7 @@
           e.preventDefault();
           state.pickupMinute = minStr;
           renderClockPicker();
+          updateScheduleCards();
         });
         minutesGrid.appendChild(btn);
       });
@@ -482,7 +494,13 @@
     }
   }
 
+  function confirmClock() {
+    updateScheduleCards();
+    closeClockModal();
+  }
+
   function closeClockModal() {
+    updateScheduleCards();
     const modal = document.getElementById('modal-exec-clock');
     if (modal) {
       modal.classList.remove('open', 'active');
@@ -620,20 +638,7 @@
     if (confirmClockBtn) {
       confirmClockBtn.onclick = (e) => {
         e.preventDefault();
-        // Persist chosen time into the hidden select so it survives re-init
-        const formattedTime = `${String(state.pickupHour).padStart(2, '0')}:${state.pickupMinute} ${state.pickupAmPm}`;
-        const pickupTimeSelect = document.getElementById('pickup-time-select');
-        if (pickupTimeSelect) {
-          // Add option if it doesn't exist yet
-          let exists = Array.from(pickupTimeSelect.options).some(o => o.value === formattedTime);
-          if (!exists) {
-            pickupTimeSelect.add(new Option(formattedTime, formattedTime));
-          }
-          pickupTimeSelect.value = formattedTime;
-          pickupTimeSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-        updateScheduleCards();
-        closeClockModal();
+        confirmClock();
       };
     }
 
@@ -642,6 +647,7 @@
         e.preventDefault();
         state.pickupAmPm = 'AM';
         renderClockPicker();
+        updateScheduleCards();
       };
     }
 
@@ -650,6 +656,7 @@
         e.preventDefault();
         state.pickupAmPm = 'PM';
         renderClockPicker();
+        updateScheduleCards();
       };
     }
 
@@ -723,13 +730,14 @@
     state.viewYear = today.getFullYear();
     state.viewMonth = today.getMonth();
 
-    // Restore previously selected time if the hidden select already has a value
+    // Restore previously selected time if available in session or hidden select
+    const storedTime = sessionStorage.getItem('otb_pickup_time');
     const pickupTimeSelect = document.getElementById('pickup-time-select');
-    if (pickupTimeSelect && pickupTimeSelect.value) {
+    if (storedTime && storedTime.includes(':')) {
+      setTimeByString(storedTime);
+    } else if (pickupTimeSelect && pickupTimeSelect.value) {
       setTimeByString(pickupTimeSelect.value);
     }
-    // else keep the state defaults (10:00 AM) – they will be overwritten once
-    // the user picks a time from the clock modal
 
     initEventListeners();
     updateScheduleCards();
@@ -747,7 +755,9 @@
     closeCalendar: closeCalendarModal,
     openClock: openClockModal,
     closeClock: closeClockModal,
+    confirmClock: confirmClock,
     updateCards: updateScheduleCards,
+    getFormattedTime: () => `${String(state.pickupHour).padStart(2, '0')}:${state.pickupMinute} ${state.pickupAmPm}`,
     getState: () => ({ ...state })
   };
 

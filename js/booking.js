@@ -296,9 +296,40 @@ class BookingManager {
     const timeSelect = document.getElementById("pickup-time-select");
     if (timeSelect) {
       timeSelect.addEventListener("change", (e) => {
-        this.pickupTime = e.target.value;
+        if (e.target.value) this.pickupTime = e.target.value;
+      });
+      timeSelect.addEventListener("input", (e) => {
+        if (e.target.value) this.pickupTime = e.target.value;
       });
     }
+
+    this.getResolvedPickupTime();
+  }
+
+  getResolvedPickupTime() {
+    const domText = document.getElementById("display-pickup-time")?.textContent?.trim();
+    if (domText && domText.includes(":") && !domText.toLowerCase().includes("select")) {
+      this.pickupTime = domText;
+      return domText;
+    }
+    const selVal = document.getElementById("pickup-time-select")?.value?.trim();
+    if (selVal && selVal.includes(":")) {
+      this.pickupTime = selVal;
+      return selVal;
+    }
+    if (window.ExecDateTimePicker && typeof window.ExecDateTimePicker.getFormattedTime === "function") {
+      const execTime = window.ExecDateTimePicker.getFormattedTime();
+      if (execTime && execTime.includes(":")) {
+        this.pickupTime = execTime;
+        return execTime;
+      }
+    }
+    const sessionTime = sessionStorage.getItem("otb_pickup_time");
+    if (sessionTime && sessionTime.includes(":")) {
+      this.pickupTime = sessionTime;
+      return sessionTime;
+    }
+    return this.pickupTime || "10:00 AM";
   }
 
   /* ==========================================================================
@@ -1380,6 +1411,8 @@ class BookingManager {
     const displayDate = document.getElementById("display-pickup-date")?.textContent?.trim() ||
                         document.getElementById("pickup-date-display")?.textContent?.trim() ||
                         this.pickupDate || "Today";
+    const resolvedTime = this.getResolvedPickupTime();
+    this.pickupTime = resolvedTime;
 
     const tripPayload = {
       tripType: this.tripType || "oneway",
@@ -1389,7 +1422,7 @@ class BookingManager {
       duration: this.calculatedDuration || "2h 15m",
       pickupDate: this.pickupDate || new Date().toISOString().split("T")[0],
       displayDate: displayDate,
-      pickupTime: this.pickupTime || "10:00 AM",
+      pickupTime: resolvedTime,
       phone: phoneToRecord || this.userPhone || ""
     };
 
@@ -1542,7 +1575,7 @@ class BookingManager {
       destCity: destName,
       tripType: this.tripType || "oneway",
       pickupDate: this.pickupDate || new Date().toISOString().split("T")[0],
-      pickupTime: this.pickupTime || "10:00 AM",
+      pickupTime: this.getResolvedPickupTime(),
       distanceKm: this.calculatedDistanceKm || 100,
       duration: this.calculatedDuration || "2h",
       selectedCab: extra.selectedCab || this.selectedCabId || "sedan",

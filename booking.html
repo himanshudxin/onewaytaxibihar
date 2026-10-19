@@ -929,9 +929,14 @@
           duration: "2h 15m",
           pickupDate: new Date().toISOString().split("T")[0],
           displayDate: "Today",
-          pickupTime: "10:00 AM",
+          pickupTime: sessionStorage.getItem('otb_pickup_time') || "10:00 AM",
           phone: ""
         };
+      } else {
+        const storedTime = sessionStorage.getItem('otb_pickup_time');
+        if (storedTime && storedTime.includes(':') && (!trip.pickupTime || trip.pickupTime === '10:00 AM')) {
+          trip.pickupTime = storedTime;
+        }
       }
       if (!cab) {
         cab = {

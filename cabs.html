@@ -444,9 +444,9 @@
       const originId = trip?.origin?.id || urlParams.get('fromId') || 'patna';
       const destId = trip?.dest?.id || urlParams.get('toId') || 'gaya';
       const tripType = trip?.tripType || urlParams.get('type') || 'oneway';
-      const pickupDate = trip?.pickupDate || urlParams.get('date') || new Date().toISOString().split('T')[0];
-      const displayDate = trip?.displayDate || pickupDate;
-      const pickupTime = trip?.pickupTime || urlParams.get('time') || '10:00 AM';
+      const pickupDate = urlParams.get('date') || trip?.pickupDate || new Date().toISOString().split('T')[0];
+      const displayDate = urlParams.get('displayDate') || trip?.displayDate || pickupDate;
+      const pickupTime = urlParams.get('time') || trip?.pickupTime || sessionStorage.getItem('otb_pickup_time') || '10:00 AM';
 
       // Check phone number existence & validity (Mandatory gate to view fares)
       let rawPhone = (trip?.phone || urlParams.get('phone') || '').replace(/\D/g, '');

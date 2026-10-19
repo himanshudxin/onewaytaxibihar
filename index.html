@@ -1756,7 +1756,7 @@
           <span class="info-label">Pickup Time</span>
           <strong class="info-val" id="clock-selected-summary">10:00 AM (Morning)</strong>
         </div>
-        <button type="button" class="exec-confirm-btn" id="btn-confirm-clock" onclick="window.ExecDateTimePicker.closeClock()">
+        <button type="button" class="exec-confirm-btn" id="btn-confirm-clock" onclick="if(window.ExecDateTimePicker && window.ExecDateTimePicker.confirmClock){window.ExecDateTimePicker.confirmClock();}else if(window.ExecDateTimePicker){window.ExecDateTimePicker.closeClock();}">
           <span>Set Pickup Time</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </button>
@@ -1840,6 +1840,13 @@
           source: 'Homepage Check Fare Button'
         })
       }).catch(() => {});
+
+      const resolvedPickupTime = document.getElementById('display-pickup-time')?.textContent?.trim() ||
+                                 document.getElementById('pickup-time-select')?.value?.trim() ||
+                                 sessionStorage.getItem('otb_pickup_time') || '10:00 AM';
+      if (window.bookingManager) {
+        window.bookingManager.pickupTime = resolvedPickupTime;
+      }
 
       if (window.bookingManager && typeof window.bookingManager.handleCheckFare === 'function') {
         try {

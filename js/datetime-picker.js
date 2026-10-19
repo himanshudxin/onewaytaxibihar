@@ -620,6 +620,18 @@
     if (confirmClockBtn) {
       confirmClockBtn.onclick = (e) => {
         e.preventDefault();
+        // Persist chosen time into the hidden select so it survives re-init
+        const formattedTime = `${String(state.pickupHour).padStart(2, '0')}:${state.pickupMinute} ${state.pickupAmPm}`;
+        const pickupTimeSelect = document.getElementById('pickup-time-select');
+        if (pickupTimeSelect) {
+          // Add option if it doesn't exist yet
+          let exists = Array.from(pickupTimeSelect.options).some(o => o.value === formattedTime);
+          if (!exists) {
+            pickupTimeSelect.add(new Option(formattedTime, formattedTime));
+          }
+          pickupTimeSelect.value = formattedTime;
+          pickupTimeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
         updateScheduleCards();
         closeClockModal();
       };
@@ -710,6 +722,14 @@
     state.pickupDate = today;
     state.viewYear = today.getFullYear();
     state.viewMonth = today.getMonth();
+
+    // Restore previously selected time if the hidden select already has a value
+    const pickupTimeSelect = document.getElementById('pickup-time-select');
+    if (pickupTimeSelect && pickupTimeSelect.value) {
+      setTimeByString(pickupTimeSelect.value);
+    }
+    // else keep the state defaults (10:00 AM) – they will be overwritten once
+    // the user picks a time from the clock modal
 
     initEventListeners();
     updateScheduleCards();

@@ -1612,6 +1612,246 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
+    // 5B. BIHAR TOURISM & SIGHTSEEING MODULE (Public & Passenger)
+    // -------------------------------------------------------------
+
+    // 1. PUBLIC: LIST PUBLISHED TOUR PACKAGES
+    if ((pathname === '/tourism/packages' || pathname === '/tourism') && method === 'GET') {
+      const allPkgs = db.tourism_packages || [];
+      const published = allPkgs
+        .filter(p => p.status === 'published')
+        .map(p => ({
+          id: p.id,
+          title: p.title,
+          subtitle: p.subtitle,
+          slug: p.slug,
+          duration: p.duration,
+          destinations: p.destinations || [],
+          pickupLocations: p.pickupLocations || [],
+          pricing: p.pricing || { sedan: 2999, suv: 4499, innova: 5499 },
+          description: p.description || '',
+          inclusions: p.inclusions || [],
+          exclusions: p.exclusions || [],
+          highlights: p.highlights || [],
+          featured: Boolean(p.featured),
+          bannerImage: p.bannerImage || '/images/voyago/tour-banner.jpg',
+          maxPassengers: p.maxPassengers || 7
+        }));
+
+      return sendJson(200, {
+        success: true,
+        count: published.length,
+        packages: published
+      });
+    }
+
+    // 2. PUBLIC: GET SINGLE TOUR PACKAGE DETAILS
+    if (pathname.startsWith('/tourism/packages/') && method === 'GET') {
+      const pkgId = pathname.replace('/tourism/packages/', '').trim();
+      const pkg = (db.tourism_packages || []).find(p => p.id === pkgId || p.slug === pkgId);
+      if (!pkg || pkg.status !== 'published') {
+        return sendJson(404, { success: false, message: 'Tourism package not found or no longer active' });
+      }
+
+      return sendJson(200, {
+        success: true,
+        package: {
+          id: pkg.id,
+          title: pkg.title,
+          subtitle: pkg.subtitle,
+          slug: pkg.slug,
+          duration: pkg.duration,
+          destinations: pkg.destinations || [],
+          pickupLocations: pkg.pickupLocations || [],
+          pricing: pkg.pricing || { sedan: 2999, suv: 4499, innova: 5499 },
+          description: pkg.description || '',
+          inclusions: pkg.inclusions || [],
+          exclusions: pkg.exclusions || [],
+          highlights: pkg.highlights || [],
+          featured: Boolean(pkg.featured),
+          bannerImage: pkg.bannerImage || '/images/voyago/tour-banner.jpg',
+          maxPassengers: pkg.maxPassengers || 7
+        }
+      });
+    }
+
+    // 3. PUBLIC: CREATE TOUR BOOKING / ENQUIRY (Rate Limited, Server-Authoritative Fare)
+    if ((pathname === '/tourism/book' || pathname === '/tourism/enquire') && method === 'POST') {
+      const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+      const rateCheck = securityService.checkRateLimit(`tour_book_${clientIp}`, 5, 60000);
+      if (!rateCheck.allowed) {
+        return sendJson(429, {
+          success: false,
+          message: `Too many tour booking attempts. Please wait ${rateCheck.retryAfter} seconds before trying again.`
+        });
+      }
+
+      const packageId = String(body.packageId || body.packageCode || '').trim();
+      const pkg = (db.tourism_packages || []).find(p =>
+        (p.id === packageId ||
+         p.packageCode === packageId ||
+         p.slug === packageId ||
+         (packageId && p.id && p.id.toLowerCase().includes(packageId.toLowerCase().replace(/tour-|-0\d+/g, '')))) &&
+        (p.status === 'published' || !p.status)
+      );
+      if (!pkg) {
+        return sendJson(400, { success: false, message: 'Invalid or inactive tourism package selected.' });
+      }
+
+      const rawName = String(body.customerName || body.passengerName || body.name || '').trim();
+      const customerName = securityService.sanitizeString(rawName, 100);
+      if (!customerName || customerName.length < 2) {
+        return sendJson(400, { success: false, message: 'Please enter a valid traveler full name (minimum 2 characters).' });
+      }
+
+      const rawPhone = String(body.customerPhone || body.passengerPhone || body.phone || '').trim();
+      const cleanPhone = securityService.sanitizePhone(rawPhone);
+      if (!cleanPhone || cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return sendJson(400, { success: false, message: 'Please enter a valid 10-digit Indian mobile number.' });
+      }
+
+      const pickupDate = String(body.pickupDate || body.travelDate || '').trim();
+      if (!pickupDate || !/^\d{4}-\d{2}-\d{2}$/.test(pickupDate)) {
+        return sendJson(400, { success: false, message: 'Please select a valid travel date in YYYY-MM-DD format.' });
+      }
+      const travelTime = new Date(pickupDate + 'T00:00:00Z').getTime();
+      const todayTime = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00Z').getTime();
+      if (isNaN(travelTime) || travelTime < todayTime) {
+        return sendJson(400, { success: false, message: 'Travel date cannot be in the past.' });
+      }
+      if (travelTime > todayTime + (365 * 86400000)) {
+        return sendJson(400, { success: false, message: 'Travel date cannot be more than 1 year in advance.' });
+      }
+
+      const vehicleType = String(body.vehicleType || body.selectedVehicle || body.vehicleCategory || 'sedan').toLowerCase();
+      if (!['sedan', 'suv', 'innova'].includes(vehicleType)) {
+        return sendJson(400, { success: false, message: 'Invalid vehicle type. Allowed options: sedan, suv, innova.' });
+      }
+
+      const maxPass = pkg.maxPassengers || (vehicleType === 'sedan' ? 4 : (vehicleType === 'suv' ? 6 : 7));
+      const passengers = Math.max(1, Math.min(Number(body.passengers) || 1, maxPass));
+      const pickupCity = securityService.sanitizeString(String(body.pickupCity || body.pickupLocation || 'Patna'), 80);
+      const notes = securityService.sanitizeString(String(body.notes || body.specialRequests || ''), 500);
+
+      // Server-Authoritative Fare calculation
+      const serverPrice = (pkg.pricing && Number(pkg.pricing[vehicleType])) || 3499;
+      const totalAmount = serverPrice;
+
+      // Duplicate Submission Guard: Check recent booking within 2 minutes with same phone + package + date
+      const twoMinsAgo = Date.now() - 120000;
+      const duplicate = (db.tourism_bookings || []).find(b =>
+        (b.customerPhone || '').replace(/\D/g, '').slice(-10) === cleanPhone &&
+        b.packageId === pkg.id &&
+        b.pickupDate === pickupDate &&
+        new Date(b.createdAt).getTime() > twoMinsAgo
+      );
+      if (duplicate) {
+        return sendJson(409, {
+          success: false,
+          bookingId: duplicate.bookingId,
+          message: `A booking for this tour package on ${pickupDate} was already received recently. Reference ID: ${duplicate.bookingId}. Our desk will call you shortly.`
+        });
+      }
+
+      // Check customer session if logged in
+      const auth = getSessionUser(req, db);
+      const customerId = auth ? auth.user.id : `usr_${cleanPhone}`;
+
+      const bookingId = `OTB-TOUR-2026-${crypto.randomInt(1000, 9999)}`;
+      const newBooking = {
+        id: `tb_${Date.now()}_${crypto.randomInt(100, 999)}`,
+        bookingId,
+        packageId: pkg.id,
+        packageTitle: pkg.title,
+        customerName,
+        customerPhone: `+91 ${cleanPhone}`,
+        customerEmail: securityService.sanitizeString(String(body.customerEmail || body.email || ''), 100),
+        customerId,
+        pickupDate,
+        pickupCity,
+        passengers,
+        selectedVehicle: vehicleType,
+        totalAmount,
+        advancePaid: 0,
+        status: 'ENQUIRY',
+        assignedDriverId: null,
+        driverDetails: null,
+        notes,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!db.tourism_bookings) db.tourism_bookings = [];
+      db.tourism_bookings.unshift(newBooking);
+
+      // Also create a lead so Central Dispatch Desk sees it immediately in Live Enquiries
+      if (!db.leads) db.leads = [];
+      db.leads.unshift({
+        id: `lead_tour_${Date.now()}`,
+        name: customerName,
+        phone: `+91 ${cleanPhone}`,
+        origin: pickupCity,
+        destination: `${pkg.title} (Tour Package)`,
+        distanceKm: 0,
+        quotedFare: totalAmount,
+        tier: vehicleType,
+        status: 'NEW',
+        source: 'Bihar Tourism Portal',
+        createdAt: new Date().toISOString()
+      });
+
+      await saveDb(db);
+
+      return sendJson(201, {
+        success: true,
+        bookingId: newBooking.bookingId,
+        packageTitle: pkg.title,
+        package: pkg,
+        booking: {
+          ...newBooking,
+          tripType: 'TOURISM_PACKAGE',
+          totalFare: totalAmount
+        },
+        totalAmount,
+        pickupDate,
+        message: `Your tour booking request for ${pkg.title} has been received! Our Bihar Tourism Specialist will contact you at +91 ${cleanPhone} to confirm itinerary & pickup details.`
+      });
+    }
+
+    // 4. PASSENGER PORTAL: MY TOUR BOOKINGS (Strict Object-Level Authorization)
+    if (pathname === '/tourism/my-bookings' && method === 'GET') {
+      const auth = getSessionUser(req, db);
+      if (!auth) {
+        // Zero Leakage for unauthenticated requests
+        return sendJson(200, { success: true, count: 0, bookings: [] });
+      }
+
+      const cleanUserPhone = auth.user.phone.replace(/\D/g, '').slice(-10);
+      const userBookings = (db.tourism_bookings || []).filter(b =>
+        b.customerId === auth.user.id ||
+        (b.customerPhone && b.customerPhone.replace(/\D/g, '').slice(-10) === cleanUserPhone)
+      );
+
+      // Mask driver details if booking is still in ENQUIRY / PENDING state
+      const sanitized = userBookings.map(b => {
+        if (b.status === 'ENQUIRY' || b.status === 'PENDING') {
+          return {
+            ...b,
+            driverDetails: null,
+            supportNotice: 'Our tourism team will call you within 15 minutes to confirm booking.'
+          };
+        }
+        return b;
+      });
+
+      return sendJson(200, {
+        success: true,
+        count: sanitized.length,
+        bookings: sanitized
+      });
+    }
+
+    // -------------------------------------------------------------
     // 6. CREATE BOOKING REQUEST (REQUESTED Status & Server Fare Lock)
     // -------------------------------------------------------------
     if ((pathname === '/bookings' || pathname === '/rides') && method === 'POST') {
@@ -3611,6 +3851,334 @@ module.exports = async (req, res) => {
           baseFare: db.settings.baseFare,
           baseKm: db.settings.baseKm
         }
+      });
+    }
+
+    // =============================================================
+    // 9D. SECURE TOURISM MANAGEMENT MODULE (Admin RBAC Protected)
+    // =============================================================
+
+    // 1. ADMIN: LIST ALL TOURISM PACKAGES (Includes Drafts & Archived)
+    if (pathname === '/admin/tourism/packages' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to manage tourism operations.' });
+      }
+
+      const packages = db.tourism_packages || [];
+      return sendJson(200, {
+        success: true,
+        count: packages.length,
+        packages
+      });
+    }
+
+    // 2. ADMIN: CREATE NEW TOURISM PACKAGE
+    if (pathname === '/admin/tourism/packages' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to create tourism packages.' });
+      }
+
+      const rawTitle = String(body.title || '').trim();
+      const title = securityService.sanitizeString(rawTitle, 150);
+      if (!title || title.length < 3) {
+        return sendJson(400, { success: false, message: 'Package title must be at least 3 characters.' });
+      }
+
+      const subtitle = securityService.sanitizeString(String(body.subtitle || ''), 200);
+      const duration = securityService.sanitizeString(String(body.duration || '1 Day'), 100);
+      const description = securityService.sanitizeString(String(body.description || ''), 2000);
+      const bannerImage = securityService.sanitizeString(String(body.bannerImage || '/images/voyago/tour-banner.jpg'), 255);
+
+      const pricing = body.pricing || {};
+      const sedanPrice = Math.max(500, Number(pricing.sedan) || 2999);
+      const suvPrice = Math.max(500, Number(pricing.suv) || 4499);
+      const innovaPrice = Math.max(500, Number(pricing.innova) || 5499);
+
+      const destinations = Array.isArray(body.destinations) 
+        ? body.destinations.map(d => securityService.sanitizeString(d, 80)).filter(Boolean)
+        : [title];
+
+      const inclusions = Array.isArray(body.inclusions)
+        ? body.inclusions.map(i => securityService.sanitizeString(i, 200)).filter(Boolean)
+        : ['Dedicated AC Cab with driver', 'All toll, fuel, and driver allowances'];
+
+      const exclusions = Array.isArray(body.exclusions)
+        ? body.exclusions.map(e => securityService.sanitizeString(e, 200)).filter(Boolean)
+        : ['Monument entry fees', 'Personal meals'];
+
+      const highlights = Array.isArray(body.highlights)
+        ? body.highlights.map(h => securityService.sanitizeString(h, 150)).filter(Boolean)
+        : [];
+
+      const status = ['published', 'draft', 'archived'].includes(body.status) ? body.status : 'published';
+      const featured = Boolean(body.featured);
+      const maxPassengers = Math.max(1, Math.min(Number(body.maxPassengers) || 7, 14));
+
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const newPackage = {
+        id: `pkg_${Date.now()}_${crypto.randomInt(100, 999)}`,
+        title,
+        subtitle,
+        slug: `${slug}-${crypto.randomInt(100, 999)}`,
+        duration,
+        destinations,
+        pickupLocations: Array.isArray(body.pickupLocations) ? body.pickupLocations : ['Patna', 'Gaya'],
+        pricing: { sedan: sedanPrice, suv: suvPrice, innova: innovaPrice },
+        description,
+        inclusions,
+        exclusions,
+        highlights,
+        status,
+        featured,
+        bannerImage,
+        maxPassengers,
+        createdBy: admin.username,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (!db.tourism_packages) db.tourism_packages = [];
+      db.tourism_packages.unshift(newPackage);
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'CREATE_TOURISM_PACKAGE',
+        entityType: 'tourism_package',
+        entityId: newPackage.id,
+        newValue: { id: newPackage.id, title: newPackage.title, status: newPackage.status },
+        note: `Admin created tourism package: ${title}`
+      });
+
+      return sendJson(201, {
+        success: true,
+        package: newPackage,
+        message: `Tourism package "${title}" successfully created.`
+      });
+    }
+
+    // 3. ADMIN: UPDATE TOURISM PACKAGE
+    if ((pathname === '/admin/tourism/packages/update' || pathname.startsWith('/admin/tourism/packages/')) && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to update tourism packages.' });
+      }
+
+      const pkgId = String(body.id || body.packageId || pathname.replace('/admin/tourism/packages/', '')).trim();
+      const pkgIndex = (db.tourism_packages || []).findIndex(p => p.id === pkgId);
+      if (pkgIndex === -1) {
+        return sendJson(404, { success: false, message: 'Tourism package not found.' });
+      }
+
+      const existing = db.tourism_packages[pkgIndex];
+      const oldValue = { title: existing.title, status: existing.status, pricing: existing.pricing };
+
+      if (body.title) existing.title = securityService.sanitizeString(body.title, 150);
+      if (body.subtitle !== undefined) existing.subtitle = securityService.sanitizeString(body.subtitle, 200);
+      if (body.duration) existing.duration = securityService.sanitizeString(body.duration, 100);
+      if (body.description !== undefined) existing.description = securityService.sanitizeString(body.description, 2000);
+      if (body.status && ['published', 'draft', 'archived'].includes(body.status)) existing.status = body.status;
+      if (body.featured !== undefined) existing.featured = Boolean(body.featured);
+      if (body.bannerImage) existing.bannerImage = securityService.sanitizeString(body.bannerImage, 255);
+      if (body.pricing) {
+        existing.pricing = {
+          sedan: Math.max(500, Number(body.pricing.sedan) || existing.pricing.sedan),
+          suv: Math.max(500, Number(body.pricing.suv) || existing.pricing.suv),
+          innova: Math.max(500, Number(body.pricing.innova) || existing.pricing.innova)
+        };
+      }
+      if (Array.isArray(body.destinations)) {
+        existing.destinations = body.destinations.map(d => securityService.sanitizeString(d, 80)).filter(Boolean);
+      }
+      if (Array.isArray(body.inclusions)) {
+        existing.inclusions = body.inclusions.map(i => securityService.sanitizeString(i, 200)).filter(Boolean);
+      }
+      if (Array.isArray(body.exclusions)) {
+        existing.exclusions = body.exclusions.map(e => securityService.sanitizeString(e, 200)).filter(Boolean);
+      }
+      if (Array.isArray(body.highlights)) {
+        existing.highlights = body.highlights.map(h => securityService.sanitizeString(h, 150)).filter(Boolean);
+      }
+
+      existing.updatedAt = new Date().toISOString();
+      existing.updatedBy = admin.username;
+
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'UPDATE_TOURISM_PACKAGE',
+        entityType: 'tourism_package',
+        entityId: existing.id,
+        oldValue,
+        newValue: { title: existing.title, status: existing.status, pricing: existing.pricing },
+        note: `Admin updated tourism package: ${existing.title}`
+      });
+
+      return sendJson(200, {
+        success: true,
+        package: existing,
+        message: `Package "${existing.title}" updated successfully.`
+      });
+    }
+
+    // 4. ADMIN: ARCHIVE OR DELETE TOURISM PACKAGE
+    if ((pathname === '/admin/tourism/packages/delete' || pathname === '/admin/tourism/packages/archive') && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to archive tourism packages.' });
+      }
+
+      const pkgId = String(body.id || body.packageId || '').trim();
+      const pkg = (db.tourism_packages || []).find(p => p.id === pkgId);
+      if (!pkg) {
+        return sendJson(404, { success: false, message: 'Tourism package not found.' });
+      }
+
+      pkg.status = 'archived';
+      pkg.updatedAt = new Date().toISOString();
+      pkg.updatedBy = admin.username;
+
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'ARCHIVE_TOURISM_PACKAGE',
+        entityType: 'tourism_package',
+        entityId: pkg.id,
+        note: `Admin archived tourism package: ${pkg.title}`
+      });
+
+      return sendJson(200, {
+        success: true,
+        message: `Tourism package "${pkg.title}" archived successfully.`
+      });
+    }
+
+    // 5. ADMIN: LIST ALL TOURISM BOOKINGS & ENQUIRIES
+    if (pathname === '/admin/tourism/bookings' && method === 'GET') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to view tourism bookings.' });
+      }
+
+      const bookings = db.tourism_bookings || [];
+      return sendJson(200, {
+        success: true,
+        count: bookings.length,
+        bookings
+      });
+    }
+
+    // 6. ADMIN: UPDATE TOURISM BOOKING STATUS
+    if (pathname === '/admin/tourism/bookings/status' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to update tour booking status.' });
+      }
+
+      const bookingId = String(body.bookingId || body.id || '').trim();
+      const booking = (db.tourism_bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking) {
+        return sendJson(404, { success: false, message: 'Tourism booking not found.' });
+      }
+
+      const allowedStatuses = ['ENQUIRY', 'CONFIRMED', 'ASSIGNED', 'COMPLETED', 'CANCELLED'];
+      const targetStatus = String(body.status || '').toUpperCase().trim();
+      if (!allowedStatuses.includes(targetStatus)) {
+        return sendJson(400, { success: false, message: `Invalid status. Allowed statuses: ${allowedStatuses.join(', ')}` });
+      }
+
+      // Valid state transitions
+      if (booking.status === 'COMPLETED' && targetStatus !== 'COMPLETED') {
+        return sendJson(400, { success: false, message: 'Cannot modify status of a completed tour.' });
+      }
+
+      const oldStatus = booking.status;
+      booking.status = targetStatus;
+      booking.updatedAt = new Date().toISOString();
+      booking.statusUpdatedBy = admin.username;
+      if (body.advancePaid !== undefined) {
+        booking.advancePaid = Math.max(0, Number(body.advancePaid) || 0);
+      }
+
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'UPDATE_TOURISM_BOOKING_STATUS',
+        entityType: 'tourism_booking',
+        entityId: booking.bookingId,
+        oldValue: { status: oldStatus },
+        newValue: { status: targetStatus, advancePaid: booking.advancePaid },
+        note: `Tour booking ${booking.bookingId} status transitioned from ${oldStatus} to ${targetStatus}`
+      });
+
+      return sendJson(200, {
+        success: true,
+        booking,
+        message: `Tour booking ${booking.bookingId} status updated to ${targetStatus}.`
+      });
+    }
+
+    // 7. ADMIN: ASSIGN DRIVER & CAB TO TOUR
+    if (pathname === '/admin/tourism/bookings/assign' && method === 'POST') {
+      const admin = getSessionAdmin(req, db);
+      if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
+      if (!securityService.hasPermission(admin.role, 'tourism')) {
+        return sendJson(403, { success: false, message: 'Access Denied: You do not have permission to assign tour drivers.' });
+      }
+
+      const bookingId = String(body.bookingId || body.id || '').trim();
+      const booking = (db.tourism_bookings || []).find(b => b.bookingId === bookingId || b.id === bookingId);
+      if (!booking) {
+        return sendJson(404, { success: false, message: 'Tourism booking not found.' });
+      }
+
+      const driverId = String(body.driverId || '').trim();
+      const driver = (db.drivers || []).find(d => d.id === driverId);
+      if (!driver) {
+        return sendJson(404, { success: false, message: 'Selected driver partner not found.' });
+      }
+
+      booking.assignedDriverId = driver.id;
+      booking.driverDetails = {
+        name: driver.name,
+        phone: driver.phone,
+        vehicleNumber: driver.vehicleNumber || body.vehicleNumber || 'BR-01-TAX-2026',
+        vehicleModel: driver.vehicleModel || body.vehicleModel || (booking.selectedVehicle ? booking.selectedVehicle.toUpperCase() : 'CAB')
+      };
+      booking.status = 'ASSIGNED';
+      booking.updatedAt = new Date().toISOString();
+
+      await saveDb(db);
+
+      await securityService.recordAuditLog(db, {
+        actor: admin.username,
+        role: admin.role,
+        action: 'ASSIGN_TOURISM_DRIVER',
+        entityType: 'tourism_booking',
+        entityId: booking.bookingId,
+        newValue: { driverId: driver.id, driverName: driver.name },
+        note: `Assigned driver ${driver.name} to tour ${booking.bookingId}`
+      });
+
+      return sendJson(200, {
+        success: true,
+        booking,
+        message: `Driver ${driver.name} successfully assigned to tour booking ${booking.bookingId}.`
       });
     }
 

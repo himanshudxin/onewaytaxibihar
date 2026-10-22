@@ -707,6 +707,10 @@
         <span>🚖 My Bookings</span>
         <span class="tab-badge-num" id="badge-trips-count">0</span>
       </button>
+      <button class="portal-tab-btn" id="tab-btn-tours" onclick="switchPortalTab('tours')">
+        <span>🧭 Bihar Tours</span>
+        <span class="tab-badge-num" id="badge-tours-count" style="display:none;">0</span>
+      </button>
       <button class="portal-tab-btn" id="tab-btn-wallet" onclick="switchPortalTab('wallet')">
         <span>🎁 Wallet &amp; Offers</span>
       </button>
@@ -721,6 +725,13 @@
     <!-- TAB 1: MY TRIPS / BOOKINGS -->
     <section class="tab-panel active" id="panel-trips">
       <div id="trips-list-container">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+    </section>
+
+    <!-- TAB 1B: TOURS & SIGHTSEEING -->
+    <section class="tab-panel" id="panel-tours">
+      <div id="tours-list-container">
         <!-- Rendered dynamically via JavaScript -->
       </div>
     </section>
@@ -1272,9 +1283,154 @@
         }
       };
 
+      // Load Tourism Bookings (Strict Object-Level Authorization & Local State)
+      async function loadTourismData() {
+        const container = document.getElementById('tours-list-container');
+        const badge = document.getElementById('badge-tours-count');
+        if (!container) return;
+
+        let localTours = [];
+        try {
+          const saved = localStorage.getItem('otb_recent_tour_bookings');
+          if (saved) localTours = JSON.parse(saved);
+        } catch (e) {}
+
+        let serverTours = [];
+        try {
+          const token = localStorage.getItem('otb_token') || localStorage.getItem('otb_session_token') || sessionStorage.getItem('otb_session_token') || '';
+          const headers = {};
+          if (token) headers['Authorization'] = `Bearer ${token}`;
+
+          const res = await fetch('/api/tourism/my-bookings', { headers });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && Array.isArray(data.bookings)) {
+              serverTours = data.bookings;
+            }
+          }
+        } catch (err) {
+          console.warn('Network error loading tour bookings:', err);
+        }
+
+        // Merge server and local tours (deduplicated by bookingId)
+        const tourMap = new Map();
+        localTours.forEach(t => { if (t && t.bookingId) tourMap.set(t.bookingId, t); });
+        serverTours.forEach(t => { if (t && t.bookingId) tourMap.set(t.bookingId, t); });
+        const allTours = Array.from(tourMap.values()).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+        if (badge) {
+          badge.textContent = allTours.length;
+          badge.style.display = allTours.length > 0 ? 'inline-block' : 'none';
+        }
+
+        if (allTours.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state-box">
+              <div class="empty-icon">🧭</div>
+              <h3 class="empty-title">No Tour Bookings Found</h3>
+              <p class="empty-desc">You haven't booked any Bihar Sightseeing or Heritage Tours yet. Explore Bodh Gaya, Rajgir, Nalanda, and Valmiki Tiger Reserve with private AC cab transfers.</p>
+              <a href="index.html#voyago-journey-card" class="btn-new-ride" style="padding: 10px 22px; font-size: 14px; display: inline-flex;">
+                Explore Bihar Tour Packages ➔
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = allTours.map(t => {
+          const rawStatus = (t.status || 'ENQUIRY').toUpperCase();
+          let pillClass = 'status-confirmed';
+          let statusLabel = 'Enquiry Received';
+          if (rawStatus === 'ENQUIRY') {
+            pillClass = 'status-confirmed';
+            statusLabel = '🟡 Enquiry Submitted';
+          } else if (rawStatus === 'CONFIRMED') {
+            pillClass = 'status-confirmed';
+            statusLabel = '🟢 Tour Confirmed';
+          } else if (rawStatus === 'ASSIGNED') {
+            pillClass = 'status-confirmed';
+            statusLabel = '🟢 Chauffeur Allocated';
+          } else if (rawStatus === 'COMPLETED') {
+            pillClass = 'status-completed';
+            statusLabel = '✓ Tour Completed';
+          } else if (rawStatus === 'CANCELLED') {
+            pillClass = 'status-cancelled';
+            statusLabel = '✕ Cancelled';
+          }
+
+          let driverSection = '';
+          if (t.driverDetails) {
+            driverSection = `
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+                <div style="font-size: 11px; font-weight: 800; color: #10b981; text-transform: uppercase; margin-bottom: 4px;">✓ Assigned Chauffeur Partner</div>
+                <div style="font-size: 15px; font-weight: 900; color: var(--owc-text);">${escapeHtml(t.driverDetails.name)}</div>
+                <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-top: 2px;">Vehicle: <strong>${escapeHtml(t.driverDetails.vehicleNumber || 'Cab')}</strong></div>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                  <a href="tel:${t.driverDetails.phone}" class="btn-act btn-act-primary" style="font-size: 12px; padding: 6px 12px;">📞 Call Driver</a>
+                  <a href="https://wa.me/91${cleanPhone(t.driverDetails.phone)}" target="_blank" class="btn-act" style="font-size: 12px; padding: 6px 12px;">💬 WhatsApp</a>
+                </div>
+              </div>
+            `;
+          } else if (rawStatus === 'ENQUIRY') {
+            driverSection = `
+              <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: var(--owc-text-muted);">
+                Our Bihar Tourism Specialist will contact you at <strong>${t.customerPhone || ''}</strong> to confirm itinerary customization, pickup timing, and vehicle dispatch.
+              </div>
+            `;
+          }
+
+          return `
+            <div class="booking-card">
+              <div class="booking-card-header">
+                <div>
+                  <span class="booking-id-text">${t.bookingId}</span>
+                  <div style="font-size: 11px; color: var(--owc-text-muted); margin-top: 2px;">Booked on ${new Date(t.createdAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                </div>
+                <span class="booking-status-pill ${pillClass}">${statusLabel}</span>
+              </div>
+
+              <div class="booking-route-row">
+                <span>🧭 ${escapeHtml(t.packageTitle || 'Bihar Sightseeing Tour')}</span>
+              </div>
+
+              <div class="booking-meta-grid">
+                <div>
+                  <div class="meta-item-title">Travel Date</div>
+                  <div class="meta-item-val">📅 ${t.pickupDate || 'TBD'}</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Pickup City</div>
+                  <div class="meta-item-val">📍 ${escapeHtml(t.pickupCity || 'Patna')}</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Vehicle Class</div>
+                  <div class="meta-item-val">🚖 ${(t.selectedVehicle || 'sedan').toUpperCase()} (${t.passengers || 1} Pax)</div>
+                </div>
+                <div>
+                  <div class="meta-item-title">Authoritative Fare</div>
+                  <div class="meta-item-val" style="color: var(--owc-primary); font-weight: 900;">₹${t.totalAmount || 0}</div>
+                </div>
+              </div>
+
+              ${driverSection}
+
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <a href="https://wa.me/917739406400?text=${encodeURIComponent('Hello OneWayTaxiBihar, I have an inquiry regarding my tour booking ' + t.bookingId)}" target="_blank" class="btn-act btn-act-primary" style="font-size: 12px;">
+                  💬 Contact Tour Desk
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
       // Initialize
-      document.addEventListener('DOMContentLoaded', loadPassengerData);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadPassengerData();
+        loadTourismData();
+      });
       loadPassengerData();
+      loadTourismData();
     })();
   </script>
   <script src="/js/brand-logo.js?v=20261016_v1"></script>

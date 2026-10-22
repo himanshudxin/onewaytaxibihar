@@ -360,7 +360,11 @@ const RBAC_ROLES = {
   },
   manager: {
     name: 'Operations Manager',
-    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'fares', 'reports', 'audit', 'settings']
+    permissions: ['dashboard', 'leads', 'bookings', 'drivers', 'vehicles', 'payments', 'customers', 'coupons', 'fares', 'reports', 'audit', 'settings', 'tourism']
+  },
+  tourism_manager: {
+    name: 'Tourism Operations Manager',
+    permissions: ['dashboard', 'tourism', 'customers', 'reports']
   },
   dispatcher: {
     name: 'Central Dispatcher',

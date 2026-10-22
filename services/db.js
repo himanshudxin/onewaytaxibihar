@@ -29,7 +29,9 @@ const ALL_COLLECTIONS = [
   'error_logs',
   'settings',
   'admins',
-  'fares'
+  'fares',
+  'tourism_packages',
+  'tourism_bookings'
 ];
 
 function getLocalDbPath() {
@@ -309,6 +311,22 @@ async function pullFromRemoteCloud(targetCollection = null) {
                 } else {
                   memoryDb.fares = sanitized;
                 }
+              } else if (colName === 'tourism_packages') {
+                if (sanitized.length === 0 && Array.isArray(memoryDb.tourism_packages) && memoryDb.tourism_packages.length > 0) {
+                  syncCollectionToCloud('tourism_packages', memoryDb.tourism_packages).catch(() => {});
+                } else if (sanitized.length > 0) {
+                  const remotePkgIds = new Set(sanitized.map(p => p.id));
+                  const localPending = (memoryDb.tourism_packages || []).filter(p => !remotePkgIds.has(p.id));
+                  memoryDb.tourism_packages = [...localPending, ...sanitized];
+                }
+              } else if (colName === 'tourism_bookings') {
+                if (sanitized.length === 0 && Array.isArray(memoryDb.tourism_bookings) && memoryDb.tourism_bookings.length > 0) {
+                  syncCollectionToCloud('tourism_bookings', memoryDb.tourism_bookings).catch(() => {});
+                } else if (sanitized.length > 0) {
+                  const remoteBookingIds = new Set(sanitized.map(b => b.bookingId || b.id));
+                  const localPending = (memoryDb.tourism_bookings || []).filter(b => !remoteBookingIds.has(b.bookingId || b.id));
+                  memoryDb.tourism_bookings = [...localPending, ...sanitized];
+                }
               } else {
                 memoryDb[colName] = sanitized;
               }
@@ -351,6 +369,8 @@ async function syncCollectionToCloud(colName, items) {
     else if (colName === 'coupons') idField = 'code';
     else if (colName === 'sessions') idField = 'token';
     else if (colName === 'fares') idField = 'id';
+    else if (colName === 'tourism_bookings') idField = 'bookingId';
+    else if (colName === 'tourism_packages') idField = 'id';
 
     const bulkOps = items.slice(0, 500).map(item => {
       const keyVal = item[idField] || item.id || item.phone || item.bookingId;
@@ -400,7 +420,9 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('coupons', db.coupons),
         syncCollectionToCloud('admins', db.admins),
         syncCollectionToCloud('notifications', db.notifications),
-        syncCollectionToCloud('fares', db.fares)
+        syncCollectionToCloud('fares', db.fares),
+        syncCollectionToCloud('tourism_packages', db.tourism_packages),
+        syncCollectionToCloud('tourism_bookings', db.tourism_bookings)
       ];
       if (db.settings) {
         tasks.push(mongoDbInstance.collection('settings').updateOne(

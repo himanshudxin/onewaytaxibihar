@@ -1918,6 +1918,12 @@
           <span class="nav-label">Customers</span>
         </button>
 
+        <button type="button" class="nav-item-btn" id="side-tab-tourism" onclick="switchMainTab('tourism')">
+          <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></span>
+          <span class="nav-label">Tourism Desk</span>
+          <span class="nav-badge success" id="badge-tourism-count" style="display:none;">0</span>
+        </button>
+
         <div class="nav-section-title">Fleet &amp; Drivers</div>
 
         <button type="button" class="nav-item-btn" id="side-tab-drivers" onclick="switchMainTab('drivers')">
@@ -3259,6 +3265,82 @@
 
         </section>
 
+        <!-- ====================================================================
+             VIEW 15: TOURISM MANAGEMENT (Protected Operations & Itinerary Desk)
+             ==================================================================== -->
+        <section class="content-view" id="view-tourism">
+          <div class="view-header">
+            <div class="view-title-group">
+              <h2>Bihar Tourism &amp; Sightseeing Desk</h2>
+              <p>Curated spiritual, cultural &amp; heritage tour packages with fixed vehicle pricing and dedicated tour allocations</p>
+            </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="refreshTourismData()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                <span>Refresh Desk</span>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="openAddPackageModal()">
+                <span>+ Add Tour Package</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-toolbar">
+            <div class="tab-pills-row">
+              <button type="button" class="tab-pill active" id="tourism-tab-btn-packages" onclick="switchTourismSubTab('packages', this)">Tour Packages Catalog</button>
+              <button type="button" class="tab-pill" id="tourism-tab-btn-bookings" onclick="switchTourismSubTab('bookings', this)">Tour Bookings &amp; Enquiries</button>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 1: PACKAGES CATALOG -->
+          <div class="tourism-sub-panel" id="tourism-sub-packages">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px;" id="tourism-packages-grid">
+              <div style="grid-column: 1/-1; text-align: center; padding: 32px; color: #64748b;">
+                Loading curated Bihar tourism packages...
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: TOUR BOOKINGS & ENQUIRIES -->
+          <div class="tourism-sub-panel" id="tourism-sub-bookings" style="display: none;">
+            <div class="ops-card">
+              <div class="ops-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div class="ops-card-title">Tour Bookings &amp; Inquiries</div>
+                <div style="display: flex; gap: 8px;">
+                  <select class="form-control" id="filter-tourism-status" style="width: auto; min-width: 140px; padding: 4px 8px; font-size: 12px;" onchange="renderTourismBookingsTable()">
+                    <option value="ALL">All Statuses</option>
+                    <option value="ENQUIRY">Enquiries</option>
+                    <option value="CONFIRMED">Confirmed</option>
+                    <option value="ASSIGNED">Assigned</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="ops-table">
+                  <thead>
+                    <tr>
+                      <th>Booking Ref</th>
+                      <th>Package &amp; Destinations</th>
+                      <th>Traveler Details</th>
+                      <th>Travel Date</th>
+                      <th>Vehicle</th>
+                      <th>Total Fare</th>
+                      <th>Advance</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tourism-bookings-table-body">
+                    <tr><td colspan="9" style="text-align: center; padding: 32px; color: #64748b;">Loading tour bookings...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
   </div>
@@ -3989,6 +4071,133 @@
     <option value="Kolkata">
   </datalist>
 
+  <!-- ADD / EDIT TOURISM PACKAGE MODAL -->
+  <div class="modal-backdrop" id="modal-add-package">
+    <div class="ops-modal" style="max-width: 680px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title" id="modal-package-title">Add Bihar Tourism Package</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeAddPackageModal()">✕</button>
+      </div>
+      <form id="form-add-package" onsubmit="handleSavePackageSubmit(event)">
+        <input type="hidden" id="pkg-form-id" value="">
+        <div class="ops-modal-body" style="max-height: calc(85vh - 120px); overflow-y: auto;">
+          <div class="form-grid-2">
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Package Title *</label>
+              <input type="text" class="form-control" id="pkg-form-title" required placeholder="e.g. Bodh Gaya &amp; Gaya Spiritual Heritage Tour">
+            </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Subtitle / Tagline</label>
+              <input type="text" class="form-control" id="pkg-form-subtitle" placeholder="e.g. Mahabodhi Temple, Vishnupad Temple &amp; Mangla Gauri">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Duration *</label>
+              <input type="text" class="form-control" id="pkg-form-duration" required placeholder="e.g. 1 Day / Same Day Excursion">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status *</label>
+              <select class="form-control" id="pkg-form-status">
+                <option value="published">Published (Active on Website)</option>
+                <option value="draft">Draft (Admin Only)</option>
+                <option value="archived">Archived (Hidden)</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Destinations (Comma-separated) *</label>
+              <input type="text" class="form-control" id="pkg-form-destinations" required placeholder="Bodh Gaya, Gaya, Dungeshwari Caves">
+            </div>
+            <div class="form-group" style="grid-column: 1/-1;">
+              <label class="form-label">Pickup Locations (Comma-separated)</label>
+              <input type="text" class="form-control" id="pkg-form-pickups" placeholder="Patna Airport, Patna Junction, Gaya Junction, Hotel Pickup">
+            </div>
+          </div>
+
+          <div style="font-weight: 700; color: var(--navy-900); font-size: 12.5px; margin: 12px 0 8px; border-top: 1px solid var(--border-color); padding-top: 12px;">Fixed Vehicle Pricing (₹ All Inclusive)</div>
+          <div class="form-grid-2" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="form-group">
+              <label class="form-label">Sedan (Dzire) ₹ *</label>
+              <input type="number" class="form-control" id="pkg-form-price-sedan" required min="500" placeholder="2999">
+            </div>
+            <div class="form-group">
+              <label class="form-label">SUV (Ertiga) ₹ *</label>
+              <input type="number" class="form-control" id="pkg-form-price-suv" required min="500" placeholder="4499">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Innova (7-Seater) ₹ *</label>
+              <input type="number" class="form-control" id="pkg-form-price-innova" required min="500" placeholder="5499">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 12px;">
+            <label class="form-label">Description / Itinerary Summary</label>
+            <textarea class="form-control" id="pkg-form-description" rows="3" placeholder="Detailed itinerary description for travelers..."></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Key Inclusions (One per line)</label>
+              <textarea class="form-control" id="pkg-form-inclusions" rows="3" placeholder="AC Cab hire for full day&#10;Experienced Hindi &amp; English chauffeur&#10;Toll taxes &amp; driver allowance"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Exclusions (One per line)</label>
+              <textarea class="form-control" id="pkg-form-exclusions" rows="3" placeholder="Monument entry fees&#10;Personal meals &amp; puja offerings&#10;Camera/video tickets"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="ops-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAddPackageModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-package">Save Tour Package</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOUR BOOKING STATUS & ASSIGN MODAL -->
+  <div class="modal-backdrop" id="modal-tourism-status">
+    <div class="ops-modal" style="max-width: 520px;">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Manage Tour Booking &amp; Allocation</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closeTourismStatusModal()">✕</button>
+      </div>
+      <form id="form-tourism-status" onsubmit="handleTourismStatusSubmit(event)">
+        <input type="hidden" id="tour-status-booking-id" value="">
+        <div class="ops-modal-body">
+          <div style="background: #f1f5f9; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;" id="tour-status-summary">
+            <!-- summary injected -->
+          </div>
+          <div class="form-group">
+            <label class="form-label">Booking Status *</label>
+            <select class="form-control" id="tour-status-select" onchange="toggleTourDriverSelect()">
+              <option value="ENQUIRY">ENQUIRY (Pending Confirmation)</option>
+              <option value="CONFIRMED">CONFIRMED (Advance / Date Locked)</option>
+              <option value="ASSIGNED">ASSIGNED (Chauffeur Allocated)</option>
+              <option value="COMPLETED">COMPLETED (Tour Finished)</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+          </div>
+          <div class="form-group" id="tour-driver-select-group" style="display: none;">
+            <label class="form-label">Assign Chauffeur Partner</label>
+            <select class="form-control" id="tour-driver-select">
+              <option value="">Select available driver...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Advance Amount Paid (₹)</label>
+            <input type="number" class="form-control" id="tour-advance-amount" min="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Internal Operations Note</label>
+            <textarea class="form-control" id="tour-status-note" rows="2" placeholder="e.g. Advance paid via UPI, customer requested child seat"></textarea>
+          </div>
+        </div>
+        <div class="ops-modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeTourismStatusModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Status &amp; Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- CONFIRMATION MODAL (For Destructive Actions) -->
   <div class="modal-backdrop" id="modal-confirm-action">
     <div class="ops-modal" style="max-width:440px;">
@@ -4292,6 +4501,20 @@
           if (el) el.style.opacity = "1";
         });
       }
+
+      // Tourism Desk RBAC Control: Authorized for owner, manager, tourism_manager
+      const tourismBtn = document.getElementById('side-tab-tourism');
+      if (tourismBtn) {
+        if (role === 'owner' || role === 'manager' || role === 'tourism_manager') {
+          tourismBtn.style.opacity = '1';
+          tourismBtn.style.pointerEvents = 'auto';
+          tourismBtn.title = 'Bihar Tourism & Sightseeing Management';
+        } else {
+          tourismBtn.style.opacity = '0.35';
+          tourismBtn.style.pointerEvents = 'none';
+          tourismBtn.title = 'Restricted: Requires Tourism Manager or Executive credentials';
+        }
+      }
     }
 
     // =========================================================================
@@ -4565,7 +4788,7 @@
       const allViews = [
         'dashboard', 'dispatch', 'leads', 'bookings', 'customers', 'drivers',
         'vehicles', 'payments', 'wallet', 'coupons', 'fares', 'reports',
-        'notifications', 'audit', 'support', 'settings'
+        'notifications', 'audit', 'support', 'settings', 'tourism'
       ];
 
       allViews.forEach(v => {
@@ -4586,6 +4809,9 @@
         loadBookings();
       } else if (tabName === 'fares') {
         loadAdminFares();
+      } else if (tabName === 'tourism') {
+        loadTourismPackages();
+        loadTourismBookings();
       } else if (tabName === 'support') {
         loadSupportTickets();
       } else if (tabName === 'settings') {
@@ -4653,7 +4879,9 @@
         loadNotifications(),
         loadAuditLogs(),
         loadSupportTickets(),
-        loadSettings()
+        loadSettings(),
+        loadTourismPackages(),
+        loadTourismBookings()
       ]);
       renderDashboard();
     }
@@ -8392,6 +8620,438 @@
       }
     }
 
+    // =========================================================================
+    // VIEW: BIHAR TOURISM & SIGHTSEEING MODULE (Protected Operations Desk)
+    // =========================================================================
+    let _allTourismPackages = [];
+    let _allTourismBookings = [];
+
+    async function refreshTourismData() {
+      showToast("Refreshing tourism packages & bookings...", "info");
+      await Promise.allSettled([
+        loadTourismPackages(),
+        loadTourismBookings()
+      ]);
+      showToast("Tourism desk data synchronized", "success");
+    }
+
+    function switchTourismSubTab(subName, btn) {
+      const pnlPackages = document.getElementById("tourism-sub-packages");
+      const pnlBookings = document.getElementById("tourism-sub-bookings");
+      const btnPackages = document.getElementById("tourism-tab-btn-packages");
+      const btnBookings = document.getElementById("tourism-tab-btn-bookings");
+
+      if (subName === 'packages') {
+        if (pnlPackages) pnlPackages.style.display = "block";
+        if (pnlBookings) pnlBookings.style.display = "none";
+        if (btnPackages) btnPackages.classList.add("active");
+        if (btnBookings) btnBookings.classList.remove("active");
+        renderTourismPackagesGrid();
+      } else {
+        if (pnlPackages) pnlPackages.style.display = "none";
+        if (pnlBookings) pnlBookings.style.display = "block";
+        if (btnPackages) btnPackages.classList.remove("active");
+        if (btnBookings) btnBookings.classList.add("active");
+        renderTourismBookingsTable();
+      }
+    }
+
+    async function loadTourismPackages() {
+      const grid = document.getElementById("tourism-packages-grid");
+      try {
+        const res = await adminFetch("/api/admin/tourism/packages?t=" + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          _allTourismPackages = Array.isArray(data.packages) ? data.packages : [];
+          renderTourismPackagesGrid();
+        } else if (res.status === 403) {
+          if (grid) grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:#ef4444;">
+            Access restricted: You do not have 'tourism' operational permissions.
+          </div>`;
+        }
+      } catch (e) {
+        console.warn("loadTourismPackages notice:", e.message);
+      }
+    }
+
+    function renderTourismPackagesGrid() {
+      const grid = document.getElementById("tourism-packages-grid");
+      if (!grid) return;
+
+      if (_allTourismPackages.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:#64748b;">
+          <div style="font-size:32px; margin-bottom:8px;">🗺️</div>
+          <div style="font-size:14px; font-weight:600; color:var(--navy-900);">No Tourism Packages Found</div>
+          <p style="font-size:12px; margin-top:4px;">Click "+ Add Tour Package" above to publish your first Bihar tourism package.</p>
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = _allTourismPackages.map(pkg => {
+        const statusClass = pkg.status === 'published' ? 'confirmed' : (pkg.status === 'draft' ? 'pending' : 'cancelled');
+        const statusLabel = (pkg.status || 'draft').toUpperCase();
+        const pricing = pkg.pricing || { sedan: 2999, suv: 4499, innova: 5499 };
+        const dests = Array.isArray(pkg.destinations) ? pkg.destinations.join(' • ') : (pkg.destinations || 'Bihar');
+
+        return `
+          <div class="ops-card" style="display:flex; flex-direction:column; overflow:hidden; border:1px solid #e2e8f0; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+            <div style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding:16px; color:white; position:relative;">
+              <span class="pill ${statusClass}" style="position:absolute; top:12px; right:12px; font-size:10px;">${statusLabel}</span>
+              <div style="font-size:11px; color:#38bdf8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">${escapeHtml(pkg.duration || '1 Day')}</div>
+              <h3 style="font-size:15px; font-weight:800; color:#f8fafc; line-height:1.3; margin:0 0 6px 0;">${escapeHtml(pkg.title)}</h3>
+              <div style="font-size:11.5px; color:#94a3b8; display:flex; align-items:center; gap:4px;">
+                <span>📍</span>
+                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(dests)}</span>
+              </div>
+            </div>
+            <div class="ops-card-body" style="flex:1; padding:14px; display:flex; flex-direction:column; justify-content:space-between; gap:12px;">
+              <div>
+                <p style="font-size:12px; color:#475569; line-height:1.5; margin:0 0 10px 0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                  ${escapeHtml(pkg.description || 'Full day scenic and cultural tour of Bihar historical attractions.')}
+                </p>
+                <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:8px 10px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; text-align:center;">
+                  <div>
+                    <div style="font-size:10px; color:#64748b; font-weight:600;">Sedan</div>
+                    <div style="font-size:13px; font-weight:800; color:#059669;">₹${pricing.sedan || 2999}</div>
+                  </div>
+                  <div style="border-left:1px solid #e2e8f0; border-right:1px solid #e2e8f0;">
+                    <div style="font-size:10px; color:#64748b; font-weight:600;">SUV</div>
+                    <div style="font-size:13px; font-weight:800; color:#0284c7;">₹${pricing.suv || 4499}</div>
+                  </div>
+                  <div>
+                    <div style="font-size:10px; color:#64748b; font-weight:600;">Innova</div>
+                    <div style="font-size:13px; font-weight:800; color:#7c3aed;">₹${pricing.innova || 5499}</div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; border-top:1px solid #f1f5f9; padding-top:10px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openAddPackageModal('${pkg.id}')">
+                  ✏️ Edit Package
+                </button>
+                ${pkg.status !== 'archived' ? `
+                  <button type="button" class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="archiveTourismPackage('${pkg.id}', '${escapeHtml(pkg.title)}')">
+                    📦 Archive
+                  </button>
+                ` : `
+                  <span style="font-size:11px; color:#94a3b8; font-style:italic;">Archived</span>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function loadTourismBookings() {
+      const tbody = document.getElementById("tourism-bookings-table-body");
+      const badge = document.getElementById("badge-tourism-count");
+      try {
+        const res = await adminFetch("/api/admin/tourism/bookings?t=" + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          _allTourismBookings = Array.isArray(data.bookings) ? data.bookings : [];
+          if (badge) {
+            const pendingCount = _allTourismBookings.filter(b => b.status === 'ENQUIRY').length;
+            badge.textContent = pendingCount;
+            badge.style.display = pendingCount > 0 ? "inline-flex" : "none";
+          }
+          renderTourismBookingsTable();
+        } else if (res.status === 403) {
+          if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:32px; color:#ef4444;">Access restricted: Tourism operations permission required.</td></tr>`;
+        }
+      } catch (e) {
+        console.warn("loadTourismBookings notice:", e.message);
+      }
+    }
+
+    function renderTourismBookingsTable() {
+      const tbody = document.getElementById("tourism-bookings-table-body");
+      if (!tbody) return;
+
+      const statusFilter = document.getElementById("filter-tourism-status")?.value || "ALL";
+      let list = _allTourismBookings;
+      if (statusFilter !== "ALL") {
+        list = list.filter(b => b.status === statusFilter);
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:36px; color:#64748b;">
+          No tour bookings match the selected status filter.
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(b => {
+        let pillClass = 'pending';
+        if (b.status === 'CONFIRMED') pillClass = 'confirmed';
+        else if (b.status === 'ASSIGNED') pillClass = 'assigned';
+        else if (b.status === 'COMPLETED') pillClass = 'confirmed';
+        else if (b.status === 'CANCELLED') pillClass = 'cancelled';
+
+        const rawPhone = (b.customerPhone || '').replace(/\D/g, '').slice(-10);
+        const driverInfo = b.driverDetails ? `${escapeHtml(b.driverDetails.name)} (${b.driverDetails.vehicleNumber || 'Cab'})` : '<span style="color:#94a3b8; font-style:italic;">Unassigned</span>';
+
+        return `
+          <tr>
+            <td>
+              <strong style="color:var(--primary); font-family:var(--font-mono); font-size:12px;">${b.bookingId}</strong>
+              <div style="font-size:10.5px; color:#64748b;">${new Date(b.createdAt || Date.now()).toLocaleDateString('en-IN')}</div>
+            </td>
+            <td>
+              <div style="font-weight:700; color:var(--navy-900); font-size:12.5px;">${escapeHtml(b.packageTitle || 'Bihar Sightseeing Tour')}</div>
+              <div style="font-size:11px; color:#0284c7;">Pickup: ${escapeHtml(b.pickupCity || 'Patna')}</div>
+            </td>
+            <td>
+              <div style="font-weight:600; color:var(--text-main); font-size:12px;">${escapeHtml(b.customerName || 'Traveler')}</div>
+              <div style="font-size:11px; color:#64748b;">${b.customerPhone || ''}</div>
+              <div style="font-size:10.5px; color:#94a3b8;">${b.passengers || 1} Traveler(s)</div>
+            </td>
+            <td>
+              <div style="font-weight:700; font-size:12px; color:var(--navy-900);">${b.pickupDate || 'TBD'}</div>
+            </td>
+            <td>
+              <span style="text-transform:uppercase; font-size:11px; font-weight:700; background:#f1f5f9; padding:2px 6px; border-radius:4px; color:#334155;">${escapeHtml(b.selectedVehicle || 'sedan')}</span>
+              <div style="font-size:11px; margin-top:3px;">${driverInfo}</div>
+            </td>
+            <td>
+              <strong style="font-size:13px; color:var(--navy-900);">₹${b.totalAmount || 0}</strong>
+            </td>
+            <td>
+              <span style="font-size:12px; color:${b.advancePaid > 0 ? '#059669' : '#64748b'}; font-weight:700;">₹${b.advancePaid || 0}</span>
+            </td>
+            <td>
+              <span class="pill ${pillClass}">${b.status || 'ENQUIRY'}</span>
+            </td>
+            <td>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="openTourismStatusModal('${b.bookingId}')" style="padding:4px 8px; font-size:11px;">
+                  Manage
+                </button>
+                <a href="https://wa.me/91${rawPhone}" target="_blank" class="btn btn-secondary btn-sm" style="padding:4px 7px; font-size:11px;" title="Chat with traveler on WhatsApp">
+                  💬
+                </a>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openAddPackageModal(pkgId = null) {
+      const modal = document.getElementById("modal-add-package");
+      const titleEl = document.getElementById("modal-package-title");
+      const btnSave = document.getElementById("btn-save-package");
+      if (!modal) return;
+
+      document.getElementById("form-add-package").reset();
+      document.getElementById("pkg-form-id").value = "";
+
+      if (pkgId) {
+        const pkg = _allTourismPackages.find(p => p.id === pkgId);
+        if (pkg) {
+          if (titleEl) titleEl.textContent = `Edit Tour Package: ${pkg.title}`;
+          if (btnSave) btnSave.textContent = "Update Tour Package";
+          document.getElementById("pkg-form-id").value = pkg.id;
+          document.getElementById("pkg-form-title").value = pkg.title || "";
+          document.getElementById("pkg-form-subtitle").value = pkg.subtitle || "";
+          document.getElementById("pkg-form-duration").value = pkg.duration || "";
+          document.getElementById("pkg-form-status").value = pkg.status || "published";
+          document.getElementById("pkg-form-destinations").value = Array.isArray(pkg.destinations) ? pkg.destinations.join(", ") : (pkg.destinations || "");
+          document.getElementById("pkg-form-pickups").value = Array.isArray(pkg.pickupLocations) ? pkg.pickupLocations.join(", ") : (pkg.pickupLocations || "");
+          const pricing = pkg.pricing || {};
+          document.getElementById("pkg-form-price-sedan").value = pricing.sedan || 2999;
+          document.getElementById("pkg-form-price-suv").value = pricing.suv || 4499;
+          document.getElementById("pkg-form-price-innova").value = pricing.innova || 5499;
+          document.getElementById("pkg-form-description").value = pkg.description || "";
+          document.getElementById("pkg-form-inclusions").value = Array.isArray(pkg.inclusions) ? pkg.inclusions.join("\n") : (pkg.inclusions || "");
+          document.getElementById("pkg-form-exclusions").value = Array.isArray(pkg.exclusions) ? pkg.exclusions.join("\n") : (pkg.exclusions || "");
+        }
+      } else {
+        if (titleEl) titleEl.textContent = "Add Bihar Tourism Package";
+        if (btnSave) btnSave.textContent = "Save Tour Package";
+      }
+
+      modal.classList.add("active");
+    }
+
+    function closeAddPackageModal() {
+      document.getElementById("modal-add-package")?.classList.remove("active");
+    }
+
+    async function handleSavePackageSubmit(e) {
+      if (e) e.preventDefault();
+      const pkgId = document.getElementById("pkg-form-id").value.trim();
+      const title = document.getElementById("pkg-form-title").value.trim();
+      const subtitle = document.getElementById("pkg-form-subtitle").value.trim();
+      const duration = document.getElementById("pkg-form-duration").value.trim();
+      const status = document.getElementById("pkg-form-status").value;
+      const rawDests = document.getElementById("pkg-form-destinations").value;
+      const rawPickups = document.getElementById("pkg-form-pickups").value;
+      const priceSedan = Number(document.getElementById("pkg-form-price-sedan").value) || 2999;
+      const priceSuv = Number(document.getElementById("pkg-form-price-suv").value) || 4499;
+      const priceInnova = Number(document.getElementById("pkg-form-price-innova").value) || 5499;
+      const description = document.getElementById("pkg-form-description").value.trim();
+      const rawInclusions = document.getElementById("pkg-form-inclusions").value;
+      const rawExclusions = document.getElementById("pkg-form-exclusions").value;
+
+      const destinations = rawDests.split(",").map(s => s.trim()).filter(Boolean);
+      const pickupLocations = rawPickups.split(",").map(s => s.trim()).filter(Boolean);
+      const inclusions = rawInclusions.split("\n").map(s => s.trim()).filter(Boolean);
+      const exclusions = rawExclusions.split("\n").map(s => s.trim()).filter(Boolean);
+
+      const payload = {
+        title,
+        subtitle,
+        duration,
+        status,
+        destinations,
+        pickupLocations,
+        pricing: { sedan: priceSedan, suv: priceSuv, innova: priceInnova },
+        description,
+        inclusions,
+        exclusions
+      };
+
+      const btn = document.getElementById("btn-save-package");
+      try {
+        if (btn) { btn.disabled = true; btn.textContent = "Saving..."; }
+        let endpoint = "/api/admin/tourism/packages";
+        if (pkgId) {
+          endpoint = "/api/admin/tourism/packages/update";
+          payload.id = pkgId;
+        }
+
+        const res = await adminFetch(endpoint, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(pkgId ? "Package updated successfully!" : "New tour package created!", "success");
+          closeAddPackageModal();
+          await loadTourismPackages();
+        } else {
+          showToast(data.message || "Failed to save tour package.", "error");
+        }
+      } catch (err) {
+        showToast(err.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = pkgId ? "Update Tour Package" : "Save Tour Package"; }
+      }
+    }
+
+    async function archiveTourismPackage(pkgId, title) {
+      openConfirmModal(
+        "Archive Tour Package",
+        `Are you sure you want to archive "${title}"? It will be immediately hidden from the public tourism website.`,
+        async () => {
+          try {
+            const res = await adminFetch("/api/admin/tourism/packages/archive", {
+              method: "POST",
+              body: JSON.stringify({ id: pkgId })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              showToast("Package archived cleanly.", "success");
+              await loadTourismPackages();
+            } else {
+              showToast(data.message || "Failed to archive package.", "error");
+            }
+          } catch (e) {
+            showToast(e.message, "error");
+          }
+        }
+      );
+    }
+
+    function openTourismStatusModal(bookingId) {
+      const modal = document.getElementById("modal-tourism-status");
+      const summaryEl = document.getElementById("tour-status-summary");
+      const idInput = document.getElementById("tour-status-booking-id");
+      const selectStatus = document.getElementById("tour-status-select");
+      const advInput = document.getElementById("tour-advance-amount");
+      const noteInput = document.getElementById("tour-status-note");
+      const driverSelect = document.getElementById("tour-driver-select");
+
+      const booking = _allTourismBookings.find(b => b.bookingId === bookingId);
+      if (!booking || !modal) return;
+
+      idInput.value = booking.bookingId;
+      if (selectStatus) selectStatus.value = booking.status || "ENQUIRY";
+      if (advInput) advInput.value = booking.advancePaid || 0;
+      if (noteInput) noteInput.value = booking.notes || "";
+
+      // Populate driver select with available drivers
+      if (driverSelect) {
+        driverSelect.innerHTML = `<option value="">Select available chauffeur...</option>` +
+          _allDrivers.map(d => `<option value="${d.id || d.phone}">${escapeHtml(d.name || d.driverName)} — ${escapeHtml(d.carNo || d.vehicleNumber || 'Cab')} (${escapeHtml(d.phone)})</option>`).join("");
+        if (booking.assignedDriverId) {
+          driverSelect.value = booking.assignedDriverId;
+        }
+      }
+
+      if (summaryEl) {
+        summaryEl.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:var(--primary); font-size:13px;">${booking.bookingId}</strong>
+            <span style="font-weight:700; color:var(--navy-900);">₹${booking.totalAmount || 0}</span>
+          </div>
+          <div style="font-size:12px; color:var(--navy-900); font-weight:600;">${escapeHtml(booking.packageTitle || 'Tour Package')}</div>
+          <div style="font-size:11.5px; color:#64748b;">Traveler: ${escapeHtml(booking.customerName)} (${booking.customerPhone}) • Date: ${booking.pickupDate}</div>
+        `;
+      }
+
+      toggleTourDriverSelect();
+      modal.classList.add("active");
+    }
+
+    function toggleTourDriverSelect() {
+      const status = document.getElementById("tour-status-select")?.value;
+      const grp = document.getElementById("tour-driver-select-group");
+      if (grp) {
+        grp.style.display = (status === 'ASSIGNED' || status === 'CONFIRMED') ? 'block' : 'none';
+      }
+    }
+
+    function closeTourismStatusModal() {
+      document.getElementById("modal-tourism-status")?.classList.remove("active");
+    }
+
+    async function handleTourismStatusSubmit(e) {
+      if (e) e.preventDefault();
+      const bookingId = document.getElementById("tour-status-booking-id").value;
+      const status = document.getElementById("tour-status-select").value;
+      const advancePaid = Number(document.getElementById("tour-advance-amount").value) || 0;
+      const notes = document.getElementById("tour-status-note").value.trim();
+      const driverId = document.getElementById("tour-driver-select").value;
+
+      try {
+        const res = await adminFetch("/api/admin/tourism/bookings/status", {
+          method: "POST",
+          body: JSON.stringify({ bookingId, status, advancePaid, notes })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          showToast(data.message || "Failed to update status.", "error");
+          return;
+        }
+
+        // If driver selected, call assign endpoint
+        if (driverId && (status === 'ASSIGNED' || status === 'CONFIRMED')) {
+          await adminFetch("/api/admin/tourism/bookings/assign", {
+            method: "POST",
+            body: JSON.stringify({ bookingId, driverId })
+          });
+        }
+
+        showToast("Tour booking updated successfully!", "success");
+        closeTourismStatusModal();
+        await loadTourismBookings();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+
     // Global keyboard listener (Escape closes modals/drawers)
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -8408,6 +9068,8 @@
         closeConvertLeadModal();
         closeConfirmModal();
         closeCopilotModal();
+        closeAddPackageModal();
+        closeTourismStatusModal();
       }
     });
   </script>

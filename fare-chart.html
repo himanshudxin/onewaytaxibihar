@@ -15,6 +15,14 @@
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://onewaytaxibihar.com/img/logo-reframed.png">
 
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@onewaytaxibihar">
+  <meta name="twitter:creator" content="@onewaytaxibihar">
+  <meta name="twitter:title" content="Bihar Intercity One-Way &amp; Round-Trip Taxi Fare Chart 2026 | OneWayTaxiBihar">
+  <meta name="twitter:description" content="Calculate and view fixed, transparent one-way and two-way taxi fares across Bihar, UP, Jharkhand &amp; Bengal.">
+  <meta name="twitter:image" content="https://onewaytaxibihar.com/img/logo-reframed.png">
+
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
@@ -730,7 +738,7 @@
       letter-spacing: 0.4px;
       margin-top: 2px;
     }
-    .dest-region-tag.bihar-dist { background: #e0f2fe; color: #0369a1; }
+    .dest-region-tag.bihar-dist { background: #ecfdf5; color: #047857; }
     .dest-region-tag.bihar-tourist { background: #fef3c7; color: #b45309; }
     .dest-region-tag.up { background: #fae8ff; color: #86198f; }
     .dest-region-tag.jharkhand { background: #dcfce7; color: #15803d; }
@@ -1236,7 +1244,7 @@
 
         <div class="policy-card">
           <div class="policy-card-title">
-            <span style="color: #0284c7;">💳</span>
+            <span style="color: #059669;">💳</span>
             <span>Booking &amp; Round-Trip Savings</span>
           </div>
           <ul class="policy-list">
@@ -1256,7 +1264,7 @@
       <div style="font-weight: 800; font-size: 18px; color: white; margin-bottom: 8px;">OneWayTaxiBihar Mobility Solutions</div>
       <p style="font-size: 12.5px; color: #94a3b8; max-width: 600px; margin: 0 auto 10px;">Dedicated intercity mobility network offering flat-rate one-way and two-way outstation cabs across Patna and all 38 districts in Bihar, UP, Jharkhand &amp; West Bengal.</p>
       <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
-        Follow us: <a href="https://www.facebook.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; margin-right: 12px;">Facebook</a> • <a href="https://www.instagram.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 700; margin-left: 12px;">Instagram</a>
+        Follow us: <a href="https://www.facebook.com/share/1FAuDD5Wu5/" target="_blank" rel="noopener noreferrer" style="color: #10b981; font-weight: 700; margin-right: 12px;">Facebook</a> • <a href="https://www.instagram.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: #10b981; font-weight: 700; margin-left: 12px; margin-right: 12px;">Instagram</a> • <a href="https://x.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: #10b981; font-weight: 700; margin-left: 12px;">X (@onewaytaxibihar)</a>
       </p>
       <div style="font-size: 12px; color: #64748b;">Central Helpline: +91 80021 41816 • WhatsApp: +91 77394 06400 • Boring Road, Patna, Bihar</div>
     </div>
@@ -4544,7 +4552,7 @@
           : `Showing ${items.length} Direct Routes from ${currentOriginCity} (Direct Highway Costing)`;
       }
 
-      tbody.innerHTML = items.map(f => {
+      const renderRow = (f) => {
         const isTwoWay = currentTripType === 'twoway';
         let dist = f.distanceKm;
         let hatchBase = f.hatchback;
@@ -4641,9 +4649,31 @@
             </td>
           </tr>
         `;
-      }).join('');
+      };
 
-      applyColumnVisibility();
+      const BATCH_SIZE = 25;
+      if (items.length <= BATCH_SIZE) {
+        tbody.innerHTML = items.map(renderRow).join('');
+        applyColumnVisibility();
+      } else {
+        // Fast Initial Render (First 25 destinations in <10ms)
+        tbody.innerHTML = items.slice(0, BATCH_SIZE).map(renderRow).join('');
+        applyColumnVisibility();
+
+        // Asynchronously stream remaining rows without freezing browser main thread
+        const remaining = items.slice(BATCH_SIZE);
+        const appendNextChunk = (startIndex) => {
+          if (startIndex >= remaining.length) return;
+          const chunk = remaining.slice(startIndex, startIndex + BATCH_SIZE);
+          const chunkHtml = chunk.map(renderRow).join('');
+          tbody.insertAdjacentHTML('beforeend', chunkHtml);
+          applyColumnVisibility();
+          if (startIndex + BATCH_SIZE < remaining.length) {
+            requestAnimationFrame(() => appendNextChunk(startIndex + BATCH_SIZE));
+          }
+        };
+        requestAnimationFrame(() => appendNextChunk(0));
+      }
     }
 
     function escapeHtml(str) {

@@ -366,7 +366,7 @@
             <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 22px 20px 18px; color: #ffffff; text-align: center; position: relative;">
               <button type="button" class="modal-close-btn" onclick="window.otpService.closeOtpModal()" aria-label="Close" style="position: absolute; right: 14px; top: 14px; color: #94a3b8; background: rgba(255,255,255,0.08); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
               
-              <div style="width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; background: rgba(0, 154, 244, 0.15); border: 2px solid #38bdf8; display: flex; align-items: center; justify-content: center; color: #38bdf8;">
+              <div style="width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; display: flex; align-items: center; justify-content: center; color: #10b981;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg>
@@ -382,12 +382,12 @@
             <div class="modal-body" style="padding: 20px 22px 24px; text-align: center; background: var(--owc-card-bg, #ffffff);">
               
               <!-- Sent To Phone Number Bar -->
-              <div style="background: rgba(0, 154, 244, 0.06); border: 1px solid rgba(0, 154, 244, 0.2); border-radius: 10px; padding: 9px 12px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 9px 12px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
                 <div style="text-align: left;">
                   <span style="font-size: 10.5px; color: var(--owc-text-muted, #64748b); text-transform: uppercase; font-weight: 700; display: block;">SMS OTP SENT TO:</span>
                   <strong id="otp-modal-phone-display" style="font-size: 14px; color: var(--owc-text, #0f172a); font-weight: 800;">+91 98765 43210</strong>
                 </div>
-                <button type="button" onclick="window.otpService.editPhoneNumber()" style="border: none; background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                <button type="button" onclick="window.otpService.editPhoneNumber()" style="border: none; background: #ecfdf5; color: #059669; padding: 4px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
                   Edit
                 </button>
               </div>

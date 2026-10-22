@@ -183,19 +183,28 @@ class BookingManager {
     this.restoreState();
     this.syncPaymentConfig();
 
-    // Dynamically synchronize live fares from server
+    // Idle/deferred synchronization of live fares (never block initial critical render)
     if (typeof fetch === "function") {
-      fetch("/api/fares")
-        .then(r => r.json())
-        .then(d => {
-          if (d && d.success && Array.isArray(d.fares) && d.fares.length > 0) {
-            window.OTB_PATNA_FARES = d.fares;
-            if (this.originCity && this.destCity) {
-              this.renderFleetCards();
+      const syncLiveFares = () => {
+        fetch("/api/fares")
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.success && Array.isArray(d.fares) && d.fares.length > 0) {
+              window.OTB_PATNA_FARES = d.fares;
+              if (this.originCity && this.destCity) {
+                this.renderFleetCards();
+              }
             }
-          }
-        })
-        .catch(() => {});
+          })
+          .catch(() => {});
+      };
+      if (!window.OTB_PATNA_FARES || window.OTB_PATNA_FARES.length === 0) {
+        syncLiveFares();
+      } else if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(syncLiveFares, { timeout: 4000 });
+      } else {
+        setTimeout(syncLiveFares, 3000);
+      }
     }
   }
 
@@ -921,7 +930,7 @@ class BookingManager {
               <span>SEARCHING DOORSTEP STREETS &amp; LOCALITIES</span>
             </div>
             <div style="padding: 16px; font-size: 13px; color: var(--owc-text-muted); display:flex; align-items:center; gap:10px;">
-              <span class="pro-spinner-sm" style="display:inline-block; width:14px; height:14px; border:2px solid #009af4; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite;"></span>
+              <span class="pro-spinner-sm" style="display:inline-block; width:14px; height:14px; border:2px solid #059669; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite;"></span>
               <span>Finding exact streets or landmarks for "${escapeHtml(query)}"...</span>
             </div>
           `;
@@ -2752,7 +2761,7 @@ class BookingManager {
               </div>
 
               <!-- 11. Remaining Payment -->
-              <div class="summary-row" style="background: rgba(0, 154, 244, 0.05);">
+              <div class="summary-row" style="background: rgba(16, 185, 129, 0.08);">
                 <span class="summary-row-label" style="color: var(--owc-primary); font-weight: 800;">Remaining Payment</span>
                 <span class="summary-row-val">
                   <strong style="color: var(--owc-primary); font-size: 15px;" id="sum-final-payable">₹${finalPayableInit.toLocaleString('en-IN')}</strong>

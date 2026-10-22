@@ -1994,7 +1994,7 @@ window.copyUpiId = (upiId, btnEl) => {
         targetBtn.style.background = "#059669";
         setTimeout(() => {
           targetBtn.innerHTML = origText;
-          targetBtn.style.background = "#009af4";
+          targetBtn.style.background = "";
         }, 2200);
       }
     }).catch(() => {

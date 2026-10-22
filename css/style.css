@@ -257,18 +257,18 @@ button, a, input, select {
 
 @keyframes logoAuraGlow {
   0%, 100% {
-    box-shadow: 0 4px 18px rgba(37, 99, 235, 0.25), 0 0 8px rgba(250, 204, 21, 0.15);
-    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 4px 18px rgba(5, 150, 105, 0.25), 0 0 8px rgba(250, 204, 21, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
   }
   50% {
-    box-shadow: 0 6px 24px rgba(37, 99, 235, 0.45), 0 0 14px rgba(250, 204, 21, 0.35);
+    box-shadow: 0 6px 24px rgba(5, 150, 105, 0.45), 0 0 14px rgba(250, 204, 21, 0.35);
     border-color: rgba(250, 204, 21, 0.65);
   }
 }
 
 .brand-wrapper:hover .brand-badge-icon {
   border-color: #facc15;
-  box-shadow: 0 6px 26px rgba(37, 99, 235, 0.5), 0 0 18px rgba(250, 204, 21, 0.45);
+  box-shadow: 0 6px 26px rgba(5, 150, 105, 0.5), 0 0 18px rgba(250, 204, 21, 0.45);
   transform: translateY(-1.5px) scale(1.04);
 }
 
@@ -289,8 +289,8 @@ button, a, input, select {
 }
 
 .brand-text-logo .brand-highlight {
-  color: #facc15;
-  background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
+  color: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-left: 1px;
@@ -301,7 +301,7 @@ button, a, input, select {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  color: #38bdf8;
+  color: #10b981;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -363,8 +363,8 @@ button, a, input, select {
   font-weight: 900;
 }
 .brand-logo__word-two {
-  color: #facc15;
-  background: linear-gradient(135deg, #facc15 0%, #38bdf8 100%);
+  color: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-left: 1px;
@@ -631,18 +631,18 @@ button, a, input, select {
 }
 
 .top-help-link:hover {
-  background: linear-gradient(135deg, rgba(0, 149, 246, 0.15) 0%, rgba(0, 149, 246, 0.05) 100%);
-  border-color: rgba(56, 189, 248, 0.45);
-  box-shadow: 0 2px 12px rgba(0, 149, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 2px 12px rgba(5, 150, 105, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-0.5px);
 }
 
 .top-help-link:hover .top-phone-label {
-  color: #38bdf8;
+  color: #10b981;
 }
 
 .top-help-link:hover .top-phone-number {
-  color: #38bdf8;
+  color: #10b981;
 }
 
 .top-help-link:hover .top-phone-badge {
@@ -756,7 +756,7 @@ body.call-bar-collapsed .navbar-call-mini-pill {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #009af4 0%, #0086d6 100%);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: #ffffff;
   padding: 8px 18px;
   border-radius: 9999px;
@@ -764,7 +764,7 @@ body.call-bar-collapsed .navbar-call-mini-pill {
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 2px 10px rgba(0, 154, 244, 0.32);
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.32);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   letter-spacing: 0.2px;
@@ -775,8 +775,8 @@ body.call-bar-collapsed .navbar-call-mini-pill {
 
 .nav-help-pill:hover,
 .nav-call-now-btn:hover {
-  background: linear-gradient(135deg, #0086d6 0%, #0073c0 100%);
-  box-shadow: 0 4px 16px rgba(0, 154, 244, 0.45);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.45);
   transform: translateY(-1px);
   color: #fde047;
 }
@@ -1161,11 +1161,11 @@ body.drawer-open {
   height: 36px;
   border-radius: 10px;
   background: radial-gradient(circle at 30% 20%, #0c1527 0%, #060a14 60%, #020408 100%);
-  border: 1.2px solid rgba(56, 189, 248, 0.4);
+  border: 1.2px solid rgba(16, 185, 129, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.3);
   flex-shrink: 0;
 }
 
@@ -1344,8 +1344,8 @@ body.drawer-open {
   align-items: center;
   justify-content: space-between;
   padding: 13px 14px;
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.14) 0%, rgba(2, 132, 199, 0.05) 100%);
-  border: 1.5px solid rgba(2, 132, 199, 0.4);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.14) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
   border-radius: var(--radius-md);
   text-decoration: none;
   transition: all var(--transition-fast);
@@ -1355,7 +1355,7 @@ body.drawer-open {
 .drawer-hero-cta:active {
   transform: translateY(-1px);
   border-color: var(--owc-primary);
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.22) 0%, rgba(2, 132, 199, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.22) 0%, rgba(5, 150, 105, 0.08) 100%);
 }
 
 .drawer-hero-cta-content {
@@ -1457,9 +1457,9 @@ body.drawer-open {
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 9999px;
-  background: rgba(2, 132, 199, 0.12);
+  background: rgba(16, 185, 129, 0.12);
   color: var(--owc-primary);
-  border: 1px solid rgba(2, 132, 199, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   white-space: nowrap;
 }
 
@@ -1513,8 +1513,8 @@ body.drawer-open {
 }
 
 .drawer-portal-card.admin:hover {
-  border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.08);
 }
 
 .drawer-portal-card.driver:hover {
@@ -1601,7 +1601,7 @@ body.drawer-open {
   font-size: 13.5px;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.28);
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.28);
   transition: all var(--transition-fast);
 }
 
@@ -1632,11 +1632,11 @@ main.site-main {
 }
 
 .app-section.alt-bg {
-  background: linear-gradient(180deg, rgba(0, 154, 244, 0.03) 0%, rgba(255, 255, 255, 0.4) 100%);
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.03) 0%, rgba(255, 255, 255, 0.4) 100%);
 }
 
 [data-theme="dark"] .app-section.alt-bg {
-  background: linear-gradient(180deg, rgba(0, 154, 244, 0.04) 0%, rgba(15, 23, 42, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.04) 0%, rgba(15, 23, 42, 0.6) 100%);
 }
 
 .section-header {
@@ -1660,7 +1660,7 @@ main.site-main {
 }
 
 .section-pill-tag.blue {
-  background: linear-gradient(135deg, #009af4, #0086d6);
+  background: linear-gradient(135deg, #059669, #047857);
   color: #ffffff;
   box-shadow: var(--shadow-blue-glow);
 }
@@ -1735,7 +1735,7 @@ main.site-main {
 }
 
 .footer-brand-name span {
-  color: #38bdf8;
+  color: #f59e0b;
 }
 
 .footer-brand-tagline {
@@ -1842,7 +1842,7 @@ main.site-main {
 }
 
 .footer-col ul li a:hover {
-  color: #38bdf8;
+  color: #10b981;
   transform: translateX(4px);
 }
 
@@ -1896,8 +1896,8 @@ main.site-main {
 }
 
 .footer-route-pill:hover {
-  background: rgba(0, 149, 246, 0.1);
-  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
   transform: translateY(-2px);
 }
 
@@ -1914,7 +1914,7 @@ main.site-main {
 .frp-price {
   font-size: 11px;
   font-weight: 700;
-  color: #38bdf8;
+  color: #10b981;
   white-space: nowrap;
 }
 
@@ -1962,11 +1962,11 @@ main.site-main {
 }
 
 .social-circle-btn:hover {
-  background: #0070f3;
+  background: #059669;
   color: #ffffff;
-  border-color: #0070f3;
+  border-color: #059669;
   transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 6px 18px rgba(0, 112, 243, 0.4);
+  box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
 }
 
 .social-circle-btn.btn-wa:hover {
@@ -2066,7 +2066,7 @@ main.site-main {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #38bdf8;
+  color: #10b981;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2504,7 +2504,7 @@ main.site-main {
 
 .fare-search-input:focus {
   border-color: var(--owc-primary);
-  box-shadow: 0 0 0 3px rgba(0, 149, 246, 0.2);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 .fare-search-icon {
@@ -2584,7 +2584,7 @@ main.site-main {
 }
 
 .fare-table tbody tr:hover {
-  background: rgba(0, 149, 246, 0.04);
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .fare-table td {

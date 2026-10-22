@@ -4,7 +4,7 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v4.1';
+const CACHE_NAME = 'onewaytaxibihar-v5.0-colors-20261022';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -26,8 +26,9 @@ const CORE_ASSETS = [
   '/patna-to-bhagalpur-cab.html',
   '/404.html',
   '/500.html',
-  '/css/style.css',
-  '/css/components.css?v=3.0',
+  '/css/style.css?v=20261022_v25_colors',
+  '/css/components.css?v=20261022_v25_colors',
+  '/css/voyago-theme.css?v=20261022_v25_colors',
   '/js/brand-logo.js?v=20261019_v6',
   '/js/data.js?v=20261019_v6',
   '/js/calculator.js?v=20261019_v6',

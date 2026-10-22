@@ -351,18 +351,18 @@
 }
 
 .trip-tab-btn.active {
-  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
   color: #ffffff !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4) !important;
   font-weight: 700;
 }
 
 [data-theme="dark"] .trip-tab-btn.active {
-  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
   color: #ffffff !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.4) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45) !important;
 }
 
 .trip-tab-btn.active .tab-icon svg {
@@ -403,13 +403,13 @@
 }
 
 .input-field-group:hover {
-  border-color: rgba(0, 149, 246, 0.4);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .input-field-group:focus-within {
-  border-color: #0095f6 !important;
-  box-shadow: 0 0 0 3.5px rgba(0, 149, 246, 0.16), 0 4px 16px rgba(0, 149, 246, 0.08) !important;
-  background: rgba(0, 149, 246, 0.02) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.16), 0 4px 16px rgba(16, 185, 129, 0.08) !important;
+  background: rgba(16, 185, 129, 0.02) !important;
 }
 
 .route-point-marker {
@@ -614,17 +614,17 @@
 
 .route-swap-btn:hover {
   background: var(--owc-slate-100);
-  color: #0095f6;
-  border-color: #0095f6;
+  color: #f97316;
+  border-color: #f97316;
   transform: rotate(180deg) scale(1.08);
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.25);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
 }
 
 [data-theme="dark"] .route-swap-btn:hover {
   background: #1e293b;
-  color: #38bdf8;
-  border-color: #38bdf8;
-  box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
+  color: #f97316;
+  border-color: #f97316;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.4);
 }
 
 /* Autocomplete Dropdown */
@@ -871,14 +871,14 @@
 }
 
 .autocomplete-type-pill.badge-town {
-  background: rgba(2, 132, 199, 0.1);
-  color: #0284c7;
-  border: 1px solid rgba(2, 132, 199, 0.25);
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+  border: 1px solid rgba(249, 115, 22, 0.25);
 }
 
 [data-theme="dark"] .autocomplete-type-pill.badge-town {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.3);
+  color: #fb923c;
+  border-color: rgba(249, 115, 22, 0.3);
 }
 
 .autocomplete-type-pill.badge-outstation {
@@ -1361,25 +1361,25 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.6px;
-  color: #0095f6;
+  color: #10b981;
   text-transform: uppercase;
 }
 
 .exec-sheet-badge.time {
-  color: #10b981;
+  color: #f59e0b;
 }
 
 .exec-pulse-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #0095f6;
-  box-shadow: 0 0 8px #0095f6;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
 }
 
 .exec-pulse-dot.time {
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
 }
 
 .exec-sheet-title {
@@ -1563,10 +1563,10 @@
 }
 
 .cal-month-pill.selected {
-  background: linear-gradient(135deg, #0095f6 0%, #0066cc 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #ffffff;
   border-color: transparent;
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.4);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
 }
 
 .cal-month-pill.disabled {
@@ -1632,10 +1632,10 @@
 }
 
 .cal-day-cell.selected {
-  background: linear-gradient(135deg, #0095f6 0%, #0066cc 100%) !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
   color: #ffffff !important;
   font-weight: 900;
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.45);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
   transform: scale(1.04);
 }
 
@@ -1771,11 +1771,11 @@
 }
 
 .clock-cell.selected {
-  background: linear-gradient(135deg, #0095f6 0%, #0066cc 100%) !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
   color: #ffffff !important;
   font-weight: 800;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(0, 149, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 /* Modal Footer & Confirm */
@@ -1822,13 +1822,13 @@
   padding: 10px 18px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #0095f6 0%, #0066cc 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
   flex-shrink: 0;
 }
 
@@ -2378,25 +2378,25 @@
   user-select: none;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   
-  /* Executive Stripe/Uber Grade Blue Gradient */
-  background: linear-gradient(135deg, #0095f6 0%, #0070f3 50%, #0056b3 100%) !important;
+  /* Executive Stripe/Uber Grade Green / Orange Gradient */
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #047857 100%) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 6px 20px -2px rgba(0, 149, 246, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 6px 20px -2px rgba(16, 185, 129, 0.45), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 [data-theme="dark"] .check-fare-primary-btn {
-  background: linear-gradient(135deg, #0095f6 0%, #0070f3 60%, #0056b3 100%) !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 60%, #047857 100%) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 6px 24px -2px rgba(0, 149, 246, 0.5), 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 6px 24px -2px rgba(16, 185, 129, 0.5), 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
 }
 
 .check-fare-primary-btn:hover {
-  background: linear-gradient(135deg, #0084e8 0%, #0060d4 50%, #004ba3 100%) !important;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px -2px rgba(0, 149, 246, 0.55), 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 10px 28px -2px rgba(249, 115, 22, 0.55), 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
 .check-fare-primary-btn:active {
@@ -3269,7 +3269,7 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0070f3 0%, #0095f6 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -3277,7 +3277,7 @@
   font-size: 15px;
   font-weight: 800;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 112, 243, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
 .why-feature-card h3 {
@@ -3649,13 +3649,13 @@
 
 [data-theme="light"] .faq-chevron {
   background: #f1f5f9;
-  color: #0284c7;
+  color: #059669;
 }
 
 .faq-item.active .faq-chevron {
   transform: rotate(180deg);
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
 }
 
 .faq-answer-pane {
@@ -4030,11 +4030,11 @@
 }
 
 [data-theme="dark"] .btn-select-cab {
-  background: #0284c7;
+  background: #059669;
 }
 
 [data-theme="dark"] .btn-select-cab:hover {
-  background: #009af4;
+  background: #10b981;
 }
 
 [data-theme="dark"] .cab-savings-pill {
@@ -4504,15 +4504,15 @@
   }
 
   .trip-tab-btn.active {
-    background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 3px 10px rgba(0, 149, 246, 0.35) !important;
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4) !important;
   }
 
   [data-theme="dark"] .trip-tab-btn.active {
-    background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%) !important;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 3px 10px rgba(0, 149, 246, 0.45) !important;
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.45) !important;
   }
 
   /* Connected Visual Route Inputs on Mobile */
@@ -4699,9 +4699,9 @@
     justify-content: center;
     text-transform: none;
     touch-action: manipulation;
-    background: linear-gradient(135deg, #0095f6 0%, #0070f3 50%, #0056b3 100%) !important;
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #047857 100%) !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 18px rgba(0, 149, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
   }
 
   .check-fare-primary-btn.ready {
@@ -5133,19 +5133,19 @@
 }
 
 .auto-type-chip:hover {
-  background: #f0f9ff !important;
-  color: #0284c7 !important;
-  border-color: #0284c7 !important;
+  background: #ecfdf5 !important;
+  color: #059669 !important;
+  border-color: #059669 !important;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(2, 132, 199, 0.15) !important;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.15) !important;
 }
 
 .auto-type-chip.chip-selected {
-  background: #0284c7 !important;
+  background: #059669 !important;
   color: #ffffff !important;
-  border-color: #0284c7 !important;
+  border-color: #059669 !important;
   transform: scale(0.97);
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
 }
 
 .auto-type-loading {
@@ -5664,11 +5664,11 @@
 }
 
 .quick-route-chip:hover {
-  background: linear-gradient(135deg, #0095f6 0%, #0070f3 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: #ffffff;
   border-color: transparent;
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 149, 246, 0.35);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
 /* 5. Cab Selection & Fleet Cards Elevation */
@@ -6633,7 +6633,7 @@ body.modal-open .mobile-call-bar {
 }
 
 .ai-bubble-user {
-  background: #0284c7;
+  background: #059669;
   color: #ffffff;
   border-bottom-right-radius: 4px;
   align-self: flex-end;
@@ -6685,10 +6685,10 @@ body.modal-open .mobile-call-bar {
   font-size: 13px;
   outline: none;
 }
-.ai-chat-input-bar input:focus { border-color: #38bdf8; }
+.ai-chat-input-bar input:focus { border-color: #10b981; }
 
 .ai-chat-input-bar button {
-  background: #0284c7;
+  background: #059669;
   color: white;
   border: none;
   width: 36px;

@@ -252,7 +252,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #059669, #0284c7, #7c3aed);
+      background: linear-gradient(90deg, #059669, #f97316, #f59e0b);
     }
     .calc-header { margin-bottom: 18px; }
     .calc-title-badge {
@@ -763,11 +763,11 @@
       font-weight: 600;
       display: block;
     }
-    .fare-price-cell.hatchback .price-amount { color: #0284c7; }
-    .fare-price-cell.sedan .price-amount { color: #059669; }
-    .fare-price-cell.exec-sedan .price-amount { color: #2563eb; }
-    .fare-price-cell.suv .price-amount { color: #7c3aed; }
-    .fare-price-cell.lux-suv .price-amount { color: #db2777; }
+    .fare-price-cell.hatchback .price-amount { color: #059669; }
+    .fare-price-cell.sedan .price-amount { color: #f97316; }
+    .fare-price-cell.exec-sedan .price-amount { color: #ea580c; }
+    .fare-price-cell.suv .price-amount { color: #d97706; }
+    .fare-price-cell.lux-suv .price-amount { color: #b45309; }
 
     .market-cell {
       font-size: 12px;
@@ -1003,7 +1003,7 @@
     <!-- AI Transparency Strip -->
     <div class="ai-strip-banner">
       <div class="ai-strip-item">
-        <div class="ai-strip-icon" style="background: #e0f2fe; color: #0284c7;">🛣️</div>
+        <div class="ai-strip-icon" style="background: rgba(16, 185, 129, 0.12); color: #059669;">🛣️</div>
         <div>
           <div style="font-weight: 800; font-size: 14px; color: #0f172a;">Real Road Kilometers</div>
           <div style="font-size: 12px; color: #64748b;">Source-checked highway navigation</div>
@@ -4440,8 +4440,8 @@
       const srcEl = document.getElementById('calc-res-source');
       if (srcEl) {
         srcEl.textContent = isExcel ? '⭐ Verified Fixed Excel Route Rate' : '🛣️ Direct Highway Route (Zero Return Fare)';
-        srcEl.style.background = isExcel ? '#ecfdf5' : '#e0f2fe';
-        srcEl.style.color = isExcel ? '#059669' : '#0284c7';
+        srcEl.style.background = isExcel ? '#ecfdf5' : '#fff7ed';
+        srcEl.style.color = isExcel ? '#059669' : '#ea580c';
       }
 
       const tiers = [

@@ -1,0 +1,1123 @@
+/* =============================================================================
+   OneWayTaxiBihar - Executive Modern Passenger Web Application Theme
+   Precision-crafted travel UI inspired by VOYAGO & MakeMyTrip aesthetics:
+   Sleek cards, micro-interactions, stacked route inputs (no text truncation),
+   vehicle selector with rates, popular destination circuits & trust pillars.
+   ============================================================================= */
+
+:root {
+  --v-primary: #0284c7;
+  --v-primary-hover: #0369a1;
+  --v-accent: #f97316;
+  --v-card-bg: #111827;
+  --v-card-bg-subtle: #1e293b;
+  --v-border: rgba(255, 255, 255, 0.08);
+  --v-border-active: rgba(2, 132, 199, 0.45);
+  --v-text-main: #f8fafc;
+  --v-text-muted: #94a3b8;
+  --v-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --v-shadow-lg: 0 20px 45px -12px rgba(0, 0, 0, 0.7);
+  --v-radius: 20px;
+  --v-radius-pill: 9999px;
+}
+
+[data-theme="light"] {
+  --v-primary: #0284c7;
+  --v-primary-hover: #0369a1;
+  --v-accent: #f97316;
+  --v-card-bg: #ffffff;
+  --v-card-bg-subtle: #f8fafc;
+  --v-border: rgba(15, 23, 42, 0.08);
+  --v-border-active: rgba(2, 132, 199, 0.45);
+  --v-text-main: #0f172a;
+  --v-text-muted: #64748b;
+  --v-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.08);
+  --v-shadow-lg: 0 20px 45px -12px rgba(15, 23, 42, 0.12);
+}
+
+/* =============================================================================
+   1. TOP LOCATION SELECTOR BADGE (Navbar)
+   ============================================================================= */
+.voyago-location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(2, 132, 199, 0.1);
+  border: 1px solid rgba(2, 132, 199, 0.22);
+  padding: 6px 14px;
+  border-radius: var(--v-radius-pill);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--v-text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.voyago-location-badge:hover {
+  background: rgba(2, 132, 199, 0.18);
+  border-color: rgba(2, 132, 199, 0.4);
+  transform: translateY(-1px);
+}
+.voyago-location-badge .loc-pin {
+  color: #ef4444;
+  display: flex;
+}
+.voyago-location-badge .loc-arrow {
+  color: var(--v-text-muted);
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+/* =============================================================================
+   2. HERO BANNER - EXECUTIVE STUDIO RADIAL GRADIENT
+   ============================================================================= */
+.voyago-hero-banner {
+  position: relative;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.78) 0%, rgba(11, 17, 32, 0.94) 100%),
+              url('/images/voyago/cab-banner.jpg') center 30% / cover no-repeat;
+  padding: 30px 0 36px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+[data-theme="light"] .voyago-hero-banner {
+  background: linear-gradient(180deg, rgba(241, 245, 249, 0.82) 0%, rgba(248, 250, 252, 0.93) 100%),
+              url('/images/voyago/cab-banner.jpg') center 30% / cover no-repeat;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+@media (max-width: 600px) {
+  .voyago-hero-banner {
+    padding: 16px 0 24px 0 !important;
+  }
+}
+
+.voyago-hero-header {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 24px auto;
+  padding: 0 16px;
+}
+.voyago-hero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  color: #ea580c;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: var(--v-radius-pill);
+  margin-bottom: 14px;
+}
+[data-theme="dark"] .voyago-hero-chip {
+  color: #fb923c;
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.35);
+}
+.voyago-hero-chip .pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: #f97316;
+  border-radius: 50%;
+  animation: v-pulse 1.8s infinite;
+}
+@keyframes v-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(249, 115, 22, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+
+.voyago-hero-title {
+  font-size: clamp(23px, 4vw, 34px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  color: var(--v-text-main);
+  margin-bottom: 8px;
+}
+.voyago-hero-title .title-accent {
+  color: #0284c7;
+}
+[data-theme="dark"] .voyago-hero-title .title-accent {
+  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.voyago-hero-sub {
+  font-size: clamp(13px, 2.5vw, 14.5px);
+  color: var(--v-text-muted);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* =============================================================================
+   3. BOOKING WIDGET CARD (Clean Executive Styling)
+   ============================================================================= */
+.voyago-booking-card {
+  max-width: 720px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto 36px auto;
+  background: var(--v-card-bg);
+  border: 1px solid var(--v-border);
+  border-radius: 24px;
+  padding: 24px 26px;
+  box-shadow: var(--v-shadow-lg);
+  position: relative;
+  z-index: 10;
+}
+@media (max-width: 600px) {
+  .voyago-booking-card {
+    padding: 14px 12px !important;
+    border-radius: 18px !important;
+    margin: 0 auto 20px auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Trip Tabs Header inside the Card */
+.voyago-booking-card .trip-tabs-header {
+  display: flex !important;
+  gap: 6px !important;
+  background: var(--v-card-bg-subtle) !important;
+  border: 1px solid var(--v-border) !important;
+  padding: 5px !important;
+  border-radius: 14px !important;
+  margin-bottom: 20px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 580px) {
+  .voyago-booking-card .trip-tabs-header {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    padding: 4px !important;
+    margin-bottom: 14px !important;
+  }
+}
+.voyago-booking-card .trip-tab-btn {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 11px 14px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--v-text-muted) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 580px) {
+  .voyago-booking-card .trip-tab-btn {
+    padding: 8px 6px !important;
+    font-size: 12px !important;
+    gap: 5px !important;
+  }
+  .voyago-booking-card .trip-tab-btn .tab-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}
+.voyago-booking-card .trip-tab-btn:hover {
+  color: var(--v-text-main) !important;
+}
+.voyago-booking-card .trip-tab-btn.active {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+}
+.voyago-booking-card .trip-tab-btn.active .tab-icon {
+  color: #ffffff !important;
+}
+
+/* =============================================================================
+   4. STACKED 2-STORY ROUTE INPUTS CONTAINER (Zero Text Truncation)
+   ============================================================================= */
+.route-inputs-grid-2.voyago-stacked-route {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  background: var(--v-card-bg-subtle) !important;
+  border: 1.5px solid var(--v-border) !important;
+  border-radius: 18px !important;
+  position: relative !important;
+  margin-bottom: 18px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  overflow: visible !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+[data-theme="dark"] .route-inputs-grid-2.voyago-stacked-route {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper {
+  width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper:first-child .input-field-group {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--v-border) !important;
+  border-radius: 18px 18px 0 0 !important;
+  padding: 12px 18px !important;
+  min-height: 62px !important;
+  box-sizing: border-box !important;
+}
+
+[data-theme="dark"] .route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper:first-child .input-field-group {
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper:last-child .input-field-group {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 0 18px 18px !important;
+  padding: 12px 18px !important;
+  min-height: 62px !important;
+  box-sizing: border-box !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .input-content input {
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  color: var(--v-text-main) !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .input-content label {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.6px !important;
+  color: var(--v-text-muted) !important;
+  margin-bottom: 2px !important;
+}
+
+/* Floating Circular Swap Button on Dividing Border */
+.route-inputs-grid-2.voyago-stacked-route .route-swap-btn {
+  position: absolute !important;
+  right: 20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: var(--v-card-bg) !important;
+  border: 1.5px solid var(--v-border) !important;
+  color: #0284c7 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  z-index: 15 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.route-inputs-grid-2.voyago-stacked-route .route-swap-btn:hover {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  transform: translateY(-50%) rotate(180deg) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4) !important;
+}
+
+@media (max-width: 580px) {
+  .route-inputs-grid-2.voyago-stacked-route {
+    margin-bottom: 14px !important;
+  }
+  .route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper:first-child .input-field-group,
+  .route-inputs-grid-2.voyago-stacked-route .autocomplete-wrapper:last-child .input-field-group {
+    padding: 9px 12px !important;
+    min-height: 52px !important;
+  }
+  .route-inputs-grid-2.voyago-stacked-route .input-content input {
+    font-size: 14px !important;
+    padding-right: 42px !important;
+  }
+  .route-inputs-grid-2.voyago-stacked-route .route-swap-btn {
+    right: 12px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* =============================================================================
+   5. VEHICLE SELECTION CARDS (Clean Voyago Screen 3 Style)
+   ============================================================================= */
+.voyago-vehicle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.voyago-vehicle-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--v-text-main);
+}
+.voyago-vehicle-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2.5px 8px;
+  border-radius: var(--v-radius-pill);
+}
+.voyago-vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px;
+  margin-bottom: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.voyago-vehicle-card {
+  background: var(--v-card-bg-subtle);
+  border: 1.5px solid var(--v-border);
+  border-radius: 16px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+.voyago-vehicle-card:hover {
+  border-color: rgba(2, 132, 199, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.voyago-vehicle-card.selected {
+  border-color: #0284c7;
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.08) 0%, var(--v-card-bg-subtle) 100%);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.22);
+}
+.voyago-vehicle-card.selected::before {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 16px;
+  height: 16px;
+  background: #0284c7;
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.voyago-vehicle-img {
+  width: 100%;
+  max-width: 80px;
+  height: 44px;
+  object-fit: contain;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+.voyago-vehicle-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--v-text-main);
+  line-height: 1.2;
+}
+.voyago-vehicle-rate {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0284c7;
+  margin-top: 2px;
+}
+.voyago-vehicle-seats {
+  font-size: 10px;
+  color: var(--v-text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+@media (max-width: 480px) {
+  .voyago-vehicle-grid {
+    gap: 6px !important;
+    margin-bottom: 14px !important;
+  }
+  .voyago-vehicle-card {
+    padding: 8px 3px !important;
+    border-radius: 12px !important;
+  }
+  .voyago-vehicle-card.selected::before {
+    top: 4px !important;
+    right: 4px !important;
+    width: 14px !important;
+    height: 14px !important;
+    font-size: 9px !important;
+  }
+  .voyago-vehicle-img {
+    max-width: 62px !important;
+    height: 35px !important;
+    margin-bottom: 3px !important;
+  }
+  .voyago-vehicle-name {
+    font-size: 11.5px !important;
+  }
+  .voyago-vehicle-rate {
+    font-size: 11px !important;
+    margin-top: 1px !important;
+  }
+  .voyago-vehicle-seats {
+    font-size: 8.5px !important;
+    margin-top: 1px !important;
+    line-height: 1.15 !important;
+  }
+}
+
+/* =============================================================================
+   6. CTA SEARCH CAB BUTTON & TRUST ROW
+   ============================================================================= */
+.voyago-search-btn {
+  width: 100% !important;
+  padding: 15px 20px !important;
+  border-radius: 14px !important;
+  border: none !important;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  font-size: 15.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.3px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+.voyago-search-btn:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%) !important;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.5) !important;
+  transform: translateY(-2px) !important;
+}
+@media (max-width: 480px) {
+  .voyago-search-btn {
+    padding: 13px 14px !important;
+    font-size: 14.5px !important;
+    border-radius: 12px !important;
+  }
+}
+
+.voyago-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--v-border);
+  width: 100%;
+  box-sizing: border-box;
+}
+.voyago-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--v-text-muted);
+}
+.voyago-trust-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .voyago-trust-row {
+    gap: 6px 10px !important;
+    margin-top: 12px !important;
+    padding-top: 10px !important;
+  }
+  .voyago-trust-item {
+    font-size: 10px !important;
+  }
+  .voyago-trust-icon {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+.voyago-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--v-text-muted);
+}
+.voyago-trust-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   7. POPULAR PLACES SECTION
+   ============================================================================= */
+.voyago-section {
+  padding: 34px 0;
+}
+.voyago-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.voyago-section-title {
+  font-size: clamp(18px, 4vw, 22px);
+  font-weight: 800;
+  color: var(--v-text-main);
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.voyago-places-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+@media (max-width: 860px) {
+  .voyago-places-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 480px) {
+  .voyago-places-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}
+.voyago-place-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--v-card-bg);
+  border: 1px solid var(--v-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+.voyago-place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--v-shadow);
+  border-color: var(--v-border-active);
+}
+.voyago-place-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.voyago-place-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.voyago-place-card:hover .voyago-place-img {
+  transform: scale(1.08);
+}
+.voyago-place-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.75) 100%);
+}
+.voyago-place-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--v-radius-pill);
+}
+.voyago-place-info {
+  padding: 12px 14px;
+}
+.voyago-place-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--v-text-main);
+  line-height: 1.2;
+}
+.voyago-place-subtitle {
+  font-size: 11.5px;
+  color: var(--v-text-muted);
+  margin-top: 2px;
+}
+.voyago-place-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--v-border);
+}
+.voyago-place-fare {
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #10b981;
+}
+.voyago-place-arrow {
+  color: #0284c7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =============================================================================
+   8. SPECIAL TRAVEL DEALS BANNER
+   ============================================================================= */
+.voyago-deal-card {
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0284c7 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  box-shadow: var(--v-shadow);
+  margin-bottom: 24px;
+}
+[data-theme="light"] .voyago-deal-card {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 60%, #0f172a 100%);
+  color: #ffffff;
+}
+@media (max-width: 680px) {
+  .voyago-deal-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 18px;
+  }
+}
+.voyago-deal-content {
+  flex: 1;
+  z-index: 2;
+}
+.voyago-deal-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f97316;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--v-radius-pill);
+  margin-bottom: 8px;
+}
+.voyago-deal-title {
+  font-size: clamp(20px, 4.5vw, 25px);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+.voyago-deal-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.5;
+  max-width: 480px;
+  margin-bottom: 16px;
+}
+.voyago-deal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 10px 22px;
+  border-radius: var(--v-radius-pill);
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+.voyago-deal-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+.voyago-deal-img {
+  width: 100%;
+  max-width: 250px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 2;
+}
+
+/* =============================================================================
+   9. BIHAR TOUR PACKAGES SECTION
+   ============================================================================= */
+.voyago-tours-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 860px) {
+  .voyago-tours-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.voyago-tour-card {
+  background: var(--v-card-bg);
+  border: 1px solid var(--v-border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.voyago-tour-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--v-shadow);
+  border-color: var(--v-border-active);
+}
+.voyago-tour-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.voyago-tour-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.voyago-tour-card:hover .voyago-tour-thumb img {
+  transform: scale(1.06);
+}
+.voyago-tour-duration {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--v-radius-pill);
+}
+.voyago-tour-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.voyago-tour-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--v-text-main);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.voyago-tour-route {
+  font-size: 12px;
+  color: var(--v-text-muted);
+  margin-bottom: 12px;
+}
+.voyago-tour-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--v-border);
+}
+.voyago-tour-price {
+  font-size: 16px;
+  font-weight: 900;
+  color: #f97316;
+}
+.voyago-tour-price span {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--v-text-muted);
+}
+.voyago-tour-action {
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: var(--v-radius-pill);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.voyago-tour-action:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* =============================================================================
+   10. MOBILE BOTTOM APP NAVIGATION
+   ============================================================================= */
+.voyago-bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  background: #0d1526 !important;
+  background: var(--v-card-bg, #0d1526) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 1px solid var(--v-border, rgba(255, 255, 255, 0.1)) !important;
+  display: none;
+  align-items: center !important;
+  justify-content: space-around !important;
+  z-index: 99999 !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 6px 4px 8px 4px !important;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  height: auto !important;
+  min-height: 60px !important;
+}
+[data-theme="light"] .voyago-bottom-nav {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+@media (max-width: 991px), (max-width: 1024px) and (pointer: coarse) {
+  .voyago-bottom-nav {
+    display: flex !important;
+  }
+  body {
+    padding-bottom: 76px !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+.voyago-nav-item {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  max-width: 20% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  color: #94a3b8 !important;
+  color: var(--v-text-muted, #94a3b8) !important;
+  gap: 3px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  transition: color 0.2s ease !important;
+  padding: 2px 0 !important;
+}
+[data-theme="light"] .voyago-nav-item {
+  color: #64748b !important;
+}
+.voyago-nav-item svg {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  display: block !important;
+  stroke: #94a3b8 !important;
+  stroke: var(--v-text-muted, #94a3b8) !important;
+  stroke-width: 2.2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  fill: none !important;
+  flex-shrink: 0 !important;
+  overflow: visible !important;
+}
+[data-theme="light"] .voyago-nav-item svg {
+  stroke: #64748b !important;
+}
+.voyago-nav-item span {
+  display: block !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  letter-spacing: -0.2px !important;
+}
+.voyago-nav-item:hover,
+.voyago-nav-item.active {
+  color: #0284c7 !important;
+}
+.voyago-nav-item:hover svg,
+.voyago-nav-item.active svg {
+  stroke: #0284c7 !important;
+}
+.voyago-nav-center-btn {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5) !important;
+  margin-top: -18px !important;
+  border: 3px solid #0d1526 !important;
+  border: 3px solid var(--v-card-bg, #0d1526) !important;
+  transition: transform 0.2s ease !important;
+  flex-shrink: 0 !important;
+}
+[data-theme="light"] .voyago-nav-center-btn {
+  border-color: #ffffff !important;
+}
+.voyago-nav-center-btn:active {
+  transform: scale(0.95) !important;
+}
+.voyago-nav-center-btn svg,
+[data-theme="light"] .voyago-nav-center-btn svg,
+[data-theme="dark"] .voyago-nav-center-btn svg,
+.voyago-nav-item .voyago-nav-center-btn svg,
+[data-theme="light"] .voyago-nav-item .voyago-nav-center-btn svg {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  stroke: #ffffff !important;
+  color: #ffffff !important;
+  fill: none !important;
+  display: block !important;
+}
+
+/* =============================================================================
+   11. COMPREHENSIVE MOBILE VIEWPORT AUDIT & SCREEN FIT FIXES
+   ============================================================================= */
+@media (max-width: 768px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .booking-widget-card,
+  .voyago-booking-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .site-main {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .schedule-section-header {
+    flex-wrap: wrap !important;
+    gap: 4px 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .schedule-row {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  .exec-picker-card {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 8px 8px !important;
+  }
+
+  .voyago-phone-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .phone-input-inline-wrap {
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .phone-input-inline-wrap input {
+    min-width: 0 !important;
+    font-size: 15px !important;
+  }
+}

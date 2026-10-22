@@ -128,6 +128,7 @@
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="/css/style.css?v=20261016_v3">
   <link rel="stylesheet" href="/css/components.css?v=3.0">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261021_v8">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -396,45 +397,45 @@
     <!-- ======================================================================
          1. HERO SECTION: BOOKING WIZARD (OneWayTaxiBihar)
          ====================================================================== -->
-    <section class="hero-section" id="booking-hero">
+    <section class="hero-section voyago-hero-banner" id="booking-hero">
       <div class="container">
 
         <!-- Emergency Incident / Booking Pause Banner Container -->
         <div id="emergency-pause-container" style="display:none;" role="alert" aria-live="assertive"></div>
 
         <!-- Main Booking Widget Card -->
-        <div class="booking-widget-card">
+        <div class="booking-widget-card voyago-booking-card">
           
-          <!-- 4 Trip Type Tabs -->
+          <!-- Unified Trip Type Tabs -->
           <div class="trip-tabs-header">
             <button type="button" class="trip-tab-btn active" data-trip="oneway">
               <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
               </span>
               <span class="tab-label">One-Way</span>
             </button>
             <button type="button" class="trip-tab-btn" data-trip="roundtrip">
               <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>
               </span>
               <span class="tab-label">Round-Trip</span>
             </button>
             <button type="button" class="trip-tab-btn" data-trip="local">
               <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </span>
-              <span class="tab-label">Local 8h</span>
+              <span class="tab-label">Local Rental</span>
             </button>
             <button type="button" class="trip-tab-btn" data-trip="airport">
               <span class="tab-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.5.1-1.8.7l-.5.9c-.3.7 0 1.5.6 1.9l6.5 4.7-3.5 3.5-2.8-.9c-.4-.1-.8 0-1.1.3l-.4.4c-.3.3-.3.8 0 1.1l2.3 2.3c.3.3.8.3 1.1 0l.4-.4c.3-.3.4-.7.3-1.1l-.9-2.8 3.5-3.5 4.7 6.5c.4.6 1.2.9 1.9.6l.9-.5c.6-.3.9-1 .7-1.8z"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.5.1-1.8.7l-.5.9c-.3.7 0 1.5.6 1.9l6.5 4.7-3.5 3.5-2.8-.9c-.4-.1-.8 0-1.1.3l-.4.4c-.3.3-.3.8 0 1.1l2.3 2.3c.3.3.8.3 1.1 0l.4-.4c.3-.3.4-.7.3-1.1l-.9-2.8 3.5-3.5 4.7 6.5c.4.6 1.2.9 1.9.6l.9-.5c.6-.3.9-1 .7-1.8z"/></svg>
               </span>
-              <span class="tab-label">Airport</span>
+              <span class="tab-label">Airport Taxi</span>
             </button>
           </div>
 
-          <!-- Route Inputs (Pickup & Drop) -->
-          <div class="route-inputs-grid-2">
+          <!-- Stacked 2-Story Route Container (Full Width, Zero Truncation) -->
+          <div class="route-inputs-grid-2 voyago-stacked-route">
             <!-- Pickup Field -->
             <div class="autocomplete-wrapper">
               <div class="input-field-group" id="group-pickup">
@@ -615,8 +616,34 @@
           </div>
 
 
+          <!-- Voyago-Style Vehicle Selection Grid -->
+          <div class="voyago-vehicle-header">
+            <span class="voyago-vehicle-title">SELECT VEHICLE CATEGORY</span>
+            <span class="voyago-vehicle-badge">✓ Guaranteed AC</span>
+          </div>
+          <div class="voyago-vehicle-grid" id="voyago-vehicle-selector">
+            <div class="voyago-vehicle-card" data-fleet="sedan" onclick="window.selectVoyagoVehicle('sedan', this)">
+              <img src="/images/voyago/car-sedan.jpg" alt="Sedan Dzire" class="voyago-vehicle-img">
+              <div class="voyago-vehicle-name">Sedan</div>
+              <div class="voyago-vehicle-rate">₹11/km</div>
+              <div class="voyago-vehicle-seats">4 Seats • AC</div>
+            </div>
+            <div class="voyago-vehicle-card selected" data-fleet="ertiga" onclick="window.selectVoyagoVehicle('ertiga', this)">
+              <img src="/images/voyago/car-ertiga.jpg" alt="Ertiga SUV" class="voyago-vehicle-img">
+              <div class="voyago-vehicle-name">Ertiga</div>
+              <div class="voyago-vehicle-rate">₹14/km</div>
+              <div class="voyago-vehicle-seats">6 Seats • Dual AC</div>
+            </div>
+            <div class="voyago-vehicle-card" data-fleet="suv" onclick="window.selectVoyagoVehicle('suv', this)">
+              <img src="/images/voyago/car-suv.jpg" alt="Scorpio / Innova" class="voyago-vehicle-img">
+              <div class="voyago-vehicle-name">Scorpio</div>
+              <div class="voyago-vehicle-rate">₹18/km</div>
+              <div class="voyago-vehicle-seats">7 Seats • Heavy SUV</div>
+            </div>
+          </div>
+
           <!-- Contact Mobile Number Field (Mandatory to View Fares) -->
-          <div class="input-field-group phone-field-group" id="phone-check-group" style="margin-bottom: 16px;">
+          <div class="input-field-group phone-field-group voyago-phone-row" id="phone-check-group" style="margin-bottom: 16px;">
             <div class="phone-icon-badge">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -654,10 +681,44 @@
           </div>
 
           <!-- Primary "Check Fare" Action Button (Locked until 10-digit mobile entered) -->
-          <button type="button" class="check-fare-primary-btn" id="btn-check-fare" onclick="window.executeCheckFareFlow()" title="Enter 10-digit mobile number to view live fares &amp; availability">
-            <svg class="btn-check-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="margin-right: 6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>Enter Mobile to View Fares</span>
+          <button type="button" class="check-fare-primary-btn voyago-search-btn" id="btn-check-fare" onclick="window.executeCheckFareFlow()" title="Enter 10-digit mobile number to view live fares &amp; availability">
+            <svg class="btn-check-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Search Cab &amp; View Live Fares</span>
           </button>
+
+          <!-- Voyago-Style Trust Badges Row -->
+          <div class="voyago-trust-row">
+            <div class="voyago-trust-item">
+              <span class="voyago-trust-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </span>
+              <span>24x7 Service</span>
+            </div>
+            <div class="voyago-trust-item">
+              <span class="voyago-trust-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              <span>Safe &amp; Reliable</span>
+            </div>
+            <div class="voyago-trust-item">
+              <span class="voyago-trust-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.5 8.5 0 0 1 13 0"/></svg>
+              </span>
+              <span>Verified Drivers</span>
+            </div>
+            <div class="voyago-trust-item">
+              <span class="voyago-trust-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
+              <span>Zero Return Fare</span>
+            </div>
+            <div class="voyago-trust-item">
+              <span class="voyago-trust-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span>Zero Cancellation</span>
+            </div>
+          </div>
 
           <!-- BELOW CHECK FARE OPTION: Built in Bihar for BHARAT (Prestigious National Identity Badge) -->
           <div class="hero-center-header below-check-fare">
@@ -711,6 +772,197 @@
           <div class="quick-routes-chips" id="hero-quick-routes">
             <!-- Injected via JavaScript -->
           </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VOYAGO-INSPIRED SECTION 1: POPULAR PLACES IN BIHAR
+         ====================================================================== -->
+    <section class="voyago-section" id="voyago-places-section" style="background: var(--v-card-bg-subtle, #0b1120); border-bottom: 1px solid var(--v-border, rgba(255,255,255,0.08));">
+      <div class="container">
+        
+        <div class="voyago-section-header">
+          <div>
+            <h2 class="voyago-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Popular Places in Bihar</span>
+            </h2>
+            <p style="font-size: 13px; color: var(--v-text-muted, #94a3b8); margin-top: 3px;">Top tourist, spiritual, and commercial destinations connected with zero return fare</p>
+          </div>
+          <a href="javascript:void(0)" onclick="window.openRoutesModal()" style="font-size: 12.5px; font-weight: 800; color: #0284c7; text-decoration: none;">View All 38 Districts →</a>
+        </div>
+
+        <div class="voyago-places-grid">
+          
+          <!-- Place 1: Patna -->
+          <div class="voyago-place-card" onclick="window.quickSelectRoute('Patna', 'Gaya', '1498')">
+            <div class="voyago-place-img-wrap">
+              <img src="/images/voyago/dest-patna.jpg" alt="Patna City" class="voyago-place-img" loading="lazy">
+              <div class="voyago-place-overlay"></div>
+              <span class="voyago-place-badge">Hub City</span>
+            </div>
+            <div class="voyago-place-info">
+              <div class="voyago-place-name">Patna</div>
+              <div class="voyago-place-subtitle">Golghar • Takht Patna Sahib • Marine Drive</div>
+              <div class="voyago-place-footer">
+                <span class="voyago-place-fare">from ₹699</span>
+                <span class="voyago-place-arrow">Book Cab →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Place 2: Gaya & Bodh Gaya -->
+          <div class="voyago-place-card" onclick="window.quickSelectRoute('Patna', 'Gaya (Bodh Gaya)', '1498')">
+            <div class="voyago-place-img-wrap">
+              <img src="/images/voyago/dest-gaya.jpg" alt="Bodh Gaya" class="voyago-place-img" loading="lazy">
+              <div class="voyago-place-overlay"></div>
+              <span class="voyago-place-badge">UNESCO Site</span>
+            </div>
+            <div class="voyago-place-info">
+              <div class="voyago-place-name">Bodh Gaya &amp; Gaya</div>
+              <div class="voyago-place-subtitle">Mahabodhi Temple • Vishnupad Mandir</div>
+              <div class="voyago-place-footer">
+                <span class="voyago-place-fare">from ₹1,498</span>
+                <span class="voyago-place-arrow">Book Cab →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Place 3: Rajgir & Nalanda -->
+          <div class="voyago-place-card" onclick="window.quickSelectRoute('Patna', 'Rajgir', '1699')">
+            <div class="voyago-place-img-wrap">
+              <img src="/images/voyago/dest-rajgir.jpg" alt="Rajgir and Nalanda" class="voyago-place-img" loading="lazy">
+              <div class="voyago-place-overlay"></div>
+              <span class="voyago-place-badge">Ancient Heritage</span>
+            </div>
+            <div class="voyago-place-info">
+              <div class="voyago-place-name">Rajgir &amp; Nalanda</div>
+              <div class="voyago-place-subtitle">Vishwa Shanti Stupa • Nalanda University</div>
+              <div class="voyago-place-footer">
+                <span class="voyago-place-fare">from ₹1,699</span>
+                <span class="voyago-place-arrow">Book Cab →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Place 4: Varanasi -->
+          <div class="voyago-place-card" onclick="window.quickSelectRoute('Patna', 'Varanasi', '3498')">
+            <div class="voyago-place-img-wrap">
+              <img src="/images/voyago/dest-varanasi.jpg" alt="Varanasi Kashi" class="voyago-place-img" loading="lazy">
+              <div class="voyago-place-overlay"></div>
+              <span class="voyago-place-badge">Spiritual Hub</span>
+            </div>
+            <div class="voyago-place-info">
+              <div class="voyago-place-name">Varanasi (Kashi)</div>
+              <div class="voyago-place-subtitle">Kashi Vishwanath • Ganga Ghats Aarti</div>
+              <div class="voyago-place-footer">
+                <span class="voyago-place-fare">from ₹3,498</span>
+                <span class="voyago-place-arrow">Book Cab →</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VOYAGO-INSPIRED SECTION 2: SPECIAL TRAVEL DEALS BANNER
+         ====================================================================== -->
+    <section class="voyago-section" style="padding-top: 24px; padding-bottom: 24px;">
+      <div class="container">
+        
+        <div class="voyago-deal-card">
+          <div class="voyago-deal-content">
+            <span class="voyago-deal-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Special Travel Deals</span>
+            </span>
+            <h3 class="voyago-deal-title">Save More, Travel More Across Bihar!</h3>
+            <p class="voyago-deal-desc">
+              Pay only for one-way distance with guaranteed zero return charges. Chilled AC, commercial yellow-plate cars, police-verified highway captains, and transparent GST billing.
+            </p>
+            <a href="#booking-hero" class="voyago-deal-btn" onclick="document.getElementById('input-pickup')?.focus()">
+              <span>Book Your Cab Now</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+          </div>
+          <img src="/images/voyago/deal-car.jpg" alt="Special Travel Deals - OneWayTaxiBihar" class="voyago-deal-img" loading="lazy">
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VOYAGO-INSPIRED SECTION 3: CURATED BIHAR TOUR PACKAGES
+         ====================================================================== -->
+    <section class="voyago-section" id="voyago-tours-section" style="background: var(--v-card-bg-subtle, #0b1120); border-top: 1px solid var(--v-border, rgba(255,255,255,0.08)); border-bottom: 1px solid var(--v-border, rgba(255,255,255,0.08));">
+      <div class="container">
+        
+        <div class="voyago-section-header">
+          <div>
+            <h2 class="voyago-section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <span>Curated Bihar Tour Packages</span>
+            </h2>
+            <p style="font-size: 13px; color: var(--v-text-muted, #94a3b8); margin-top: 3px;">Explore More, Worry Less • Dedicated Private Chauffeur &amp; AC Vehicle</p>
+          </div>
+          <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20am%20interested%20in%20custom%20Bihar%20Tour%20Packages" target="_blank" rel="noopener noreferrer" style="font-size: 12.5px; font-weight: 800; color: #10b981; text-decoration: none;">Custom Package Inquiry ↗</a>
+        </div>
+
+        <div class="voyago-tours-grid">
+          
+          <!-- Tour 1 -->
+          <div class="voyago-tour-card">
+            <div class="voyago-tour-thumb">
+              <img src="/images/voyago/dest-rajgir.jpg" alt="Bihar Heritage Tour" loading="lazy">
+              <span class="voyago-tour-duration">4 Days / 3 Nights</span>
+            </div>
+            <div class="voyago-tour-body">
+              <h3 class="voyago-tour-title">Bodh Gaya - Rajgir - Nalanda Circuit</h3>
+              <p class="voyago-tour-route">Patna ➔ Bodh Gaya ➔ Rajgir Ropeway ➔ Ancient Nalanda ➔ Patna</p>
+              <div class="voyago-tour-meta">
+                <div class="voyago-tour-price">₹12,499 <span>/ Private Cab</span></div>
+                <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20want%20to%20book%20the%204D/3N%20Bodh%20Gaya%20-%20Rajgir%20-%20Nalanda%20Tour" target="_blank" rel="noopener noreferrer" class="voyago-tour-action">Book Tour</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tour 2 -->
+          <div class="voyago-tour-card">
+            <div class="voyago-tour-thumb">
+              <img src="/images/voyago/dest-varanasi.jpg" alt="Varanasi Spiritual Tour" loading="lazy">
+              <span class="voyago-tour-duration">3 Days / 2 Nights</span>
+            </div>
+            <div class="voyago-tour-body">
+              <h3 class="voyago-tour-title">Patna - Kashi Spiritual Darshan Tour</h3>
+              <p class="voyago-tour-route">Patna ➔ Varanasi Kashi Vishwanath ➔ Sarnath ➔ Ganga Aarti</p>
+              <div class="voyago-tour-meta">
+                <div class="voyago-tour-price">₹9,999 <span>/ Private Cab</span></div>
+                <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20want%20to%20book%20the%203D/2N%20Kashi%20Darshan%20Tour" target="_blank" rel="noopener noreferrer" class="voyago-tour-action">Book Tour</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tour 3 -->
+          <div class="voyago-tour-card">
+            <div class="voyago-tour-thumb">
+              <img src="/images/voyago/tour-banner.jpg" alt="Mithilanchal Tour" loading="lazy">
+              <span class="voyago-tour-duration">2 Days / 1 Night</span>
+            </div>
+            <div class="voyago-tour-body">
+              <h3 class="voyago-tour-title">Mithilanchal Cultural &amp; Art Trail</h3>
+              <p class="voyago-tour-route">Patna ➔ Raj Darbhanga ➔ Madhubani Village Art ➔ Patna</p>
+              <div class="voyago-tour-meta">
+                <div class="voyago-tour-price">₹6,999 <span>/ Private Cab</span></div>
+                <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20want%20to%20book%20the%202D/1N%20Mithila%20Cultural%20Tour" target="_blank" rel="noopener noreferrer" class="voyago-tour-action">Book Tour</a>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -947,46 +1199,7 @@
 
 
 
-    <!-- ======================================================================
-         8. SERVICE AREAS ACROSS ALL 38 DISTRICTS OF BIHAR
-         ====================================================================== -->
-    <section class="app-section alt-bg" id="service-areas-section">
-      <div class="container">
-        
-        <div class="section-header">
-          <span class="section-pill-tag blue">COVERAGE IN ALL 38 DISTRICTS</span>
-          <h2 class="section-title">Direct Outstation Cabs from Patna to Every Corner of Bihar</h2>
-          <p class="section-subtitle">Reliable one-way intercity cab services connecting all 9 administrative divisions</p>
-        </div>
 
-        <div class="service-stats-grid">
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-            </div>
-            <div class="service-stat-text">All 38 Districts of Bihar</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div class="service-stat-text">24x7 Cab Availability</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
-            </div>
-            <div class="service-stat-text">One-Way & Round Trip</div>
-          </div>
-          <div class="service-stat-card">
-            <div class="service-stat-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-            </div>
-            <div class="service-stat-text">Airport & Outstation Cabs</div>
-        </div>
-
-      </div>
-    </section>
 
 
 
@@ -1006,6 +1219,35 @@
           <!-- Injected via JavaScript -->
         </div>
 
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         STATE-WIDE NETWORK & VALUE PROPOSITION (Transferred from Top of Page)
+         ====================================================================== -->
+    <section class="app-section voyago-ending-hero-section" style="padding: 48px 0; text-align: center; background: var(--v-card-bg-subtle, #f8fafc); border-top: 1px solid var(--v-border, rgba(0,0,0,0.08));">
+      <div class="container">
+        <div class="voyago-hero-header" style="margin: 0 auto; max-width: 840px;">
+          <div class="voyago-hero-chip">
+            <span class="pulse-dot"></span>
+            <span>Bihar State-Wide Dedicated Taxi Network • Zero Return Fare</span>
+          </div>
+          <h2 class="voyago-hero-title" style="font-size: clamp(24px, 4.5vw, 32px); margin-bottom: 10px;">
+            Book Outstation &amp; One-Way Cabs <span class="title-accent">Across Bihar</span>
+          </h2>
+          <p class="voyago-hero-sub" style="font-size: 15px; max-width: 680px; margin: 0 auto 24px auto;">
+            Doorstep Pickup across All 38 Districts • Chilled AC Fleet • 24×7 State-Wide Dispatch
+          </p>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;">
+            <a href="#booking-hero" class="voyago-deal-btn" style="background: #0284c7; color: #ffffff; padding: 12px 28px; font-size: 14px;" onclick="document.getElementById('input-pickup')?.focus()">
+              <span>Book Your Cab Now</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+            <a href="tel:+918002141816" class="voyago-deal-btn" style="background: transparent; color: var(--v-text-main, #0f172a); border: 1.5px solid var(--v-border, #cbd5e1); padding: 11px 24px; font-size: 14px;">
+              <span>Call 24×7 Hotline: +91 80021 41816</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1125,20 +1367,31 @@
   <!-- ======================================================================
        12. MOBILE STICKY EXECUTIVE BOTTOM ACTION BAR (Smart Ergonomics)
        ====================================================================== -->
-  <div class="mobile-sticky-bottom-bar" id="mobile-sticky-bar">
-    <div class="msb-content">
-      <a href="tel:+918002141816" class="msb-action-circle" title="Call 24x7 Helpdesk" aria-label="Call Dispatch Desk">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      </a>
-      <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="msb-action-circle wa" title="WhatsApp Dispatch" aria-label="Chat on WhatsApp">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
-      </a>
-      <a href="#booking-hero" class="msb-primary-btn" onclick="document.getElementById('input-pickup')?.focus()">
-        <span>Book One-Way Cab</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-    </div>
-  </div>
+  <!-- Voyago-Style Mobile Bottom App Navigation Bar (Screen 2 Style) -->
+  <nav class="voyago-bottom-nav" id="voyago-bottom-nav" role="navigation" aria-label="Mobile Navigation">
+    <a href="#booking-hero" class="voyago-nav-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Go to Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="/passenger.html" class="voyago-nav-item" aria-label="View My Bookings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Bookings</span>
+    </a>
+    <a href="#booking-hero" class="voyago-nav-item" onclick="document.getElementById('input-pickup')?.focus()" aria-label="Book a Cab Now">
+      <div class="voyago-nav-center-btn" title="Instant Cab Booking">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      </div>
+      <span>Book Cab</span>
+    </a>
+    <a href="javascript:void(0)" class="voyago-nav-item" onclick="window.openFareChartModal()" aria-label="View Offers and Fares">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Offers</span>
+    </a>
+    <a href="tel:+918002141816" class="voyago-nav-item" aria-label="24x7 Customer Support">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Support</span>
+    </a>
+  </nav>
 
   <!-- ======================================================================
        12. INTERACTIVE MODALS & SUB-PAGE DIALOGS
@@ -2001,6 +2254,56 @@
       }
     }
   })();
+
+    // =========================================================================
+    // VOYAGO-INSPIRED INTERACTION CONTROLLERS
+    // =========================================================================
+    window.selectVoyagoService = function(type, el) {
+      document.querySelectorAll('.voyago-service-card').forEach(c => c.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      const targetTab = document.querySelector(`.trip-tab-btn[data-trip="${type}"]`);
+      if (targetTab) {
+        targetTab.click();
+      }
+
+      const widget = document.querySelector('.voyago-booking-card');
+      if (widget) {
+        widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    window.selectVoyagoVehicle = function(fleetId, el) {
+      document.querySelectorAll('.voyago-vehicle-card').forEach(c => c.classList.remove('selected'));
+      if (el) el.classList.add('selected');
+      try {
+        sessionStorage.setItem('otb_preferred_cab', fleetId);
+      } catch (e) {}
+    };
+
+    window.quickSelectRoute = function(fromCity, toCity, approxFare) {
+      const pInput = document.getElementById('input-pickup');
+      const dInput = document.getElementById('input-drop');
+      if (pInput) pInput.value = fromCity + (fromCity.includes('Patna') ? ' (पटना), Bihar' : ', Bihar');
+      if (dInput) dInput.value = toCity + (toCity.includes('Gaya') ? ' (गया), Bihar' : ', Bihar');
+
+      const hero = document.getElementById('booking-hero');
+      if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      const phoneInput = document.getElementById('input-fare-phone');
+      if (phoneInput && !phoneInput.value) {
+        setTimeout(() => phoneInput.focus(), 600);
+      }
+
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Selected route: ${fromCity} → ${toCity} (from ₹${approxFare})`, 'info');
+      }
+    };
+
+    window.scrollToSection = function(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 </script>
 
 </body>

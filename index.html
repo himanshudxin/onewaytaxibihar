@@ -149,9 +149,9 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261023_v39_fixes">
-  <link rel="stylesheet" href="/css/components.css?v=20261023_v39_fixes">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v39_fixes">
+  <link rel="stylesheet" href="/css/style.css?v=20261023_v40_navbar">
+  <link rel="stylesheet" href="/css/components.css?v=20261023_v40_navbar">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v40_navbar">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -205,12 +205,12 @@
       </a>
 
       <!-- Desktop Nav Links -->
-      <ul class="nav-links">
-        <li><a href="javascript:void(0)" onclick="window.openServicesModal()">Services</a></li>
-        <li><a href="/fare-chart.html">Fare Chart</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openCorporateModal()">Corporate</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()">Reviews</a></li>
-        <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()">Request Invoice</a></li>
+      <ul class="nav-links" role="menubar">
+        <li><a href="javascript:void(0)" onclick="window.openServicesModal()" role="menuitem">Services</a></li>
+        <li><a href="/fare-chart.html" role="menuitem">Fare Chart</a></li>
+        <li><a href="javascript:void(0)" onclick="window.openCorporateModal()" role="menuitem">Corporate</a></li>
+        <li><a href="javascript:void(0)" onclick="window.openFriendsReviewModal()" role="menuitem">Reviews</a></li>
+        <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()" title="GST Tax Invoice &amp; Receipts" role="menuitem">Tax Invoice</a></li>
       </ul>
 
       <!-- Nav Actions -->
@@ -2667,15 +2667,15 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261023_v39_fixes"></script>
-  <script src="/js/data.js?v=20261023_v39_fixes"></script>
-  <script src="/js/calculator.js?v=20261023_v39_fixes"></script>
-  <script src="/js/map.js?v=20261023_v39_fixes"></script>
-  <script src="/js/api.js?v=20261023_v39_fixes"></script>
-  <script src="/js/datetime-picker.js?v=20261023_v39_fixes"></script>
-  <script src="/js/firebase-otp.js?v=20261023_v39_fixes"></script>
-  <script src="/js/booking.js?v=20261023_v39_fixes"></script>
-  <script src="/js/app.js?v=20261023_v39_fixes"></script>
+  <script src="/js/brand-logo.js?v=20261023_v40_navbar"></script>
+  <script src="/js/data.js?v=20261023_v40_navbar"></script>
+  <script src="/js/calculator.js?v=20261023_v40_navbar"></script>
+  <script src="/js/map.js?v=20261023_v40_navbar"></script>
+  <script src="/js/api.js?v=20261023_v40_navbar"></script>
+  <script src="/js/datetime-picker.js?v=20261023_v40_navbar"></script>
+  <script src="/js/firebase-otp.js?v=20261023_v40_navbar"></script>
+  <script src="/js/booking.js?v=20261023_v40_navbar"></script>
+  <script src="/js/app.js?v=20261023_v40_navbar"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
@@ -2959,6 +2959,6 @@
     };
 </script>
 <script src="/js/analytics.js"></script>
-<script src="/js/cookie-consent.js?v=20261023_v39_fixes"></script>
+<script src="/js/cookie-consent.js?v=20261023_v40_navbar"></script>
 </body>
 </html>

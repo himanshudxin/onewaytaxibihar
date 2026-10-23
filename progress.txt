@@ -96,3 +96,25 @@
 - Cache Busting:
   - Bumped Service Worker cache to `onewaytaxibihar-v9.3-drawer-fix-20261023` and updated asset version strings to `?v=20261023_v39_fixes`.
 - Tested: Node syntax validation PASS across `js/app.js`, `js/cookie-consent.js`, and `sw.js`.
+
+[2026-10-23] Phase 9: Desktop Navbar Redesign & Alignment:
+- Root Cause Elimination:
+  - Diagnosed jagged multi-line wrapping in the desktop navigation bar where 2-word labels ("Fare Chart", "Request Invoice") wrapped onto two lines while single-word labels ("Services", "Corporate", "Reviews") remained on one line, creating an amateur, broken visual hierarchy.
+- Executive Glass Capsule Pill Design:
+  - Enclosed `.nav-links` inside an executive glass capsule pill (`border-radius: 9999px; backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04); padding: 4px; gap: 3px;`).
+  - Added full light theme support (`[data-theme="light"] .nav-links { background: rgba(0, 0, 0, 0.03); border-color: rgba(0, 0, 0, 0.07); }`).
+- Strict Single-Line Alignment & Geometry:
+  - Added `white-space: nowrap !important;` to all desktop nav links.
+  - Enforced uniform height (`34px`), `display: inline-flex; align-items: center; justify-content: center; line-height: 1; padding: 0 14px; border-radius: 9999px;`.
+  - Refined typography (`13.5px`, `font-weight: 600`, `letter-spacing: -0.2px`).
+  - Added smooth interactive micro-interactions (`translateY(-1px)`, emerald glow `#10b981`, and active pill highlights).
+- Mid-Screen Responsive Cushioning:
+  - Updated `@media (min-width: 993px) and (max-width: 1250px)` to compact padding (`0 10px; font-size: 12.5px; height: 32px;`).
+  - Set `.navbar-call-mini-pill` to `display: none !important;` on mid-screens to prevent header crowding.
+- Copy & Semantics:
+  - Streamlined "Request Invoice" to "Tax Invoice" (`role="menubar"`, `role="menuitem"`, title="GST Tax Invoice & Receipts").
+- Cache Busting:
+  - Bumped Service Worker cache to `onewaytaxibihar-v9.4-nav-redesign-20261023`.
+  - Bumped stylesheet and script query versions across `index.html`, `passenger.html`, and `sw.js` to `?v=20261023_v40_navbar`.
+- Tested: Node syntax checks PASS across all scripts.
+

@@ -60,10 +60,19 @@
 - [x] 8.4 Z-Index Hierarchy: Elevated `.drawer-backdrop` (`z-index: 1000005`) and `.mobile-nav-drawer` (`z-index: 1000006`) above all fixed overlays.
 - [x] 8.5 Toggle Menu Handler: Added `window.toggleMobileDrawer()` and attached direct inline onclick handler to `#btn-hamburger`.
 
+### Phase 9: Desktop Navbar Redesign & Alignment
+- [x] 9.1 Root Cause Elimination: Diagnosed and fixed jagged vertical misalignment where two-word links ("Fare Chart", "Request Invoice") wrapped onto two lines while single-word links stayed on one line.
+- [x] 9.2 Strict Single-Line Enforcement: Applied `white-space: nowrap !important;`, uniform fixed height (`34px`), and `display: inline-flex; align-items: center; justify-content: center;` to `.nav-links li a`.
+- [x] 9.3 Executive Glass Capsule Pill: Enclosed `.nav-links` in a sleek glass capsule container with `border-radius: 9999px; backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.04);` and light-theme support.
+- [x] 9.4 Typography & Micro-Interactions: Refined link font size to 13.5px / 600 weight with -0.2px tracking, subtle translateY(-1px) hover, emerald glow, and active pill states.
+- [x] 9.5 Copy & Accessibility Optimization: Streamlined "Request Invoice" to "Tax Invoice" (`role="menubar"`, `role="menuitem"`, title tooltip).
+- [x] 9.6 Mid-Screen Viewport Cushioning: Optimized `@media (min-width: 993px) and (max-width: 1250px)` with compact horizontal padding, hiding `.navbar-call-mini-pill` to prevent crowding.
+
 ---
 
 ## 3. Ralph Loop Acceptance Criteria
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.
 - Status log must be recorded in `progress.txt`.
+
 

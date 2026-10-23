@@ -49,3 +49,20 @@
 - Hardened: Defined inline zero-latency nav controller in index.html, pre-populated static markup for festival offers and trips login, purged stale Service Worker caches with v8.0 cache-bust, and removed all static fallback references to 'Valued Passenger'.
 - Tested: Node syntax checks PASS across all modified JavaScript and server files.
 
+[2026-10-23] Phase 6: Mobile Modal UX & Cookie Clearance Remediation:
+- Background Page Scrolling Fixed Site-wide:
+  - Implemented cross-browser body and html scroll lock with `position: fixed`, `scrollY` offset preservation, and seamless position restoration.
+  - Added non-passive `touchmove` blocker on overlay backdrop to prevent iOS WebKit and Android Chrome touch rubber-banding.
+  - Added site-wide `MutationObserver` on `document.body` class attribute to automatically lock scroll whenever any modal opens across any script.
+  - Added CSS containment (`overscroll-behavior: contain !important; touch-action: pan-y !important;`) on `.modal-overlay`, `.modal-dialog-box`, and `.modal-body`.
+- Support Modal Dual Action & Bottom Nav Clearance Fixed:
+  - Redesigned `modal-help-support` with compact, balanced layout.
+  - Made both Call Helpdesk (`+91 80021 41816`) and Chat on WhatsApp (`+91 77394 06400`) 100% visible immediately above the fold with vivid brand styling.
+  - Elevated `.modal-overlay` z-index to `1000000 !important;` and hid `.voyago-bottom-nav` while any modal is open (`display: none !important;`).
+- Cookie Consent Verification Banner Fixed:
+  - Elevated cookie banner container z-index to `1000002 !important;`.
+  - Positioned banner cleanly above the Voyago mobile bottom navigation bar (`bottom: calc(76px + env(safe-area-inset-bottom, 8px)) !important;`) on mobile screens.
+  - Made 'Essential Only' and 'Accept All' buttons prominently styled with 40px+ touch targets and full visibility.
+- Cache Busting:
+  - Bumped Service Worker cache to `onewaytaxibihar-v9.0-modal-cookie-fix-20261023` and updated asset version strings to `?v=20261023_v36_fixes`.
+- Tested: Node syntax checks PASS across all JS files.

@@ -4,7 +4,7 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v8.0-mobilefixed-20261023';
+const CACHE_NAME = 'onewaytaxibihar-v9.0-modal-cookie-fix-20261023';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -28,18 +28,19 @@ const CORE_ASSETS = [
   '/patna-to-bhagalpur-cab.html',
   '/404.html',
   '/500.html',
-  '/css/style.css?v=20261023_v35_mobile',
-  '/css/components.css?v=20261023_v35_mobile',
-  '/css/voyago-theme.css?v=20261023_v35_mobile',
-  '/js/brand-logo.js?v=20261023_v35_mobile',
-  '/js/data.js?v=20261023_v35_mobile',
-  '/js/calculator.js?v=20261023_v35_mobile',
-  '/js/map.js?v=20261023_v35_mobile',
-  '/js/api.js?v=20261023_v35_mobile',
-  '/js/datetime-picker.js?v=20261023_v35_mobile',
-  '/js/firebase-otp.js?v=20261023_v35_mobile',
-  '/js/booking.js?v=20261023_v35_mobile',
-  '/js/app.js?v=20261023_v35_mobile',
+  '/css/style.css?v=20261023_v36_fixes',
+  '/css/components.css?v=20261023_v36_fixes',
+  '/css/voyago-theme.css?v=20261023_v36_fixes',
+  '/js/brand-logo.js?v=20261023_v36_fixes',
+  '/js/data.js?v=20261023_v36_fixes',
+  '/js/calculator.js?v=20261023_v36_fixes',
+  '/js/map.js?v=20261023_v36_fixes',
+  '/js/api.js?v=20261023_v36_fixes',
+  '/js/datetime-picker.js?v=20261023_v36_fixes',
+  '/js/firebase-otp.js?v=20261023_v36_fixes',
+  '/js/booking.js?v=20261023_v36_fixes',
+  '/js/app.js?v=20261023_v36_fixes',
+  '/js/cookie-consent.js?v=20261023_v36_fixes',
   '/favicon.svg',
   '/img/logo-reframed.png',
   '/images/icon-192.png',

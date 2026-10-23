@@ -1166,10 +1166,23 @@
   .voyago-bottom-nav {
     display: flex !important;
   }
+  body.modal-open .voyago-bottom-nav,
+  html.modal-open .voyago-bottom-nav,
+  body.drawer-open .voyago-bottom-nav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+  }
   body {
     padding-bottom: 76px !important;
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   }
+}
+
+.modal-overlay {
+  z-index: 1000000 !important;
 }
 .voyago-nav-item {
   flex: 1 1 0 !important;

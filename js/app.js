@@ -9,6 +9,80 @@ window.bookingManager = null;
 window.onewayMap = null;
 window.themeManager = null;
 
+/* ==========================================================================
+   GLOBAL BULLETPROOF MOBILE SCROLL LOCK SYSTEM (CROSS-BROWSER)
+   Prevents background page scrolling/rubber-banding whenever any modal or drawer is open
+   ========================================================================== */
+(function() {
+  let savedScrollY = 0;
+  let isScrollLocked = false;
+
+  window.lockBodyScroll = function() {
+    if (isScrollLocked) return;
+    savedScrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    isScrollLocked = true;
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+  };
+
+  window.unlockBodyScroll = function() {
+    if (!isScrollLocked) return;
+    isScrollLocked = false;
+    document.documentElement.classList.remove("modal-open");
+    document.body.classList.remove("modal-open");
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+    window.scrollTo(0, savedScrollY);
+  };
+
+  // Passive touchmove barrier: prevents dragging backdrop from scrolling page behind modal
+  document.addEventListener("touchmove", function(e) {
+    if (document.body.classList.contains("modal-open") || document.documentElement.classList.contains("modal-open")) {
+      const scrollable = e.target.closest(".modal-dialog-box, .modal-body, .drawer-content, .booking-flow-card");
+      if (!scrollable) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (scrollable.scrollHeight <= scrollable.clientHeight) {
+        if (e.cancelable) e.preventDefault();
+      }
+    }
+  }, { passive: false });
+
+  // Site-wide MutationObserver fallback: guarantees lock if any external script adds modal-open
+  if (typeof MutationObserver !== "undefined") {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === "attributes" && m.attributeName === "class") {
+          const hasModal = document.body.classList.contains("modal-open") || document.body.classList.contains("drawer-open");
+          if (hasModal && !isScrollLocked) {
+            window.lockBodyScroll();
+          } else if (!hasModal && isScrollLocked) {
+            window.unlockBodyScroll();
+          }
+        }
+      });
+    });
+    if (document.body) {
+      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    } else {
+      document.addEventListener("DOMContentLoaded", function() {
+        observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      });
+    }
+  }
+})();
+
 document.addEventListener("DOMContentLoaded", async () => {
   // 0. Initialize Theme Manager
   window.themeManager = new ThemeManager();
@@ -905,7 +979,11 @@ window.openFestivalOffersModal = () => {
   const modal = document.getElementById("modal-festival-offers");
   if (!modal) return;
   modal.classList.add("open");
-  document.body.classList.add("modal-open");
+  if (window.lockBodyScroll) window.lockBodyScroll();
+  else {
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+  }
   try {
     history.pushState({ modal: "modal-festival-offers" }, "", "#modal-festival-offers");
   } catch (e) {}
@@ -917,7 +995,11 @@ window.openHelpSupportModal = () => {
   const modal = document.getElementById("modal-help-support");
   if (!modal) return;
   modal.classList.add("open");
-  document.body.classList.add("modal-open");
+  if (window.lockBodyScroll) window.lockBodyScroll();
+  else {
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+  }
   try {
     history.pushState({ modal: "modal-help-support" }, "", "#modal-help-support");
   } catch (e) {}
@@ -1009,7 +1091,11 @@ window.openMyTripsModal = async () => {
   const body = document.getElementById("modal-my-trips-body");
   if (!modal || !body) return;
   modal.classList.add("open");
-  document.body.classList.add("modal-open");
+  if (window.lockBodyScroll) window.lockBodyScroll();
+  else {
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
+  }
 
   const activePhone = localStorage.getItem('otb_passenger_logged_in') || localStorage.getItem('otb_last_passenger_phone') || '';
   
@@ -1938,7 +2024,11 @@ window.openHelpSupportModal = () => {
   const modal = document.getElementById("modal-help-support");
   if (modal) {
     modal.classList.add("open");
-    document.body.classList.add("modal-open");
+    if (window.lockBodyScroll) window.lockBodyScroll();
+    else {
+      document.documentElement.classList.add("modal-open");
+      document.body.classList.add("modal-open");
+    }
     history.pushState({ modal: "modal-help-support" }, "", "#modal-help-support");
   }
 };
@@ -2304,7 +2394,11 @@ window.startLiveTrackingSimulation = async (bookingId) => {
    ========================================================================== */
 window.closeAllModals = (updateHistory = true, resetBottomNav = true) => {
   document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("open"));
-  document.body.classList.remove("modal-open");
+  if (window.unlockBodyScroll) window.unlockBodyScroll();
+  else {
+    document.documentElement.classList.remove("modal-open");
+    document.body.classList.remove("modal-open");
+  }
   if (resetBottomNav && typeof window.setBottomNavActive === 'function') {
     window.setBottomNavActive('home');
   }
@@ -2489,7 +2583,11 @@ window.openHelpModal = () => {
   const modal = document.getElementById("modal-help-support");
   if (modal) {
     modal.classList.add("open");
-    document.body.classList.add("modal-open");
+    if (window.lockBodyScroll) window.lockBodyScroll();
+    else {
+      document.documentElement.classList.add("modal-open");
+      document.body.classList.add("modal-open");
+    }
     history.pushState({ modal: "modal-help-support" }, "", "#modal-help-support");
   }
 };

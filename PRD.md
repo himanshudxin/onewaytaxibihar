@@ -43,6 +43,11 @@
 - [x] 5.3 Animated Bihar Festival Offers: Animated Chhath Puja Mahaparv & Diwali coupon card (`CHHATH100` / `FEST100` for flat ₹100 off on first outstation ride) with sparkle animations and 1-tap book.
 - [x] 5.4 Dual Support Hub: Mobile Support action opens unified modal with clear options for both 24×7 Phone Helpline (`+91 80021 41816`) and WhatsApp Helpdesk (`+91 77394 06400`).
 
+### Phase 6: Mobile Modal UX & Cookie Clearance Remediation
+- [x] 6.1 Site-wide Modal Background Scroll Freeze: Bulletproof body & html scroll lock (`position: fixed`, `scrollY` offset retention, passive touchmove cancellation, and MutationObserver) preventing background page scroll across the entire website.
+- [x] 6.2 Dual Visible Support CTAs: Redesigned Support modal so both Call (+91 80021 41816) and WhatsApp (+91 77394 06400) buttons are 100% visible, unobstructed, and prominently accessible above the fold without clipping.
+- [x] 6.3 Cookie Verification Banner Clearance: Elevated cookie banner z-index to `1000002` and positioned cleanly above the Voyago mobile bottom navigation bar (`bottom: calc(76px + env(safe-area-inset-bottom, 8px))`) so verification buttons are fully visible and tappable.
+
 ---
 
 ## 3. Ralph Loop Acceptance Criteria

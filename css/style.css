@@ -116,6 +116,31 @@ html {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* Accessible WCAG 2.1 AA Keyboard Navigation Focus Rings */
+:focus-visible {
+  outline: 3px solid var(--owc-primary, #059669) !important;
+  outline-offset: 2px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--owc-primary, #059669) !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Custom Sleek Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;

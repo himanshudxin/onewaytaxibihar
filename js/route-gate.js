@@ -41,7 +41,10 @@
             </button>
           </form>
 
-          <div style="font-size: 11px; color: var(--owc-text-muted, #94a3b8); margin-top: 16px;">
+          <div style="font-size: 11px; color: var(--owc-text-muted, #94a3b8); margin-top: 14px; line-height: 1.5;">
+            By continuing, you agree to our <a href="/terms-of-service" target="_blank" style="color: #38bdf8; text-decoration: underline;">Terms</a> &amp; <a href="/privacy-policy" target="_blank" style="color: #38bdf8; text-decoration: underline;">Privacy Policy</a>, and confirm you are 18+ years of age.
+          </div>
+          <div style="font-size: 11px; color: #10b981; font-weight: 700; margin-top: 6px;">
             🔒 100% Privacy • No Spam Guarantee • 24x7 Patna Dispatch Desk
           </div>
         </div>

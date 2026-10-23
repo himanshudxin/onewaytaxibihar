@@ -1,0 +1,32 @@
+=== RALPH LOOP PROGRESS LOG ===
+[2026-10-23] Initialization:
+- Workspace: onewaycabs
+- Antigravity 4-Plugin Architecture configured:
+  1. GSD Plugin (.agents/plugins/gsd) - Phased planning & context rot shield
+  2. Ralph Loop (.agents/plugins/ralph-loop) - Autonomous task loop
+  3. CodeRabbit (.agents/plugins/coderabbit) - Pre-commit code inspection
+  4. Multi-Model Routing - Model quota fallback protocols
+- Status: Phase 1 complete.
+
+[2026-10-23] Security Hardening & Secret Remediation:
+- Sanitized hardcoded MongoDB credentials in services/db.js, api/leads.js, services/security.js, and scripts/test-mongo.js.
+- Removed hardcoded plaintext master passwords and deletion secrets from source files.
+- Removed hardcoded Fast2SMS API key fallbacks from services/notification.js and server.ps1.
+- Updated .env with quoted passwords and exact PBKDF2 hash.
+- Tested: Auth check PASS, Wrong pass rejection PASS, All 48 JS and 25 HTML scripts PASS.
+
+[2026-10-23] Phase 3: Statutory Legal Immunity & Penalty-Free SEO Setup:
+- Created standalone, crawlable statutory legal pages:
+  - privacy-policy.html (DPDP Act 2023, IT Act 2000, GDPR, Google Ads compliance)
+  - terms-of-service.html (Consumer Protection E-Commerce Rules 2020)
+  - refund-policy.html (Zero cancellation fee, advance token refund, dispute SLA)
+  - cookie-policy.html (Storage & tracking transparency)
+  - contact.html (Statutory business details, 24x7 helpdesk, Grievance Officer)
+  - data-deletion.html (Self-service Right to Erasure portal under DPDP Act 2023)
+- Implemented accessible, lightweight cookie consent banner (js/cookie-consent.js).
+- Added explicit consent checkboxes and 18+ age declaration to booking and route-gate forms.
+- Added WCAG 2.1 AA :focus-visible keyboard focus rings and reduced-motion styles in css/style.css.
+- Enhanced all HTML footers with statutory entity information and Grievance Officer details.
+- Updated sitemap.xml with all 21 URLs (commercial corridors + statutory legal pages).
+- Updated _redirects for clean routing on Netlify/Vercel.
+- Tested: All 49 JS files and 37 HTML inline scripts passed syntax & schema validation cleanly!

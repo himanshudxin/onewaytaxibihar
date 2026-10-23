@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coderabbit": {
+      "command": "npx",
+      "args": ["-y", "@coderabbitai/mcp-server@latest"]
+    }
+  }
+}

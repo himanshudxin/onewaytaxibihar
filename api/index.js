@@ -16,6 +16,7 @@ const paymentService = require('../services/payment.js');
 const notificationService = require('../services/notification.js');
 const securityService = require('../services/security.js');
 const faresExcelService = require('../services/fares-excel.js');
+const cache = require('../services/cache.js');
 
 // Auto-initialize Enterprise DB (MongoDB Atlas / PostgreSQL / Local Cache)
 dbService.initDatabase().catch(err => {
@@ -1184,17 +1185,26 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
-    // 4. SERVER-SIDE FARE CALCULATION
+    // 4. SERVER-SIDE FARE CALCULATION (High-Speed Cached)
     // -------------------------------------------------------------
-    if ((pathname === '/fares/calculate' || pathname === '/fare/calculate') && method === 'POST') {
-      const origin = body.origin || body.originCity || body.pickup || body.pickupCity;
-      const dest = body.dest || body.destCity || body.drop || body.dropCity;
-      const cabTier = body.cabTier || body.cabType || 'sedan';
-      const tripType = body.tripType || 'oneway';
-      const rawDistance = Number(body.distanceKm || body.distance);
+    if ((pathname === '/fares/calculate' || pathname === '/fare/calculate') && (method === 'POST' || method === 'GET')) {
+      const origin = body.origin || body.originCity || body.pickup || body.pickupCity || url.searchParams.get('pickup') || url.searchParams.get('origin') || 'Patna';
+      const dest = body.dest || body.destCity || body.drop || body.dropCity || url.searchParams.get('drop') || url.searchParams.get('dest') || 'Gaya';
+      const cabTier = body.cabTier || body.cabType || url.searchParams.get('cabTier') || 'sedan';
+      const tripType = body.tripType || url.searchParams.get('tripType') || 'oneway';
+      const rawDistance = Number(body.distanceKm || body.distance || url.searchParams.get('distanceKm'));
       const distanceKm = (rawDistance && rawDistance > 10) ? rawDistance : getRouteDistance(origin, dest);
+
+      const calcKey = `api:calc:${String(origin).toLowerCase()}:${String(dest).toLowerCase()}:${cabTier}:${tripType}:${distanceKm}`;
+      const cachedFare = await cache.get(calcKey);
+      if (cachedFare) {
+        res.setHeader('X-Cache', 'HIT');
+        res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
+        return sendJson(200, cachedFare);
+      }
+
       const fareData = calculateServerFare(distanceKm, cabTier, tripType, origin, dest);
-      return sendJson(200, {
+      const payload = {
         success: true,
         distanceKm: fareData.distanceKm,
         totalFare: fareData.totalFare,
@@ -1205,17 +1215,31 @@ module.exports = async (req, res) => {
           suv: calculateServerFare(distanceKm, 'suv', tripType, origin, dest),
           innova: calculateServerFare(distanceKm, 'innova_crysta', tripType, origin, dest)
         }
-      });
+      };
+      await cache.set(calcKey, payload, 600);
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
+      return sendJson(200, payload);
     }
 
     // -------------------------------------------------------------
-    // 4A. PATNA ONE-WAY & TWO-WAY TAXI FARE CHART (98 Dest Master Matrix)
+    // 4A. PATNA ONE-WAY & TWO-WAY TAXI FARE CHART (High-Speed Cached Master Matrix)
     // -------------------------------------------------------------
     if ((pathname === '/fares' || pathname === '/fares/patna' || pathname === '/api/fares') && method === 'GET') {
-      const faresList = getPatnaFaresList(db);
-      const activeFares = faresList.filter(f => f.active !== false);
       const q = (url.searchParams.get('q') || url.searchParams.get('search') || '').toLowerCase().trim();
       const region = (url.searchParams.get('region') || url.searchParams.get('group') || '').toLowerCase().trim();
+
+      const isUnfiltered = !q && (!region || region === 'all');
+      const cacheKey = isUnfiltered ? 'api:fares:master' : `api:fares:${region || 'all'}_${q}`;
+      const cached = await cache.get(cacheKey);
+      if (cached) {
+        res.setHeader('X-Cache', 'HIT');
+        res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400');
+        return sendJson(200, cached);
+      }
+
+      const faresList = getPatnaFaresList(db);
+      const activeFares = faresList.filter(f => f.active !== false);
 
       let filtered = activeFares;
       if (region && region !== 'all') {
@@ -1300,7 +1324,7 @@ module.exports = async (req, res) => {
         };
       });
 
-      return sendJson(200, {
+      const fareResponsePayload = {
         success: true,
         origin: "Patna",
         title: "Patna One-Way & Round-Trip Master Fare Chart",
@@ -1339,13 +1363,24 @@ module.exports = async (req, res) => {
           cancellation: "Zero cancellation fee if cancelled at least 2 hours prior to scheduled departure"
         },
         disclaimer: "Distances are road distances verified with official state references. Fares include all vehicle and driver charges; tolls and interstate permits at actuals."
-      });
+      };
+
+      await cache.set(cacheKey, fareResponsePayload, isUnfiltered ? 3600 : 600);
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('Cache-Control', 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400');
+      return sendJson(200, fareResponsePayload);
     }
 
     // -------------------------------------------------------------
-    // 4B. oneway.cab API: PICKUP CITIES
+    // 4B. oneway.cab API: PICKUP CITIES (High-Speed Cached)
     // -------------------------------------------------------------
     if (pathname === '/cities/pickup' && method === 'GET') {
+      const cachedCities = await cache.get('api:cities:pickup');
+      if (cachedCities) {
+        res.setHeader('X-Cache', 'HIT');
+        res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+        return sendJson(200, cachedCities);
+      }
       const cities = loadCities();
       const formatted = cities.map(c => ({
         id: c.id,
@@ -1363,7 +1398,11 @@ module.exports = async (req, res) => {
         minTimeHour: 2,
         minTimeMinute: 0
       }));
-      return sendJson(200, { success: true, count: formatted.length, cities: formatted });
+      const payload = { success: true, count: formatted.length, cities: formatted };
+      await cache.set('api:cities:pickup', payload, 86400);
+      res.setHeader('X-Cache', 'MISS');
+      res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+      return sendJson(200, payload);
     }
 
     // -------------------------------------------------------------
@@ -2433,7 +2472,8 @@ module.exports = async (req, res) => {
     if ((pathname === '/bookings' || pathname === '/admin/bookings' || pathname === '/rides') && method === 'DELETE') {
       const admin = getSessionAdmin(req, db);
       const delPass = (body.deletePassword || body.password || url.searchParams.get('deletePassword') || url.searchParams.get('password') || '').trim();
-      const isPassValid = (delPass === 'deleteit' || delPass === 'harharmahadev@3');
+      const allowedDelPass = process.env.DELETE_PASSWORD || process.env.ADMIN_PASSWORD || 'deleteit';
+      const isPassValid = (delPass && (delPass === allowedDelPass || delPass === 'deleteit'));
       if (!admin && !isPassValid) {
         return sendJson(401, {
           success: false,
@@ -2485,7 +2525,8 @@ module.exports = async (req, res) => {
     ) && method === 'DELETE') {
       const admin = getSessionAdmin(req, db);
       const delPass = (body.deletePassword || body.password || url.searchParams.get('deletePassword') || url.searchParams.get('password') || '').trim();
-      const isPassValid = (delPass === 'deleteit' || delPass === 'harharmahadev@3');
+      const allowedDelPass = process.env.DELETE_PASSWORD || process.env.ADMIN_PASSWORD || 'deleteit';
+      const isPassValid = (delPass && (delPass === allowedDelPass || delPass === 'deleteit'));
       if (!admin && !isPassValid) {
         return sendJson(401, {
           success: false,

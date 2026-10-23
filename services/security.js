@@ -21,10 +21,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'oneway_secure_jwt_secret_productio
 const JWT_EXPIRY_SECONDS = 8 * 3600; // 8 hours active session
 const AUTHORIZED_ADMIN_PHONE = (process.env.ADMIN_AUTHORIZED_PHONE || '6206494214').replace(/\D/g, '').slice(-10);
 
-// Default Rotated Master Admin (Pre-hashed with secure salt)
-// Password: OWT#Bihar@2026!SecOps (Never exposed in frontend or client code)
+// Default Rotated Master Admin (Pre-hashed with secure salt from env)
 const DEFAULT_SALT = process.env.ADMIN_PASSWORD_SALT || '7f9a2b8c4d1e3f6a5b8c9d0e1f2a3b4c';
-const DEFAULT_HASH = process.env.ADMIN_PASSWORD_HASH || hashPassword('OWT#Bihar@2026!SecOps', DEFAULT_SALT);
+const DEFAULT_HASH = process.env.ADMIN_PASSWORD_HASH || (process.env.ADMIN_PASSWORD ? hashPassword(process.env.ADMIN_PASSWORD, DEFAULT_SALT) : '');
 const DEFAULT_USERNAME = (process.env.ADMIN_USERNAME || 'admin').toLowerCase();
 
 // ---------------------------------------------------------------------------
@@ -59,11 +58,8 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
     }
   }
 
-  // 2. Authorized Master Admin Passwords (Strictly no generic passwords like 'admin' or 'password')
-  const allowedPasswords = new Set([
-    'OWT#Bihar@2026!SecOps',
-    'harharmahadev@3'
-  ]);
+  // 2. Authorized Master Admin Passwords (Loaded strictly from env)
+  const allowedPasswords = new Set();
   if (process.env.ADMIN_PASSWORD) {
     allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
   }
@@ -428,7 +424,7 @@ async function recordAuditLog(db, {
 
     // Save asynchronously to MongoDB if connected
     const { MongoClient } = require('mongodb');
-    const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
+    const mongoUri = process.env.MONGODB_URI || '';
     if (mongoUri && global._mongoDbInstance) {
       await global._mongoDbInstance.collection('audit_logs').insertOne(logEntry).catch(() => {});
     }

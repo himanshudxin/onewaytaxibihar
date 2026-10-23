@@ -6,8 +6,7 @@
 
 require('dotenv').config();
 
-const FAST2SMS_FALLBACK_KEY = '9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx';
-const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || FAST2SMS_FALLBACK_KEY;
+const FAST2SMS_API_KEY = process.env.FAST2SMS_API_KEY || '';
 const MSG91_AUTH_KEY = process.env.MSG91_AUTH_KEY || '';
 const MSG91_SENDER_ID = process.env.MSG91_SENDER_ID || 'OWTAXI';
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || '';

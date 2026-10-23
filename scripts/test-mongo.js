@@ -1,11 +1,11 @@
+try { require('dotenv').config(); } catch (e) {}
 const { MongoClient } = require('mongodb');
 
-// URL encode the password since it contains '@'
-const username = 'himanshudu255_db_user';
-const rawPassword = 'Himanshu@123';
-const encodedPassword = encodeURIComponent(rawPassword);
-
-const uri = `mongodb+srv://${username}:${encodedPassword}@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0`;
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  console.error('❌ MONGODB_URI is not set in .env. Please configure it first.');
+  process.exit(1);
+}
 
 console.log('Connecting to MongoDB Atlas at cluster0.7pf5pvc.mongodb.net...');
 

@@ -9,6 +9,7 @@
     "start": "node local-server.js",
     "dev": "node local-server.js",
     "test": "node scripts/check-syntax.js && node scripts/check-html-scripts.js",
+    "loadtest": "node scripts/run-load-test.js",
     "deploy": "node -e \"const d = new Date().toISOString().slice(0,16).replace('T',' '); require('child_process').execSync('git add -A && git commit -m \\\"deploy: ' + d + '\\\" && git push origin main', { stdio: 'inherit' });\""
   },
   "repository": {

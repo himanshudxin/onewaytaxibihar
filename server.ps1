@@ -83,7 +83,7 @@ function Send-SmsFast2SMS($phone, $message, $otp = "") {
     try {
         $cleanPhone = ($phone -replace '\D', '')
         if ($cleanPhone.Length -gt 10) { $cleanPhone = $cleanPhone.Substring($cleanPhone.Length - 10) }
-        $apiKey = "9tRWU6vwiOcTH4LzNMSBCujlfhEG2xnV7X8pIakoeAP15dbFKys7FLguhCk6G2jfb9vqNpASY5r0iolx"
+        $apiKey = if ($env:FAST2SMS_API_KEY) { $env:FAST2SMS_API_KEY } else { "" }
         
         $bodyObj = @{
             route = "q"

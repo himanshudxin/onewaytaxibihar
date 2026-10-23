@@ -116,10 +116,8 @@ function loadLocalDb() {
 }
 
 // High-Throughput MongoDB Atlas Connection
-const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-
 async function initMongo() {
-  const mongoUri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
+  const mongoUri = process.env.MONGODB_URI || '';
   if (!mongoUri) return false;
 
   if (global._mongoClient && global._mongoDbInstance) {
@@ -164,24 +162,35 @@ async function initMongo() {
     isDbConnected = true;
     console.log(`[Database Service] 🚀 ✅ Connected to High-Throughput MongoDB Atlas Cloud (${dbName})`);
 
-    // Ensure compound indexes asynchronously
+    // Ensure compound indexes asynchronously for instant O(1) query performance
     (async () => {
       try {
         await Promise.allSettled([
           mongoDbInstance.collection('bookings').createIndex({ bookingId: 1 }, { unique: true, sparse: true }),
           mongoDbInstance.collection('bookings').createIndex({ createdAt: -1 }),
           mongoDbInstance.collection('bookings').createIndex({ passengerPhone: 1 }),
+          mongoDbInstance.collection('bookings').createIndex({ status: 1, createdAt: -1 }),
+          mongoDbInstance.collection('bookings').createIndex({ pickupCity: 1, dropCity: 1 }),
+          mongoDbInstance.collection('bookings').createIndex({ driverId: 1, status: 1 }),
           mongoDbInstance.collection('leads').createIndex({ id: 1 }, { unique: true, sparse: true }),
           mongoDbInstance.collection('leads').createIndex({ createdAt: -1 }),
           mongoDbInstance.collection('leads').createIndex({ cleanPhone: 1 }),
+          mongoDbInstance.collection('leads').createIndex({ status: 1, createdAt: -1 }),
           mongoDbInstance.collection('users').createIndex({ phone: 1 }),
+          mongoDbInstance.collection('users').createIndex({ email: 1 }, { sparse: true }),
           mongoDbInstance.collection('drivers').createIndex({ phone: 1 }),
+          mongoDbInstance.collection('drivers').createIndex({ status: 1, currentCity: 1 }),
+          mongoDbInstance.collection('fares').createIndex({ destination: 1, active: 1 }),
+          mongoDbInstance.collection('fares').createIndex({ destCity: 1 }),
+          mongoDbInstance.collection('fares').createIndex({ id: 1 }, { unique: true, sparse: true }),
           mongoDbInstance.collection('notifications').createIndex({ createdAt: -1 }),
           mongoDbInstance.collection('sessions').createIndex({ token: 1 }),
+          mongoDbInstance.collection('sessions').createIndex({ createdAt: 1 }, { expireAfterSeconds: 28800 }),
           mongoDbInstance.collection('support_tickets').createIndex({ id: 1 }, { unique: true, sparse: true }),
           mongoDbInstance.collection('support_tickets').createIndex({ bookingId: 1 }),
           mongoDbInstance.collection('support_tickets').createIndex({ createdAt: -1 })
         ]);
+        console.log('[Database Service] ⚡ Database Indexes verified (Compound, Unique & TTL)');
       } catch (idxErr) {}
     })();
 

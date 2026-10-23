@@ -4,8 +4,7 @@ const path = require('path');
 const { MongoClient } = require('mongodb');
 const securityService = require('../services/security.js');
 
-const DEFAULT_MONGODB_URI = 'mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0';
-const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || '';
 let cachedDb = null;
 let cachedClient = null;
 
@@ -407,7 +406,8 @@ const handler = async (req, res) => {
       }
 
       const delPass = (body.deletePassword || body.password || url.searchParams.get('deletePassword') || url.searchParams.get('password') || '').trim();
-      const isPassValid = (delPass === 'deleteit' || delPass === 'harharmahadev@3');
+      const allowedDelPass = process.env.DELETE_PASSWORD || process.env.ADMIN_PASSWORD || 'deleteit';
+      const isPassValid = (delPass && (delPass === allowedDelPass || delPass === 'deleteit'));
 
       // Check JWT
       const verifiedAdmin = token ? securityService.verifyJwt(token) : null;

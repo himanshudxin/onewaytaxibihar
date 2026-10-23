@@ -11,7 +11,7 @@ Your application now has an Enterprise Database Service that supports both **Mon
 ### Connecting MongoDB Atlas:
 Your credentials are configured in `.env`:
 ```env
-MONGODB_URI=mongodb+srv://himanshudu255_db_user:Himanshu%40123@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.7pf5pvc.mongodb.net/onewaytaxibihar?retryWrites=true&w=majority&appName=Cluster0
 MONGODB_DB_NAME=onewaytaxibihar
 ```
 

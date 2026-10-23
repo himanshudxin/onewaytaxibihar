@@ -149,9 +149,9 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261022_v25_colors">
-  <link rel="stylesheet" href="/css/components.css?v=20261022_v25_colors">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261022_v25_colors">
+  <link rel="stylesheet" href="/css/style.css?v=20261023_v35_mobile">
+  <link rel="stylesheet" href="/css/components.css?v=20261023_v35_mobile">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v35_mobile">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -1459,6 +1459,84 @@
     </a>
   </nav>
 
+  <!-- Zero-Latency Mobile Bottom App Navigation Controller (Instant Response) -->
+  <script>
+    window.setBottomNavActive = function (tabName) {
+      var tabs = ['home', 'trips', 'book', 'offers', 'support'];
+      for (var i = 0; i < tabs.length; i++) {
+        var el = document.getElementById('bottom-nav-' + tabs[i]);
+        if (el) {
+          if (tabs[i] === tabName) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        }
+      }
+    };
+
+    window.navGoTo = function (action) {
+      window.setBottomNavActive(action);
+      if (action === 'home') {
+        if (typeof window.closeAllModals === 'function') window.closeAllModals();
+        else {
+          document.querySelectorAll('.modal-overlay').forEach(function(m){ m.classList.remove('open'); });
+          document.body.classList.remove('modal-open');
+        }
+        window.setBottomNavActive('home');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (action === 'trips') {
+        if (typeof window.openMyTripsModal === 'function') {
+          window.openMyTripsModal();
+        } else {
+          var m = document.getElementById('modal-my-trips');
+          if (m) {
+            m.classList.add('open');
+            document.body.classList.add('modal-open');
+          } else {
+            window.location.href = '/passenger.html';
+          }
+        }
+        window.setBottomNavActive('trips');
+      } else if (action === 'book') {
+        if (typeof window.closeAllModals === 'function') window.closeAllModals();
+        else {
+          document.querySelectorAll('.modal-overlay').forEach(function(m){ m.classList.remove('open'); });
+          document.body.classList.remove('modal-open');
+        }
+        window.setBottomNavActive('book');
+        var hero = document.getElementById('booking-hero');
+        if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(function() {
+          var p = document.getElementById('input-pickup');
+          if (p) p.focus();
+        }, 300);
+      } else if (action === 'offers') {
+        if (typeof window.openFestivalOffersModal === 'function') {
+          window.openFestivalOffersModal();
+        } else {
+          var m = document.getElementById('modal-festival-offers');
+          if (m) {
+            m.classList.add('open');
+            document.body.classList.add('modal-open');
+          }
+        }
+        window.setBottomNavActive('offers');
+      } else if (action === 'support') {
+        if (typeof window.openHelpSupportModal === 'function') {
+          window.openHelpSupportModal();
+        } else {
+          var m = document.getElementById('modal-help-support');
+          if (m) {
+            m.classList.add('open');
+            document.body.classList.add('modal-open');
+          }
+        }
+        window.setBottomNavActive('support');
+      }
+    };
+  </script>
+
   <!-- Modal 16: Festival Offers & Promo Discounts Modal -->
   <div class="modal-overlay" id="modal-festival-offers">
     <div class="modal-dialog-box large">
@@ -1469,8 +1547,62 @@
         </div>
         <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
       </div>
-      <div class="modal-body" id="modal-festival-offers-body">
-        <!-- Injected via app.js -->
+      <div class="modal-body" id="modal-festival-offers-body" style="padding: 20px;">
+        <!-- Animated Festival Special Coupon Card (Chhath Puja Mahaparv & Diwali) -->
+        <div class="festive-coupon-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+            <span class="festive-badge">🪔 CHHATH PUJA &amp; DIWALI SPECIAL</span>
+            <span style="font-size: 11px; font-weight: 800; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.4);">
+              ✨ FIRST TRIP OFFER
+            </span>
+          </div>
+
+          <h3 style="font-size: 20px; font-weight: 900; margin: 12px 0 6px; letter-spacing: -0.3px; line-height: 1.25; color: #ffffff;">
+            Flat ₹100 Instant Discount
+          </h3>
+          <p style="font-size: 13px; opacity: 0.9; margin: 0 0 14px; line-height: 1.5; color: #e2e8f0;">
+            Celebrate Bihar's greatest festival with your family! Get <strong style="color: #fbbf24;">₹100 instant cash discount</strong> on your first outstation cab booking across all 38 districts of Bihar.
+          </p>
+
+          <div class="festive-code-row">
+            <div>
+              <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; opacity: 0.8; margin-bottom: 2px;">
+                PROMO CODE
+              </div>
+              <div class="festive-code-val" id="festive-promo-code-val">CHHATH100</div>
+            </div>
+            <button type="button" class="btn-copy-code" onclick="window.copyPromoCode('CHHATH100', this)" style="background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);">
+              📋 Copy Code
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap;">
+            <button type="button" class="btn-act btn-act-primary" onclick="window.applyAndBookWithPromo('CHHATH100')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #0f172a; font-weight: 900; border: none; padding: 11px 20px; border-radius: 10px; font-size: 13.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+              ⚡ Book Ride with ₹100 Off ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Additional Active Offers -->
+        <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div>
+              <span style="display: inline-block; font-size: 11.5px; font-weight: 900; color: #10b981; background: rgba(16,185,129,0.15); padding: 2px 8px; border-radius: 6px; margin-bottom: 4px;">FEST100</span>
+              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text, #ffffff);">Festive Outstation Special</div>
+              <div style="font-size: 12px; color: var(--owc-text-muted, #94a3b8);">Flat ₹100 OFF on Patna to any Bihar district cab.</div>
+            </div>
+            <button type="button" class="btn-copy-code" onclick="window.copyPromoCode('FEST100', this)" style="background: var(--owc-slate-100, #334155); color: var(--owc-text, #ffffff); border: 1px solid var(--owc-border, rgba(255,255,255,0.15)); padding: 7px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;">Copy</button>
+          </div>
+
+          <div style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div>
+              <span style="display: inline-block; font-size: 11.5px; font-weight: 900; color: #0284c7; background: rgba(2,132,199,0.15); padding: 2px 8px; border-radius: 6px; margin-bottom: 4px;">BIHAR50</span>
+              <div style="font-size: 14px; font-weight: 800; color: var(--owc-text, #ffffff);">Instant Repeat Rider Discount</div>
+              <div style="font-size: 12px; color: var(--owc-text-muted, #94a3b8);">₹50 Instant Discount for all verified travelers.</div>
+            </div>
+            <button type="button" class="btn-copy-code" onclick="window.copyPromoCode('BIHAR50', this)" style="background: var(--owc-slate-100, #334155); color: var(--owc-text, #ffffff); border: 1px solid var(--owc-border, rgba(255,255,255,0.15)); padding: 7px 14px; border-radius: 8px; font-weight: 700; cursor: pointer;">Copy</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1717,8 +1849,30 @@
         </div>
         <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
       </div>
-      <div class="modal-body" id="modal-my-trips-body">
-        <!-- Injected via app.js -->
+      <div class="modal-body" id="modal-my-trips-body" style="padding: 20px;">
+        <div class="trips-lookup-card" style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 16px; padding: 22px 18px; margin-bottom: 20px; text-align: center;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 24px;">📱</div>
+          <h4 style="font-size: 17px; font-weight: 800; color: var(--owc-text, #ffffff); margin: 0 0 6px;">Passenger Trip Login</h4>
+          <p style="font-size: 13px; color: var(--owc-text-muted, #94a3b8); margin: 0 0 16px; line-height: 1.45;">
+            Enter your 10-digit mobile number to view active rides, live chauffeur allocation, and download official GST tax invoices.
+          </p>
+          <form onsubmit="return window.handlePhoneLookup(event)" style="display: flex; flex-direction: column; gap: 10px; max-width: 360px; margin: 0 auto;">
+            <div style="position: relative; display: flex; align-items: center;">
+              <span style="position: absolute; left: 14px; font-weight: 800; font-size: 14px; color: var(--owc-text-muted, #94a3b8);">+91</span>
+              <input type="tel" id="trips-lookup-phone" maxlength="10" placeholder="Enter 10-digit mobile number" style="width: 100%; box-sizing: border-box; padding: 12px 14px 12px 50px; font-size: 15px; font-weight: 700; border: 1.5px solid var(--owc-border, rgba(255,255,255,0.2)); border-radius: 12px; background: var(--owc-slate-50, #0f172a); color: var(--owc-text, #ffffff); outline: none;" required>
+            </div>
+            <button type="submit" class="check-fare-primary-btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 12px;">
+              🔍 Find My Bookings &amp; Invoices
+            </button>
+          </form>
+          <div style="margin-top: 14px; font-size: 12.5px;">
+            <a href="/passenger.html" style="color: #10b981; font-weight: 700; text-decoration: none;">Open Dedicated Passenger Portal ➔</a>
+          </div>
+        </div>
+
+        <div id="trips-content-list">
+          <!-- Rendered dynamically if rides found -->
+        </div>
       </div>
     </div>
   </div>
@@ -2508,15 +2662,15 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261019_v6"></script>
-  <script src="/js/data.js?v=20261019_v6"></script>
-  <script src="/js/calculator.js?v=20261019_v6"></script>
-  <script src="/js/map.js?v=20261019_v6"></script>
-  <script src="/js/api.js?v=20261019_v6"></script>
-  <script src="/js/datetime-picker.js?v=20261019_v6"></script>
-  <script src="/js/firebase-otp.js?v=20261019_v6"></script>
-  <script src="/js/booking.js?v=20261019_v6"></script>
-  <script src="/js/app.js?v=20261019_v6"></script>
+  <script src="/js/brand-logo.js?v=20261023_v35_mobile"></script>
+  <script src="/js/data.js?v=20261023_v35_mobile"></script>
+  <script src="/js/calculator.js?v=20261023_v35_mobile"></script>
+  <script src="/js/map.js?v=20261023_v35_mobile"></script>
+  <script src="/js/api.js?v=20261023_v35_mobile"></script>
+  <script src="/js/datetime-picker.js?v=20261023_v35_mobile"></script>
+  <script src="/js/firebase-otp.js?v=20261023_v35_mobile"></script>
+  <script src="/js/booking.js?v=20261023_v35_mobile"></script>
+  <script src="/js/app.js?v=20261023_v35_mobile"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->

@@ -46,5 +46,6 @@
 - Designed and integrated animated Bihar Nearest Festival coupon card (Chhath Puja Mahaparv & Diwali Special: CHHATH100 / FEST100 for ₹100 off on first outstation ride) with CSS @keyframes festPulse, festSparkle, festShimmer, 1-tap copy, and direct booking pre-fill.
 - Configured backend coupon verification and payment calculator to accept CHHATH100, FEST100, and FESTIVAL100.
 - Enhanced mobile Support interaction to open the Support Hub modal giving both Call (+91 80021 41816) and WhatsApp (+91 77394 06400) options rather than forcing an immediate phone call.
+- Hardened: Defined inline zero-latency nav controller in index.html, pre-populated static markup for festival offers and trips login, purged stale Service Worker caches with v8.0 cache-bust, and removed all static fallback references to 'Valued Passenger'.
 - Tested: Node syntax checks PASS across all modified JavaScript and server files.
 

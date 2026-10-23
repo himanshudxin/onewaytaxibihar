@@ -899,6 +899,70 @@ window.navGoTo = (action) => {
   }
 };
 
+window.openFestivalOffersModal = () => {
+  window.closeAllModals(false, false);
+  window.setBottomNavActive('offers');
+  const modal = document.getElementById("modal-festival-offers");
+  if (!modal) return;
+  modal.classList.add("open");
+  document.body.classList.add("modal-open");
+  try {
+    history.pushState({ modal: "modal-festival-offers" }, "", "#modal-festival-offers");
+  } catch (e) {}
+};
+
+window.openHelpSupportModal = () => {
+  window.closeAllModals(false, false);
+  window.setBottomNavActive('support');
+  const modal = document.getElementById("modal-help-support");
+  if (!modal) return;
+  modal.classList.add("open");
+  document.body.classList.add("modal-open");
+  try {
+    history.pushState({ modal: "modal-help-support" }, "", "#modal-help-support");
+  } catch (e) {}
+};
+
+window.copyPromoCode = (code, btnEl) => {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = btnEl ? btnEl.innerHTML : '';
+      if (btnEl) {
+        btnEl.innerHTML = '✓ Copied!';
+        btnEl.style.background = '#10b981';
+        btnEl.style.color = '#ffffff';
+        setTimeout(() => {
+          btnEl.innerHTML = orig;
+          btnEl.style.background = '';
+          btnEl.style.color = '';
+        }, 2000);
+      }
+      if (window.showToast) window.showToast(`Coupon code ${code} copied!`, 'success');
+    }).catch(() => {
+      prompt('Copy promo code:', code);
+    });
+  } else {
+    prompt('Copy promo code:', code);
+  }
+};
+
+window.applyAndBookWithPromo = (code) => {
+  window.closeAllModals();
+  window.setBottomNavActive('book');
+  try {
+    sessionStorage.setItem('otb_applied_coupon', code);
+    localStorage.setItem('otb_applied_coupon', code);
+  } catch (e) {}
+
+  const hero = document.getElementById('booking-hero');
+  if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => {
+    const input = document.getElementById('input-pickup');
+    if (input) input.focus();
+    if (window.showToast) window.showToast(`🎉 Coupon ${code} applied! Flat ₹100 discount on your trip.`, 'success');
+  }, 350);
+};
+
 window.handlePhoneLookup = async (e) => {
   if (e) e.preventDefault();
   const input = document.getElementById('trips-lookup-phone');
@@ -939,11 +1003,13 @@ window.handlePassengerLogout = () => {
 };
 
 window.openMyTripsModal = async () => {
-  window.closeAllModals(false);
+  window.closeAllModals(false, false);
   window.setBottomNavActive('trips');
   const modal = document.getElementById("modal-my-trips");
   const body = document.getElementById("modal-my-trips-body");
   if (!modal || !body) return;
+  modal.classList.add("open");
+  document.body.classList.add("modal-open");
 
   const activePhone = localStorage.getItem('otb_passenger_logged_in') || localStorage.getItem('otb_last_passenger_phone') || '';
   
@@ -2236,10 +2302,10 @@ window.startLiveTrackingSimulation = async (bookingId) => {
 /* ==========================================================================
    6. GLOBAL UI HELPERS, TOASTS & MODAL DISMISSAL WITH BROWSER BACK BUTTON
    ========================================================================== */
-window.closeAllModals = (updateHistory = true) => {
+window.closeAllModals = (updateHistory = true, resetBottomNav = true) => {
   document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("open"));
   document.body.classList.remove("modal-open");
-  if (typeof window.setBottomNavActive === 'function') {
+  if (resetBottomNav && typeof window.setBottomNavActive === 'function') {
     window.setBottomNavActive('home');
   }
   if (updateHistory && window.location.hash) {

@@ -31,6 +31,15 @@
 - [x] 3.7 Add Statutory Business Details & Grievance Officer (Consumer Protection Rules 2020)
 - [x] 3.8 Audit third-party SDKs, font/asset licenses, and email/SMS opt-out compliance
 
+### Phase 4: Google Ecosystem, Search Console & Live Analytics Setup
+- [x] 4.1 Google Search Console verification (`google325984f7b343fbb3.html` & meta tag)
+- [x] 4.2 Submit 21-URL XML Sitemap (`sitemap.xml`) to Google Search Console
+- [x] 4.3 Synchronize physical registered address across all 7 statutory pages and schemas
+- [x] 4.4 Google Business Profile verified status audit & 100% profile strength guidance
+- [x] 4.5 GA4 Engine (`js/analytics.js`) deployed with live Measurement ID `G-1YTK7M3FS3`
+- [x] 4.6 Conversion event tracking for phone calls (`tel:`), WhatsApp chats, and ride bookings
+- [x] 4.7 Google Consent Mode v2 integration for DPDP Act 2023 compliance
+
 ---
 
 ## 3. Ralph Loop Acceptance Criteria

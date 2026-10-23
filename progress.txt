@@ -66,3 +66,11 @@
 - Cache Busting:
   - Bumped Service Worker cache to `onewaytaxibihar-v9.0-modal-cookie-fix-20261023` and updated asset version strings to `?v=20261023_v36_fixes`.
 - Tested: Node syntax checks PASS across all JS files.
+
+[2026-10-23] Phase 7: OTP-Driven My Trips Integration (Zero Separate Phone Form):
+- Removed separate manual phone input forms from My Trips modal (index.html) and Passenger Portal (passenger.html).
+- Tied My Trips directly to authoritative OTP Login (`window.currentUser` and `otb_current_user`):
+  - When logged in, automatically retrieves and displays the passenger's verified rides, driver assignment, and GST invoices.
+  - When not logged in, displays a clean "Login to View Your Trips" card with a 1-tap "📲 Login with OTP ➔" CTA.
+  - Integrated `_authReturnToTrips` handler in both `handleVerifyOtpCode` (app.js) and Telecom OTP (firebase-otp.js) so that verifying OTP automatically transitions the user back to My Trips with full data pre-loaded.
+- Tested: Node syntax validation PASS across all modified JavaScript files.

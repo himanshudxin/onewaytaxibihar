@@ -222,21 +222,35 @@
         }
 
         if (isVerified) {
+          const cleanP = (this.activePhone || '').replace(/\D/g, "").slice(-10);
           sessionStorage.setItem(`otb_verified_${this.activePhone}`, "true");
-          localStorage.setItem("oneway_fare_phone", this.activePhone);
+          localStorage.setItem("oneway_fare_phone", cleanP);
+          localStorage.setItem("otb_passenger_logged_in", cleanP);
 
           if (!window.currentUser) {
             window.currentUser = {
               name: this.activeName || "Passenger",
-              phone: `+91 ${this.activePhone}`,
+              phone: `+91 ${cleanP}`,
               walletBalance: 100,
               isPhoneVerified: true
             };
           } else {
             window.currentUser.isPhoneVerified = true;
-            window.currentUser.phone = `+91 ${this.activePhone}`;
+            window.currentUser.phone = `+91 ${cleanP}`;
           }
           localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
+
+          // If user came from My Trips, auto-open My Trips immediately
+          if (window._authReturnToTrips) {
+            window._authReturnToTrips = false;
+            setTimeout(() => {
+              this.closeOtpModal();
+              if (window.closeAllModals) window.closeAllModals(false, false);
+              if (window.showToast) window.showToast("Logged in successfully! Loading your trips...", "success");
+              if (window.openMyTripsModal) window.openMyTripsModal();
+            }, 300);
+            return;
+          }
 
           // Auto-sync verified customer login lead to Admin Portal
           if (window.ApiClient && ApiClient.sendLead) {

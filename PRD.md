@@ -48,6 +48,11 @@
 - [x] 6.2 Dual Visible Support CTAs: Redesigned Support modal so both Call (+91 80021 41816) and WhatsApp (+91 77394 06400) buttons are 100% visible, unobstructed, and prominently accessible above the fold without clipping.
 - [x] 6.3 Cookie Verification Banner Clearance: Elevated cookie banner z-index to `1000002` and positioned cleanly above the Voyago mobile bottom navigation bar (`bottom: calc(76px + env(safe-area-inset-bottom, 8px))`) so verification buttons are fully visible and tappable.
 
+### Phase 7: OTP-Driven My Trips Integration
+- [x] 7.1 Elimination of Separate Phone Input: Removed redundant phone lookup forms from My Trips modal and Passenger Portal.
+- [x] 7.2 Automatic Trip Retrieval from OTP Session: Wired My Trips to fetch verified rides and GST invoices automatically when logged in.
+- [x] 7.3 OTP Login Flow with Auto-Return: Added seamless "Login with OTP" CTA with automatic redirect back to My Trips upon verification.
+
 ---
 
 ## 3. Ralph Loop Acceptance Criteria

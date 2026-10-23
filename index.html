@@ -1862,38 +1862,28 @@
   </div>
 
   <!-- Modal 10: My Trips Dashboard Modal -->
-  <div class="modal-overlay" id="modal-my-trips">
+  <div class="modal-overlay" id="modal-my-trips" role="dialog" aria-modal="true" aria-labelledby="trips-modal-title">
     <div class="modal-dialog-box large">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
           <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title">My Trips &amp; Bookings Dashboard</div>
+          <div class="modal-title" id="trips-modal-title">My Trips &amp; Bookings Dashboard</div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
+        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
       </div>
       <div class="modal-body" id="modal-my-trips-body" style="padding: 20px;">
-        <div class="trips-lookup-card" style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 16px; padding: 22px 18px; margin-bottom: 20px; text-align: center;">
-          <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 24px;">📱</div>
-          <h4 style="font-size: 17px; font-weight: 800; color: var(--owc-text, #ffffff); margin: 0 0 6px;">Passenger Trip Login</h4>
-          <p style="font-size: 13px; color: var(--owc-text-muted, #94a3b8); margin: 0 0 16px; line-height: 1.45;">
-            Enter your 10-digit mobile number to view active rides, live chauffeur allocation, and download official GST tax invoices.
+        <div class="trips-lookup-card" style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 18px; padding: 32px 20px; text-align: center;">
+          <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 26px;">🔐</div>
+          <h4 style="font-size: 18px; font-weight: 800; color: var(--owc-text, #ffffff); margin: 0 0 6px;">Login to View Your Trips</h4>
+          <p style="font-size: 13px; color: var(--owc-text-muted, #94a3b8); margin: 0 auto 20px; line-height: 1.5; max-width: 380px;">
+            Your bookings, assigned chauffeur details, and GST invoices are automatically retrieved when you log in with OTP. No manual phone filling required!
           </p>
-          <form onsubmit="return window.handlePhoneLookup(event)" style="display: flex; flex-direction: column; gap: 10px; max-width: 360px; margin: 0 auto;">
-            <div style="position: relative; display: flex; align-items: center;">
-              <span style="position: absolute; left: 14px; font-weight: 800; font-size: 14px; color: var(--owc-text-muted, #94a3b8);">+91</span>
-              <input type="tel" id="trips-lookup-phone" maxlength="10" placeholder="Enter 10-digit mobile number" style="width: 100%; box-sizing: border-box; padding: 12px 14px 12px 50px; font-size: 15px; font-weight: 700; border: 1.5px solid var(--owc-border, rgba(255,255,255,0.2)); border-radius: 12px; background: var(--owc-slate-50, #0f172a); color: var(--owc-text, #ffffff); outline: none;" required>
-            </div>
-            <button type="submit" class="check-fare-primary-btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 12px;">
-              🔍 Find My Bookings &amp; Invoices
-            </button>
-          </form>
-          <div style="margin-top: 14px; font-size: 12.5px;">
+          <button type="button" class="check-fare-primary-btn" onclick="window.openAuthModal({ returnToTrips: true })" style="padding: 13px 26px; font-size: 14.5px; font-weight: 800; border-radius: 12px; margin: 0 auto; display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
+            <span>📲 Login with OTP ➔</span>
+          </button>
+          <div style="margin-top: 18px; font-size: 12.5px;">
             <a href="/passenger.html" style="color: #10b981; font-weight: 700; text-decoration: none;">Open Dedicated Passenger Portal ➔</a>
           </div>
-        </div>
-
-        <div id="trips-content-list">
-          <!-- Rendered dynamically if rides found -->
         </div>
       </div>
     </div>

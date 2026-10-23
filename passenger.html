@@ -1354,8 +1354,8 @@
           pickupDate: 'Today',
           pickupTime: '10:00 AM',
           cabType: 'Prime Sedan',
-          passengerName: 'Valued Passenger',
-          passengerPhone: '8002141816'
+          passengerName: 'Passenger',
+          passengerPhone: (localStorage.getItem('otb_passenger_logged_in') || '')
         };
 
         const fare = Number(b.fare || 2998);
@@ -1380,7 +1380,7 @@
             </div>
 
             <div style="background: var(--owc-slate-50); padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 14px;">
-              <strong>Passenger:</strong> ${b.passengerName || 'Valued Passenger'} (+91 ${b.passengerPhone || '8002141816'})<br>
+              <strong>Passenger:</strong> ${b.passengerName || 'Passenger'}${b.passengerPhone ? ` (+91 ${b.passengerPhone})` : ''}<br>
               <strong>Trip:</strong> ${b.origin} ➔ ${b.dest} (${b.cabType || 'Sedan'})<br>
               <strong>Schedule:</strong> ${b.pickupDate} at ${b.pickupTime}
             </div>

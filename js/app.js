@@ -3306,7 +3306,7 @@ window.handleSupportTicketSubmit = async function(e) {
       bookingId,
       category,
       message,
-      name: currentUser?.name || 'Valued Passenger'
+      name: currentUser?.name || 'Passenger'
     });
 
     if (res && res.success) {

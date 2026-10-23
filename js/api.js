@@ -385,6 +385,12 @@ class ApiClient {
         cached.unshift(res.booking);
         localStorage.setItem("otb_user_bookings", JSON.stringify(cached));
       } catch (e) {}
+
+      // Trigger GA4 & Ads Conversion Tracking
+      if (window.OTBAnalytics && typeof window.OTBAnalytics.trackBookingCompleted === 'function') {
+        window.OTBAnalytics.trackBookingCompleted(res.booking);
+      }
+
       return res;
     }
 
@@ -427,6 +433,11 @@ class ApiClient {
         adminBookings.unshift(fallbackBooking);
         localStorage.setItem("otb_admin_bookings_cache", JSON.stringify(adminBookings));
       } catch (e) {}
+
+      // Trigger GA4 & Ads Conversion Tracking
+      if (window.OTBAnalytics && typeof window.OTBAnalytics.trackBookingCompleted === 'function') {
+        window.OTBAnalytics.trackBookingCompleted(fallbackBooking);
+      }
 
       return {
         success: true,

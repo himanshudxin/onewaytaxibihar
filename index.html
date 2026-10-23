@@ -149,9 +149,9 @@
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261023_v36_fixes">
-  <link rel="stylesheet" href="/css/components.css?v=20261023_v36_fixes">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v36_fixes">
+  <link rel="stylesheet" href="/css/style.css?v=20261023_v38_trips">
+  <link rel="stylesheet" href="/css/components.css?v=20261023_v38_trips">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v38_trips">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -1508,16 +1508,15 @@
         window.setBottomNavActive('home');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (action === 'trips') {
-        if (typeof window.openMyTripsModal === 'function') {
+        var activePhone = (window.currentUser && window.currentUser.phone ? window.currentUser.phone.replace(/\D/g, '').slice(-10) : '') ||
+                          localStorage.getItem('otb_passenger_logged_in') || '';
+        if (!activePhone && typeof window.openAuthModal === 'function') {
+          window._authReturnTo = 'trips';
+          window.openAuthModal();
+        } else if (typeof window.openMyTripsModal === 'function') {
           window.openMyTripsModal();
         } else {
-          var m = document.getElementById('modal-my-trips');
-          if (m) {
-            m.classList.add('open');
-            window.lockBodyScroll();
-          } else {
-            window.location.href = '/passenger.html';
-          }
+          window.location.href = '/passenger.html';
         }
         window.setBottomNavActive('trips');
       } else if (action === 'book') {
@@ -1862,28 +1861,19 @@
   </div>
 
   <!-- Modal 10: My Trips Dashboard Modal -->
-  <div class="modal-overlay" id="modal-my-trips" role="dialog" aria-modal="true" aria-labelledby="trips-modal-title">
+  <div class="modal-overlay" id="modal-my-trips">
     <div class="modal-dialog-box large">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
           <button type="button" class="modal-back-btn" onclick="window.handleBackNavigation()" aria-label="Go Back">← Back</button>
-          <div class="modal-title" id="trips-modal-title">My Trips &amp; Bookings Dashboard</div>
+          <div class="modal-title">My Trips &amp; Bookings Dashboard</div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()" aria-label="Close">✕</button>
+        <button type="button" class="modal-close-btn" onclick="window.closeAllModals()">✕</button>
       </div>
       <div class="modal-body" id="modal-my-trips-body" style="padding: 20px;">
-        <div class="trips-lookup-card" style="background: var(--owc-card-bg, #1e293b); border: 1.5px solid var(--owc-border, rgba(255,255,255,0.1)); border-radius: 18px; padding: 32px 20px; text-align: center;">
-          <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 26px;">🔐</div>
-          <h4 style="font-size: 18px; font-weight: 800; color: var(--owc-text, #ffffff); margin: 0 0 6px;">Login to View Your Trips</h4>
-          <p style="font-size: 13px; color: var(--owc-text-muted, #94a3b8); margin: 0 auto 20px; line-height: 1.5; max-width: 380px;">
-            Your bookings, assigned chauffeur details, and GST invoices are automatically retrieved when you log in with OTP. No manual phone filling required!
-          </p>
-          <button type="button" class="check-fare-primary-btn" onclick="window.openAuthModal({ returnToTrips: true })" style="padding: 13px 26px; font-size: 14.5px; font-weight: 800; border-radius: 12px; margin: 0 auto; display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
-            <span>📲 Login with OTP ➔</span>
-          </button>
-          <div style="margin-top: 18px; font-size: 12.5px;">
-            <a href="/passenger.html" style="color: #10b981; font-weight: 700; text-decoration: none;">Open Dedicated Passenger Portal ➔</a>
-          </div>
+        <div style="text-align: center; padding: 48px 16px;">
+          <div style="width: 36px; height: 36px; border: 3px solid rgba(16,185,129,0.2); border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+          <div style="font-weight: 700; font-size: 14px; color: var(--owc-text);">Loading your trips &amp; bookings...</div>
         </div>
       </div>
     </div>
@@ -2677,15 +2667,15 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261023_v36_fixes"></script>
-  <script src="/js/data.js?v=20261023_v36_fixes"></script>
-  <script src="/js/calculator.js?v=20261023_v36_fixes"></script>
-  <script src="/js/map.js?v=20261023_v36_fixes"></script>
-  <script src="/js/api.js?v=20261023_v36_fixes"></script>
-  <script src="/js/datetime-picker.js?v=20261023_v36_fixes"></script>
-  <script src="/js/firebase-otp.js?v=20261023_v36_fixes"></script>
-  <script src="/js/booking.js?v=20261023_v36_fixes"></script>
-  <script src="/js/app.js?v=20261023_v36_fixes"></script>
+  <script src="/js/brand-logo.js?v=20261023_v38_trips"></script>
+  <script src="/js/data.js?v=20261023_v38_trips"></script>
+  <script src="/js/calculator.js?v=20261023_v38_trips"></script>
+  <script src="/js/map.js?v=20261023_v38_trips"></script>
+  <script src="/js/api.js?v=20261023_v38_trips"></script>
+  <script src="/js/datetime-picker.js?v=20261023_v38_trips"></script>
+  <script src="/js/firebase-otp.js?v=20261023_v38_trips"></script>
+  <script src="/js/booking.js?v=20261023_v38_trips"></script>
+  <script src="/js/app.js?v=20261023_v38_trips"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
@@ -2969,6 +2959,6 @@
     };
 </script>
 <script src="/js/analytics.js"></script>
-<script src="/js/cookie-consent.js?v=20261023_v36_fixes"></script>
+<script src="/js/cookie-consent.js?v=20261023_v38_trips"></script>
 </body>
 </html>

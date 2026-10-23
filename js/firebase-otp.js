@@ -226,6 +226,7 @@
           sessionStorage.setItem(`otb_verified_${this.activePhone}`, "true");
           localStorage.setItem("oneway_fare_phone", cleanP);
           localStorage.setItem("otb_passenger_logged_in", cleanP);
+          localStorage.setItem("otb_last_passenger_phone", cleanP);
 
           if (!window.currentUser) {
             window.currentUser = {
@@ -241,12 +242,12 @@
           localStorage.setItem("otb_current_user", JSON.stringify(window.currentUser));
 
           // If user came from My Trips, auto-open My Trips immediately
-          if (window._authReturnToTrips) {
-            window._authReturnToTrips = false;
+          if (window._authReturnTo === 'trips') {
+            window._authReturnTo = null;
             setTimeout(() => {
               this.closeOtpModal();
               if (window.closeAllModals) window.closeAllModals(false, false);
-              if (window.showToast) window.showToast("Logged in successfully! Loading your trips...", "success");
+              if (window.showToast) window.showToast("Logged in with OTP! Loading your trips...", "success");
               if (window.openMyTripsModal) window.openMyTripsModal();
             }, 300);
             return;

@@ -27,9 +27,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261023_v36_fixes">
-  <link rel="stylesheet" href="/css/components.css?v=20261023_v36_fixes">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v36_fixes">
+  <link rel="stylesheet" href="/css/style.css?v=20261023_v38_trips">
+  <link rel="stylesheet" href="/css/components.css?v=20261023_v38_trips">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v38_trips">
 
   <style>
     /* Reset & Base Containment */
@@ -728,19 +728,13 @@
       <div id="trips-list-container">
         <div class="empty-state-box" style="max-width:440px; margin:20px auto; padding:28px 20px; background:var(--owc-card-bg); border:1.5px solid var(--owc-border); border-radius:18px; text-align:center;">
           <div style="width:54px; height:54px; border-radius:50%; background:rgba(16, 185, 129, 0.12); color:#10b981; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:26px;">📱</div>
-          <h3 style="font-size:18px; font-weight:800; color:var(--owc-text); margin:0 0 6px;">Passenger Trip Login</h3>
-          <p style="font-size:13px; color:var(--owc-text-muted); line-height:1.5; margin:0 0 20px;">Enter your 10-digit mobile number used during booking to track chauffeur allocation, download GST invoices, and manage rides.</p>
-          <form onsubmit="return window.handlePortalPhoneLookup(event)" style="display:flex; flex-direction:column; gap:12px;">
-            <div style="position:relative; display:flex; align-items:center;">
-              <span style="position:absolute; left:14px; font-weight:800; font-size:14px; color:var(--owc-text-muted);">+91</span>
-              <input type="tel" id="portal-lookup-phone" maxlength="10" placeholder="Enter 10-digit mobile number" style="width:100%; box-sizing:border-box; padding:12px 14px 12px 52px; font-size:15px; font-weight:700; border:1.5px solid var(--owc-border); border-radius:12px; background:var(--owc-slate-50); color:var(--owc-text); outline:none;" required>
-            </div>
-            <button type="submit" class="btn-act btn-act-primary" style="padding:13px; font-size:14px; font-weight:800; border-radius:12px; justify-content:center; width:100%;">
-              🔍 View My Rides &amp; Invoices
-            </button>
-          </form>
+          <h3 style="font-size:18px; font-weight:800; color:var(--owc-text); margin:0 0 6px;">Login with OTP to View Your Trips</h3>
+          <p style="font-size:13px; color:var(--owc-text-muted); line-height:1.5; margin:0 0 20px;">Your confirmed bookings, driver allocation, and official GST invoices are automatically retrieved when you log in with SMS OTP.</p>
+          <a href="/index.html#modal-auth" class="btn-act btn-act-primary" style="padding:13px; font-size:14.5px; font-weight:800; border-radius:12px; justify-content:center; width:100%; text-decoration:none; display:flex; align-items:center; gap:8px;">
+            📲 Login with OTP ➔
+          </a>
           <div style="margin-top:16px; font-size:12px; color:var(--owc-text-muted);">
-            Need to book a new ride? <a href="index.html" style="color:var(--owc-primary); font-weight:700; text-decoration:none;">Book Outstation Cab ➔</a>
+            Need to book a new ride? <a href="/index.html" style="color:var(--owc-primary); font-weight:700; text-decoration:none;">Book Outstation Cab ➔</a>
           </div>
         </div>
       </div>
@@ -1049,12 +1043,6 @@
           sessionStorage.getItem('otb_passenger_logged_in') ||
           localStorage.getItem('otb_last_passenger_phone') || ''
         );
-        if (!activePhone) {
-          try {
-            const u = JSON.parse(localStorage.getItem('otb_current_user') || '{}');
-            if (u && u.phone) activePhone = cleanPhone(u.phone);
-          } catch (e) {}
-        }
 
         let bookings = [];
         try {
@@ -1076,7 +1064,7 @@
         if (!activePhone) {
           if (nameEl) nameEl.textContent = 'Guest Traveler';
           if (phoneEl) {
-            phoneEl.innerHTML = `<span style="color:var(--owc-text-muted);">Not Logged In</span> <a href="index.html#modal-auth" style="color:var(--owc-primary); font-weight:800; font-size:12px; margin-left:6px; text-decoration:none;">Login with OTP ➔</a>`;
+            phoneEl.innerHTML = `<span style="color:var(--owc-text-muted);">Not Logged In</span> <a href="/index.html#modal-auth" style="color:var(--owc-primary); font-weight:800; font-size:12px; margin-left:6px; text-decoration:none;">Login with OTP ➔</a>`;
           }
           if (avatarEl) avatarEl.textContent = '👤';
           if (countBadge) countBadge.textContent = '0';
@@ -1084,21 +1072,21 @@
 
           if (tripsContainer) {
             tripsContainer.innerHTML = `
-              <div class="empty-state-box" style="max-width:440px; margin:20px auto; padding:32px 20px; background:var(--owc-card-bg); border:1.5px solid var(--owc-border); border-radius:18px; text-align:center;">
-                <div style="width:58px; height:58px; border-radius:50%; background:rgba(16, 185, 129, 0.12); color:#10b981; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:26px;">🔐</div>
-                <h3 style="font-size:18px; font-weight:800; color:var(--owc-text); margin:0 0 6px;">Login with OTP to View Trips</h3>
-                <p style="font-size:13px; color:var(--owc-text-muted); line-height:1.5; margin:0 0 20px;">Your confirmed rides, assigned chauffeur details, and GST tax invoices are automatically retrieved with SMS OTP login. No manual phone filling required!</p>
-                <a href="index.html#modal-auth" class="btn-act btn-act-primary" style="padding:13px 26px; font-size:14.5px; font-weight:800; border-radius:12px; justify-content:center; width:100%; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+              <div class="empty-state-box" style="max-width:440px; margin:20px auto; padding:28px 20px; background:var(--owc-card-bg); border:1.5px solid var(--owc-border); border-radius:18px; text-align:center;">
+                <div style="width:54px; height:54px; border-radius:50%; background:rgba(16, 185, 129, 0.12); color:#10b981; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:26px;">📱</div>
+                <h3 style="font-size:18px; font-weight:800; color:var(--owc-text); margin:0 0 6px;">Login with OTP to View Your Trips</h3>
+                <p style="font-size:13px; color:var(--owc-text-muted); line-height:1.5; margin:0 0 20px;">Your confirmed bookings, driver allocation, and official GST invoices are automatically retrieved when you log in with SMS OTP.</p>
+                <a href="/index.html#modal-auth" class="btn-act btn-act-primary" style="padding:13px; font-size:14.5px; font-weight:800; border-radius:12px; justify-content:center; width:100%; text-decoration:none; display:flex; align-items:center; gap:8px;">
                   📲 Login with OTP ➔
                 </a>
                 <div style="margin-top:16px; font-size:12px; color:var(--owc-text-muted);">
-                  Need to book a new ride? <a href="index.html" style="color:var(--owc-primary); font-weight:700; text-decoration:none;">Book Outstation Cab ➔</a>
+                  Need to book a new ride? <a href="/index.html" style="color:var(--owc-primary); font-weight:700; text-decoration:none;">Book Outstation Cab ➔</a>
                 </div>
               </div>
             `;
           }
           if (invoicesContainer) {
-            invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 28px 16px;"><span style="font-size:24px; display:block; margin-bottom:8px;">🧾</span>Please <a href="index.html#modal-auth" style="color:var(--owc-primary); font-weight:800; text-decoration:underline;">login with OTP</a> to view and print your GST tax receipts.</div>`;
+            invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 28px 16px;"><span style="font-size:24px; display:block; margin-bottom:8px;">🧾</span>Please log in with OTP above to retrieve and print your GST tax receipts.</div>`;
           }
           return;
         }

@@ -48,10 +48,12 @@
 - [x] 6.2 Dual Visible Support CTAs: Redesigned Support modal so both Call (+91 80021 41816) and WhatsApp (+91 77394 06400) buttons are 100% visible, unobstructed, and prominently accessible above the fold without clipping.
 - [x] 6.3 Cookie Verification Banner Clearance: Elevated cookie banner z-index to `1000002` and positioned cleanly above the Voyago mobile bottom navigation bar (`bottom: calc(76px + env(safe-area-inset-bottom, 8px))`) so verification buttons are fully visible and tappable.
 
-### Phase 7: OTP-Driven My Trips Integration
-- [x] 7.1 Elimination of Separate Phone Input: Removed redundant phone lookup forms from My Trips modal and Passenger Portal.
-- [x] 7.2 Automatic Trip Retrieval from OTP Session: Wired My Trips to fetch verified rides and GST invoices automatically when logged in.
-- [x] 7.3 OTP Login Flow with Auto-Return: Added seamless "Login with OTP" CTA with automatic redirect back to My Trips upon verification.
+### Phase 7: My Trips Redesign & Complete OTP-Driven Auto-Fetch
+- [x] 7.1 Eradicate Manual Phone Filling: Removed phone input form, manual lookup handlers, and static login cards from My Trips modal and passenger dashboard.
+- [x] 7.2 Automatic Trips Fetch via OTP Session: Trips are strictly fetched from backend `/api/passenger/trips?phone=` using verified session phone (`window.currentUser.phone` / `otb_passenger_logged_in`).
+- [x] 7.3 Remove In-Modal Login Section: Eradicated redundant "Login with OTP to View Your Trips" card and duplicate empty states inside the My Trips modal.
+- [x] 7.4 Seamless Unauthenticated Routing: Unauthenticated riders tapping My Trips are routed directly to the clean SMS OTP modal with `_authReturnTo = 'trips'`, returning immediately into My Trips upon verification.
+- [x] 7.5 Modern Rider Header & Sync: Added sleek verified passenger badge (`👤 +91 XXXXX XXXXX • OTP Verified • ₹100 Wallet`), 1-tap live sync, and clean empty states.
 
 ---
 

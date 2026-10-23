@@ -368,9 +368,14 @@ function renderNavAuth() {
 
 // Global Logout Handler
 window.handleLogout = async () => {
-  await ApiClient.logout();
+  try {
+    await ApiClient.logout();
+  } catch (e) {}
   currentUser = null;
   window.currentUser = null;
+  localStorage.removeItem('otb_passenger_logged_in');
+  localStorage.removeItem('otb_last_passenger_phone');
+  localStorage.removeItem('otb_current_user');
   renderNavAuth();
   window.closeAllModals();
   window.showToast("Logged out successfully.", "info");
@@ -401,38 +406,24 @@ window.openAuthModal = (bookingContext = null) => {
     nameInput.value = window.currentUser?.name || "";
   }
 
-  // Handle returnToTrips from My Trips
-  if (bookingContext && bookingContext.returnToTrips) {
-    window._authReturnToTrips = true;
+  // Display booking context if opened by tapping a cab
+  if (bookingContext) {
+    if (contextBanner) contextBanner.style.display = "block";
+    if (cabTitleEl) cabTitleEl.textContent = `Selected Cab: ${bookingContext.cabName || 'Outstation Cab'} (₹${(bookingContext.price || 0).toLocaleString('en-IN')})`;
+    if (discountNoteEl) {
+      const discounted = Math.max(0, (bookingContext.price || 0) - 100);
+      discountNoteEl.innerHTML = `✓ <strong>₹100 Welcome Reward</strong> will apply automatically! (Payable: ₹${discounted.toLocaleString('en-IN')})`;
+    }
+    if (modalTitle) modalTitle.textContent = "Login & Claim ₹100 Ride Reward";
+    if (modalSub) modalSub.textContent = "Verify your mobile number to lock in your cab reservation with ₹100 instant discount.";
+  } else if (window._authReturnTo === 'trips') {
     if (contextBanner) contextBanner.style.display = "none";
     if (modalTitle) modalTitle.textContent = "Login with OTP to View Trips";
-    if (modalSub) modalSub.textContent = "Enter your mobile number to receive a 6-digit SMS OTP. We will automatically fetch your bookings & GST tax invoices.";
+    if (modalSub) modalSub.textContent = "Enter your mobile number to receive an instant SMS OTP. Your confirmed rides & invoices will load automatically.";
   } else {
-    window._authReturnToTrips = false;
-    // Pre-fill phone from fare check or localStorage if available
-    const existingPhone = window.bookingManager?.userPhone || localStorage.getItem("oneway_fare_phone") || "";
-    if (phoneInput) {
-      phoneInput.value = existingPhone ? existingPhone.replace(/\D/g, "").slice(-10) : "";
-    }
-    if (nameInput && !nameInput.value) {
-      nameInput.value = window.currentUser?.name || "";
-    }
-
-    // Display booking context if opened by tapping a cab
-    if (bookingContext) {
-      if (contextBanner) contextBanner.style.display = "block";
-      if (cabTitleEl) cabTitleEl.textContent = `Selected Cab: ${bookingContext.cabName || 'Outstation Cab'} (₹${(bookingContext.price || 0).toLocaleString('en-IN')})`;
-      if (discountNoteEl) {
-        const discounted = Math.max(0, (bookingContext.price || 0) - 100);
-        discountNoteEl.innerHTML = `✓ <strong>₹100 Welcome Reward</strong> will apply automatically! (Payable: ₹${discounted.toLocaleString('en-IN')})`;
-      }
-      if (modalTitle) modalTitle.textContent = "Login & Claim ₹100 Ride Reward";
-      if (modalSub) modalSub.textContent = "Verify your mobile number to lock in your cab reservation with ₹100 instant discount.";
-    } else {
-      if (contextBanner) contextBanner.style.display = "none";
-      if (modalTitle) modalTitle.textContent = "SMS OTP Login & Claim ₹100 Reward";
-      if (modalSub) modalSub.textContent = "Enter your name & mobile number. We will send a secure 6-digit SMS OTP to your phone.";
-    }
+    if (contextBanner) contextBanner.style.display = "none";
+    if (modalTitle) modalTitle.textContent = "SMS OTP Login & Claim ₹100 Reward";
+    if (modalSub) modalSub.textContent = "Enter your name & mobile number. We will send a secure 6-digit SMS OTP to your phone.";
   }
 
   if (modal) {
@@ -611,16 +602,17 @@ window.handleVerifyOtpCode = async () => {
     if (res && res.success && res.user) {
       currentUser = res.user;
       window.currentUser = res.user;
-      const cleanPhone = (res.user.phone || phone).replace(/\D/g, "").slice(-10);
-      localStorage.setItem("otb_current_user", JSON.stringify(res.user));
-      localStorage.setItem("otb_passenger_logged_in", cleanPhone);
+      if (phone) {
+        localStorage.setItem('otb_passenger_logged_in', phone);
+        localStorage.setItem('otb_last_passenger_phone', phone);
+      }
       renderNavAuth();
 
-      // Check if this was initiated by My Trips
-      if (window._authReturnToTrips) {
-        window._authReturnToTrips = false;
-        window.closeAllModals(false, false);
-        window.showToast("Logged in successfully! Loading your trips...", "success");
+      // Check if this was initiated by tapping My Trips
+      if (window._authReturnTo === 'trips') {
+        window._authReturnTo = null;
+        window.closeAllModals(false);
+        window.showToast("Logged in with OTP! Welcome back.", "success");
         window.openMyTripsModal();
         return;
       }
@@ -1075,51 +1067,33 @@ window.applyAndBookWithPromo = (code) => {
   }, 350);
 };
 
-window.handlePhoneLookup = async (e) => {
-  if (e) e.preventDefault();
-  const input = document.getElementById('trips-lookup-phone');
-  if (!input) return;
-  const raw = input.value.replace(/\D/g, '');
-  const cleanPhone = raw.length > 10 ? raw.slice(-10) : raw;
-
-  if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
-    if (window.showToast) window.showToast('Please enter a valid 10-digit Indian mobile number', 'error');
-    else alert('Please enter a valid 10-digit mobile number');
-    return;
-  }
-
-  localStorage.setItem('otb_passenger_logged_in', cleanPhone);
-  localStorage.setItem('otb_last_passenger_phone', cleanPhone);
-
-  try {
-    const res = await fetch(`/api/passenger/trips?phone=${cleanPhone}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && Array.isArray(data.bookings) && data.bookings.length > 0) {
-        localStorage.setItem('otb_user_bookings', JSON.stringify(data.bookings));
-      }
-    }
-  } catch (err) {
-    console.warn('Trip lookup fetch failed, using local storage cache:', err);
-  }
-
-  if (window.showToast) window.showToast(`Showing bookings for +91 ${cleanPhone}`, 'success');
-  window.openMyTripsModal();
-};
-
 window.handlePassengerLogout = () => {
-  localStorage.removeItem('otb_passenger_logged_in');
-  localStorage.removeItem('otb_last_passenger_phone');
-  localStorage.removeItem('otb_current_user');
-  localStorage.removeItem('otb_auth_token');
-  window.currentUser = null;
-  currentUser = null;
-  if (typeof renderNavAuth === 'function') renderNavAuth();
-  if (window.showToast) window.showToast('Logged out. Please login with OTP to view trips.', 'info');
-  window.openMyTripsModal();
+  window.handleLogout();
 };
 
 window.openMyTripsModal = async () => {
+  // Determine if user is logged in via OTP
+  let activeUser = window.currentUser;
+  if (!activeUser) {
+    try {
+      const u = localStorage.getItem('otb_current_user');
+      if (u) activeUser = JSON.parse(u);
+    } catch (e) {}
+  }
+
+  const activePhone = (activeUser && activeUser.phone ? activeUser.phone.replace(/\D/g, '').slice(-10) : '') ||
+                      localStorage.getItem('otb_passenger_logged_in') || '';
+  const isLoggedIn = !!(activePhone && (activeUser?.isPhoneVerified || localStorage.getItem('otb_passenger_logged_in')));
+
+  // If not logged in, directly prompt the clean OTP login modal
+  if (!isLoggedIn) {
+    window._authReturnTo = 'trips';
+    if (typeof window.openAuthModal === 'function') {
+      window.openAuthModal();
+      return;
+    }
+  }
+
   window.closeAllModals(false, false);
   window.setBottomNavActive('trips');
   const modal = document.getElementById("modal-my-trips");
@@ -1132,25 +1106,37 @@ window.openMyTripsModal = async () => {
     document.body.classList.add("modal-open");
   }
 
-  // 1. Resolve logged-in user from window.currentUser or localStorage
-  let activeUser = window.currentUser;
-  if (!activeUser) {
-    try {
-      const savedUser = localStorage.getItem("otb_current_user");
-      if (savedUser) activeUser = JSON.parse(savedUser);
-    } catch (e) {}
-  }
-  const userPhone = (activeUser?.phone || '').replace(/\D/g, '').slice(-10);
-  const activePhone = userPhone || (localStorage.getItem('otb_passenger_logged_in') || '').replace(/\D/g, '').slice(-10);
-  if (activePhone && !localStorage.getItem('otb_passenger_logged_in')) {
-    localStorage.setItem('otb_passenger_logged_in', activePhone);
-  }
+  // Quick loading indicator while fetching trips
+  body.innerHTML = `
+    <div style="text-align: center; padding: 48px 16px;">
+      <div style="width: 36px; height: 36px; border: 3px solid rgba(16,185,129,0.2); border-top-color: #10b981; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+      <div style="font-weight: 700; font-size: 14px; color: var(--owc-text);">Fetching your verified trips...</div>
+    </div>
+  `;
 
-  // Aggregate real bookings from local caches
+  // Aggregate real bookings from database and local storage
   let allBookings = [];
   try {
     const saved = localStorage.getItem('otb_user_bookings');
     if (saved) allBookings = JSON.parse(saved);
+  } catch (e) {}
+
+  if (activePhone) {
+    try {
+      const res = await fetch(`/api/passenger/trips?phone=${activePhone}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.bookings)) {
+          allBookings = data.bookings;
+          localStorage.setItem('otb_user_bookings', JSON.stringify(data.bookings));
+        }
+      }
+    } catch (err) {
+      console.warn('Trip sync fetch error:', err);
+    }
+  }
+
+  try {
     const recent = localStorage.getItem('otb_recent_bookings');
     if (recent) {
       const recentList = JSON.parse(recent);
@@ -1160,30 +1146,10 @@ window.openMyTripsModal = async () => {
     }
   } catch (e) {}
 
-  // If logged in via OTP, background sync genuine bookings from backend API
-  if (activePhone) {
-    try {
-      const res = await fetch(`/api/passenger/trips?phone=${encodeURIComponent(activePhone)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.trips || data.bookings)) {
-          const fetched = data.trips || data.bookings;
-          fetched.forEach(b => {
-            if (!allBookings.some(x => x.bookingId === b.bookingId)) allBookings.unshift(b);
-          });
-          localStorage.setItem('otb_user_bookings', JSON.stringify(allBookings));
-        }
-      }
-    } catch (e) {
-      console.warn('Backend trips sync notice:', e);
-    }
-  }
-
-  // Filter rides if logged in with specific phone
   let rides = allBookings;
   if (activePhone) {
     rides = allBookings.filter(b => {
-      const p = (b.passengerPhone || b.phone || '').replace(/\D/g, '').slice(-10);
+      const p = (b.passengerPhone || '').replace(/\D/g, '').slice(-10);
       return !p || p === activePhone;
     });
   }
@@ -1328,11 +1294,11 @@ window.openMyTripsModal = async () => {
   };
 
   const renderEmptyState = (msg, iconSvg) => `
-    <div style="text-align: center; padding: 36px 16px; background: var(--owc-slate-50); border-radius: var(--radius-lg); border: 1.5px dashed var(--owc-border);">
-      <div style="font-size: 28px; color: var(--owc-text-muted); margin-bottom: 8px;">
+    <div style="text-align: center; padding: 36px 16px; background: var(--owc-slate-50); border-radius: 14px; border: 1.5px dashed var(--owc-border);">
+      <div style="font-size: 30px; margin-bottom: 8px;">
         ${iconSvg || '🚖'}
       </div>
-      <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--owc-text);">${msg}</h4>
+      <h4 style="font-size: 15px; font-weight: 800; margin-bottom: 4px; color: var(--owc-text);">${msg}</h4>
       <p style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 14px;">Travel intercity anywhere in Bihar with certified AC cabs and transparent one-way fares.</p>
       <button type="button" class="btn-select-cab" style="width: auto; padding: 8px 20px; font-size: 12.5px;" onclick="window.closeAllModals(); document.getElementById('booking-hero').scrollIntoView({behavior: 'smooth'})">
         Book One-Way Cab Now
@@ -1340,42 +1306,39 @@ window.openMyTripsModal = async () => {
     </div>
   `;
 
+  const userName = activeUser?.name || 'Verified Passenger';
+  const initial = userName.charAt(0).toUpperCase() || 'P';
+  const walletBalance = activeUser?.walletBalance !== undefined ? activeUser.walletBalance : 100;
+
   body.innerHTML = `
-    <!-- Top Account Verification Status / Login Card -->
-    ${activePhone ? `
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 42px; height: 42px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px;">
-            ${(activeUser?.name || 'P').charAt(0).toUpperCase()}
+    <!-- Minimalist Rider Info Badge (Zero phone input forms, zero login boxes) -->
+    <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 34px; height: 34px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; box-shadow: 0 2px 6px rgba(5,150,105,0.3);">
+          ${initial}
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 13.5px; color: var(--owc-text); display: flex; align-items: center; gap: 6px;">
+            <span>${userName}</span>
+            <span style="font-size: 10px; background: #10b981; color: #fff; padding: 1px 6px; border-radius: 9999px; font-weight: 800;">✓ OTP Verified</span>
           </div>
-          <div>
-            <div style="font-weight: 800; font-size: 15px; color: var(--owc-text); display: flex; align-items: center; gap: 6px;">
-              <span>${activeUser?.name || 'Verified Passenger'}</span>
-              <span style="font-size: 10.5px; background: #10b981; color: #fff; padding: 1px 7px; border-radius: 9999px; font-weight: 800;">✓ OTP Verified</span>
-            </div>
-            <div style="font-size: 12px; color: var(--owc-text-muted);">+91 ${activePhone} • Wallet: ₹${activeUser?.walletBalance !== undefined ? activeUser.walletBalance : 100}</div>
+          <div style="font-size: 11.5px; color: var(--owc-text-muted); display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+            <span>+91 ${activePhone}</span>
+            <span>&bull;</span>
+            <span style="color: #059669; font-weight: 700;">Wallet: ₹${walletBalance}</span>
           </div>
         </div>
-        <button type="button" onclick="window.handlePassengerLogout()" style="background: transparent; border: 1px solid var(--owc-border); color: var(--owc-text-muted); padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;">
-          Switch / Logout
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button type="button" onclick="window.openMyTripsModal()" style="background: transparent; border: 1px solid var(--owc-border); color: var(--owc-text); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Refresh Trips">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Sync
+        </button>
+        <button type="button" onclick="window.handleLogout()" style="background: transparent; border: 1px solid var(--owc-border); color: var(--owc-text-muted); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">
+          Logout
         </button>
       </div>
-    ` : `
-      <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 18px; padding: 32px 20px; text-align: center; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
-        <div style="width: 58px; height: 58px; border-radius: 50%; background: rgba(16, 185, 129, 0.12); color: #10b981; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 26px;">
-          🔐
-        </div>
-        <h3 style="font-size: 18px; font-weight: 800; color: var(--owc-text); margin-bottom: 6px;">
-          Login with OTP to View Your Trips
-        </h3>
-        <p style="font-size: 13px; color: var(--owc-text-muted); line-height: 1.5; margin: 0 auto 20px; max-width: 380px;">
-          Your bookings, assigned chauffeur details, and GST invoices are automatically retrieved when you log in with OTP. No manual phone filling required!
-        </p>
-        <button type="button" class="check-fare-primary-btn" onclick="window.openAuthModal({ returnToTrips: true })" style="padding: 13px 26px; font-size: 14.5px; font-weight: 800; border-radius: 12px; margin: 0 auto; display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
-          <span>📲 Login with OTP ➔</span>
-        </button>
-      </div>
-    `}
+    </div>
 
     <!-- 4 Filter Tabs -->
     <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--owc-border-light);">
@@ -1395,12 +1358,12 @@ window.openMyTripsModal = async () => {
 
     <!-- Tab 1: Upcoming Trips -->
     <div id="customer-tab-upcoming" style="display: ${window.currentTripsTab === 'upcoming' ? 'flex' : 'none'}; flex-direction: column; gap: 12px; max-height: 460px; overflow-y: auto;">
-      ${upcomingRides.length === 0 ? renderEmptyState(activePhone ? `No upcoming trips found for +91 ${activePhone}. Your booked rides and driver allocations will appear here automatically.` : "Please login with OTP above to retrieve and view your confirmed trips.") : upcomingRides.map(r => renderRideCard(r, true)).join("")}
+      ${upcomingRides.length === 0 ? renderEmptyState("No upcoming trips scheduled", "🚖") : upcomingRides.map(r => renderRideCard(r, true)).join("")}
     </div>
 
     <!-- Tab 2: Completed Trips -->
     <div id="customer-tab-completed" style="display: ${window.currentTripsTab === 'completed' ? 'flex' : 'none'}; flex-direction: column; gap: 12px; max-height: 460px; overflow-y: auto;">
-      ${completedRides.length === 0 ? renderEmptyState("No completed trips recorded yet.") : completedRides.map(r => renderRideCard(r, false)).join("")}
+      ${completedRides.length === 0 ? renderEmptyState("No completed trips recorded yet.", "🏁") : completedRides.map(r => renderRideCard(r, false)).join("")}
     </div>
 
     <!-- Tab 3: Cancelled Trips -->

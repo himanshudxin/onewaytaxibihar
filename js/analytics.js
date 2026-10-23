@@ -5,8 +5,8 @@
  */
 
 (function () {
-  // Configurable GA4 Measurement ID (Replace with your live G-XXXXXXXXXX ID)
-  const GA_MEASUREMENT_ID = window.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
+  // Configurable GA4 Measurement ID
+  const GA_MEASUREMENT_ID = window.GA_MEASUREMENT_ID || 'G-1YTK7M3FS3';
   const IS_CONFIGURED = GA_MEASUREMENT_ID && GA_MEASUREMENT_ID !== 'G-XXXXXXXXXX' && /^G-[A-Z0-9]+$/i.test(GA_MEASUREMENT_ID);
 
   // Initialize dataLayer and gtag if not already done
@@ -16,18 +16,21 @@
   }
   window.gtag = window.gtag || gtag;
 
-  // Load Google Tag Manager / GA4 script dynamically if configured
+  // Load Google Tag Manager / GA4 script if not already present in DOM
   if (IS_CONFIGURED) {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script);
+    const existingScript = document.querySelector(`script[src*="${GA_MEASUREMENT_ID}"]`);
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+      document.head.appendChild(script);
 
-    gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID, {
-      send_page_view: true,
-      cookie_flags: 'SameSite=None;Secure'
-    });
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID, {
+        send_page_view: true,
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    }
   }
 
   // Unified Conversion & Event Tracker

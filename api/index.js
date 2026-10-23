@@ -789,6 +789,16 @@ module.exports = async (req, res) => {
       db = dbService.getDb();
     }
     // -------------------------------------------------------------
+    // 0. GOOGLE SEARCH CONSOLE HTML VERIFICATION
+    // -------------------------------------------------------------
+    if (pathname.startsWith('/google') && pathname.endsWith('.html') && method === 'GET') {
+      const fileName = pathname.replace(/^\//, '');
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.end(`google-site-verification: ${fileName}\n`);
+    }
+
+    // -------------------------------------------------------------
     // 1. HEALTHCHECK
     // -------------------------------------------------------------
     if ((pathname === '/health' || pathname === '/status' || pathname === '/' || pathname === '/index.js' || pathname === '') && method === 'GET') {

@@ -57,12 +57,39 @@
 
     document.getElementById('otb-cookie-accept').addEventListener('click', function () {
       localStorage.setItem(CONSENT_KEY, 'all');
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          'analytics_storage': 'granted',
+          'ad_storage': 'granted',
+          'ad_user_data': 'granted',
+          'ad_personalization': 'granted'
+        });
+      }
       banner.remove();
     });
 
     document.getElementById('otb-cookie-reject').addEventListener('click', function () {
       localStorage.setItem(CONSENT_KEY, 'essential_only');
+      if (typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', {
+          'analytics_storage': 'denied',
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied'
+        });
+      }
       banner.remove();
+    });
+  }
+
+  // Restore consent state on page load for Google Analytics
+  const existingConsent = localStorage.getItem(CONSENT_KEY);
+  if (existingConsent === 'all' && typeof window.gtag === 'function') {
+    window.gtag('consent', 'update', {
+      'analytics_storage': 'granted',
+      'ad_storage': 'granted',
+      'ad_user_data': 'granted',
+      'ad_personalization': 'granted'
     });
   }
 

@@ -36,6 +36,7 @@ window.themeManager = null;
     isScrollLocked = false;
     document.documentElement.classList.remove("modal-open");
     document.body.classList.remove("modal-open");
+    document.body.classList.remove("drawer-open");
     document.body.style.position = "";
     document.body.style.top = "";
     document.body.style.left = "";
@@ -45,10 +46,12 @@ window.themeManager = null;
     window.scrollTo(0, savedScrollY);
   };
 
-  // Passive touchmove barrier: prevents dragging backdrop from scrolling page behind modal
+  // Passive touchmove barrier: prevents dragging backdrop from scrolling page behind modal/drawer
   document.addEventListener("touchmove", function(e) {
-    if (document.body.classList.contains("modal-open") || document.documentElement.classList.contains("modal-open")) {
-      const scrollable = e.target.closest(".modal-dialog-box, .modal-body, .drawer-content, .booking-flow-card");
+    const hasModal = !!document.querySelector(".modal-overlay.open");
+    const hasDrawer = (document.getElementById("mobile-drawer") && document.getElementById("mobile-drawer").classList.contains("open")) || document.body.classList.contains("drawer-open");
+    if (hasModal || hasDrawer) {
+      const scrollable = e.target.closest(".modal-dialog-box, .modal-body, .drawer-body, .mobile-nav-drawer, .drawer-content, .booking-flow-card");
       if (!scrollable) {
         if (e.cancelable) e.preventDefault();
         return;
@@ -59,25 +62,25 @@ window.themeManager = null;
     }
   }, { passive: false });
 
-  // Site-wide MutationObserver fallback: guarantees lock if any external script adds modal-open
+  // Site-wide MutationObserver fallback: accurately tracks open modal overlays and drawer
   if (typeof MutationObserver !== "undefined") {
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(m) {
-        if (m.type === "attributes" && m.attributeName === "class") {
-          const hasModal = document.body.classList.contains("modal-open") || document.body.classList.contains("drawer-open");
-          if (hasModal && !isScrollLocked) {
-            window.lockBodyScroll();
-          } else if (!hasModal && isScrollLocked) {
-            window.unlockBodyScroll();
-          }
-        }
-      });
-    });
+    const checkScrollState = function() {
+      const hasModal = !!document.querySelector(".modal-overlay.open");
+      const hasDrawer = (document.getElementById("mobile-drawer") && document.getElementById("mobile-drawer").classList.contains("open")) || document.body.classList.contains("drawer-open");
+      const shouldLock = hasModal || hasDrawer;
+      if (shouldLock && !isScrollLocked) {
+        window.lockBodyScroll();
+      } else if (!shouldLock && isScrollLocked) {
+        window.unlockBodyScroll();
+      }
+    };
+
+    const observer = new MutationObserver(checkScrollState);
     if (document.body) {
-      observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
     } else {
       document.addEventListener("DOMContentLoaded", function() {
-        observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+        observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
       });
     }
   }
@@ -2631,6 +2634,7 @@ window.addEventListener("popstate", (e) => {
     drawer.classList.remove("open");
     if (backdrop) backdrop.classList.remove("active");
     document.body.classList.remove("drawer-open");
+    if (window.unlockBodyScroll) window.unlockBodyScroll();
     return;
   }
 
@@ -2650,14 +2654,23 @@ window.addEventListener("popstate", (e) => {
     return;
   }
 
-  // 3. Handle step back from cab selection to hero booking form
-  if (!window.location.hash || window.location.hash === "#hero" || window.location.hash === "") {
+  // 3. Only step back to hero booking form if state explicitly specifies returning to hero
+  if (e.state && e.state.step === "hero") {
     const hero = document.getElementById("booking-hero");
     if (hero) {
       hero.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 });
+
+window.toggleMobileDrawer = () => {
+  const d = document.getElementById("mobile-drawer");
+  if (d && d.classList.contains("open")) {
+    window.closeMobileDrawer(true);
+  } else {
+    window.openMobileDrawer();
+  }
+};
 
 window.openMobileDrawer = () => {
   const d = document.getElementById("mobile-drawer");
@@ -2666,7 +2679,10 @@ window.openMobileDrawer = () => {
     d.classList.add("open");
     if (b) b.classList.add("active");
     document.body.classList.add("drawer-open");
-    history.pushState({ drawer: true }, "", "#menu");
+    if (window.lockBodyScroll) window.lockBodyScroll();
+    try {
+      history.pushState({ drawer: true }, "", "#menu");
+    } catch (e) {}
   }
 };
 
@@ -2677,6 +2693,7 @@ window.closeMobileDrawer = (updateHistory = false) => {
     d.classList.remove("open");
     if (b) b.classList.remove("active");
     document.body.classList.remove("drawer-open");
+    if (window.unlockBodyScroll) window.unlockBodyScroll();
     if (updateHistory && window.location.hash === "#menu") {
       try {
         history.back();
@@ -2702,15 +2719,12 @@ document.addEventListener("keydown", (e) => {
 
 function setupMobileDrawer() {
   const btn = document.getElementById("btn-hamburger");
-  const drawer = document.getElementById("mobile-drawer");
-  if (btn && drawer) {
-    btn.addEventListener("click", () => {
-      if (drawer.classList.contains("open")) {
-        window.closeMobileDrawer(true);
-      } else {
-        window.openMobileDrawer();
-      }
-    });
+  if (btn) {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.toggleMobileDrawer();
+    };
   }
 }
 

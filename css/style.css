@@ -1122,10 +1122,11 @@ body.call-bar-collapsed .navbar-call-mini-pill {
   background: rgba(4, 7, 13, 0.65);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 9998;
+  z-index: 1000005 !important;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  touch-action: none;
 }
 
 .drawer-backdrop.active,
@@ -1136,7 +1137,6 @@ body.drawer-open .drawer-backdrop {
 
 body.drawer-open {
   overflow: hidden !important;
-  touch-action: none;
 }
 
 .mobile-nav-drawer {
@@ -1149,7 +1149,7 @@ body.drawer-open {
   height: 100vh;
   height: 100dvh;
   background: var(--owc-card-bg);
-  z-index: 9999;
+  z-index: 1000006 !important;
   display: flex;
   flex-direction: column;
   box-shadow: -10px 0 36px rgba(0, 0, 0, 0.38);
@@ -1158,6 +1158,7 @@ body.drawer-open {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   box-sizing: border-box;
+  touch-action: pan-y !important;
 }
 
 .mobile-nav-drawer.open {
@@ -1255,8 +1256,10 @@ body.drawer-open {
 /* Scrollable Drawer Body */
 .drawer-body {
   flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  overscroll-behavior: contain !important;
   padding: 14px 14px 20px 14px;
   display: flex;
   flex-direction: column;

@@ -82,3 +82,17 @@
 - Cache Busting:
   - Bumped Service Worker cache to `onewaytaxibihar-v9.2-trips-redesign-20261023` and updated asset version strings to `?v=20261023_v38_trips`.
 - Tested: Node syntax validation PASS across `js/app.js`, `js/firebase-otp.js`, and `sw.js`.
+
+[2026-10-23] Phase 8: Mobile Navigation Drawer (Three Bars) Interaction & Scroll Lock Remediation:
+- Solved Page Stuck & Scroll Freeze on Drawer Toggle:
+  - Fixed MutationObserver in `app.js` to inspect genuine open elements (`document.querySelector(".modal-overlay.open")` and drawer state) rather than persisting on self-assigned `modal-open` class.
+  - Added explicit `window.unlockBodyScroll()` invocation inside `closeMobileDrawer()` and `popstate`.
+  - Added `.drawer-body` and `.mobile-nav-drawer` to allowed touchmove scrollable targets with `touch-action: pan-y !important;` and `overscroll-behavior: contain !important;` so menu scrolls freely.
+- Solved Unintended Jump to Booking Hero Page:
+  - Eradicated blanket generic fallback in `popstate` that indiscriminately scrolled window to `#booking-hero` whenever hash became empty upon closing the drawer.
+- Z-Index & Trigger Hardening:
+  - Elevated `.drawer-backdrop` (`z-index: 1000005 !important;`) and `.mobile-nav-drawer` (`z-index: 1000006 !important;`) above bottom nav bar and overlays.
+  - Added `window.toggleMobileDrawer()` and attached direct inline onclick handler to `#btn-hamburger`.
+- Cache Busting:
+  - Bumped Service Worker cache to `onewaytaxibihar-v9.3-drawer-fix-20261023` and updated asset version strings to `?v=20261023_v39_fixes`.
+- Tested: Node syntax validation PASS across `js/app.js`, `js/cookie-consent.js`, and `sw.js`.

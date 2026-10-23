@@ -53,7 +53,12 @@
 - [x] 7.2 Automatic Trips Fetch via OTP Session: Trips are strictly fetched from backend `/api/passenger/trips?phone=` using verified session phone (`window.currentUser.phone` / `otb_passenger_logged_in`).
 - [x] 7.3 Remove In-Modal Login Section: Eradicated redundant "Login with OTP to View Your Trips" card and duplicate empty states inside the My Trips modal.
 - [x] 7.4 Seamless Unauthenticated Routing: Unauthenticated riders tapping My Trips are routed directly to the clean SMS OTP modal with `_authReturnTo = 'trips'`, returning immediately into My Trips upon verification.
-- [x] 7.5 Modern Rider Header & Sync: Added sleek verified passenger badge (`👤 +91 XXXXX XXXXX • OTP Verified • ₹100 Wallet`), 1-tap live sync, and clean empty states.
+### Phase 8: Mobile Navigation Drawer (Three Bars) Interaction & Scroll Lock Remediation
+- [x] 8.1 Fix Drawer Scroll Freeze: Fixed `unlockBodyScroll` handling when closing drawer and fixed MutationObserver to evaluate actual open modals and drawer state instead of getting stuck on `modal-open`.
+- [x] 8.2 Touch Barrier Containment: Added `.drawer-body` and `.mobile-nav-drawer` to allowed touchmove scrollable targets with `touch-action: pan-y !important;` and `overscroll-behavior: contain !important;` so menu scrolls freely.
+- [x] 8.3 Fix Unintended Booking Hero Jump: Removed generic `popstate` redirect to `#booking-hero` on drawer close; user remains at their current scroll location without unexpected jumps.
+- [x] 8.4 Z-Index Hierarchy: Elevated `.drawer-backdrop` (`z-index: 1000005`) and `.mobile-nav-drawer` (`z-index: 1000006`) above all fixed overlays.
+- [x] 8.5 Toggle Menu Handler: Added `window.toggleMobileDrawer()` and attached direct inline onclick handler to `#btn-hamburger`.
 
 ---
 

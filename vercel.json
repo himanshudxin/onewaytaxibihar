@@ -1,8 +1,7 @@
 {
-  "cleanUrls": true,
+  "cleanUrls": false,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/(google[a-zA-Z0-9_-]+\\.html)", "destination": "/api" },
     { "source": "/api/admin/leads/:path*", "destination": "/api/leads" },
     { "source": "/api/admin/leads", "destination": "/api/leads" },
     { "source": "/api/admin/enquiries/:path*", "destination": "/api/leads" },
@@ -14,7 +13,32 @@
     { "source": "/api/enquiries/:path*", "destination": "/api/leads" },
     { "source": "/api/enquiries", "destination": "/api/leads" },
     { "source": "/api/health", "destination": "/api/health" },
-    { "source": "/api/:path*", "destination": "/api" }
+    { "source": "/api/:path*", "destination": "/api" },
+
+    { "source": "/cabs", "destination": "/cabs.html" },
+    { "source": "/booking", "destination": "/booking.html" },
+    { "source": "/payment", "destination": "/payment.html" },
+    { "source": "/fare-chart", "destination": "/fare-chart.html" },
+    { "source": "/passenger", "destination": "/passenger.html" },
+    { "source": "/driver", "destination": "/driver.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+
+    { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
+    { "source": "/terms-of-service", "destination": "/terms-of-service.html" },
+    { "source": "/refund-policy", "destination": "/refund-policy.html" },
+    { "source": "/cookie-policy", "destination": "/cookie-policy.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/data-deletion", "destination": "/data-deletion.html" },
+
+    { "source": "/patna-airport-taxi", "destination": "/patna-airport-taxi.html" },
+    { "source": "/bihar-airport-taxi", "destination": "/bihar-airport-taxi.html" },
+    { "source": "/outstation-cab-bihar", "destination": "/outstation-cab-bihar.html" },
+    { "source": "/patna-to-gaya-cab", "destination": "/patna-to-gaya-cab.html" },
+    { "source": "/patna-to-muzaffarpur-cab", "destination": "/patna-to-muzaffarpur-cab.html" },
+    { "source": "/patna-to-darbhanga-cab", "destination": "/patna-to-darbhanga-cab.html" },
+    { "source": "/patna-to-bhagalpur-cab", "destination": "/patna-to-bhagalpur-cab.html" },
+    { "source": "/patna-to-bodh-gaya-taxi", "destination": "/patna-to-bodh-gaya-taxi.html" },
+    { "source": "/patna-to-varanasi-taxi", "destination": "/patna-to-varanasi-taxi.html" }
   ],
   "headers": [
     {

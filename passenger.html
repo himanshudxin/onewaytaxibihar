@@ -747,6 +747,39 @@
 
       <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">Active Bihar Promo Offers</h3>
       
+      <!-- Animated Festival Special Coupon (Chhath Puja Mahaparv & Diwali) -->
+      <div class="festive-coupon-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+          <span class="festive-badge">🪔 CHHATH PUJA &amp; DIWALI SPECIAL</span>
+          <span style="font-size: 11px; font-weight: 800; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.4);">
+            ✨ FIRST TRIP OFFER
+          </span>
+        </div>
+
+        <h3 style="font-size: 20px; font-weight: 900; margin: 12px 0 6px; letter-spacing: -0.3px; line-height: 1.25;">
+          Flat ₹100 Instant Discount
+        </h3>
+        <p style="font-size: 13px; opacity: 0.9; margin: 0 0 14px; line-height: 1.5;">
+          Celebrate with family! Get ₹100 instant cash discount on your first outstation cab booking across all 38 districts of Bihar.
+        </p>
+
+        <div class="festive-code-row">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; opacity: 0.8; margin-bottom: 2px;">
+              PROMO CODE
+            </div>
+            <div class="festive-code-val">CHHATH100</div>
+          </div>
+          <button type="button" class="btn-copy-code" onclick="copyCode('CHHATH100', this)" style="background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);">
+            📋 Copy Code
+          </button>
+        </div>
+
+        <a href="index.html" class="btn-act btn-act-primary" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #10b981 100%); font-weight: 800; text-decoration: none; padding: 12px; border-radius: 10px;">
+          ⚡ Apply ₹100 OFF &amp; Book Cab Now ➔
+        </a>
+      </div>
+
       <div class="coupon-card">
         <div>
           <span class="coupon-code-tag">BIHAR100</span>
@@ -844,6 +877,32 @@
 
   </main>
 
+  <!-- Voyago-Style Mobile Bottom App Navigation Bar (With Dynamic Active State) -->
+  <nav class="voyago-bottom-nav" id="voyago-bottom-nav" role="navigation" aria-label="Mobile Navigation">
+    <a href="index.html" class="voyago-nav-item" id="pnav-home" aria-label="Go to Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="javascript:void(0)" class="voyago-nav-item active" id="pnav-trips" onclick="switchPortalTab('trips')" aria-label="View My Bookings">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>My Trips</span>
+    </a>
+    <a href="index.html#booking-hero" class="voyago-nav-item" id="pnav-book" aria-label="Book a Cab Now">
+      <div class="voyago-nav-center-btn" title="Instant Cab Booking">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11 2 11.5 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      </div>
+      <span>Book Cab</span>
+    </a>
+    <a href="javascript:void(0)" class="voyago-nav-item" id="pnav-wallet" onclick="switchPortalTab('wallet')" aria-label="View Offers and Coupons">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Offers</span>
+    </a>
+    <a href="javascript:void(0)" class="voyago-nav-item" id="pnav-support" onclick="switchPortalTab('support')" aria-label="24x7 Customer Support">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span>Support</span>
+    </a>
+  </nav>
+
   <!-- Printable Invoice Receipt Modal -->
   <div class="invoice-modal" id="invoice-modal" onclick="closeInvoiceModal(event)">
     <div class="invoice-modal-content" onclick="event.stopPropagation()">
@@ -890,7 +949,7 @@
         });
       }
 
-      // Switch Tab Function
+      // Switch Tab Function (with dynamic bottom bar active state)
       window.switchPortalTab = function (tabKey) {
         document.querySelectorAll('.portal-tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
@@ -899,6 +958,19 @@
         const targetPanel = document.getElementById(`panel-${tabKey}`);
         if (targetBtn) targetBtn.classList.add('active');
         if (targetPanel) targetPanel.classList.add('active');
+
+        // Dynamic sync with Voyago bottom navigation bar
+        document.querySelectorAll('#voyago-bottom-nav .voyago-nav-item').forEach(el => el.classList.remove('active'));
+        if (tabKey === 'trips' || tabKey === 'tours') {
+          const el = document.getElementById('pnav-trips');
+          if (el) el.classList.add('active');
+        } else if (tabKey === 'wallet') {
+          const el = document.getElementById('pnav-wallet');
+          if (el) el.classList.add('active');
+        } else if (tabKey === 'support') {
+          const el = document.getElementById('pnav-support');
+          if (el) el.classList.add('active');
+        }
       };
 
       // Copy Promo Code
@@ -930,8 +1002,38 @@
         return (p || '').replace(/\D/g, '').slice(-10);
       }
 
+      // Handle Phone Lookup / Login
+      window.handlePortalPhoneLookup = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const input = document.getElementById('portal-lookup-phone');
+        const phone = cleanPhone(input ? input.value : '');
+        if (!phone || phone.length !== 10) {
+          alert('Please enter a valid 10-digit Indian mobile number');
+          if (input) input.focus();
+          return false;
+        }
+        localStorage.setItem('otb_passenger_logged_in', phone);
+        localStorage.setItem('otb_last_passenger_phone', phone);
+        loadPassengerData(phone);
+        return false;
+      };
+
+      // Handle Portal Logout / Switch Number
+      window.handlePortalLogout = function () {
+        localStorage.removeItem('otb_passenger_logged_in');
+        localStorage.removeItem('otb_last_passenger_phone');
+        loadPassengerData();
+      };
+
       // Load Bookings & Passenger Details
-      async function loadPassengerData() {
+      async function loadPassengerData(forcedPhone) {
+        let activePhone = cleanPhone(
+          forcedPhone ||
+          localStorage.getItem('otb_passenger_logged_in') ||
+          sessionStorage.getItem('otb_passenger_logged_in') ||
+          localStorage.getItem('otb_last_passenger_phone') || ''
+        );
+
         let bookings = [];
         try {
           const saved = localStorage.getItem('otb_recent_bookings');
@@ -939,6 +1041,74 @@
         } catch (e) {
           console.warn('Error reading bookings:', e);
         }
+
+        const tripsContainer = document.getElementById('trips-list-container');
+        const invoicesContainer = document.getElementById('invoices-list-container');
+        const nameEl = document.getElementById('display-passenger-name');
+        const phoneEl = document.getElementById('display-passenger-phone');
+        const avatarEl = document.getElementById('avatar-initial');
+        const countBadge = document.getElementById('badge-trips-count');
+        const statRides = document.getElementById('stat-total-rides');
+
+        // Check if NOT logged in
+        if (!activePhone) {
+          if (nameEl) nameEl.textContent = 'Guest Traveler';
+          if (phoneEl) {
+            phoneEl.innerHTML = `<span style="color:var(--owc-text-muted);">Not Logged In</span> <a href="javascript:void(0)" onclick="document.getElementById('portal-lookup-phone')?.focus()" style="color:var(--owc-primary); font-weight:800; font-size:12px; margin-left:6px; text-decoration:none;">Login ➔</a>`;
+          }
+          if (avatarEl) avatarEl.textContent = '👤';
+          if (countBadge) countBadge.textContent = '0';
+          if (statRides) statRides.textContent = '0';
+
+          if (tripsContainer) {
+            tripsContainer.innerHTML = `
+              <div class="empty-state-box" style="max-width:440px; margin:20px auto; padding:28px 20px; background:var(--owc-card-bg); border:1.5px solid var(--owc-border); border-radius:18px; text-align:center;">
+                <div style="width:54px; height:54px; border-radius:50%; background:rgba(16, 185, 129, 0.12); color:#10b981; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:26px;">📱</div>
+                <h3 style="font-size:18px; font-weight:800; color:var(--owc-text); margin:0 0 6px;">Passenger Trip Login</h3>
+                <p style="font-size:13px; color:var(--owc-text-muted); line-height:1.5; margin:0 0 20px;">Enter your 10-digit mobile number used during booking to track chauffeur allocation, download GST invoices, and manage rides.</p>
+                <form onsubmit="return window.handlePortalPhoneLookup(event)" style="display:flex; flex-direction:column; gap:12px;">
+                  <div style="position:relative; display:flex; align-items:center;">
+                    <span style="position:absolute; left:14px; font-weight:800; font-size:14px; color:var(--owc-text-muted);">+91</span>
+                    <input type="tel" id="portal-lookup-phone" maxlength="10" placeholder="Enter 10-digit mobile number" style="width:100%; box-sizing:border-box; padding:12px 14px 12px 52px; font-size:15px; font-weight:700; border:1.5px solid var(--owc-border); border-radius:12px; background:var(--owc-slate-50); color:var(--owc-text); outline:none;" required>
+                  </div>
+                  <button type="submit" class="btn-act btn-act-primary" style="padding:13px; font-size:14px; font-weight:800; border-radius:12px; justify-content:center; width:100%;">
+                    🔍 View My Rides &amp; Invoices
+                  </button>
+                </form>
+                <div style="margin-top:16px; font-size:12px; color:var(--owc-text-muted);">
+                  Need to book a new ride? <a href="index.html" style="color:var(--owc-primary); font-weight:700; text-decoration:none;">Book Outstation Cab ➔</a>
+                </div>
+              </div>
+            `;
+          }
+          if (invoicesContainer) {
+            invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 28px 16px;"><span style="font-size:24px; display:block; margin-bottom:8px;">🧾</span>Please enter your 10-digit mobile number in the <strong>My Bookings</strong> tab to retrieve and print your GST tax receipts.</div>`;
+          }
+          return;
+        }
+
+        // Fetch genuine trips from backend for this active phone
+        try {
+          const res = await fetch(`/api/passenger/trips?phone=${encodeURIComponent(activePhone)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && Array.isArray(data.trips)) {
+              const map = new Map();
+              bookings.forEach(b => { if (b && b.bookingId) map.set(b.bookingId, b); });
+              data.trips.forEach(b => { if (b && b.bookingId) map.set(b.bookingId, b); });
+              bookings = Array.from(map.values());
+            }
+          }
+        } catch (e) {
+          console.warn('Network sync trips fallback:', e);
+        }
+
+        // Filter bookings matching this phone
+        bookings = bookings.filter(b => {
+          if (!b) return false;
+          const bPhone = cleanPhone(b.passengerPhone || b.phone || '');
+          return !bPhone || bPhone === activePhone;
+        });
 
         // Also check last rider details
         let rider = null;
@@ -948,16 +1118,14 @@
         } catch (e) {}
 
         const latestBooking = bookings && bookings.length > 0 ? bookings[0] : null;
-        const passengerName = (rider && rider.passengerName) || (latestBooking && latestBooking.passengerName) || 'Valued Passenger';
-        const passengerPhone = (rider && rider.passengerPhone) || (latestBooking && latestBooking.passengerPhone) || localStorage.getItem('otb_last_passenger_phone') || '8002141816';
+        const passengerName = (rider && rider.passengerName) || (latestBooking && latestBooking.passengerName) || 'Verified Passenger';
 
         // Update Profile
-        const nameEl = document.getElementById('display-passenger-name');
-        const phoneEl = document.getElementById('display-passenger-phone');
-        const avatarEl = document.getElementById('avatar-initial');
         if (nameEl) nameEl.textContent = passengerName;
-        if (phoneEl) phoneEl.textContent = `+91 ${passengerPhone}`;
-        if (avatarEl) avatarEl.textContent = passengerName.charAt(0) || 'P';
+        if (phoneEl) {
+          phoneEl.innerHTML = `+91 ${activePhone} <button onclick="window.handlePortalLogout()" class="btn-act" style="padding:2px 8px; font-size:11px; margin-left:8px; border-radius:6px; cursor:pointer;" title="Switch or logout">Switch</button>`;
+        }
+        if (avatarEl) avatarEl.textContent = passengerName.charAt(0).toUpperCase() || 'P';
 
         // Background sync each booking status from live backend
         if (bookings && bookings.length > 0) {
@@ -987,27 +1155,26 @@
         }
 
         const ridesCount = bookings.length;
-        const countBadge = document.getElementById('badge-trips-count');
-        const statRides = document.getElementById('stat-total-rides');
         if (countBadge) countBadge.textContent = ridesCount;
         if (statRides) statRides.textContent = ridesCount;
 
-        // Render Bookings List
-        const tripsContainer = document.getElementById('trips-list-container');
-        const invoicesContainer = document.getElementById('invoices-list-container');
-
         if (!bookings || bookings.length === 0) {
           tripsContainer.innerHTML = `
-            <div class="empty-state-box">
+            <div class="empty-state-box" style="padding:32px 16px; text-align:center;">
               <div class="empty-icon">🚖</div>
-              <h3 class="empty-title">No Active Bookings Found</h3>
-              <p class="empty-desc">You don't have any pending or scheduled trips. Book your next intercity journey across Bihar with guaranteed one-way zero return fares.</p>
-              <a href="index.html" class="btn-new-ride" style="padding: 10px 22px; font-size: 14px; display: inline-flex;">
-                Book a Cab Now ➔
-              </a>
+              <h3 class="empty-title">No Bookings Found for +91 ${activePhone}</h3>
+              <p class="empty-desc">We couldn't find any trips associated with this mobile number. Book an outstation ride across Bihar with flat ₹100 festival discount (Code: FEST100 / CHHATH100).</p>
+              <div style="display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;">
+                <a href="index.html" class="btn-new-ride" style="padding: 10px 22px; font-size: 14px; display: inline-flex;">
+                  Book a Cab Now ➔
+                </a>
+                <button onclick="window.handlePortalLogout()" class="btn-act" style="padding: 10px 18px; font-size: 13.5px;">
+                  Use Different Number
+                </button>
+              </div>
             </div>
           `;
-          invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 20px 0;">No tax invoices generated yet. Invoices appear here after booking.</div>`;
+          invoicesContainer.innerHTML = `<div style="text-align: center; color: var(--owc-text-muted); font-size: 13px; padding: 20px 0;">No tax invoices generated yet for +91 ${activePhone}. Invoices appear here after booking.</div>`;
           return;
         }
 

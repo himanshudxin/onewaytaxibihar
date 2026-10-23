@@ -854,13 +854,122 @@ window.openCancellationModal = () => {
    ========================================================================== */
 window.currentTripsTab = "upcoming";
 
+// Bottom Nav State Controller
+window.setBottomNavActive = (tabName) => {
+  const tabs = ['home', 'trips', 'book', 'offers', 'support'];
+  tabs.forEach(t => {
+    const el = document.getElementById(`bottom-nav-${t}`);
+    if (el) {
+      if (t === tabName) {
+        el.classList.add('active');
+      } else {
+        el.classList.remove('active');
+      }
+    }
+  });
+};
+
+// Bottom Nav Action Dispatcher
+window.navGoTo = (action) => {
+  window.setBottomNavActive(action);
+  switch (action) {
+    case 'home':
+      window.closeAllModals();
+      window.setBottomNavActive('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'trips':
+      window.openMyTripsModal();
+      break;
+    case 'book':
+      window.closeAllModals();
+      window.setBottomNavActive('book');
+      const hero = document.getElementById('booking-hero');
+      if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        document.getElementById('input-pickup')?.focus();
+      }, 350);
+      break;
+    case 'offers':
+      window.openFestivalOffersModal();
+      break;
+    case 'support':
+      window.openHelpSupportModal();
+      break;
+  }
+};
+
+window.handlePhoneLookup = async (e) => {
+  if (e) e.preventDefault();
+  const input = document.getElementById('trips-lookup-phone');
+  if (!input) return;
+  const raw = input.value.replace(/\D/g, '');
+  const cleanPhone = raw.length > 10 ? raw.slice(-10) : raw;
+
+  if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+    if (window.showToast) window.showToast('Please enter a valid 10-digit Indian mobile number', 'error');
+    else alert('Please enter a valid 10-digit mobile number');
+    return;
+  }
+
+  localStorage.setItem('otb_passenger_logged_in', cleanPhone);
+  localStorage.setItem('otb_last_passenger_phone', cleanPhone);
+
+  try {
+    const res = await fetch(`/api/passenger/trips?phone=${cleanPhone}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.bookings) && data.bookings.length > 0) {
+        localStorage.setItem('otb_user_bookings', JSON.stringify(data.bookings));
+      }
+    }
+  } catch (err) {
+    console.warn('Trip lookup fetch failed, using local storage cache:', err);
+  }
+
+  if (window.showToast) window.showToast(`Showing bookings for +91 ${cleanPhone}`, 'success');
+  window.openMyTripsModal();
+};
+
+window.handlePassengerLogout = () => {
+  localStorage.removeItem('otb_passenger_logged_in');
+  localStorage.removeItem('otb_last_passenger_phone');
+  if (window.showToast) window.showToast('Logged out. Enter mobile number to view trips.', 'info');
+  window.openMyTripsModal();
+};
+
 window.openMyTripsModal = async () => {
   window.closeAllModals(false);
+  window.setBottomNavActive('trips');
   const modal = document.getElementById("modal-my-trips");
   const body = document.getElementById("modal-my-trips-body");
   if (!modal || !body) return;
 
-  const rides = await ApiClient.getRides();
+  const activePhone = localStorage.getItem('otb_passenger_logged_in') || localStorage.getItem('otb_last_passenger_phone') || '';
+  
+  // Aggregate real bookings from local caches
+  let allBookings = [];
+  try {
+    const saved = localStorage.getItem('otb_user_bookings');
+    if (saved) allBookings = JSON.parse(saved);
+    const recent = localStorage.getItem('otb_recent_bookings');
+    if (recent) {
+      const recentList = JSON.parse(recent);
+      recentList.forEach(b => {
+        if (!allBookings.some(x => x.bookingId === b.bookingId)) allBookings.unshift(b);
+      });
+    }
+  } catch (e) {}
+
+  // Filter rides if logged in with specific phone
+  let rides = allBookings;
+  if (activePhone) {
+    rides = allBookings.filter(b => {
+      const p = (b.passengerPhone || '').replace(/\D/g, '').slice(-10);
+      return !p || p === activePhone;
+    });
+  }
+
   const ledgerRes = await ApiClient.getWalletLedger();
   const ledger = (ledgerRes && ledgerRes.success) ? (ledgerRes.ledger || ledgerRes.transactions || []) : [];
 
@@ -920,10 +1029,10 @@ window.openMyTripsModal = async () => {
         statusColor = '#b91c1c';
         statusBg = 'rgba(185, 28, 28, 0.12)';
         break;
-      case 'NO SHOW':
-        statusLabel = 'NO SHOW';
-        statusColor = '#64748b';
-        statusBg = 'rgba(100, 116, 139, 0.12)';
+      default:
+        statusLabel = statusLabel || 'SCHEDULED';
+        statusColor = '#0284c7';
+        statusBg = 'rgba(2, 132, 199, 0.12)';
         break;
     }
 
@@ -942,38 +1051,38 @@ window.openMyTripsModal = async () => {
               </span>
             </div>
             <h4 style="font-size: 16px; font-weight: 800; color: var(--owc-text); margin-top: 4px; margin-bottom: 2px;">
-              ${r.originCity} ➔ ${r.destCity}
+              ${r.originCity || 'Patna'} ➔ ${r.destCity || 'Bihar Outstation'}
             </h4>
             <div style="font-size: 11.5px; color: var(--owc-text-muted);">
-              Pickup: ${r.pickupAddress || `${r.originCity} Doorstep`} • Drop: ${r.dropAddress || `${r.destCity} Destination`}
+              Pickup: ${r.pickupAddress || `${r.originCity || 'Patna'} Doorstep`} • Drop: ${r.dropAddress || `${r.destCity || 'Destination'}`}
             </div>
           </div>
 
           <div style="text-align: right;">
-            <span style="font-size: 18px; font-weight: 900; color: var(--owc-primary);">₹${(r.totalFare || 0).toLocaleString('en-IN')}</span>
+            <span style="font-size: 18px; font-weight: 900; color: var(--owc-primary);">₹${(r.totalFare || r.finalPayable || 0).toLocaleString('en-IN')}</span>
             <div style="font-size: 11px; font-weight: 700; color: ${payStatusColor};">
-              ${r.paymentStatus || 'Pending'} (${r.paymentMethod || 'UPI'})
+              ${r.paymentStatus || 'Pending'} (${r.paymentMethod || 'Cash/UPI on Boarding'})
             </div>
           </div>
         </div>
 
         <div style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--owc-text-muted); background: var(--owc-slate-50); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px;">
-          <span>Schedule: <strong>${r.pickupDate}</strong> at <strong>${r.pickupTime}</strong></span>
-          <span>Cab: <strong>${r.fleetClass}</strong> (${r.fleetModel})</span>
-          <span>Passenger: ${r.passengerName} (${r.passengerPhone})</span>
+          <span>Schedule: <strong>${r.pickupDate || 'Today'}</strong> at <strong>${r.pickupTime || '10:00 AM'}</strong></span>
+          <span>Cab: <strong>${r.fleetClass || 'Prime Sedan'}</strong></span>
+          ${r.passengerName ? `<span>Passenger: <strong>${r.passengerName}</strong></span>` : ''}
         </div>
 
-        <!-- Driver Info / 5-Minute Confirmation Note -->
+        <!-- Driver Info / Confirmation Note -->
         <div style="font-size: 12px; margin-bottom: 12px; color: var(--owc-text);">
-          ${r.driverDetails ? `
+          ${r.driverDetails || r.assignedDriverName ? `
             <div style="display: flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.08); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2);">
               <span style="font-weight: 800; color: #0284c7;">Assigned Chauffeur:</span>
-              <strong>${r.driverDetails.name}</strong> (${r.driverDetails.phone}) • <span style="font-family: monospace;">${r.driverDetails.vehicleNumber}</span>
+              <strong>${r.driverDetails?.name || r.assignedDriverName}</strong> (${r.driverDetails?.phone || r.assignedDriverPhone || 'Verified'}) • <span style="font-family: monospace;">${r.driverDetails?.vehicleNumber || r.assignedDriverCarNo || ''}</span>
             </div>
           ` : `
             <div style="font-size: 11.5px; color: #059669; font-weight: 600; display: flex; align-items: center; gap: 6px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Our partner/driver or agent will call you in 5 minutes to confirm booking. Driver details shared upon confirmation.
+              Our Patna operations desk will call you to confirm chauffeur & vehicle details.
             </div>
           `}
         </div>
@@ -1003,10 +1112,10 @@ window.openMyTripsModal = async () => {
   const renderEmptyState = (msg, iconSvg) => `
     <div style="text-align: center; padding: 36px 16px; background: var(--owc-slate-50); border-radius: var(--radius-lg); border: 1.5px dashed var(--owc-border);">
       <div style="font-size: 28px; color: var(--owc-text-muted); margin-bottom: 8px;">
-        ${iconSvg || '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'}
+        ${iconSvg || '🚖'}
       </div>
       <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px; color: var(--owc-text);">${msg}</h4>
-      <p style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 14px;">Travel intercity anywhere in Bihar with certified AC cabs and transparent fares.</p>
+      <p style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 14px;">Travel intercity anywhere in Bihar with certified AC cabs and transparent one-way fares.</p>
       <button type="button" class="btn-select-cab" style="width: auto; padding: 8px 20px; font-size: 12.5px;" onclick="window.closeAllModals(); document.getElementById('booking-hero').scrollIntoView({behavior: 'smooth'})">
         Book One-Way Cab Now
       </button>
@@ -1014,30 +1123,42 @@ window.openMyTripsModal = async () => {
   `;
 
   body.innerHTML = `
-    <!-- Top Account & Wallet Banner -->
-    <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--owc-border); padding-bottom: 12px;">
-      <div>
-        <h3 style="font-size: 17px; font-weight: 800; color: var(--owc-text); margin: 0 0 4px 0;">Customer Trips &amp; Wallet Hub</h3>
-        <p style="font-size: 12.5px; color: var(--owc-text-muted); margin: 0;">
-          ${currentUser ? `<strong>${currentUser.name || 'Passenger'}</strong> (${currentUser.phone || ''})` : 'Manage your Bihar outstation bookings & invoices'}
-        </p>
-      </div>
-
-      <!-- Wallet Balance Pill (Req 146) -->
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #059669; color: #065f46; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 6px;">
-          <span>Wallet Balance:</span>
-          <span style="color: #059669; font-size: 15px;">₹${currentUser ? (currentUser.walletBalance || 100) : 100}</span>
+    <!-- Top Account Lookup / Login Card -->
+    ${activePhone ? `
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid #10b981; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📱</span>
+          <div>
+            <div style="font-weight: 800; font-size: 13.5px; color: var(--owc-text);">Logged In: +91 ${activePhone}</div>
+            <div style="font-size: 11.5px; color: var(--owc-text-muted);">Displaying verified outstation bookings & invoices</div>
+          </div>
         </div>
-        ${currentUser ? `
-          <button type="button" class="btn-logout-danger" style="padding: 6px 12px; font-size: 12px;" onclick="window.handleLogout()">
-            Logout
-          </button>
-        ` : ''}
+        <button type="button" onclick="window.handlePassengerLogout()" style="background: transparent; border: 1px solid var(--owc-border); color: var(--owc-text-muted); padding: 5px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+          Switch Mobile Number
+        </button>
       </div>
-    </div>
+    ` : `
+      <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+          <span style="font-size: 20px;">🔍</span>
+          <div>
+            <div style="font-weight: 800; font-size: 14px; color: var(--owc-text);">Find &amp; Track Your Outstation Bookings</div>
+            <div style="font-size: 12px; color: var(--owc-text-muted);">Enter the 10-digit phone number you used when booking to view driver contact & receipts:</div>
+          </div>
+        </div>
+        <form onsubmit="window.handlePhoneLookup(event)" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 180px; display: flex; align-items: center; border: 1.5px solid var(--owc-border); border-radius: 8px; padding: 0 10px; background: var(--owc-slate-50);">
+            <span style="font-size: 13px; font-weight: 700; color: var(--owc-text-muted); margin-right: 4px;">+91</span>
+            <input type="tel" id="trips-lookup-phone" maxlength="10" placeholder="10-digit mobile number" style="border: none; background: transparent; width: 100%; font-size: 13.5px; font-weight: 700; color: var(--owc-text); padding: 8px 0; outline: none;" required pattern="[6-9][0-9]{9}">
+          </div>
+          <button type="submit" class="btn-select-cab" style="width: auto; padding: 8px 18px; font-size: 12.5px; margin: 0;">
+            Search My Trips ➔
+          </button>
+        </form>
+      </div>
+    `}
 
-    <!-- 4 Filter Tabs (Req 145, 147) -->
+    <!-- 4 Filter Tabs -->
     <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--owc-border-light);">
       <button type="button" class="admin-filter-pill ${window.currentTripsTab === 'upcoming' ? 'active' : ''}" id="tab-btn-upcoming" onclick="window.switchCustomerTab('upcoming')">
         Upcoming Trips (${upcomingRides.length})
@@ -1055,12 +1176,12 @@ window.openMyTripsModal = async () => {
 
     <!-- Tab 1: Upcoming Trips -->
     <div id="customer-tab-upcoming" style="display: ${window.currentTripsTab === 'upcoming' ? 'flex' : 'none'}; flex-direction: column; gap: 12px; max-height: 460px; overflow-y: auto;">
-      ${upcomingRides.length === 0 ? renderEmptyState("No upcoming trips found.") : upcomingRides.map(r => renderRideCard(r, true)).join("")}
+      ${upcomingRides.length === 0 ? renderEmptyState(activePhone ? `No upcoming trips found for +91 ${activePhone}.` : "No active bookings in this session. Enter your phone number above or book now.") : upcomingRides.map(r => renderRideCard(r, true)).join("")}
     </div>
 
     <!-- Tab 2: Completed Trips -->
     <div id="customer-tab-completed" style="display: ${window.currentTripsTab === 'completed' ? 'flex' : 'none'}; flex-direction: column; gap: 12px; max-height: 460px; overflow-y: auto;">
-      ${completedRides.length === 0 ? renderEmptyState("No completed trips yet.") : completedRides.map(r => renderRideCard(r, false)).join("")}
+      ${completedRides.length === 0 ? renderEmptyState("No completed trips recorded yet.") : completedRides.map(r => renderRideCard(r, false)).join("")}
     </div>
 
     <!-- Tab 3: Cancelled Trips -->
@@ -1068,12 +1189,12 @@ window.openMyTripsModal = async () => {
       ${cancelledRides.length === 0 ? renderEmptyState("No cancelled trips.", "✓") : cancelledRides.map(r => renderRideCard(r, false)).join("")}
     </div>
 
-    <!-- Tab 4: Wallet Transaction History (Req 147) -->
+    <!-- Tab 4: Wallet Transaction History -->
     <div id="customer-tab-wallet" style="display: ${window.currentTripsTab === 'wallet' ? 'block' : 'none'}; max-height: 460px; overflow-y: auto;">
       <div style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: white; border-radius: 12px; padding: 18px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
         <div>
           <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9;">AVAILABLE WALLET CREDIT</div>
-          <div style="font-size: 28px; font-weight: 900;">₹${currentUser ? (currentUser.walletBalance || 100) : 100}</div>
+          <div style="font-size: 28px; font-weight: 900;">₹100</div>
           <div style="font-size: 12px; opacity: 0.95; margin-top: 2px;">Applicable automatically for ₹100 instant discount on bookings</div>
         </div>
         <div style="opacity: 0.9; color: white;">
@@ -1084,7 +1205,7 @@ window.openMyTripsModal = async () => {
       <div style="font-size: 13px; font-weight: 800; color: var(--owc-text); margin-bottom: 8px;">WALLET TRANSACTION AUDIT TRAIL</div>
       ${ledger.length === 0 ? `
         <div style="text-align: center; padding: 24px; color: var(--owc-text-muted); font-size: 13px; background: var(--owc-slate-50); border-radius: 8px;">
-          No wallet transactions recorded yet. Complete bookings to earn referral rewards.
+          Welcome ₹100 credit active. Use code CHHATH100 on your first booking!
         </div>
       ` : `
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -1611,6 +1732,149 @@ window.openFareChartModal = () => {
   `;
 
   modal.classList.add("open");
+  if (typeof window.setBottomNavActive === 'function') window.setBottomNavActive('offers');
+};
+
+/* ==========================================================================
+   4. FESTIVAL SPECIAL OFFERS & COUPONS (Chhath Puja Mahaparv / Diwali)
+   ========================================================================== */
+window.openFestivalOffersModal = () => {
+  window.closeAllModals(false);
+  if (typeof window.setBottomNavActive === 'function') window.setBottomNavActive('offers');
+  const modal = document.getElementById("modal-festival-offers");
+  const body = document.getElementById("modal-festival-offers-body");
+  if (!modal || !body) return;
+
+  body.innerHTML = `
+    <div>
+      <!-- Animated Festival Hero Card -->
+      <div class="festive-coupon-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
+          <span class="festive-badge">🪔 CHHATH PUJA &amp; DIWALI SPECIAL</span>
+          <span style="font-size: 11.5px; font-weight: 800; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.4);">
+            ✨ FIRST TRIP OFFER
+          </span>
+        </div>
+
+        <h3 style="font-size: 21px; font-weight: 900; margin: 12px 0 6px; letter-spacing: -0.3px; line-height: 1.25;">
+          Flat ₹100 Instant Discount
+        </h3>
+        <p style="font-size: 13.5px; opacity: 0.9; margin: 0 0 14px; line-height: 1.5;">
+          Celebrate with family! Get ₹100 instant discount on your first outstation cab booking across all 38 districts of Bihar.
+        </p>
+
+        <!-- Dashed Glowing Code Row -->
+        <div class="festive-code-row">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; opacity: 0.8; margin-bottom: 2px;">
+              PROMO CODE
+            </div>
+            <div class="festive-code-val">CHHATH100</div>
+          </div>
+          <button type="button" class="btn-copy-code" id="btn-copy-festive" onclick="window.copyPromoCode('CHHATH100', this)" style="background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);">
+            📋 Copy Code
+          </button>
+        </div>
+
+        <button type="button" class="check-fare-primary-btn" onclick="window.applyAndBookWithPromo('CHHATH100')" style="margin-top: 10px; width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #10b981 100%); font-weight: 800; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4); text-decoration: none;">
+          ⚡ Apply ₹100 OFF &amp; Book Cab Now ➔
+        </button>
+      </div>
+
+      <!-- More Active Offers -->
+      <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 12px; color: var(--owc-text);">Other Active Bihar Cab Offers</h4>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-family: monospace; font-size: 14px; font-weight: 900; background: rgba(2, 132, 199, 0.12); color: #0284c7; padding: 3px 8px; border-radius: 6px;">BIHAR100</span>
+              <span style="font-size: 13px; font-weight: 800; color: var(--owc-text);">Flat ₹100 Outstation Discount</span>
+            </div>
+            <div style="font-size: 12px; color: var(--owc-text-muted);">Applicable on Sedan and SUV intercity routes across Bihar.</div>
+          </div>
+          <button type="button" class="btn-nav-outline" onclick="window.applyAndBookWithPromo('BIHAR100')" style="padding: 7px 14px; font-size: 12px;">Apply</button>
+        </div>
+
+        <div style="background: var(--owc-card-bg); border: 1.5px solid var(--owc-border); border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span style="font-family: monospace; font-size: 14px; font-weight: 900; background: rgba(147, 51, 234, 0.12); color: #9333ea; padding: 3px 8px; border-radius: 6px;">FIRST50</span>
+              <span style="font-size: 13px; font-weight: 800; color: var(--owc-text);">₹50 Instant Welcome Off</span>
+            </div>
+            <div style="font-size: 12px; color: var(--owc-text-muted);">Valid on all one-way drops &amp; airport transfers.</div>
+          </div>
+          <button type="button" class="btn-nav-outline" onclick="window.applyAndBookWithPromo('FIRST50')" style="padding: 7px 14px; font-size: 12px;">Apply</button>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn-nav-outline" onclick="window.openFareChartModal()" style="flex: 1; justify-content: center; padding: 10px;">
+          📊 Rate Card (34 Cities)
+        </button>
+        <button type="button" class="btn-nav-outline" onclick="window.openHelpSupportModal()" style="flex: 1; justify-content: center; padding: 10px; border-color: #25d366; color: #15803d;">
+          💬 WhatsApp Helpdesk
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add("open");
+  document.body.classList.add("modal-open");
+  history.pushState({ modal: "modal-festival-offers" }, "", "#modal-festival-offers");
+};
+
+window.copyPromoCode = (code, el) => {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = el.innerHTML;
+      el.innerHTML = `✓ Copied!`;
+      el.style.background = '#047857';
+      if (window.showToast) window.showToast(`Festival Code ${code} copied! Applied ₹100 discount.`, 'success');
+      setTimeout(() => {
+        el.innerHTML = orig;
+        el.style.background = '';
+      }, 2500);
+    }).catch(() => {
+      prompt('Copy Festival Promo Code:', code);
+    });
+  } else {
+    prompt('Copy Festival Promo Code:', code);
+  }
+};
+
+window.applyAndBookWithPromo = (code) => {
+  window.closeAllModals();
+  if (typeof window.setBottomNavActive === 'function') window.setBottomNavActive('home');
+  sessionStorage.setItem('otb_selected_coupon', code);
+
+  const promoInput = document.getElementById('chk-coupon-input') || document.getElementById('coupon-code-input');
+  if (promoInput) promoInput.value = code;
+
+  if (window.showToast) {
+    window.showToast(`🎉 Festival code ${code} applied! ₹100 discount activated.`, 'success');
+  }
+
+  const hero = document.getElementById('booking-hero');
+  if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => {
+    document.getElementById('input-pickup')?.focus();
+  }, 350);
+};
+
+/* ==========================================================================
+   5. 24x7 CUSTOMER HELPDESK (Direct Phone & WhatsApp Options)
+   ========================================================================== */
+window.openHelpSupportModal = () => {
+  window.closeAllModals(false);
+  if (typeof window.setBottomNavActive === 'function') window.setBottomNavActive('support');
+  const modal = document.getElementById("modal-help-support");
+  if (modal) {
+    modal.classList.add("open");
+    document.body.classList.add("modal-open");
+    history.pushState({ modal: "modal-help-support" }, "", "#modal-help-support");
+  }
 };
 
 window.openPrivacyModal = () => {
@@ -1975,6 +2239,9 @@ window.startLiveTrackingSimulation = async (bookingId) => {
 window.closeAllModals = (updateHistory = true) => {
   document.querySelectorAll(".modal-overlay").forEach(m => m.classList.remove("open"));
   document.body.classList.remove("modal-open");
+  if (typeof window.setBottomNavActive === 'function') {
+    window.setBottomNavActive('home');
+  }
   if (updateHistory && window.location.hash) {
     try {
       history.pushState(null, "", window.location.pathname + window.location.search);

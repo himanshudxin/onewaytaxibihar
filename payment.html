@@ -900,11 +900,11 @@
 
         msg.style.display = 'block';
 
-        if (code === 'BIHAR100') {
+        if (code === 'BIHAR100' || code === 'CHHATH100' || code === 'FEST100' || code === 'FESTIVAL100') {
           appliedDiscount = 100;
           currentFare = Math.max(100, Number(cab.price) - appliedDiscount);
           msg.style.color = '#10b981';
-          msg.textContent = '✓ Coupon BIHAR100 applied! Flat ₹100 deducted.';
+          msg.textContent = `✓ Festival Coupon ${code} applied! Flat ₹100 deducted.`;
           document.getElementById('row-discount').style.display = 'flex';
           document.getElementById('txt-discount-val').textContent = `-₹100`;
           document.getElementById('txt-total-fare').textContent = `₹${currentFare.toLocaleString('en-IN')}`;
@@ -918,7 +918,7 @@
           document.getElementById('txt-total-fare').textContent = `₹${currentFare.toLocaleString('en-IN')}`;
         } else {
           msg.style.color = '#ef4444';
-          msg.textContent = '✕ Invalid promo code. Try BIHAR100 or FIRST50.';
+          msg.textContent = '✕ Invalid promo code. Try CHHATH100, FEST100, or BIHAR100.';
         }
       };
 

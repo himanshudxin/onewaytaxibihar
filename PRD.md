@@ -37,8 +37,11 @@
 - [x] 4.3 Synchronize physical registered address across all 7 statutory pages and schemas
 - [x] 4.4 Google Business Profile verified status audit & 100% profile strength guidance
 - [x] 4.5 GA4 Engine (`js/analytics.js`) deployed with live Measurement ID `G-1YTK7M3FS3`
-- [x] 4.6 Conversion event tracking for phone calls (`tel:`), WhatsApp chats, and ride bookings
-- [x] 4.7 Google Consent Mode v2 integration for DPDP Act 2023 compliance
+### Phase 5: Mobile Experience, Festival Offers & Passenger Portal Overhaul
+- [x] 5.1 Dynamic Mobile Bottom Navigation: Eliminate static green Home tab, wire dynamic tab switching (`setBottomNavActive`) across index and passenger portals.
+- [x] 5.2 Real Passenger Mobile Lookup & Login: Eradicate hardcoded dummy data ('Valued Passenger' / '8002141816') in favor of 10-digit mobile number lookup and backend sync.
+- [x] 5.3 Animated Bihar Festival Offers: Animated Chhath Puja Mahaparv & Diwali coupon card (`CHHATH100` / `FEST100` for flat ₹100 off on first outstation ride) with sparkle animations and 1-tap book.
+- [x] 5.4 Dual Support Hub: Mobile Support action opens unified modal with clear options for both 24×7 Phone Helpline (`+91 80021 41816`) and WhatsApp Helpdesk (`+91 77394 06400`).
 
 ---
 
@@ -46,3 +49,4 @@
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.
 - Status log must be recorded in `progress.txt`.
+

@@ -2333,6 +2333,25 @@ module.exports = async (req, res) => {
     }
 
     // -------------------------------------------------------------
+    // 6c. PASSENGER TRIP HISTORY LOOKUP BY MOBILE NUMBER
+    // -------------------------------------------------------------
+    if ((pathname === '/passenger/trips' || pathname === '/bookings/by-phone') && method === 'GET') {
+      const phone = (url.searchParams.get('phone') || '').replace(/\D/g, '').slice(-10);
+      if (!phone || phone.length !== 10) {
+        return sendJson(400, { success: false, message: 'Valid 10-digit Indian phone number required' });
+      }
+      const matching = (db.bookings || []).filter(b => {
+        const bPhone = (b.passengerPhone || '').replace(/\D/g, '').slice(-10);
+        return bPhone === phone;
+      });
+      return sendJson(200, {
+        success: true,
+        count: matching.length,
+        bookings: matching
+      });
+    }
+
+    // -------------------------------------------------------------
     // 7. CUSTOMER CANCEL BOOKING / RIDE (Zero Cancellation Fee)
     // -------------------------------------------------------------
     if ((pathname === '/bookings/cancel' || pathname === '/rides/cancel') && method === 'POST') {
@@ -6420,6 +6439,20 @@ module.exports = async (req, res) => {
     if (pathname === '/coupons/apply' && method === 'POST') {
       const codeInput = (body.code || body.couponCode || body.coupon || '').trim().toUpperCase();
       const fareAmount = parseInt(body.fareAmount || body.fare || body.totalFare) || 1500;
+
+      // Built-in Bihar Festival Coupons (Chhath Puja & Diwali Mahaparv)
+      if (['CHHATH100', 'FEST100', 'FESTIVAL100'].includes(codeInput)) {
+        const discount = Math.min(100, fareAmount);
+        return sendJson(200, {
+          success: true,
+          valid: true,
+          code: codeInput,
+          discount: discount,
+          title: 'Bihar Mahaparv Festival Special',
+          message: `Festival coupon '${codeInput}' applied! Flat Rs ${discount} off on your outstation trip.`
+        });
+      }
+
       const cpnList = (db.coupons && db.coupons.length > 0) ? db.coupons : (dbService.getDb().coupons || []);
       const cpn = cpnList.find(c => c.code.toUpperCase() === codeInput && c.active);
 

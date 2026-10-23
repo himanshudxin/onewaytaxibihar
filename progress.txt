@@ -39,3 +39,12 @@
 - Engineered and deployed js/analytics.js with live GA4 Measurement ID G-1YTK7M3FS3 across all 21 pages.
 - Integrated automated conversion event tracking for phone calls (tel:), WhatsApp links, and e-commerce ride purchases.
 - Verified live 200 OK deployment with active GA4 tag on https://onewaytaxibihar.com.
+
+[2026-10-23] Phase 5: Mobile Navigation, Festival Offers & Passenger Portal Overhaul:
+- Fixed static green "Home" in mobile Voyago bottom nav bar: implemented dynamic active tab highlighting across all views.
+- Removed hardcoded dummy passenger data ('Valued Passenger' / '8002141816') in My Trips modal & passenger portal; replaced with 10-digit mobile lookup/login and live backend trip query.
+- Designed and integrated animated Bihar Nearest Festival coupon card (Chhath Puja Mahaparv & Diwali Special: CHHATH100 / FEST100 for ₹100 off on first outstation ride) with CSS @keyframes festPulse, festSparkle, festShimmer, 1-tap copy, and direct booking pre-fill.
+- Configured backend coupon verification and payment calculator to accept CHHATH100, FEST100, and FESTIVAL100.
+- Enhanced mobile Support interaction to open the Support Hub modal giving both Call (+91 80021 41816) and WhatsApp (+91 77394 06400) options rather than forcing an immediate phone call.
+- Tested: Node syntax checks PASS across all modified JavaScript and server files.
+

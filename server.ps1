@@ -883,6 +883,36 @@ try {
                         }
                         continue
                     }
+                }
+
+                # 5b. Passenger Trips by Phone Lookup
+                if (($urlPath -eq "/api/passenger/trips" -or $urlPath -eq "/api/bookings/by-phone") -and $httpMethod -eq "GET") {
+                    $phoneQuery = [System.Web.HttpUtility]::ParseQueryString($request.Url.Query).Get("phone")
+                    if (-not $phoneQuery) { $phoneQuery = "" }
+                    $cleanQPhone = ($phoneQuery -replace '\D', '')
+                    if ($cleanQPhone.Length -gt 10) { $cleanQPhone = $cleanQPhone.Substring($cleanQPhone.Length - 10) }
+
+                    if ($cleanQPhone.Length -ne 10) {
+                        Send-JsonResponse $response 400 @{ success = $false; message = "Valid 10-digit Indian phone number required" }
+                        continue
+                    }
+
+                    $matched = @()
+                    foreach ($b in $db.bookings) {
+                        $bPhone = if ($b.passengerPhone) { ($b.passengerPhone -replace '\D', '') } else { "" }
+                        if ($bPhone -and $bPhone -like "*$cleanQPhone") {
+                            $matched += $b
+                        }
+                    }
+
+                    Send-JsonResponse $response 200 @{
+                        success = $true
+                        count = $matched.Count
+                        bookings = $matched
+                        rides = $matched
+                    }
+                    continue
+                }
 
                     # Create New Booking Request
                     if ($httpMethod -eq "POST") {
@@ -2400,6 +2430,20 @@ try {
                     $body = Read-RequestBody $request
                     $inputCode = if ($body.code) { $body.code.ToString().Trim().ToUpper() } else { "" }
                     $fareAmount = if ($body.fareAmount) { [int]$body.fareAmount } else { 1500 }
+
+                    # Built-in Bihar Festival Coupons (Chhath Puja & Diwali Mahaparv)
+                    if ($inputCode -in @("CHHATH100", "FEST100", "FESTIVAL100")) {
+                        $discount = [Math]::Min(100, $fareAmount)
+                        Send-JsonResponse $response 200 @{
+                            success = $true
+                            valid = $true
+                            code = $inputCode
+                            discount = $discount
+                            title = "Bihar Mahaparv Festival Special"
+                            message = "Festival coupon '$inputCode' applied! Flat Rs $discount off on your outstation trip."
+                        }
+                        continue
+                    }
 
                     if (-not $db.coupons) {
                         Send-JsonResponse $response 400 @{ success = $false; message = "No active coupons configured." }

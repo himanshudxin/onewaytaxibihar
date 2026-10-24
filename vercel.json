@@ -38,7 +38,9 @@
     { "source": "/patna-to-darbhanga-cab", "destination": "/patna-to-darbhanga-cab.html" },
     { "source": "/patna-to-bhagalpur-cab", "destination": "/patna-to-bhagalpur-cab.html" },
     { "source": "/patna-to-bodh-gaya-taxi", "destination": "/patna-to-bodh-gaya-taxi.html" },
-    { "source": "/patna-to-varanasi-taxi", "destination": "/patna-to-varanasi-taxi.html" }
+    { "source": "/patna-to-varanasi-taxi", "destination": "/patna-to-varanasi-taxi.html" },
+    { "source": "/patna-to-purnia-cab", "destination": "/patna-to-purnia-cab.html" },
+    { "source": "/patna-to-deoghar-cab", "destination": "/patna-to-deoghar-cab.html" }
   ],
   "headers": [
     {

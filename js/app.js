@@ -840,7 +840,7 @@ window.openAboutModal = () => {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>
           </div>
           <h3>Patna Central Hub</h3>
-          <p>Headquartered at Boring Road, Patna, operating 24 hours a day, 365 days a year with active GPS fleet telematics.</p>
+          <p>Central Operations Desk at Doctor Colony, Agam Kuan, Patna, operating 24 hours a day, 365 days a year with active GPS fleet telematics.</p>
         </div>
       </div>
     </div>

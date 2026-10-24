@@ -117,4 +117,8 @@
   - Bumped Service Worker cache to `onewaytaxibihar-v9.4-nav-redesign-20261023`.
   - Bumped stylesheet and script query versions across `index.html`, `passenger.html`, and `sw.js` to `?v=20261023_v40_navbar`.
 - Tested: Node syntax checks PASS across all scripts.
-
+[2026-10-24] Phase 10: Google Maps Integration & NAP Synchronization:
+- Integrated responsive, high-performance Google Maps embed iframe inside `contact.html` with direct "Get Live Directions ↗" CTA and GPS badges (25.5941° N, 85.1376° E).
+- Embedded interactive Google Maps preview box inside `.footer-hotline-card` in `index.html` alongside 24×7 dispatch hotline, address, and live directions link.
+- Synchronized registered office address in `js/app.js` About modal to Doctor Colony, Agam Kuan, Patna.
+- Verified live production deployment on https://onewaytaxibihar.com (HTTP 200 OK across all 14 endpoints).

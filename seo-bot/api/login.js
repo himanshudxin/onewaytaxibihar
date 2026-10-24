@@ -32,7 +32,7 @@ module.exports = function handler(req, res) {
   }
 
   const expected = process.env.SEO_BOT_PASSWORD;
-  if (!expected || expected.length < 16 || !process.env.SEO_BOT_SESSION_SECRET) {
+  if (!expected || expected.length < 12 || !process.env.SEO_BOT_SESSION_SECRET) {
     return res.status(503).json({ error: 'SEO bot is not configured securely' });
   }
 

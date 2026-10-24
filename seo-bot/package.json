@@ -4,7 +4,7 @@
   "private": true,
   "description": "Isolated read-only SEO audit dashboard for OneWayTaxiBihar",
   "scripts": {
-    "test": "node --check api/login.js && node --check api/audit.js && node --check lib/auth.js"
+    "test": "node --check api/login.js && node --check api/logout.js && node --check api/audit.js && node --check lib/auth.js"
   },
   "engines": {
     "node": ">=20"

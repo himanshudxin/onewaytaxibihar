@@ -121,4 +121,8 @@
 - Integrated responsive, high-performance Google Maps embed iframe inside `contact.html` with direct "Get Live Directions ↗" CTA and GPS badges (25.5941° N, 85.1376° E).
 - Embedded interactive Google Maps preview box inside `.footer-hotline-card` in `index.html` alongside 24×7 dispatch hotline, address, and live directions link.
 - Synchronized registered office address in `js/app.js` About modal to Doctor Colony, Agam Kuan, Patna.
-- Verified live production deployment on https://onewaytaxibihar.com (HTTP 200 OK across all 14 endpoints).
+[2026-10-25] Phase 11: Admin Master Credentials Security Rotation:
+- Rotated master admin password to `harharmahadev@1`.
+- Computed cryptographic PBKDF2 salt-hash (`956e8d39eafb3c291f7be2dbeb98984c6e335b41f6ead4415898328caa2a3fcf`).
+- Synchronized security configuration across `services/security.js`, `.env`, and automated test suites.
+- Deployed live to production; verified HTTP 200 OK authentication on https://onewaytaxibihar.com/api/admin/login.

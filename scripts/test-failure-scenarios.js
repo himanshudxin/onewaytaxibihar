@@ -52,7 +52,7 @@ async function runAllFailureScenarios() {
   console.log('================================================================\n');
 
   // Authenticate as Admin to acquire valid session token
-  const authRes = await request('POST', '/api/admin/login', { username: 'admin', password: 'OWT#Bihar@2026!SecOps' });
+  const authRes = await request('POST', '/api/admin/login', { username: 'admin', password: 'harharmahadev@1' });
   if (authRes.ok && authRes.data?.token) {
     ADMIN_AUTH = { 'Authorization': `Bearer ${authRes.data.token}` };
   }

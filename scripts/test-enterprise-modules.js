@@ -60,7 +60,7 @@ async function runTests() {
   total++;
   const adminLogin = await request('POST', '/api/admin/login', {
     username: process.env.ADMIN_USER || 'admin',
-    password: process.env.ADMIN_PASSWORD || 'OWT#Bihar@2026!SecOps'
+    password: process.env.ADMIN_PASSWORD || 'harharmahadev@1'
   });
   const adminCookie = (adminLogin.headers['set-cookie'] || []).map(c => c.split(';')[0]).join('; ');
   if (adminLogin.status === 200) {

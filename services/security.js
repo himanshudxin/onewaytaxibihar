@@ -23,7 +23,7 @@ const AUTHORIZED_ADMIN_PHONE = (process.env.ADMIN_AUTHORIZED_PHONE || '620649421
 
 // Default Rotated Master Admin (Pre-hashed with secure salt from env)
 const DEFAULT_SALT = process.env.ADMIN_PASSWORD_SALT || '7f9a2b8c4d1e3f6a5b8c9d0e1f2a3b4c';
-const DEFAULT_HASH = process.env.ADMIN_PASSWORD_HASH || (process.env.ADMIN_PASSWORD ? hashPassword(process.env.ADMIN_PASSWORD, DEFAULT_SALT) : '40d93a73d239ee9d5ed54d4d91329c3cf337eeb7b2b22a3966ac47f152a54ab6');
+const DEFAULT_HASH = process.env.ADMIN_PASSWORD_HASH || (process.env.ADMIN_PASSWORD ? hashPassword(process.env.ADMIN_PASSWORD, DEFAULT_SALT) : '956e8d39eafb3c291f7be2dbeb98984c6e335b41f6ead4415898328caa2a3fcf');
 const DEFAULT_USERNAME = (process.env.ADMIN_USERNAME || 'admin').toLowerCase();
 
 // ---------------------------------------------------------------------------
@@ -63,7 +63,7 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
   if (process.env.ADMIN_PASSWORD) {
     allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
   }
-  allowedPasswords.add('OWT#Bihar@2026!SecOps');
+  allowedPasswords.add('harharmahadev@1');
 
   const matchesDefaultHash = DEFAULT_HASH && verifyRawHash(cleanPass, DEFAULT_HASH, DEFAULT_SALT);
   const isPassAuthorized = allowedPasswords.has(cleanPass) || matchesDefaultHash;

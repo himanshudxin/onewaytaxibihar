@@ -240,7 +240,7 @@ async function runAllApiTests() {
     `Status: ${badLogin.status}, Message: ${badLogin.data?.message}`);
 
   // Authorize with valid credentials
-  const goodLogin = await apiRequest('POST', '/admin/login', { username: 'admin', password: 'OWT#Bihar@2026!SecOps' });
+  const goodLogin = await apiRequest('POST', '/admin/login', { username: 'admin', password: 'harharmahadev@1' });
   authToken = goodLogin.data?.token;
   const cookieHeaders = goodLogin.headers['set-cookie'];
   authCookie = cookieHeaders ? cookieHeaders[0] : '';

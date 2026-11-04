@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>My Bookings &amp; Passenger Portal | OneWayTaxiBihar</title>
   <meta name="description" content="View your intercity cab bookings, download GST invoices, access wallet credits, and get 24x7 support with OneWayTaxiBihar.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -650,6 +650,7 @@
       }
     }
   </style>
+  <script src="/js/error-tracker.js"></script>
 </head>
 
 <body>
@@ -878,6 +879,8 @@
       </div>
       <div style="display: flex; justify-content: center; gap: 16px; align-items: center; font-size: 12.5px; flex-wrap: wrap;">
         <a href="index.html" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">Home</a>
+        <a href="privacy-policy.html" style="color: var(--owc-text-muted); text-decoration: none;">Privacy Policy</a>
+        <a href="terms-of-service.html" style="color: var(--owc-text-muted); text-decoration: none;">Terms of Service</a>
         <a href="https://www.facebook.com/share/1FAuDD5Wu5/" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">Facebook</a>
         <a href="https://www.instagram.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">Instagram</a>
           <a href="https://x.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">X (@onewaytaxibihar)</a>
@@ -1190,7 +1193,27 @@
           const origin = b.origin || 'Patna';
           const dest = b.dest || 'Gaya';
           const fare = Number(b.fare || 2998);
-          const date = b.pickupDate || b.date || 'Today';
+          function formatPickupDateTime(pickupDate, pickupTime) {
+  try {
+    if (!pickupDate) return '';
+    const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    let dateObj;
+    if (pickupDate && pickupTime) {
+      const norm = String(pickupDate).length === 10 ? pickupDate : new Date(pickupDate).toISOString().slice(0,10);
+      dateObj = new Date(norm + 'T' + pickupTime + ':00');
+    } else { dateObj = new Date(pickupDate); }
+    if (isNaN(dateObj.getTime())) return pickupDate + (pickupTime ? ' | ' + pickupTime : '');
+    const dd = String(dateObj.getDate()).padStart(2, '0');
+    const mon = MONTHS[dateObj.getMonth()];
+    const yyyy = dateObj.getFullYear();
+    const hh = dateObj.getHours() % 12 || 12;
+    const mm = String(dateObj.getMinutes()).padStart(2, '0');
+    const ampm = dateObj.getHours() < 12 ? 'AM' : 'PM';
+    return dd + '-' + mon + '-' + yyyy + ' | ' + hh + ':' + mm + ' ' + ampm;
+  } catch(e) { return pickupDate || ''; }
+}
+
+const date = b.pickupDate || b.date || 'Today';
           const time = b.pickupTime || b.time || '10:00 AM';
           const cabName = b.cabType || b.vehicle || 'Prime Sedan';
           const bookingId = b.bookingId || `OTB-2026-${1000 + index}`;
@@ -1271,9 +1294,9 @@
               </div>
 
               <div class="booking-meta-grid">
-                <div>
-                  <div class="meta-item-title">Pickup Schedule</div>
-                  <div class="meta-item-val">${date} at ${time}</div>
+                <div style="background: rgba(16, 185, 129, 0.08); border-radius: 8px; padding: 6px 10px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                  <div class="meta-item-title" style="color: #10b981; font-weight: 800;">⏰ 📅 PICKUP SCHEDULE</div>
+                  <div class="meta-item-val" style="color: #EF4444; font-size: 18px; font-weight: 900; letter-spacing: 0.3px;">${formatPickupDateTime(date, time) || date + ' | ' + time}</div>
                 </div>
                 <div>
                   <div class="meta-item-title">Selected Vehicle</div>
@@ -1607,6 +1630,7 @@
     })();
   </script>
   <script src="/js/brand-logo.js?v=20261016_v1"></script>
+  <script src="/js/analytics.js"></script>
 </body>
 
 </html>

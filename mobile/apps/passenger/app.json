@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Oneway Taxi",
+    "slug": "onewaytaxi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/passenger-icon.png",
+    "scheme": "onewaytaxi",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/passenger-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F59E0B"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.onewaytaxibihar.passenger",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Oneway Taxi needs your location to set accurate doorstep pickup addresses in Bihar and calculate transparent outstation fares.",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/passenger-icon.png",
+        "backgroundColor": "#F59E0B"
+      },
+      "package": "com.onewaytaxibihar.passenger",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "extra": {
+      "apiUrl": "https://onewaytaxibihar.com/api",
+      "supportPhone": "+918002141816",
+      "whatsappPhone": "+917739406400",
+      "appType": "passenger"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

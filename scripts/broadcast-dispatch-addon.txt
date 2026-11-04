@@ -1,0 +1,254 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// BROADCAST DISPATCH ENGINE
+// First-Come, First-Served with atomic claim locking
+// ─────────────────────────────────────────────────────────────────────────────
+
+const BROADCAST_TIMEOUT_SEC = 120; // 2 minutes before escalation
+
+/**
+ * Format a pickup date/time string into DD-MMM-YYYY | hh:mm A
+ */
+function formatPickupDateTime(pickupDate, pickupTime) {
+  try {
+    let dateObj;
+    if (pickupDate && pickupTime) {
+      const normalised = String(pickupDate).length === 10 ? pickupDate : new Date(pickupDate).toISOString().slice(0, 10);
+      dateObj = new Date(normalised + 'T' + pickupTime + ':00');
+    } else if (pickupDate) {
+      dateObj = new Date(pickupDate);
+    } else {
+      return '';
+    }
+    if (isNaN(dateObj.getTime())) return String(pickupDate || '');
+    const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const dd   = String(dateObj.getDate()).padStart(2, '0');
+    const mon  = MONTHS[dateObj.getMonth()];
+    const yyyy = dateObj.getFullYear();
+    const hh   = dateObj.getHours() % 12 || 12;
+    const mm   = String(dateObj.getMinutes()).padStart(2, '0');
+    const ampm = dateObj.getHours() < 12 ? 'AM' : 'PM';
+    return dd + '-' + mon + '-' + yyyy + ' | ' + hh + ':' + mm + ' ' + ampm;
+  } catch (e) {
+    return String(pickupDate || '');
+  }
+}
+
+/**
+ * Build a rich trip card object for Driver offer displays
+ */
+function buildTripOfferCard(booking, driverId) {
+  const formattedPickup = formatPickupDateTime(booking.pickupDate, booking.pickupTime);
+  const fare = Number(booking.totalFare || booking.fare || 0);
+  const commission = Number(booking.platformCommission || 0);
+  const driverNet = commission > 0 ? fare - commission : Math.round(fare * 0.85);
+
+  return {
+    bookingId: booking.bookingId || booking.id,
+    pnr: booking.pnrCode || booking.pnr || booking.bookingId,
+    pickupDateTimeFormatted: formattedPickup,
+    pickupDate: booking.pickupDate,
+    pickupTime: booking.pickupTime,
+    pickupLocation: booking.pickupAddress || booking.originCity || 'Origin',
+    dropLocation: booking.dropAddress || booking.destCity || 'Destination',
+    originCity: booking.originCity,
+    destCity: booking.destCity,
+    totalFare: fare,
+    driverNetEarnings: driverNet,
+    platformCommission: fare - driverNet,
+    tripType: booking.tripType || 'oneway',
+    cabTier: booking.cabTier || booking.fleetClass || 'sedan',
+    passengerName: booking.passengerName || booking.customerName || '',
+    dispatchStatus: booking.dispatchStatus,
+    broadcastStartedAt: booking.broadcastStartedAt,
+    broadcastTimeoutSec: booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC,
+    candidateCount: (booking.broadcastCandidates || []).length,
+    alreadyRejected: (booking.rejectedDrivers || []).includes(driverId)
+  };
+}
+
+/**
+ * broadcastBooking() — Mark booking as BROADCASTING and record all eligible driver IDs.
+ * Does NOT mutate DB directly — caller must saveDb() after this returns.
+ */
+function broadcastBooking(db, bookingOrId) {
+  const booking = typeof bookingOrId === 'string'
+    ? (db.bookings || []).find(function(b) { return b.bookingId === bookingOrId || b.id === bookingOrId; })
+    : bookingOrId;
+
+  if (!booking) {
+    return { success: false, error: 'Booking not found for broadcast.' };
+  }
+
+  if (booking.dispatchStatus === 'ASSIGNED' || booking.bookingStatus === 'DRIVER_ASSIGNED' || booking.bookingStatus === 'DRIVER ASSIGNED') {
+    return { success: false, error: 'Booking already assigned; broadcast skipped.' };
+  }
+
+  const eligible = findEligibleDrivers(db, booking);
+  const candidateIds = eligible.map(function(d) { return d.id; });
+
+  booking.dispatchStatus = 'BROADCASTING';
+  booking.broadcastCandidates = candidateIds;
+  booking.broadcastStartedAt = new Date().toISOString();
+  booking.broadcastTimeoutSec = BROADCAST_TIMEOUT_SEC;
+  booking.broadcastClaimedBy = null;
+  if (!booking.rejectedDrivers) booking.rejectedDrivers = [];
+
+  if (!booking.statusHistory) booking.statusHistory = [];
+  booking.statusHistory.push({
+    status: 'BROADCASTING',
+    timestamp: booking.broadcastStartedAt,
+    actor: 'BroadcastEngine',
+    note: 'Broadcast sent to ' + candidateIds.length + ' eligible chauffeur(s).'
+  });
+
+  return {
+    success: true,
+    candidateCount: candidateIds.length,
+    candidateIds: candidateIds,
+    booking: booking
+  };
+}
+
+/**
+ * claimBookingAtomic() — Attempt atomic claim of a BROADCASTING booking.
+ * Only the first caller succeeds. Caller must saveDb() after this.
+ */
+function claimBookingAtomic(db, bookingId, driverId) {
+  const booking = (db.bookings || []).find(function(b) { return b.bookingId === bookingId || b.id === bookingId; });
+  if (!booking) {
+    return { success: false, error: 'Booking not found.' };
+  }
+
+  if (booking.dispatchStatus === 'ASSIGNED' || booking.broadcastClaimedBy) {
+    return {
+      success: false,
+      alreadyClaimed: true,
+      claimedBy: booking.broadcastClaimedBy,
+      message: 'Trip accepted by another driver.'
+    };
+  }
+
+  if (booking.dispatchStatus !== 'BROADCASTING') {
+    return {
+      success: false,
+      error: 'Booking is not in BROADCASTING state (current: ' + booking.dispatchStatus + ').'
+    };
+  }
+
+  if (booking.broadcastCandidates && booking.broadcastCandidates.length > 0) {
+    if (!booking.broadcastCandidates.includes(driverId)) {
+      return { success: false, error: 'You are not in the broadcast list for this booking.' };
+    }
+  }
+
+  const driver = (db.drivers || []).find(function(d) { return d.id === driverId || d.phone === driverId; });
+  if (!driver) {
+    return { success: false, error: 'Driver record not found.' };
+  }
+
+  const now = new Date().toISOString();
+
+  booking.dispatchStatus = 'ASSIGNED';
+  booking.broadcastClaimedBy = driverId;
+  booking.assignedDriverId = driver.id;
+  booking.assignedDriverName = driver.name;
+  booking.assignedDriverPhone = driver.phone;
+  booking.assignedDriverCarNo = driver.vehicleNumber || driver.carNumber || '';
+  booking.driverDetails = {
+    id: driver.id,
+    name: driver.name,
+    phone: driver.phone,
+    vehicleNumber: driver.vehicleNumber || driver.carNumber || '',
+    vehicleModel: driver.vehicleModel || '',
+    rating: driver.rating || 4.8,
+    photo: driver.photo || driver.photoUrl || ''
+  };
+  booking.bookingStatus = 'DRIVER ASSIGNED';
+  booking.status = 'DRIVER ASSIGNED';
+  booking.dispatchOffer = {
+    driverId: driverId,
+    offeredAt: booking.broadcastStartedAt,
+    acceptedAt: now,
+    status: 'ACCEPTED'
+  };
+  booking.updatedAt = now;
+
+  if (!booking.statusHistory) booking.statusHistory = [];
+  booking.statusHistory.push({
+    status: 'DRIVER ASSIGNED',
+    timestamp: now,
+    actor: driver.name || driverId,
+    note: 'Driver ' + (driver.name || driverId) + ' (' + (driver.vehicleNumber || '') + ') claimed via broadcast.'
+  });
+
+  return {
+    success: true,
+    booking: booking,
+    driver: {
+      id: driver.id,
+      name: driver.name,
+      phone: driver.phone,
+      vehicleNumber: driver.vehicleNumber || '',
+      vehicleModel: driver.vehicleModel || '',
+      rating: driver.rating || 4.8
+    }
+  };
+}
+
+/**
+ * checkBroadcastTimeouts() — Scans BROADCASTING bookings and escalates timed-out ones.
+ */
+function checkBroadcastTimeouts(db) {
+  var escalated = [];
+  var now = Date.now();
+  (db.bookings || []).forEach(function(booking) {
+    if (booking.dispatchStatus !== 'BROADCASTING') return;
+    if (!booking.broadcastStartedAt) return;
+    var timeoutMs = (booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC) * 1000;
+    var startedMs = new Date(booking.broadcastStartedAt).getTime();
+    if (now - startedMs >= timeoutMs) {
+      booking.dispatchStatus = 'ESCALATED_TO_ADMIN';
+      booking.bookingStatus = 'PENDING_ADMIN_DISPATCH';
+      booking.escalatedAt = new Date().toISOString();
+      booking.escalationReason = 'Broadcast timed out after ' + (booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC) + 's with no driver claiming.';
+
+      if (!booking.statusHistory) booking.statusHistory = [];
+      booking.statusHistory.push({
+        status: 'ESCALATED_TO_ADMIN',
+        timestamp: booking.escalatedAt,
+        actor: 'BroadcastTimeoutWatcher',
+        note: booking.escalationReason
+      });
+
+      if (!db.notifications) db.notifications = [];
+      db.notifications.unshift({
+        id: 'NOTIF_ESC_' + Date.now() + '_' + booking.bookingId,
+        type: 'BROADCAST_TIMEOUT_ESCALATION',
+        priority: 'URGENT',
+        title: 'BROADCAST TIMEOUT: Booking ' + booking.bookingId,
+        message: 'Booking ' + booking.originCity + ' to ' + booking.destCity + ' broadcast expired. No driver accepted. Immediate manual dispatch required.',
+        bookingId: booking.bookingId,
+        createdAt: booking.escalatedAt
+      });
+
+      escalated.push(booking.bookingId);
+    }
+  });
+  return escalated;
+}
+
+module.exports = {
+  BIHAR_COORDS,
+  resolveCityCoords,
+  getHaversineDistanceKm,
+  findEligibleDrivers,
+  rankDrivers,
+  autoDispatchBooking,
+  broadcastBooking,
+  claimBookingAtomic,
+  checkBroadcastTimeouts,
+  buildTripOfferCard,
+  formatPickupDateTime,
+  BROADCAST_TIMEOUT_SEC
+};
+

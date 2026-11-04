@@ -4,7 +4,7 @@
  * Version: 2026.10.11
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v9.4-nav-redesign-20261023';
+const CACHE_NAME = 'onewaytaxibihar-v9.5-ios-safari-20261025';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -117,7 +117,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Static Assets (CSS, JS, Images, Fonts) - Stale While Revalidate
+  // 3. Bypass third-party cross-origin requests (prevents WebKit ITP & CORS breakage)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 4. Same-origin Static Assets (CSS, JS, Images, Fonts) - Stale While Revalidate
   event.respondWith(
     caches.match(req).then((cachedRes) => {
       const fetchPromise = fetch(req).then((networkRes) => {
@@ -126,9 +131,16 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
         }
         return networkRes;
-      }).catch(() => null);
+      });
 
-      return cachedRes || fetchPromise;
+      if (cachedRes) {
+        // Quietly revalidate cache in background without failing active page render
+        fetchPromise.catch(() => {});
+        return cachedRes;
+      }
+
+      // If not in cache, return the active network promise directly (never null to avoid WebKit TypeError)
+      return fetchPromise;
     })
   );
 });

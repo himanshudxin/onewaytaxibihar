@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "Oneway Taxi Driver",
+    "slug": "onewaytaxidriver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/driver-icon.png",
+    "scheme": "onewaytaxidriver",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/driver-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#090D16"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.onewaytaxibihar.driver",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Oneway Taxi Driver requires real-time location to receive nearby outstation trip offers and provide turn-by-turn navigation.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Continuous background location is required while on-duty to dispatch rides accurately and maintain rider safety.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/driver-icon.png",
+        "backgroundColor": "#D97706"
+      },
+      "package": "com.onewaytaxibihar.driver",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "extra": {
+      "apiUrl": "https://onewaytaxibihar.com/api",
+      "supportPhone": "+918002141816",
+      "emergencyPhone": "112",
+      "appType": "driver"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

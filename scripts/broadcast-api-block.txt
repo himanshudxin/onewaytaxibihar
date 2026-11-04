@@ -1,0 +1,159 @@
+    // =========================================================
+    // BROADCAST DISPATCH ENDPOINTS (First-Come, First-Served)
+    // =========================================================
+
+    // POST /api/dispatch/broadcast
+    if ((pathname === '/dispatch/broadcast' || pathname === '/api/dispatch/broadcast') && method === 'POST') {
+      const adminAuth = getSessionAdmin(req, db);
+      if (!adminAuth) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const { bookingId } = body;
+      if (!bookingId) return sendJson(400, { success: false, message: 'bookingId is required.' });
+
+      const booking = (db.bookings || []).find(function(b) { return b.bookingId === bookingId || b.id === bookingId; });
+      if (!booking) return sendJson(404, { success: false, message: 'Booking not found.' });
+
+      const dispatchSvc = require('../services/dispatch.js');
+      const result = dispatchSvc.broadcastBooking(db, booking);
+
+      if (!result.success) {
+        return sendJson(400, { success: false, message: result.error });
+      }
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: 'Broadcast sent to ' + result.candidateCount + ' eligible chauffeur(s).',
+        candidateCount: result.candidateCount,
+        candidateIds: result.candidateIds,
+        dispatchStatus: 'BROADCASTING',
+        booking: { bookingId: booking.bookingId, dispatchStatus: booking.dispatchStatus, broadcastStartedAt: booking.broadcastStartedAt }
+      });
+    }
+
+    // POST /api/dispatch/claim
+    if ((pathname === '/dispatch/claim' || pathname === '/api/dispatch/claim') && method === 'POST') {
+      const driverAuth = getSessionDriver(req, db);
+      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required.' });
+
+      const { bookingId } = body;
+      if (!bookingId) return sendJson(400, { success: false, message: 'bookingId is required.' });
+
+      const dispatchSvc = require('../services/dispatch.js');
+      dispatchSvc.checkBroadcastTimeouts(db);
+
+      const driverId = driverAuth.driver.id || driverAuth.driver.phone;
+      const result = dispatchSvc.claimBookingAtomic(db, bookingId, driverId);
+
+      if (result.alreadyClaimed) {
+        await saveDb(db);
+        return sendJson(409, {
+          success: false,
+          alreadyClaimed: true,
+          message: result.message || 'Trip accepted by another driver.'
+        });
+      }
+      if (!result.success) {
+        return sendJson(400, { success: false, message: result.error });
+      }
+
+      await saveDb(db);
+      return sendJson(200, {
+        success: true,
+        message: 'Trip ' + bookingId + ' successfully claimed!',
+        booking: {
+          bookingId: result.booking.bookingId,
+          bookingStatus: result.booking.bookingStatus,
+          dispatchStatus: result.booking.dispatchStatus,
+          pickupDate: result.booking.pickupDate,
+          pickupTime: result.booking.pickupTime,
+          originCity: result.booking.originCity,
+          destCity: result.booking.destCity,
+          totalFare: result.booking.totalFare,
+          passengerName: result.booking.passengerName || result.booking.customerName
+        },
+        driver: result.driver
+      });
+    }
+
+    // GET /api/dispatch/offers
+    if ((pathname === '/dispatch/offers' || pathname === '/api/dispatch/offers') && method === 'GET') {
+      const driverAuth = getSessionDriver(req, db);
+      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required.' });
+
+      const driver = driverAuth.driver;
+      const driverId = driver.id || driver.phone;
+
+      const dispatchSvc = require('../services/dispatch.js');
+      dispatchSvc.checkBroadcastTimeouts(db);
+
+      const offerCards = (db.bookings || [])
+        .filter(function(b) {
+          if (b.dispatchStatus !== 'BROADCASTING') return false;
+          if (b.broadcastCandidates && b.broadcastCandidates.length > 0) {
+            if (!b.broadcastCandidates.includes(driverId)) return false;
+          }
+          if ((b.rejectedDrivers || []).includes(driverId)) return false;
+          return true;
+        })
+        .map(function(b) { return dispatchSvc.buildTripOfferCard(b, driverId); });
+
+      return sendJson(200, {
+        success: true,
+        offers: offerCards,
+        count: offerCards.length,
+        driverId: driverId,
+        polledAt: new Date().toISOString()
+      });
+    }
+
+    // POST /api/dispatch/broadcast-timeout
+    if ((pathname === '/dispatch/broadcast-timeout' || pathname === '/api/dispatch/broadcast-timeout') && method === 'POST') {
+      const adminAuth = getSessionAdmin(req, db);
+      if (!adminAuth) return sendJson(401, { success: false, message: 'Admin authentication required.' });
+
+      const dispatchSvc = require('../services/dispatch.js');
+      const escalated = dispatchSvc.checkBroadcastTimeouts(db);
+
+      if (escalated.length > 0) await saveDb(db);
+
+      return sendJson(200, {
+        success: true,
+        escalatedCount: escalated.length,
+        escalatedBookingIds: escalated,
+        message: escalated.length > 0
+          ? 'Escalated ' + escalated.length + ' timed-out broadcast(s) to Admin Operations.'
+          : 'No timed-out broadcasts found.'
+      });
+    }
+
+    // POST /api/dispatch/reject-broadcast
+    if ((pathname === '/dispatch/reject-broadcast' || pathname === '/api/dispatch/reject-broadcast') && method === 'POST') {
+      const driverAuth = getSessionDriver(req, db);
+      if (!driverAuth) return sendJson(401, { success: false, message: 'Driver authentication required.' });
+
+      const { bookingId } = body;
+      if (!bookingId) return sendJson(400, { success: false, message: 'bookingId is required.' });
+
+      const driver = driverAuth.driver;
+      const driverId = driver.id || driver.phone;
+
+      const booking = (db.bookings || []).find(function(b) { return b.bookingId === bookingId || b.id === bookingId; });
+      if (!booking) return sendJson(404, { success: false, message: 'Booking not found.' });
+
+      if (!booking.rejectedDrivers) booking.rejectedDrivers = [];
+      if (!booking.rejectedDrivers.includes(driverId)) {
+        booking.rejectedDrivers.push(driverId);
+      }
+      booking.updatedAt = new Date().toISOString();
+      await saveDb(db);
+
+      return sendJson(200, {
+        success: true,
+        message: 'Offer rejected. Booking remains open for other drivers.',
+        bookingId: bookingId,
+        rejectedCount: booking.rejectedDrivers.length
+      });
+    }
+
+

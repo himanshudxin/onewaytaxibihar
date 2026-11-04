@@ -483,7 +483,7 @@
 .input-content select {
   border: none;
   background: transparent;
-  font-size: 15px;
+  font-size: 16px; /* 16px minimum prevents Safari iOS auto-zoom on mobile */
   font-weight: 600;
   color: var(--owc-text);
   outline: none;

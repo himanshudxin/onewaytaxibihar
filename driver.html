@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>OneWay Driver Partner App | OneWayTaxiBihar</title>
   
   <!-- Dedicated Driver Partner PWA Manifest & App Launcher Icons -->
@@ -308,6 +308,7 @@
       }
     }
   </style>
+  <script src="/js/error-tracker.js"></script>
 </head>
 <body class="driver-body">
 
@@ -871,7 +872,61 @@
       updateDriverNotificationUiState();
     }
 
-    async function acceptAvailableTrip(bookingId) {
+    function formatPickupDateTime(pickupDate, pickupTime) {
+  try {
+    if (!pickupDate) return '';
+    const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    let dateObj;
+    if (pickupDate && pickupTime) {
+      const norm = String(pickupDate).length === 10 ? pickupDate : new Date(pickupDate).toISOString().slice(0,10);
+      dateObj = new Date(norm + 'T' + pickupTime + ':00');
+    } else { dateObj = new Date(pickupDate); }
+    if (isNaN(dateObj.getTime())) return pickupDate + (pickupTime ? ' | ' + pickupTime : '');
+    const dd = String(dateObj.getDate()).padStart(2, '0');
+    const mon = MONTHS[dateObj.getMonth()];
+    const yyyy = dateObj.getFullYear();
+    const hh = dateObj.getHours() % 12 || 12;
+    const mm = String(dateObj.getMinutes()).padStart(2, '0');
+    const ampm = dateObj.getHours() < 12 ? 'AM' : 'PM';
+    return dd + '-' + mon + '-' + yyyy + ' | ' + hh + ':' + mm + ' ' + ampm;
+  } catch(e) { return pickupDate || ''; }
+}
+
+async function claimBroadcastTrip(bookingId) {
+  try {
+    const res = await fetch('/api/dispatch/claim', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _driverToken },
+      body: JSON.stringify({ bookingId })
+    });
+    const data = await res.json();
+    if (res.status === 409) {
+      alert('Trip accepted by another driver.');
+      await refreshDriverDashboard();
+      return;
+    }
+    if (data.success) {
+      alert('🎉 Trip Claimed! Go to Active Trips tab.');
+      _currentTab = 'active';
+      await refreshDriverDashboard();
+    } else {
+      alert(data.message || 'Could not claim trip.');
+    }
+  } catch(e) { alert('Network error. Try again.'); }
+}
+
+async function rejectBroadcastTrip(bookingId) {
+  try {
+    await fetch('/api/dispatch/reject-broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _driverToken },
+      body: JSON.stringify({ bookingId, reason: 'Driver skipped via web' })
+    });
+    await refreshDriverDashboard();
+  } catch(e) { console.log('Skip error:', e); }
+}
+
+async function acceptAvailableTrip(bookingId) {
       if (!confirm("Are you sure you want to accept this trip?")) return;
       const res = await ApiClient.driverAcceptTrip(bookingId, _driverToken);
       if (res && res.success) {
@@ -946,6 +1001,7 @@
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                 <div>
                   <span style="font-size: 10.5px; font-weight: 800; color: #f97316; background: rgba(249, 115, 22, 0.15); padding: 2px 8px; border-radius: 4px;">UNASSIGNED BOOKING</span>
+                  <span style="font-size:10px;font-weight:800;color:#F59E0B;background:rgba(245,158,11,0.15);padding:2px 8px;border-radius:4px;margin-left:6px;animation:broadcastPulse 1.5s ease-in-out infinite;">📡 BROADCASTING</span>
                   <h4 style="margin: 6px 0 0 0; font-size: 17px; font-weight: 800; color: #f8fafc;">${t.originCity} ➔ ${t.destCity}</h4>
                 </div>
                 <div style="text-align: right;">
@@ -956,11 +1012,13 @@
               <div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px; background: #090d16; padding: 10px; border-radius: 8px;">
                 <div>Pickup: <strong>${t.pickupAddress || t.originCity}</strong></div>
                 <div>Drop: <strong>${t.dropAddress || t.destCity}</strong></div>
-                <div>Schedule: <strong>${t.pickupDate} at ${t.pickupTime} (~${t.distanceKm} KM)</strong></div>
+                <div style="font-size:14px; font-weight:900; color:#EF4444; margin:4px 0;">📅 ${formatPickupDateTime(t.pickupDate, t.pickupTime) || t.pickupDate || 'Today'}</div>
+                <div>Distance: <strong>~${t.distanceKm || '?'} KM</strong></div>
               </div>
-              <button type="button" class="driver-step-btn btn-step-accept" onclick="acceptAvailableTrip('${t.bookingId}')">
-                Accept Trip &amp; Start Dispatch →
-              </button>
+              <div style="display:flex;gap:8px;margin-top:4px;">
+              <button type="button" onclick="rejectBroadcastTrip('${t.bookingId}')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #EF4444;background:transparent;color:#EF4444;font-weight:800;font-size:12px;cursor:pointer;">Skip</button>
+              <button type="button" class="driver-step-btn btn-step-accept" onclick="claimBroadcastTrip('${t.bookingId}')" style="flex:2;font-size:14px;font-weight:900;">⚡ CLAIM TRIP</button>
+            </div>
             </div>
           `;
         }).join("");
@@ -1113,5 +1171,21 @@
       if (boxBanner) boxBanner.style.display = 'none';
     });
   </script>
+  
+  <!-- Chauffeur Async Operation Loading Feedback Overlay -->
+  <div id="driver-loading-spinner-overlay" class="driver-loading-overlay spinner skeleton" style="display:none;">
+    <div class="driver-spinner spinner"></div>
+    <div class="loading-label">Loading chauffeur operations...</div>
+  </div>
+
+  <!-- Dedicated Chauffeur Legal Footer -->
+  <footer class="driver-legal-footer" style="padding: 20px 16px; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #1e293b; margin-top: auto;">
+    <p style="margin: 0 0 6px 0;">OneWayTaxiBihar Chauffeur & Driver Partner Portal</p>
+    <p style="margin: 0;">
+      <a href="/privacy-policy.html" style="color: #10b981; text-decoration: none; margin-right: 16px; font-weight: 500;">Privacy Policy</a>
+      <a href="/terms-of-service.html" style="color: #10b981; text-decoration: none; font-weight: 500;">Terms of Service</a>
+    </p>
+  </footer>
+  <script src="/js/analytics.js"></script>
 </body>
 </html>

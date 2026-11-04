@@ -1,0 +1,15 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["shared/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "_legacy_single_app_prototype"
+  ]
+}

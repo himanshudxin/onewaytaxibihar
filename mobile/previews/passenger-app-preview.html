@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OneWayTaxiBihar — Passenger Mobile App Redesign Preview (Deliverables 1-9)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-yellow: #EAB308;
+      --primary-gold: #F59E0B;
+      --primary-dark-gold: #D97706;
+      --primary-cream: #FEF3C7;
+      --brand-green: #059669;
+      --bg-slate: #F8FAFC;
+      --card-white: #FFFFFF;
+      --text-dark: #0F172A;
+      --text-body: #334155;
+      --text-muted: #64748B;
+      --border-light: #E2E8F0;
+      --border-card: #F1F5F9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: #0B0F19;
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Master Navigation Bar */
+    header.preview-header {
+      background: #111827;
+      border-bottom: 1px solid #1F2937;
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-col {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--brand-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+    }
+
+    .brand-title-wrap h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-title-wrap h1 span {
+      color: var(--primary-gold);
+    }
+
+    .brand-title-wrap p {
+      font-size: 11px;
+      color: #9CA3AF;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Deliverables Selector Tabs */
+    .screen-pills-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: #090D16;
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid #1F2937;
+    }
+
+    .pill-btn {
+      background: transparent;
+      border: none;
+      color: #9CA3AF;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .pill-btn.active {
+      background: var(--primary-gold);
+      color: #0F172A;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    }
+
+    /* Workspace Content */
+    .preview-workspace {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* Mobile Phone Shell Mockup */
+    .device-shell {
+      width: 395px;
+      height: 820px;
+      background: #000000;
+      border-radius: 48px;
+      border: 6px solid #1F2937;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px #374151, inset 0 0 0 2px #111827;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Dynamic Island / Speaker Notch */
+    .device-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #000000;
+      border-radius: 20px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    .notch-camera {
+      width: 10px;
+      height: 10px;
+      border-radius: 5px;
+      background: #111827;
+    }
+
+    /* Screen Status Bar */
+    .screen-status-bar {
+      height: 44px;
+      padding: 10px 24px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0F172A;
+      z-index: 40;
+    }
+
+    .screen-status-bar.dark-text {
+      color: #0F172A;
+    }
+
+    .screen-status-bar.light-text {
+      color: #FFFFFF;
+    }
+
+    /* Viewport Screen Content Canvas */
+    .screen-canvas {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg-slate);
+      color: var(--text-dark);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Custom Scrollbar */
+    .screen-canvas::-webkit-scrollbar {
+      width: 4px;
+    }
+    .screen-canvas::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    /* Bottom 5-Item Navigation Bar */
+    .bottom-tabs-nav {
+      height: 68px;
+      background: #FFFFFF;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 8px 10px 8px;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+      z-index: 40;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 800;
+      transition: all 0.2s ease;
+      width: 20%;
+    }
+
+    .tab-item svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+
+    .tab-item.active {
+      color: var(--primary-dark-gold);
+    }
+
+    /* Specification Details Sidebar */
+    .spec-sidebar {
+      max-width: 440px;
+      background: #111827;
+      border: 1px solid #1F2937;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .spec-sidebar h2 {
+      font-size: 18px;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spec-sidebar h2 span {
+      background: var(--primary-cream);
+      color: #92400E;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .spec-sidebar p.desc {
+      font-size: 13px;
+      color: #9CA3AF;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .spec-points-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .spec-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      color: #E2E8F0;
+      line-height: 1.5;
+    }
+
+    .spec-point svg {
+      flex-shrink: 0;
+      color: var(--primary-gold);
+      margin-top: 2px;
+    }
+
+    .badge-checklist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid #1F2937;
+    }
+
+    .badge-check {
+      background: rgba(5, 150, 105, 0.15);
+      border: 1px solid rgba(5, 150, 105, 0.3);
+      color: #34D399;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Screen Views styling */
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+    }
+
+    .screen-view.active {
+      display: flex;
+    }
+
+    /* UI Components */
+    .btn-gold {
+      background: var(--primary-gold);
+      color: #0F172A;
+      font-weight: 800;
+      font-size: 14px;
+      border-radius: 14px;
+      padding: 14px 18px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.28);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-gold:hover {
+      background: #EAB308;
+      transform: translateY(-1px);
+    }
+
+    .card-white {
+      background: #FFFFFF;
+      border-radius: 18px;
+      border: 1px solid var(--border-card);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="preview-header">
+    <div class="brand-col">
+      <div class="brand-logo-badge">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.3V16c0 .6.4 1 1 1h2"/>
+          <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+        </svg>
+      </div>
+      <div class="brand-title-wrap">
+        <h1>OneWay<span>TaxiBihar</span></h1>
+        <p>MOBILE REDESIGN PREVIEW HUB (DELIVERABLES 1–9)</p>
+      </div>
+    </div>
+
+    <!-- 10 Interactive Screen Selector Tabs -->
+    <nav class="screen-pills-nav">
+      <button class="pill-btn active" onclick="switchScreen('home')">🏠 Home (C)</button>
+      <button class="pill-btn" onclick="switchScreen('splash')">✨ Splash (A)</button>
+      <button class="pill-btn" onclick="switchScreen('auth')">🔑 Login & OTP (B)</button>
+      <button class="pill-btn" onclick="switchScreen('location')">📍 Location (D)</button>
+      <button class="pill-btn" onclick="switchScreen('vehicle')">🚗 5 Tiers (E)</button>
+      <button class="pill-btn" onclick="switchScreen('checkout')">💳 Checkout (F)</button>
+      <button class="pill-btn" onclick="switchScreen('timeline')">⏱️ 7-Stage Track (G/H)</button>
+      <button class="pill-btn" onclick="switchScreen('trips')">📋 My Bookings (I)</button>
+      <button class="pill-btn" onclick="switchScreen('profile')">👤 Profile & Desk (J)</button>
+    </nav>
+  </header>
+
+  <main class="preview-workspace">
+    <!-- Phone Mockup Frame -->
+    <div class="device-shell">
+      <div class="device-notch">
+        <div style="font-size: 10px; font-weight: 800; color: #FFFFFF;">9:41</div>
+        <div class="notch-camera"></div>
+      </div>
+
+      <!-- Top Phone Status Bar -->
+      <div class="screen-status-bar dark-text" id="phoneStatusBar">
+        <span style="font-size: 11px; font-weight: 800;">Jio 5G</span>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1 15h2v2h-2v-2zm1.7-4.3l-.9.9c-.6.6-.8 1.4-.8 2.4h-2c0-1.5.5-2.7 1.5-3.7l1.2-1.2c.4-.4.6-.9.6-1.4 0-1.1-.9-2-2-2s-2 .9-2 2H6c0-2.8 2.2-5 5-5s5 2.2 5 5c0 1-.4 1.8-1.3 2.7z"/></svg>
+          <span style="font-size: 11px; font-weight: 800;">100%</span>
+        </div>
+      </div>
+
+      <!-- Screen Canvas Viewport -->
+      <div class="screen-canvas" id="screenCanvas">
+
+        <!-- SCREEN A: SPLASH SCREEN -->
+        <div class="screen-view" id="view-splash" style="background: #F59E0B; height: 100%; justify-content: space-between; align-items: center; padding: 48px 24px; text-align: center;">
+          <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+            <div style="background: #FFFFFF; border-radius: 24px; padding: 24px 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.12); border: 1px solid rgba(255,255,255,0.8); display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 72px; height: 72px; border-radius: 20px; background: #059669; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(5,150,105,0.4);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.3V16c0 .6.4 1 1 1h2"/>
+                  <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                </svg>
+              </div>
+              <div style="font-size: 22px; font-weight: 900; color: #0F172A; letter-spacing: -0.5px;">
+                OneWay<span style="color: #D97706;">TaxiBihar</span>
+              </div>
+              <div style="font-size: 9px; font-weight: 800; color: #059669; letter-spacing: 1px; margin-top: 4px;">
+                BIHAR INTERCITY CAB NETWORK
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 24px;">
+              <span style="background: rgba(255,255,255,0.92); color: #0F172A; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">✨ Zero Return Fare</span>
+              <span style="background: rgba(255,255,255,0.92); color: #059669; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">✓ Doorstep Pickup</span>
+            </div>
+
+            <p style="font-size: 12px; font-weight: 600; color: #451A03; margin-top: 18px; max-width: 260px; line-height: 1.5;">
+              Premium Intercity Taxi Network across all 38 Districts of Bihar
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <div style="width: 24px; height: 24px; border: 3px solid rgba(15,23,42,0.2); border-top-color: #0F172A; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+            <span style="font-size: 11px; font-weight: 700; color: #451A03;">Connecting to Bihar Dispatch...</span>
+          </div>
+        </div>
+
+        <!-- SCREEN B: LOGIN & REGISTRATION -->
+        <div class="screen-view" id="view-auth" style="padding: 16px; background: #F8FAFC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <button onclick="switchScreen('home')" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">←</button>
+            <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Passenger Sign In</span>
+            <div style="width: 36px;"></div>
+          </div>
+
+          <div style="text-align: center; margin-bottom: 18px;">
+            <div style="font-size: 20px; font-weight: 900; color: #0F172A;">OneWay<span style="color: #D97706;">TaxiBihar</span></div>
+            <div style="font-size: 10px; font-weight: 800; color: #059669; letter-spacing: 0.5px;">BIHAR INTERCITY CAB NETWORK</div>
+          </div>
+
+          <div class="card-white">
+            <span style="background: #FEF3C7; color: #92400E; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 12px;">Instant Passenger Account</span>
+            <h3 style="font-size: 18px; font-weight: 900; color: #0F172A; margin-bottom: 4px;">Enter Mobile Number</h3>
+            <p style="font-size: 12px; color: #64748B; margin-bottom: 16px;">Enter your 10-digit Indian phone number to book outstation taxis with zero return fare.</p>
+
+            <div style="margin-bottom: 16px;">
+              <label style="font-size: 11px; font-weight: 800; color: #475569; display: block; margin-bottom: 6px;">MOBILE NUMBER</label>
+              <div style="display: flex; align-items: center; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 0 14px; height: 50px;">
+                <span style="font-size: 16px; font-weight: 800; color: #0F172A; margin-right: 10px;">+91</span>
+                <div style="width: 1px; height: 20px; background: #CBD5E1; margin-right: 12px;"></div>
+                <input type="text" value="98765 43210" style="border: none; background: transparent; font-size: 16px; font-weight: 700; color: #0F172A; width: 100%; outline: none;">
+              </div>
+            </div>
+
+            <button class="btn-gold" style="width: 100%;" onclick="alert('OTP sent to +91 9876543210! (Test OTP: 1234)')">
+              Get Verification Code →
+            </button>
+
+            <button style="width: 100%; height: 44px; margin-top: 10px; background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; font-size: 12px; font-weight: 700; color: #334155; cursor: pointer;" onclick="alert('Signed in as Verified Passenger (9876543210)!')">
+              ⚡ 1-Tap Guest Login (9876543210)
+            </button>
+          </div>
+
+          <div style="background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.18); border-radius: 12px; padding: 12px; display: flex; gap: 8px; margin-top: auto;">
+            <span style="color: #059669; font-size: 16px;">🛡️</span>
+            <p style="font-size: 10px; color: #065F46; line-height: 1.5; font-weight: 600;">
+              Statutory Protection: Your personal records are strictly protected under India DPDP Act 2023. Zero data selling.
+            </p>
+          </div>
+        </div>
+
+        <!-- SCREEN C: HOME RIDE DASHBOARD (DEFAULT ACTIVE) -->
+        <div class="screen-view active" id="view-home" style="padding: 16px; background: #F8FAFC;">
+          <!-- Top Greeting & Account Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+              <div style="font-size: 10px; font-weight: 800; color: #D97706; letter-spacing: 0.8px;">NAMASTE & WELCOME</div>
+              <div style="font-size: 17px; font-weight: 900; color: #0F172A;">Traveler (Patna)</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border: 1px solid #E2E8F0; padding: 6px 12px; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); cursor: pointer;" onclick="switchScreen('profile')">
+              <span style="font-size: 12px;">👤</span>
+              <span style="font-size: 11px; font-weight: 800; color: #0F172A;">My Account</span>
+            </div>
+          </div>
+
+          <!-- Official Brand Banner Card -->
+          <div class="card-white" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 32px; height: 32px; border-radius: 8px; background: #059669; display: flex; align-items: center; justify-content: center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 11 2 11.3V16c0 .6.4 1 1 1h2"/>
+                  <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size: 14px; font-weight: 900; color: #0F172A;">OneWay<span style="color: #D97706;">TaxiBihar</span></div>
+                <div style="font-size: 8px; font-weight: 800; color: #059669; letter-spacing: 0.5px;">BIHAR INTERCITY CAB NETWORK</div>
+              </div>
+            </div>
+            <span style="background: #FEF3C7; color: #92400E; font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 999px;">Zero Return Fare</span>
+          </div>
+
+          <!-- Trip Type Toggle -->
+          <div style="display: flex; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 4px; margin-bottom: 12px;">
+            <button style="flex: 1; border: none; background: #F59E0B; color: #0F172A; font-weight: 800; font-size: 12px; padding: 8px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 4px rgba(245,158,11,0.25);">One-Way Drop →</button>
+            <button style="flex: 1; border: none; background: transparent; color: #64748B; font-weight: 700; font-size: 12px; padding: 8px; border-radius: 10px; cursor: pointer;" onclick="alert('Round trip selected (1.8x multiplier applied)!')">Round Trip ↺</button>
+          </div>
+
+          <!-- Main Booking Card -->
+          <div class="card-white" style="margin-bottom: 14px;">
+            <!-- Pickup -->
+            <div style="display: flex; align-items: center; gap: 10px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer;" onclick="switchScreen('location')">
+              <div style="width: 32px; height: 32px; border-radius: 16px; background: rgba(5,150,105,0.12); display: flex; align-items: center; justify-content: center; color: #059669; font-size: 14px;">📍</div>
+              <div style="flex: 1;">
+                <div style="font-size: 9px; font-weight: 800; color: #64748B;">PICKUP LOCATION</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Patna (Doorstep)</div>
+              </div>
+            </div>
+
+            <!-- Destination -->
+            <div style="display: flex; align-items: center; gap: 10px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; cursor: pointer;" onclick="switchScreen('location')">
+              <div style="width: 32px; height: 32px; border-radius: 16px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; color: #D97706; font-size: 14px;">🧭</div>
+              <div style="flex: 1;">
+                <div style="font-size: 9px; font-weight: 800; color: #64748B;">DROP DESTINATION</div>
+                <div style="font-size: 14px; font-weight: 800; color: #0F172A;">Gaya (Bodh Gaya)</div>
+              </div>
+            </div>
+
+            <!-- Date & Time Row -->
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <div style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 10px;">
+                <div style="font-size: 9px; font-weight: 800; color: #64748B;">TRAVEL DATE</div>
+                <div style="font-size: 12px; font-weight: 800; color: #0F172A;">📅 Today</div>
+              </div>
+              <div style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 8px 10px;">
+                <div style="font-size: 9px; font-weight: 800; color: #64748B;">PICKUP TIME</div>
+                <div style="font-size: 12px; font-weight: 800; color: #0F172A;">🕒 10:00 AM</div>
+              </div>
+            </div>
+
+            <!-- Search CTA -->
+            <button class="btn-gold" style="width: 100%;" onclick="switchScreen('vehicle')">
+              🚗 Search Taxis • Guaranteed Fares →
+            </button>
+          </div>
+
+          <!-- Recent Bookings Shortcut -->
+          <div class="card-white" style="margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 800; color: #475569;">RECENT OUTSTATION RIDE</span>
+              <span style="background: rgba(5,150,105,0.12); color: #059669; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">ACTIVE</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 900; color: #0F172A; margin-bottom: 6px;">Patna ➔ Gaya (Prime Sedan)</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F1F5F9; padding-top: 8px;">
+              <span style="font-size: 11px; color: #64748B; font-weight: 600;">PNR: OTB-2026-4891 • ₹2,198</span>
+              <button style="background: #FEF3C7; border: none; color: #0F172A; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; cursor: pointer;" onclick="switchScreen('timeline')">Track Trip →</button>
+            </div>
+          </div>
+
+          <!-- Popular Bihar Destinations -->
+          <div style="margin-bottom: 14px;">
+            <div style="font-size: 14px; font-weight: 900; color: #0F172A; margin-bottom: 8px;">Popular Bihar Destinations</div>
+            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+              <div class="card-white" style="min-width: 140px; margin-bottom: 0; padding: 12px; cursor: pointer;" onclick="switchScreen('vehicle')">
+                <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 4px;">FIXED FARE</span>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin: 4px 0;">Patna ➔ Gaya</div>
+                <div style="font-size: 10px; color: #64748B;">104 km • 2h 15m</div>
+                <div style="font-size: 13px; font-weight: 900; color: #D97706; margin-top: 6px;">From ₹2,198</div>
+              </div>
+              <div class="card-white" style="min-width: 140px; margin-bottom: 0; padding: 12px; cursor: pointer;" onclick="switchScreen('vehicle')">
+                <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 4px;">FIXED FARE</span>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin: 4px 0;">Patna ➔ Muzaffarpur</div>
+                <div style="font-size: 10px; color: #64748B;">75 km • 1h 45m</div>
+                <div style="font-size: 13px; font-weight: 900; color: #D97706; margin-top: 6px;">From ₹1,898</div>
+              </div>
+              <div class="card-white" style="min-width: 140px; margin-bottom: 0; padding: 12px; cursor: pointer;" onclick="switchScreen('vehicle')">
+                <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 5px; border-radius: 4px;">FIXED FARE</span>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin: 4px 0;">Patna ➔ Darbhanga</div>
+                <div style="font-size: 10px; color: #64748B;">140 km • 3h 10m</div>
+                <div style="font-size: 13px; font-weight: 900; color: #D97706; margin-top: 6px;">From ₹2,698</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 24x7 WhatsApp & Call Shortcut Card -->
+          <div class="card-white" style="margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="font-size: 20px;">💬</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: #0F172A;">24x7 WhatsApp Booking Desk</div>
+                <div style="font-size: 11px; color: #64748B;">Direct WhatsApp chat with our Patna dispatcher</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <a href="https://wa.me/917739406400" target="_blank" style="flex: 1; background: #059669; color: #FFF; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 10px; text-align: center; text-decoration: none;">WhatsApp Chat</a>
+              <a href="tel:+918002141816" style="flex: 1; background: #FEF3C7; color: #0F172A; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 10px; text-align: center; text-decoration: none; border: 1px solid #FDE68A;">Call 80021 41816</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN D: LOCATION SELECTION (MAP INTERFACE) -->
+        <div class="screen-view" id="view-location" style="padding: 16px; background: #F8FAFC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <button onclick="switchScreen('home')" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">←</button>
+            <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Select Location & Map</span>
+            <div style="width: 36px;"></div>
+          </div>
+
+          <!-- Visual Map Interface Container -->
+          <div style="height: 140px; background: #E2E8F0; border-radius: 16px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; border: 1px solid #CBD5E1;">
+            <div style="position: absolute; width: 120%; height: 12px; background: #FFF; transform: rotate(-15deg);"></div>
+            <div style="position: absolute; width: 120%; height: 10px; background: #FFF; transform: rotate(40deg);"></div>
+            <div style="position: absolute; width: 14px; height: 120%; background: #FEF3C7; left: 45%;"></div>
+            
+            <!-- Map Pin Marker -->
+            <div style="display: flex; flex-direction: column; align-items: center; z-index: 10;">
+              <div style="width: 36px; height: 36px; border-radius: 18px; background: #D97706; display: flex; align-items: center; justify-content: center; color: #FFF; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.25);">📍</div>
+              <div style="width: 2px; height: 8px; background: #0F172A;"></div>
+            </div>
+
+            <div style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; color: #0F172A;">
+              Bihar Highway Network
+            </div>
+            <button style="position: absolute; bottom: 10px; right: 10px; background: #FFFFFF; border: 1px solid #CBD5E1; padding: 6px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="alert('GPS locked: Patna Airport PAT')">
+              🎯 Auto GPS
+            </button>
+          </div>
+
+          <!-- Search Input -->
+          <div style="display: flex; align-items: center; background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 0 12px; height: 46px; margin-bottom: 12px;">
+            <span style="color: #94A3B8; margin-right: 8px;">🔍</span>
+            <input type="text" placeholder="Search Bihar district or city..." value="Gaya (Bodh Gaya)" style="border: none; outline: none; font-size: 14px; font-weight: 700; color: #0F172A; width: 100%;">
+          </div>
+
+          <!-- Frequent Bihar Transit Hubs -->
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 800; color: #64748B; margin-bottom: 6px;">FREQUENT BIHAR HUBS</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <span style="background: #FEF3C7; color: #92400E; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; border: 1px solid #FDE68A;">✈️ Patna Airport (PAT)</span>
+              <span style="background: #FFFFFF; color: #334155; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; border: 1px solid #E2E8F0;">🚆 Patna Junction</span>
+              <span style="background: #FFFFFF; color: #334155; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; border: 1px solid #E2E8F0;">✈️ Gaya Airport</span>
+              <span style="background: #FFFFFF; color: #334155; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 20px; border: 1px solid #E2E8F0;">🏥 AIIMS Patna</span>
+            </div>
+          </div>
+
+          <!-- City List -->
+          <div style="font-size: 11px; font-weight: 800; color: #64748B; margin-bottom: 6px;">ALL BIHAR DISTRICTS</div>
+          <div style="display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 220px;">
+            <div style="background: #FFFBEB; border: 1px solid #F59E0B; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: #0F172A;">Gaya (Bodh Gaya Circuit)</span>
+              <span style="color: #D97706; font-weight: 800;">✓</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 700; color: #334155;">Muzaffarpur (North Bihar Hub)</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 700; color: #334155;">Darbhanga (Mithila Airport)</span>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 700; color: #334155;">Bhagalpur (Silk City)</span>
+            </div>
+          </div>
+
+          <button class="btn-gold" style="width: 100%; margin-top: 14px;" onclick="switchScreen('vehicle')">
+            Confirm Location (Gaya) →
+          </button>
+        </div>
+
+        <!-- SCREEN E: VEHICLE SELECTION (ALL 5 TIERS WITH REAL CARS) -->
+        <div class="screen-view" id="view-vehicle" style="padding: 16px; background: #F8FAFC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <button onclick="switchScreen('home')" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">←</button>
+            <div style="text-align: center;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Patna ➔ Gaya</span>
+              <div style="font-size: 10px; color: #64748B; font-weight: 600;">104 km • ~2h 15m • One-Way</div>
+            </div>
+            <div style="width: 36px;"></div>
+          </div>
+
+          <!-- Value Strip -->
+          <div style="background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.2); border-radius: 10px; padding: 8px 12px; font-size: 11px; color: #065F46; font-weight: 700; margin-bottom: 12px;">
+            🛡️ All-Inclusive Guaranteed Fares: Zero Return Fee • Tolls & AC Included
+          </div>
+
+          <!-- 5 Vehicle Cards List -->
+          <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 520px; padding-bottom: 10px;">
+            
+            <!-- Tier 1: Hatchback -->
+            <div class="card-white" style="cursor: pointer; margin-bottom: 0; padding: 12px;" onclick="selectTierCard(this, 'Hatchback', '1698')">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 900; color: #0F172A;">Hatchback</span>
+                    <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">BEST VALUE</span>
+                  </div>
+                  <div style="font-size: 11px; color: #64748B;">WagonR, Tiago, Celerio • ₹20/km</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: 900; color: #0F172A;">₹1,698</div>
+                  <div style="font-size: 9px; color: #059669; font-weight: 800;">All-Inclusive</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../../images/voyago/deal-car.jpg" alt="Hatchback" style="width: 100px; height: 60px; object-fit: contain; border-radius: 6px; background: #F8FAFC;">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">👥 4 Pax</span>
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">🧳 2 Bags</span>
+                  <span style="background: rgba(5,150,105,0.1); font-size: 10px; font-weight: 800; color: #059669; padding: 3px 6px; border-radius: 4px;">AC</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tier 2: Sedan (Selected) -->
+            <div class="card-white" style="cursor: pointer; margin-bottom: 0; padding: 12px; border: 2px solid #F59E0B; background: #FFFDF5;" onclick="selectTierCard(this, 'Prime Sedan', '2198')">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 900; color: #0F172A;">Sedan</span>
+                    <span style="background: #FDE68A; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">MOST POPULAR</span>
+                  </div>
+                  <div style="font-size: 11px; color: #64748B;">Dzire, Etios, Amaze • ₹22/km</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: 900; color: #0F172A;">₹2,198</div>
+                  <div style="font-size: 9px; color: #059669; font-weight: 800;">All-Inclusive</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../../images/voyago/car-sedan.jpg" alt="Sedan" style="width: 100px; height: 60px; object-fit: contain; border-radius: 6px; background: #F8FAFC;">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">👥 4 Pax</span>
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">🧳 3-4 Bags</span>
+                  <span style="background: rgba(5,150,105,0.1); font-size: 10px; font-weight: 800; color: #059669; padding: 3px 6px; border-radius: 4px;">AC</span>
+                </div>
+              </div>
+              <div style="border-top: 1px solid #FEF3C7; margin-top: 8px; padding-top: 6px; font-size: 10px; font-weight: 800; color: #059669;">
+                ✓ Selected Category • Guaranteed Commercial Taxi
+              </div>
+            </div>
+
+            <!-- Tier 3: XUV -->
+            <div class="card-white" style="cursor: pointer; margin-bottom: 0; padding: 12px;" onclick="selectTierCard(this, 'Family XUV (6+1)', '3398')">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 900; color: #0F172A;">XUV</span>
+                    <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">FAMILY & LUGGAGE</span>
+                  </div>
+                  <div style="font-size: 11px; color: #64748B;">Maruti Ertiga, Carens, Scorpio • ₹27/km</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: 900; color: #0F172A;">₹3,398</div>
+                  <div style="font-size: 9px; color: #059669; font-weight: 800;">All-Inclusive</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../../images/voyago/car-ertiga.jpg" alt="XUV" style="width: 100px; height: 60px; object-fit: contain; border-radius: 6px; background: #F8FAFC;">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">👥 6 Pax</span>
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">🧳 4-5 Bags</span>
+                  <span style="background: rgba(5,150,105,0.1); font-size: 10px; font-weight: 800; color: #059669; padding: 3px 6px; border-radius: 4px;">AC</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tier 4: Executive Sedan -->
+            <div class="card-white" style="cursor: pointer; margin-bottom: 0; padding: 12px;" onclick="selectTierCard(this, 'Executive Sedan', '2698')">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 900; color: #0F172A;">Executive Sedan</span>
+                    <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">PREMIUM COMFORT</span>
+                  </div>
+                  <div style="font-size: 11px; color: #64748B;">Honda City, Ciaz, Verna • ₹26/km</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: 900; color: #0F172A;">₹2,698</div>
+                  <div style="font-size: 9px; color: #059669; font-weight: 800;">All-Inclusive</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../../images/voyago/car-sedan.jpg" alt="Executive Sedan" style="width: 100px; height: 60px; object-fit: contain; border-radius: 6px; background: #F8FAFC;">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">👥 4 Pax</span>
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">🧳 4 Large Bags</span>
+                  <span style="background: rgba(5,150,105,0.1); font-size: 10px; font-weight: 800; color: #059669; padding: 3px 6px; border-radius: 4px;">VIP AC</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tier 5: Luxury XUV (Innova Crysta) -->
+            <div class="card-white" style="cursor: pointer; margin-bottom: 0; padding: 12px;" onclick="selectTierCard(this, 'Luxury XUV (Innova Crysta)', '4598')">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 15px; font-weight: 900; color: #0F172A;">Luxury XUV</span>
+                    <span style="background: #FEF3C7; color: #92400E; font-size: 8px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">VIP LUXURY</span>
+                  </div>
+                  <div style="font-size: 11px; color: #64748B;">Toyota Innova Crysta • ₹34/km</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 18px; font-weight: 900; color: #0F172A;">₹4,598</div>
+                  <div style="font-size: 9px; color: #059669; font-weight: 800;">All-Inclusive</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="../../images/voyago/car-suv.jpg" alt="Innova Crysta" style="width: 100px; height: 60px; object-fit: contain; border-radius: 6px; background: #F8FAFC;">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">👥 7 Pax</span>
+                  <span style="background: #F1F5F9; font-size: 10px; font-weight: 700; color: #475569; padding: 3px 6px; border-radius: 4px;">🧳 6 Bags</span>
+                  <span style="background: rgba(5,150,105,0.1); font-size: 10px; font-weight: 800; color: #059669; padding: 3px 6px; border-radius: 4px;">REAR AC</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Sticky Bar -->
+          <div style="background: #FFFFFF; border-top: 1px solid #E2E8F0; padding: 12px 16px; margin: 0 -16px -16px -16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);">
+            <div>
+              <div style="font-size: 9px; font-weight: 800; color: #64748B;">ALL-INCLUSIVE TOTAL</div>
+              <div style="font-size: 20px; font-weight: 900; color: #0F172A;" id="selectedFareDisplay">₹2,198</div>
+              <div style="font-size: 10px; color: #D97706; font-weight: 700;" id="selectedTierDisplay">Prime Sedan</div>
+            </div>
+            <button class="btn-gold" style="padding: 10px 18px;" onclick="switchScreen('checkout')">
+              Select & Book →
+            </button>
+          </div>
+        </div>
+
+        <!-- SCREEN F: CHECKOUT & CONFIRMATION -->
+        <div class="screen-view" id="view-checkout" style="padding: 16px; background: #F8FAFC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <button onclick="switchScreen('vehicle')" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">←</button>
+            <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Trip Review & Checkout</span>
+            <div style="width: 36px;"></div>
+          </div>
+
+          <div class="card-white">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div>
+                <span style="font-size: 16px; font-weight: 900; color: #0F172A;">Prime Sedan</span>
+                <div style="font-size: 11px; font-weight: 700; color: #D97706;">One-Way Outstation Taxi • 104 km</div>
+              </div>
+              <div style="font-size: 20px; font-weight: 900; color: #0F172A;">₹2,198</div>
+            </div>
+
+            <!-- Route -->
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="color: #059669;">●</span>
+                <span style="font-size: 12px; font-weight: 800; color: #0F172A;">Patna (Doorstep)</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="color: #D97706;">●</span>
+                <span style="font-size: 12px; font-weight: 800; color: #0F172A;">Gaya (Bodh Gaya Circuit)</span>
+              </div>
+            </div>
+
+            <!-- Schedule -->
+            <div style="background: #FFFBEB; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 9px; font-weight: 800; color: #92400E;">DEPARTURE SCHEDULE</div>
+                <div style="font-size: 12px; font-weight: 800; color: #0F172A;">📅 Today • 🕒 10:00 AM</div>
+              </div>
+              <span style="font-size: 11px; font-weight: 800; color: #B45309;">Modify ✏️</span>
+            </div>
+          </div>
+
+          <!-- Passenger Details -->
+          <div class="card-white">
+            <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 8px;">Passenger Details</div>
+            <div style="margin-bottom: 8px;">
+              <label style="font-size: 10px; font-weight: 800; color: #64748B;">PASSENGER NAME</label>
+              <input type="text" value="Amit Kumar" style="width: 100%; height: 40px; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0 10px; font-size: 13px; font-weight: 700; color: #0F172A;">
+            </div>
+            <div>
+              <label style="font-size: 10px; font-weight: 800; color: #64748B;">MOBILE NUMBER</label>
+              <input type="text" value="+91 98351 23456" style="width: 100%; height: 40px; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0 10px; font-size: 13px; font-weight: 700; color: #0F172A;">
+            </div>
+          </div>
+
+          <!-- Payment Option -->
+          <div class="card-white">
+            <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 8px;">Payment Option</div>
+            <div style="background: #FFFBEB; border: 1.5px solid #F59E0B; border-radius: 10px; padding: 10px; display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 18px;">💵</span>
+              <div style="flex: 1;">
+                <div style="font-size: 12px; font-weight: 800; color: #0F172A;">Zero Advance • Pay Cash to Driver</div>
+                <div style="font-size: 10px; color: #64748B;">Pay full ₹2,198 directly to chauffeur upon reaching destination.</div>
+              </div>
+              <span style="color: #059669; font-weight: 900;">✓</span>
+            </div>
+          </div>
+
+          <button class="btn-gold" style="width: 100%; margin-top: 4px;" onclick="switchScreen('timeline')">
+            Confirm Taxi Booking (₹2,198) →
+          </button>
+        </div>
+
+        <!-- SCREEN G & H: 7-STAGE STATUS STEPPER & TRACKING -->
+        <div class="screen-view" id="view-timeline" style="padding: 16px; background: #F8FAFC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <button onclick="switchScreen('home')" style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">←</button>
+            <div style="text-align: center;">
+              <span style="font-size: 15px; font-weight: 800; color: #0F172A;">Live Status & Tracking</span>
+              <div style="font-size: 10px; color: #D97706; font-weight: 800;">PNR: OTB-2026-4891</div>
+            </div>
+            <button style="width: 36px; height: 36px; border-radius: 18px; border: 1px solid #E2E8F0; background: #FFF; cursor: pointer;" onclick="alert('Trip itinerary shared via WhatsApp!')">🔗</button>
+          </div>
+
+          <!-- Live Telemetry Card -->
+          <div class="card-white" style="border: 1.5px solid #E2E8F0; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="width: 8px; height: 8px; border-radius: 4px; background: #059669;"></div>
+                <span style="font-size: 13px; font-weight: 900; color: #0F172A;">Chauffeur Assigned</span>
+              </div>
+              <span style="background: #FEF3C7; color: #92400E; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">Stage 3 of 7</span>
+            </div>
+
+            <!-- Route Canvas -->
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: #0F172A;">
+                <span>Patna Doorstep</span>
+                <span>Gaya Destination</span>
+              </div>
+              <div style="height: 4px; background: #E2E8F0; border-radius: 2px; margin: 8px 0; position: relative;">
+                <div style="position: absolute; left: 0; width: 45%; height: 100%; background: #059669; border-radius: 2px;"></div>
+                <div style="position: absolute; left: 45%; top: -6px; width: 16px; height: 16px; border-radius: 8px; background: #D97706; border: 2px solid #FFF;"></div>
+              </div>
+              <div style="font-size: 10px; color: #059669; font-weight: 700;">ETA at Doorstep: ~12 mins • Highway Traffic Clear</div>
+            </div>
+
+            <!-- Chauffeur Details -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 44px; height: 44px; border-radius: 22px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 20px;">👨‍✈️</div>
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 900; color: #0F172A;">Ramesh Kumar Singh</div>
+                <div style="font-size: 11px; color: #64748B;">Maruti Dzire • BR 01 PB 8291 • ⭐ 4.9 (342 trips)</div>
+              </div>
+              <div style="text-align: right; background: #FFFBEB; border: 1px solid #F59E0B; padding: 4px 8px; border-radius: 8px;">
+                <div style="font-size: 8px; font-weight: 800; color: #92400E;">RIDE OTP</div>
+                <div style="font-size: 16px; font-weight: 900; color: #0F172A; letter-spacing: 2px;">4891</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <a href="tel:+918002141816" style="flex: 1; background: #F59E0B; color: #0F172A; font-size: 12px; font-weight: 800; padding: 9px; border-radius: 10px; text-align: center; text-decoration: none;">📞 Call Chauffeur</a>
+              <a href="https://wa.me/917739406400" target="_blank" style="flex: 1; background: #059669; color: #FFF; font-size: 12px; font-weight: 800; padding: 9px; border-radius: 10px; text-align: center; text-decoration: none;">💬 WhatsApp</a>
+            </div>
+          </div>
+
+          <!-- 7-Stage Status Stepper -->
+          <div class="card-white">
+            <div style="font-size: 14px; font-weight: 800; color: #0F172A; margin-bottom: 12px;">7-Stage Status Stepper</div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #059669; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;">✓</div>
+                <div><strong style="color: #0F172A;">1. Booking Received</strong> — Request logged in dispatch</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #059669; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;">✓</div>
+                <div><strong style="color: #0F172A;">2. Searching Driver</strong> — Corridor chauffeurs notified</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #F59E0B; color: #0F172A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid #D97706;">3</div>
+                <div><strong style="color: #B45309;">3. Driver Assigned</strong> — Ramesh Kumar Singh allocated</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; opacity: 0.5;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #F1F5F9; color: #64748B; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">4</div>
+                <div><strong>4. Driver Accepted</strong> — Chauffeur en route</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; opacity: 0.5;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #F1F5F9; color: #64748B; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">5</div>
+                <div><strong>5. Driver Details Ready</strong> — Verified plate & credentials</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; opacity: 0.5;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #F1F5F9; color: #64748B; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">6</div>
+                <div><strong>6. Trip Started</strong> — Journey in progress</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; opacity: 0.5;">
+                <div style="width: 22px; height: 22px; border-radius: 11px; background: #F1F5F9; color: #64748B; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700;">7</div>
+                <div><strong>7. Trip Completed</strong> — Safely reached destination</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN I: MY BOOKINGS -->
+        <div class="screen-view" id="view-trips" style="padding: 16px; background: #F8FAFC;">
+          <div style="font-size: 20px; font-weight: 900; color: #0F172A; margin-bottom: 2px;">My Outstation Rides</div>
+          <div style="font-size: 11px; color: #64748B; margin-bottom: 12px;">Live status, verified PNR vouchers & past travel history</div>
+
+          <!-- Tabs -->
+          <div style="display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px;">
+            <button style="background: #F59E0B; border: none; color: #0F172A; font-weight: 800; font-size: 11px; padding: 6px 12px; border-radius: 20px;">Upcoming (1)</button>
+            <button style="background: #FFFFFF; border: 1px solid #E2E8F0; color: #64748B; font-weight: 700; font-size: 11px; padding: 6px 12px; border-radius: 20px;">Active (0)</button>
+            <button style="background: #FFFFFF; border: 1px solid #E2E8F0; color: #64748B; font-weight: 700; font-size: 11px; padding: 6px 12px; border-radius: 20px;">Completed (3)</button>
+            <button style="background: #FFFFFF; border: 1px solid #E2E8F0; color: #64748B; font-weight: 700; font-size: 11px; padding: 6px 12px; border-radius: 20px;">Cancelled</button>
+          </div>
+
+          <!-- Booking Card 1 (Upcoming) -->
+          <div class="card-white">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 14px; font-weight: 900; color: #0F172A;">OTB-2026-4891</span>
+                <span style="background: #FEF3C7; color: #92400E; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">CONFIRMED</span>
+                <div style="font-size: 11px; color: #64748B; margin-top: 2px;">One-Way • Prime Sedan (Dzire)</div>
+              </div>
+              <div style="font-size: 16px; font-weight: 900; color: #0F172A;">₹2,198</div>
+            </div>
+
+            <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 6px;">
+              Patna Doorstep ➔ Gaya Bodh Gaya
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #64748B; border-top: 1px solid #F1F5F9; padding-top: 8px; margin-top: 8px;">
+              <span>📅 Today • 🕒 10:00 AM</span>
+              <span style="background: #FEF3C7; color: #92400E; font-weight: 800; padding: 2px 6px; border-radius: 4px;">OTP: 4891</span>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <button class="btn-gold" style="flex: 1; padding: 8px; font-size: 11px;" onclick="switchScreen('timeline')">Track Timeline</button>
+              <button style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 11px; font-weight: 700; color: #334155; border-radius: 10px; cursor: pointer;" onclick="alert('GST Tax Invoice downloaded!')">Tax Invoice</button>
+              <button style="flex: 1; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 11px; font-weight: 700; color: #334155; border-radius: 10px; cursor: pointer;" onclick="switchScreen('vehicle')">Rebook</button>
+            </div>
+          </div>
+
+          <!-- Booking Card 2 (Completed) -->
+          <div class="card-white" style="opacity: 0.9;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 14px; font-weight: 900; color: #0F172A;">OTB-2026-3184</span>
+                <span style="background: rgba(5,150,105,0.12); color: #059669; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">COMPLETED</span>
+                <div style="font-size: 11px; color: #64748B; margin-top: 2px;">One-Way • Go Hatchback</div>
+              </div>
+              <div style="font-size: 16px; font-weight: 900; color: #0F172A;">₹1,898</div>
+            </div>
+            <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 6px;">
+              Patna ➔ Muzaffarpur Junction
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #64748B; border-top: 1px solid #F1F5F9; padding-top: 8px;">
+              <span>Completed on 28 Oct 2026</span>
+              <button style="background: transparent; border: none; color: #D97706; font-size: 11px; font-weight: 800; cursor: pointer;" onclick="alert('GST Tax Invoice downloaded!')">Get Invoice 📄</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCREEN J: PROFILE & 24X7 SUPPORT DESK -->
+        <div class="screen-view" id="view-profile" style="padding: 16px; background: #F8FAFC;">
+          <div style="font-size: 20px; font-weight: 900; color: #0F172A; margin-bottom: 12px;">Customer Profile & Help</div>
+
+          <!-- Customer Card -->
+          <div class="card-white" style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 52px; height: 52px; border-radius: 26px; background: #FEF3C7; display: flex; align-items: center; justify-content: center; font-size: 22px;">👤</div>
+            <div style="flex: 1;">
+              <div style="font-size: 16px; font-weight: 900; color: #0F172A;">Amit Kumar</div>
+              <div style="font-size: 12px; color: #64748B;">+91 98351 23456</div>
+              <div style="font-size: 10px; font-weight: 800; color: #059669; margin-top: 2px;">✓ DPDP Act Verified Passenger</div>
+            </div>
+            <button style="border: 1px solid #E2E8F0; background: #FFF; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="alert('Profile details edit modal!')">Edit</button>
+          </div>
+
+          <!-- 24x7 Helpdesk Box -->
+          <div class="card-white">
+            <div style="font-size: 13px; font-weight: 800; color: #0F172A; margin-bottom: 10px;">24×7 Central Dispatch Hotline</div>
+            <div style="display: flex; gap: 8px;">
+              <a href="tel:+918002141816" style="flex: 1; background: #F59E0B; color: #0F172A; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 10px; text-align: center; text-decoration: none;">📞 +91 80021 41816</a>
+              <a href="https://wa.me/917739406400" target="_blank" style="flex: 1; background: #059669; color: #FFF; font-size: 11px; font-weight: 800; padding: 10px; border-radius: 10px; text-align: center; text-decoration: none;">💬 WhatsApp Desk</a>
+            </div>
+          </div>
+
+          <!-- Legal & Privacy Menu -->
+          <div class="card-white" style="padding: 6px 14px;">
+            <div style="padding: 12px 0; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;" onclick="alert('DPDP Act 2023 Statutory Privacy Policy')">
+              <span>🛡️ Privacy Policy (DPDP Act 2023)</span>
+              <span>›</span>
+            </div>
+            <div style="padding: 12px 0; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;" onclick="alert('Terms & Conditions of Service')">
+              <span>📄 Terms of Service</span>
+              <span>›</span>
+            </div>
+            <div style="padding: 12px 0; display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #334155; cursor: pointer;" onclick="alert('Zero Cancellation & Refund Rules')">
+              <span>🔄 Refund & Zero Cancellation Rules</span>
+              <span>›</span>
+            </div>
+          </div>
+
+          <!-- Sign Out & Delete Account -->
+          <button style="width: 100%; height: 44px; background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; font-size: 12px; font-weight: 700; color: #475569; cursor: pointer; margin-bottom: 8px;" onclick="alert('Logged out from passenger app session!')">
+            Sign Out
+          </button>
+          <button style="width: 100%; height: 38px; background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; font-size: 11px; font-weight: 700; color: #DC2626; cursor: pointer;" onclick="alert('Data erasure requested under DPDP Act 2023.')">
+            Delete Account & Personal Data (Right to Erasure)
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 5-Item Bottom Navigation Bar (Screens C-J) -->
+      <div class="bottom-tabs-nav" id="bottomNavBar">
+        <button class="tab-item active" onclick="switchScreen('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Home</span>
+        </button>
+        <button class="tab-item" onclick="switchScreen('trips')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          <span>My Bookings</span>
+        </button>
+        <button class="tab-item" onclick="switchScreen('timeline')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          <span>Track</span>
+        </button>
+        <button class="tab-item" onclick="switchScreen('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+          <span>Support</span>
+        </button>
+        <button class="tab-item" onclick="switchScreen('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Specifications Sidebar -->
+    <div class="spec-sidebar">
+      <h2>OneWayTaxiBihar <span>Mobile Redesign</span></h2>
+      <p class="desc">
+        Complete visual demonstration of the redesigned passenger mobile application inspired by premium modern ride-hailing standards.
+      </p>
+
+      <div class="spec-points-list">
+        <div class="spec-point">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>Color Palette:</strong> Golden Yellow (<code>#EAB308</code>, <code>#F59E0B</code>) and Clean White (<code>#FFFFFF</code>, <code>#F8FAFC</code>) with slate typography.</div>
+        </div>
+        <div class="spec-point">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>Brand Preservation:</strong> Authentic OneWayTaxiBihar logo with green car badge preserved untouched.</div>
+        </div>
+        <div class="spec-point">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>5 Vehicle Tiers:</strong> Hatchback, Sedan, XUV, Executive Sedan, and Luxury XUV featuring real studio photography.</div>
+        </div>
+        <div class="spec-point">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>7-Stage Stepper:</strong> Real-time status progression from Booking Received to Trip Completed.</div>
+        </div>
+        <div class="spec-point">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>5-Item Navigation:</strong> Home, My Bookings, Track, Support, and Profile.</div>
+        </div>
+      </div>
+
+      <div class="badge-checklist">
+        <span class="badge-check">✓ Expo SDK 58</span>
+        <span class="badge-check">✓ React Native 0.88</span>
+        <span class="badge-check">✓ 0 TypeScript Errors</span>
+        <span class="badge-check">✓ Backend Compatible</span>
+        <span class="badge-check">✓ No Fake GPS Loops</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function switchScreen(screenKey) {
+      // Hide all screen views
+      const views = document.querySelectorAll('.screen-view');
+      views.forEach(v => v.classList.remove('active'));
+
+      // Deactivate all nav pills
+      const pills = document.querySelectorAll('.pill-btn');
+      pills.forEach(p => p.classList.remove('active'));
+
+      // Activate target view
+      const targetView = document.getElementById('view-' + screenKey);
+      if (targetView) {
+        targetView.classList.add('active');
+      }
+
+      // Update pill button active
+      const indexMap = {
+        'home': 0, 'splash': 1, 'auth': 2, 'location': 3,
+        'vehicle': 4, 'checkout': 5, 'timeline': 6, 'trips': 7, 'profile': 8
+      };
+      if (pills[indexMap[screenKey]]) {
+        pills[indexMap[screenKey]].classList.add('active');
+      }
+
+      // Update bottom tab active
+      const tabs = document.querySelectorAll('.tab-item');
+      tabs.forEach(t => t.classList.remove('active'));
+      if (screenKey === 'home') tabs[0]?.classList.add('active');
+      if (screenKey === 'trips') tabs[1]?.classList.add('active');
+      if (screenKey === 'timeline') tabs[2]?.classList.add('active');
+      if (screenKey === 'profile') tabs[4]?.classList.add('active');
+
+      // Update Status Bar style
+      const bar = document.getElementById('phoneStatusBar');
+      const bottomNav = document.getElementById('bottomNavBar');
+      if (screenKey === 'splash') {
+        bar.className = 'screen-status-bar dark-text';
+        bottomNav.style.display = 'none';
+      } else {
+        bar.className = 'screen-status-bar dark-text';
+        bottomNav.style.display = 'flex';
+      }
+
+      // Scroll canvas to top
+      document.getElementById('screenCanvas').scrollTop = 0;
+    }
+
+    function selectTierCard(cardElement, tierName, fare) {
+      const cards = cardElement.parentElement.querySelectorAll('.card-white');
+      cards.forEach(c => {
+        c.style.border = '1px solid #F1F5F9';
+        c.style.background = '#FFFFFF';
+      });
+      cardElement.style.border = '2px solid #F59E0B';
+      cardElement.style.background = '#FFFDF5';
+      document.getElementById('selectedFareDisplay').innerText = '₹' + Number(fare).toLocaleString('en-IN');
+      document.getElementById('selectedTierDisplay').innerText = tierName;
+    }
+  </script>
+</body>
+</html>

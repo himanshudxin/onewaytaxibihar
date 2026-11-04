@@ -198,6 +198,15 @@ button, a, input, select {
   touch-action: manipulation;
 }
 
+/* Safari iOS Auto-Zoom Prevention: Require minimum 16px font-size on mobile inputs */
+@media screen and (max-width: 991px) {
+  input, select, textarea,
+  .input-content input, .input-content select,
+  .form-control, .form-input {
+    font-size: 16px !important;
+  }
+}
+
 /* Container */
 .container {
   width: 100%;

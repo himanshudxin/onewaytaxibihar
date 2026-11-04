@@ -116,7 +116,12 @@ function loadLocalDb() {
 }
 
 // High-Throughput MongoDB Atlas Connection
+let lastMongoFailTime = 0;
+const MONGO_RETRY_COOLDOWN_MS = 60000;
+
 async function initMongo() {
+  if (process.env.USE_LOCAL_DB === 'true' || process.env.NODE_ENV === 'test') return false;
+  if (Date.now() - lastMongoFailTime < MONGO_RETRY_COOLDOWN_MS) return false;
   const mongoUri = process.env.MONGODB_URI || '';
   if (!mongoUri) return false;
 
@@ -139,8 +144,8 @@ async function initMongo() {
     
     // Enterprise pool configuration for zero lag & maximum concurrency
     const clientOptions = {
-      serverSelectionTimeoutMS: 4000,
-      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 2000,
+      connectTimeoutMS: 2500,
       socketTimeoutMS: 30000,
       maxPoolSize: 50,
       minPoolSize: 5,
@@ -196,6 +201,7 @@ async function initMongo() {
 
     return true;
   } catch (err) {
+    lastMongoFailTime = Date.now();
     console.warn('[Database Service] MongoDB Atlas connection notice:', err.message);
     mongoClient = null;
     mongoDbInstance = null;
@@ -238,7 +244,15 @@ async function initPostgres() {
 
 // Primary Initializer
 async function initDatabase() {
+  if (process.env.USE_LOCAL_DB === 'true' || process.env.NODE_ENV === 'test') {
+    loadLocalDb();
+    activeEngine = 'local';
+    return { engine: 'local', connected: false };
+  }
   if (isDbConnected && memoryDb && (Date.now() - lastHydrationTime < CACHE_TTL_MS)) {
+    return { engine: activeEngine, connected: isDbConnected };
+  }
+  if (memoryDb && !isDbConnected && (Date.now() - lastMongoFailTime < MONGO_RETRY_COOLDOWN_MS)) {
     return { engine: activeEngine, connected: isDbConnected };
   }
 

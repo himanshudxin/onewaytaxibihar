@@ -33,5 +33,5 @@
 /google325984f7b343fbb3.html /google325984f7b343fbb3.html 200
 /google72113931b949d373.html /google72113931b949d373.html 200
 
-# Fallback for SPA or unknown routes
-/*                        /index.html                    200
+# Fallback for unknown routes (Custom 404 Page)
+/*                        /404.html                      404

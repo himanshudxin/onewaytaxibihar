@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>OneWayTaxiBihar | Operations & Dispatch Console</title>
   
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -1755,7 +1755,13 @@
         font-size: 16px !important;
       }
     }
+  
+    @keyframes broadcastPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+      50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+    }
   </style>
+  <script src="/js/error-tracker.js"></script>
 </head>
 <body>
 
@@ -2653,9 +2659,42 @@
               </table>
             </div>
           </div>
-        </section>
 
-        <!-- ====================================================================
+          <!-- Chauffeur Payout Settlement Requests -->
+          <div class="ops-card" style="margin-top:24px;">
+            <div class="ops-card-header">
+              <div class="ops-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <span>Chauffeur Payout Settlement Requests (Instant UPI / IMPS)</span>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="loadDriverPayoutsAdmin()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Refresh Payouts
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="ops-table">
+                <thead>
+                  <tr>
+                    <th>Payout ID</th>
+                    <th>Chauffeur Name</th>
+                    <th>Phone</th>
+                    <th>Requested Amount</th>
+                    <th>Payout Method</th>
+                    <th>Status</th>
+                    <th>Requested At</th>
+                    <th>Settlement Action</th>
+                  </tr>
+                </thead>
+                <tbody id="driver-payouts-table-body">
+                  <tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">Loading chauffeur payout requests...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
              VIEW 9: COUPONS (Promotions & Discount Codes)
              ==================================================================== -->
         <section class="content-view" id="view-coupons">
@@ -2976,6 +3015,7 @@
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('gateways', this)">Payments &amp; Gateways</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('rbac', this)">RBAC Operators</button>
               <button type="button" class="tab-pill" onclick="switchSettingsSubTab('diagnostics', this)">Diagnostics &amp; Data</button>
+              <button type="button" class="tab-pill" onclick="switchSettingsSubTab('app-releases', this)">App Releases (APKs)</button>
             </div>
           </div>
 
@@ -3171,6 +3211,17 @@
                         <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pay-rzp-secret')">👁️</button>
                       </div>
                     </div>
+                    <div style="margin-top: 8px;">
+                      <button type="button" class="btn btn-secondary btn-sm" id="btn-test-rzp-admin" onclick="testRazorpayAdminCredentials()">⚡ Test Connection</button>
+                    </div>
+                    <div class="form-group" style="grid-column: 1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:12px; margin-top:10px;">
+                      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                        <strong style="font-size:12px; color:var(--navy-900);">Razorpay Webhook Endpoint</strong>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="copyWebhookUrl()">📋 Copy URL</button>
+                      </div>
+                      <code id="rzp-webhook-url" style="display:block; font-size:12px; color:#2563eb; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; user-select:all;">https://onewaytaxibihar.com/api/payment/webhook</code>
+                      <div style="font-size:11px; color:#64748b; margin-top:6px;">Add this URL in Razorpay Dashboard → Settings → Webhooks with events <code>payment.captured</code> and <code>payment.failed</code>.</div>
+                    </div>
                   </div>
 
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-top:1px solid #e2e8f0; padding-top:16px;">
@@ -3263,9 +3314,102 @@
             </div>
           </div>
 
-        </section>
+          <!-- Sub-Tab E: App Release Management (APKs) -->
+          <div class="settings-sub-panel" id="settings-sub-app-releases" style="display:none;">
+            <div class="ops-card">
+              <div class="ops-card-header">
+                <div class="ops-card-title">Self-Hosted Mobile APK Ecosystem &amp; In-App Releases</div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="loadAppReleases()">Refresh Releases</button>
+              </div>
+              <div class="ops-card-body">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
+                  
+                  <!-- Passenger APK Config -->
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                      <h4 style="font-size:15px; font-weight:800; color:var(--navy-900); display:flex; align-items:center; gap:8px;">
+                        <span>🚗 Passenger Mobile App</span>
+                      </h4>
+                      <span class="pill primary" id="badge-passenger-release">Active v1.2.0</span>
+                    </div>
 
-        <!-- ====================================================================
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Latest Version String</label>
+                      <input type="text" class="form-control" id="set-passenger-latest-ver" value="1.2.0" placeholder="e.g. 1.2.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Min Supported Version (Hard Wall)</label>
+                      <input type="text" class="form-control" id="set-passenger-min-ver" value="1.0.0" placeholder="e.g. 1.0.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Direct APK Download Link</label>
+                      <input type="text" class="form-control" id="set-passenger-download-url" value="https://onewaytaxibihar.com/downloads/passenger-latest.apk">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                        <input type="checkbox" id="set-passenger-force-update">
+                        <span>Force Immediate Update (Mandatory Modal)</span>
+                      </label>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                      <label class="form-label" style="font-size:12px;">Changelog / Release Notes</label>
+                      <textarea class="form-control" id="set-passenger-notes" rows="3" style="font-size:12px;">Enhanced live GPS tracking, dynamic OTP verification, and instant GST invoices.</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAppReleaseSingle('passenger')">Save Passenger Release</button>
+                  </div>
+
+                  <!-- Driver Partner APK Config -->
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                      <h4 style="font-size:15px; font-weight:800; color:var(--navy-900); display:flex; align-items:center; gap:8px;">
+                        <span>🚕 Driver Partner App</span>
+                      </h4>
+                      <span class="pill success" id="badge-driver-release">Active v1.2.0</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Latest Version String</label>
+                      <input type="text" class="form-control" id="set-driver-latest-ver" value="1.2.0" placeholder="e.g. 1.2.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Min Supported Version (Hard Wall)</label>
+                      <input type="text" class="form-control" id="set-driver-min-ver" value="1.0.0" placeholder="e.g. 1.0.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Direct APK Download Link</label>
+                      <input type="text" class="form-control" id="set-driver-download-url" value="https://onewaytaxibihar.com/downloads/driver-latest.apk">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                        <input type="checkbox" id="set-driver-force-update">
+                        <span>Force Immediate Update (Mandatory Modal)</span>
+                      </label>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                      <label class="form-label" style="font-size:12px;">Changelog / Release Notes</label>
+                      <textarea class="form-control" id="set-driver-notes" rows="3" style="font-size:12px;">Background location heartbeat reliability and 30s audio trip dispatch offers.</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAppReleaseSingle('driver')">Save Driver Release</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ====================================================================
              VIEW 15: TOURISM MANAGEMENT (Protected Operations & Itinerary Desk)
              ==================================================================== -->
         <section class="content-view" id="view-tourism">
@@ -3562,6 +3706,43 @@
     </div>
   </div>
 
+  <!-- DRIVER PAYOUT APPROVAL MODAL -->
+  <div class="modal-backdrop" id="modal-payout-approve">
+    <div class="ops-modal">
+      <div class="ops-modal-header">
+        <div class="ops-modal-title">Approve &amp; Settle Chauffeur Payout</div>
+        <button type="button" class="btn-icon btn-secondary" onclick="closePayoutApproveModal()">✕</button>
+      </div>
+      <div class="ops-modal-body">
+        <form id="form-payout-approve" onsubmit="handlePayoutApproveSubmit(event)">
+          <input type="hidden" id="payout-appr-id">
+          
+          <div style="background:#f1f5f9; padding:12px; border-radius:8px; margin-bottom:14px; font-size:13px;">
+            <div>Driver: <strong id="payout-appr-driver">Ramesh Kumar</strong></div>
+            <div>Amount: <strong id="payout-appr-amount" style="color:#059669; font-size:16px;">₹2,198</strong></div>
+            <div>Beneficiary Account: <strong id="payout-appr-dest">9876501234@upi</strong></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bank Settlement UTR / Transaction Reference Number</label>
+            <input type="text" class="form-control" id="payout-appr-utr" required placeholder="e.g. UTR492810482910 or IMPS ref">
+            <div style="font-size:11px; color:#64748b; margin-top:4px;">Enter the 12-digit IMPS UTR or Bank Reference Number from your payment gateway / bank app.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Settlement Notes (Optional)</label>
+            <input type="text" class="form-control" id="payout-appr-notes" placeholder="e.g. Settled via RazorpayX / HDFC Corporate Banking">
+          </div>
+
+          <div class="ops-modal-footer" style="padding:0; margin-top:16px; border:none; background:transparent;">
+            <button type="button" class="btn btn-secondary" onclick="closePayoutApproveModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background:#059669;">Confirm Settlement &amp; Mark Paid</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- ADD PROMO COUPON MODAL -->
   <div class="modal-backdrop" id="modal-add-coupon">
     <div class="ops-modal">
@@ -4327,6 +4508,14 @@
       try {
         let res = await fetch(url, fetchOpts);
 
+        // Failover: If local server returned 404 or HTML, retry with production backend
+        const cType = res.headers.get("content-type") || "";
+        if ((!res.ok && res.status === 404) || cType.includes("text/html")) {
+          if (!url.startsWith("https://onewaytaxibihar.com")) {
+            return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
+          }
+        }
+
         // Automatic session invalidation on 401 Unauthorized
         if (res.status === 401 && !endpoint.includes("/login")) {
           _adminToken = "";
@@ -4814,6 +5003,9 @@
         loadTourismBookings();
       } else if (tabName === 'support') {
         loadSupportTickets();
+      } else if (tabName === 'wallet') {
+        loadWalletLedger();
+        loadDriverPayoutsAdmin();
       } else if (tabName === 'settings') {
         loadSettings();
       }
@@ -4844,7 +5036,7 @@
     }
 
     function switchSettingsSubTab(subName, btn) {
-      const subs = ['general', 'gateways', 'rbac', 'diagnostics'];
+      const subs = ['general', 'gateways', 'rbac', 'diagnostics', 'app-releases'];
       subs.forEach(s => {
         const el = document.getElementById(`settings-sub-${s}`);
         if (el) el.style.display = s === subName ? "block" : "none";
@@ -4856,6 +5048,8 @@
         loadErrorLogsAdmin();
       } else if (subName === 'rbac') {
         loadRbacUsers();
+      } else if (subName === 'app-releases') {
+        loadAppReleases();
       } else {
         loadSettings();
       }
@@ -5107,7 +5301,10 @@
                   <div style="font-size:11px; color:#64748b;">${escapeHtml(b.passengerPhone || '')}</div>
                 </td>
                 <td><strong>${escapeHtml(b.originCity)}</strong> ➔ <strong>${escapeHtml(b.destCity)}</strong></td>
-                <td>${b.pickupDate || ''} <span style="color:#64748b; font-size:11.5px;">${b.pickupTime || ''}</span></td>
+                <td>
+                  <div style="font-weight:800; font-size:13px; color:#111827;">${formatPickupDateTime(b.pickupDate, b.pickupTime) || b.pickupDate || '—'}</div>
+                  ${getDispatchStatusBadge(b)}
+                </td>
                 <td><span style="font-family:var(--font-mono); font-size:12px;">₹${(b.totalFare || b.fare || 0).toLocaleString('en-IN')}</span></td>
                 <td><span class="pill ${pillClass}">${b.bookingStatus}</span></td>
                 <td>
@@ -5237,12 +5434,16 @@
               <div>
                 <div style="font-weight:700; color:var(--primary);">${b.bookingId}</div>
                 <div style="font-size:13px; font-weight:600;">${escapeHtml(b.originCity)} ➔ ${escapeHtml(b.destCity)}</div>
-                <div style="font-size:11.5px; color:#64748b;">${b.pickupDate} • ${b.pickupTime} • ₹${(b.totalFare||b.fare||0)}</div>
+                <div style="font-size:13px; font-weight:800; color:#DC2626; margin:2px 0;">${formatPickupDateTime(b.pickupDate, b.pickupTime) || b.pickupDate || '—'}</div>
                 <div style="font-size:11px; color:#334155; margin-top:2px;">Passenger: ${escapeHtml(b.passengerName)} (${escapeHtml(b.passengerPhone)})</div>
               </div>
               <div style="display:flex; flex-direction:column; gap:6px;">
+                <button type="button" class="btn btn-sm" onclick="triggerBroadcast('${b.bookingId}')" style="background:#F59E0B;color:#fff;border:none;font-weight:700;width:100%;margin-bottom:3px;font-size:11px;">📡 Broadcast All</button>
+                <button type="button" class="btn btn-warning btn-sm" onclick="triggerSmartAutoDispatch('${b.bookingId}')" style="background:#f59e0b; color:#fff; border:none; font-weight:700;">⚡ Auto-Dispatch</button>
                 <button type="button" class="btn btn-primary btn-sm" onclick="openAssignModal('${b.bookingId}')">Assign Driver</button>
                 <a href="https://wa.me/91${cleanPhone(b.passengerPhone)}" target="_blank" class="btn btn-secondary btn-sm" style="font-size:11px; text-align:center;">WhatsApp</a>
+                <button type="button" class="btn btn-sm" onclick="cancelTripWithReason('${b.bookingId}')" style="background:rgba(239,68,68,0.1);color:#DC2626;border:1px solid #EF4444;font-size:11px;font-weight:700;margin-top:3px;">✗ Cancel</button>
+                <button type="button" class="btn btn-sm" onclick="markTripCompleted('${b.bookingId}')" style="background:rgba(5,150,105,0.1);color:#059669;border:1px solid #10B981;font-size:11px;font-weight:700;margin-top:3px;">✓ Done</button>
               </div>
             </div>
           `).join("");
@@ -8097,6 +8298,48 @@
       }
     }
 
+    
+    async function testRazorpayAdminCredentials() {
+      const btn = document.getElementById("btn-test-rzp-admin");
+      const keyId = document.getElementById("pay-rzp-key-id")?.value?.trim();
+      const keySecret = document.getElementById("pay-rzp-secret")?.value?.trim();
+
+      if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Testing..."; }
+      try {
+        const res = await adminFetch("/api/admin/test-razorpay", {
+          method: "POST",
+          body: JSON.stringify({ keyId, keySecret })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast(data.message || "Razorpay credentials verified active!", "success");
+          const rzpBadge = document.getElementById("badge-rzp-status");
+          if (rzpBadge) {
+            rzpBadge.textContent = "✓ Razorpay: ACTIVE (" + (data.mode || "live").toUpperCase() + ")";
+            rzpBadge.style.background = "#ecfdf5";
+            rzpBadge.style.color = "#059669";
+            rzpBadge.style.borderColor = "#a7f3d0";
+          }
+        } else {
+          showToast(data.message || "Razorpay verification failed.", "error");
+        }
+      } catch (e) {
+        showToast("Test request error: " + e.message, "error");
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "⚡ Test"; }
+      }
+    }
+
+    function copyWebhookUrl() {
+      const urlEl = document.getElementById("rzp-webhook-url");
+      const text = urlEl ? urlEl.textContent : "https://onewaytaxibihar.com/api/payment/webhook";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast("Webhook URL copied to clipboard!", "info"));
+      } else {
+        showToast("Webhook URL: " + text, "info");
+      }
+    }
+
     async function handleQrFileUpload(e) {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -9052,6 +9295,193 @@
       }
     }
 
+    // =========================================================================
+    // APP RELEASES MANAGEMENT (APK ECOSYSTEM)
+    // =========================================================================
+    async function loadAppReleases() {
+      try {
+        const res = await adminFetch("/api/admin/app-releases");
+        if (res.ok) {
+          const data = await res.json();
+          const rels = data.releases || {};
+          if (rels.passenger) {
+            setValue("set-passenger-latest-ver", rels.passenger.latestVersion || "1.2.0");
+            setValue("set-passenger-min-ver", rels.passenger.minSupportedVersion || "1.0.0");
+            setValue("set-passenger-download-url", rels.passenger.downloadUrl || "https://onewaytaxibihar.com/downloads/passenger-latest.apk");
+            const chk = document.getElementById("set-passenger-force-update");
+            if (chk) chk.checked = Boolean(rels.passenger.forceUpdate);
+            setValue("set-passenger-notes", rels.passenger.releaseNotes || "");
+            setText("badge-passenger-release", "Active v" + (rels.passenger.latestVersion || "1.2.0"));
+          }
+          if (rels.driver) {
+            setValue("set-driver-latest-ver", rels.driver.latestVersion || "1.2.0");
+            setValue("set-driver-min-ver", rels.driver.minSupportedVersion || "1.0.0");
+            setValue("set-driver-download-url", rels.driver.downloadUrl || "https://onewaytaxibihar.com/downloads/driver-latest.apk");
+            const chk = document.getElementById("set-driver-force-update");
+            if (chk) chk.checked = Boolean(rels.driver.forceUpdate);
+            setValue("set-driver-notes", rels.driver.releaseNotes || "");
+            setText("badge-driver-release", "Active v" + (rels.driver.latestVersion || "1.2.0"));
+          }
+        }
+      } catch (e) {
+        showToast("Error loading app releases: " + e.message, "error");
+      }
+    }
+
+    async function saveAppReleaseSingle(app) {
+      const isPass = app === 'passenger';
+      const prefix = isPass ? 'set-passenger-' : 'set-driver-';
+      const latestVer = getValue(prefix + "latest-ver").trim();
+      const minVer = getValue(prefix + "min-ver").trim();
+      const downloadUrl = getValue(prefix + "download-url").trim();
+      const forceUpdate = Boolean(document.getElementById(prefix + "force-update")?.checked);
+      const releaseNotes = getValue(prefix + "notes").trim();
+
+      if (!latestVer || !minVer || !downloadUrl) {
+        showToast("Please fill all release version strings and download URL.", "warning");
+        return;
+      }
+
+      try {
+        const res = await adminFetch("/api/admin/app-releases", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            app,
+            latestVersion: latestVer,
+            minSupportedVersion: minVer,
+            downloadUrl,
+            forceUpdate,
+            releaseNotes
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast((isPass ? 'Passenger' : 'Driver Partner') + " APK Release Config v" + latestVer + " saved!", "success");
+          setText(isPass ? "badge-passenger-release" : "badge-driver-release", "Active v" + latestVer);
+        } else {
+          showToast(data.message || "Failed to update release config", "error");
+        }
+      } catch (e) {
+        showToast("Error saving release: " + e.message, "error");
+      }
+    }
+
+    // =========================================================================
+    // CHAUFFEUR PAYOUT SETTLEMENT
+    // =========================================================================
+    let _allPayoutRequests = [];
+
+    async function loadDriverPayoutsAdmin() {
+      const tbody = document.getElementById("driver-payouts-table-body");
+      if (!tbody) return;
+      try {
+        const res = await adminFetch("/api/admin/payout-requests");
+        if (res.ok) {
+          const data = await res.json();
+          _allPayoutRequests = data.payouts || [];
+        }
+      } catch (e) {}
+
+      if (_allPayoutRequests.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:#94a3b8;">No chauffeur payout requests in queue.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = _allPayoutRequests.map(p => {
+        const isPaid = p.status === 'PAID';
+        const methodDesc = p.upiId ? ("UPI: " + escapeHtml(p.upiId)) : (p.bankDetails ? ("A/C: " + escapeHtml(p.bankDetails.accountNumber || '')) : "UPI/IMPS");
+        return '<tr>' +
+          '<td><strong style="font-family:var(--font-mono); font-size:12px;">' + escapeHtml(p.id) + '</strong></td>' +
+          '<td><strong>' + escapeHtml(p.driverName || 'Chauffeur') + '</strong></td>' +
+          '<td>' + escapeHtml(p.phone || '') + '</td>' +
+          '<td><strong style="color:#059669; font-size:14px;">₹' + (p.amount || 0) + '</strong></td>' +
+          '<td>' + methodDesc + '</td>' +
+          '<td><span class="pill ' + (isPaid ? 'confirmed' : 'warning') + '">' + escapeHtml(p.status) + '</span></td>' +
+          '<td>' + new Date(p.requestedAt || Date.now()).toLocaleString('en-IN') + '</td>' +
+          '<td>' +
+            (isPaid
+              ? '<span style="font-size:11.5px; color:#059669; font-weight:700;">✓ Settled (UTR: ' + escapeHtml(p.utrNumber || 'N/A') + ')</span>'
+              : '<button type="button" class="btn btn-primary btn-sm" onclick="openPayoutApproveModal(\'' + p.id + '\', \'' + escapeHtml(p.driverName || 'Chauffeur') + '\', ' + p.amount + ', \'' + escapeHtml(p.upiId || '') + '\')" style="background:#059669;">Approve &amp; Settle</button>'
+            ) +
+          '</td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    function openPayoutApproveModal(payoutId, driverName, amount, upiId) {
+      setValue("payout-appr-id", payoutId);
+      setText("payout-appr-driver", driverName);
+      setText("payout-appr-amount", "₹" + amount.toLocaleString('en-IN'));
+      setText("payout-appr-dest", upiId || "Bank Account Transfer");
+      setValue("payout-appr-utr", "");
+      setValue("payout-appr-notes", "");
+      const modal = document.getElementById("modal-payout-approve");
+      if (modal) modal.classList.add("active");
+    }
+
+    function closePayoutApproveModal() {
+      const modal = document.getElementById("modal-payout-approve");
+      if (modal) modal.classList.remove("active");
+    }
+
+    async function handlePayoutApproveSubmit(e) {
+      e.preventDefault();
+      const payoutId = getValue("payout-appr-id");
+      const utrNumber = getValue("payout-appr-utr").trim();
+      const notes = getValue("payout-appr-notes").trim();
+
+      if (!utrNumber) {
+        showToast("Bank / UPI Settlement UTR is required", "warning");
+        return;
+      }
+
+      try {
+        const res = await adminFetch("/api/admin/wallet/payout-approve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ payoutId, utrNumber, notes })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast("✅ Payout #" + payoutId + " settled with UTR " + utrNumber + "!", "success");
+          closePayoutApproveModal();
+          loadDriverPayoutsAdmin();
+        } else {
+          showToast(data.message || "Failed to settle payout", "error");
+        }
+      } catch (err) {
+        showToast("Error: " + err.message, "error");
+      }
+    }
+
+    // =========================================================================
+    // SMART AUTO-DISPATCH TRIGGER
+    // =========================================================================
+    async function triggerSmartAutoDispatch(bookingId) {
+      if (!bookingId) return;
+      showToast("Initiating smart allocation for ride " + bookingId + "...", "info");
+      try {
+        const res = await adminFetch("/api/dispatch/auto-assign", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bookingId })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          const drvName = (data.matchedDriver && data.matchedDriver.driverName) || "chauffeur";
+          const drvPhone = (data.matchedDriver && data.matchedDriver.phone) || "";
+          showToast("⚡ Chauffeur Dispatched: Offer sent to " + drvName + " (" + drvPhone + ")! 30-second response countdown active.", "success");
+          await forceSyncAllData();
+          if (_currentMainTab === 'dispatch') renderDispatchWorkspace();
+        } else {
+          showToast(data.message || "No chauffeur currently available in radius. Ride queued for manual override.", "warning");
+        }
+      } catch (e) {
+        showToast("Dispatch error: " + e.message, "error");
+      }
+    }
+
     // Global keyboard listener (Escape closes modals/drawers)
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -9070,8 +9500,16 @@
         closeCopilotModal();
         closeAddPackageModal();
         closeTourismStatusModal();
+        closePayoutApproveModal();
       }
     });
   </script>
+  
+  <footer style="padding: 16px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #1e293b; margin-top: 24px;">
+    <span>OneWayTaxiBihar Fleet Command Center &bull; </span>
+    <a href="/privacy-policy.html" style="color: #94a3b8; text-decoration: none; margin-right: 12px;">Privacy Policy</a>
+    <a href="/terms-of-service.html" style="color: #94a3b8; text-decoration: none;">Terms of Service</a>
+  </footer>
+  <script src="/js/analytics.js"></script>
 </body>
 </html>

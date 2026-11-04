@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Choose Your Cab | OneWayTaxiBihar</title>
   <meta name="description" content="Compare hatchback, sedan and SUV options for one-way and outstation trips across Bihar. Check availability and fares before booking.">
   <link rel="canonical" href="https://onewaytaxibihar.com/cabs">
@@ -282,6 +282,7 @@
       to { transform: scale(1); opacity: 1; }
     }
   </style>
+  <script src="/js/error-tracker.js"></script>
 </head>
 
 <body>
@@ -552,11 +553,11 @@
       // 4. Render Fleet Cards (Locked if phone not entered)
       const container = document.getElementById('cabs-grid');
       const fleetList = (typeof OTB_FLEET !== 'undefined') ? OTB_FLEET : [
-        { id: "hatchback", category: "Go Hatchback", badge: "Budget Outstation", models: "WagonR, Tiago", seats: 4, luggage: "2 Bags", ac: "100% AC", ratePerKm: 21.0, rating: 4.3, description: "Economical AC ride for up to 4 passengers with light luggage." },
-        { id: "sedan", category: "Prime Sedan", badge: "Most Popular in Bihar", models: "Dzire, Etios, Amaze", seats: 4, luggage: "3-4 Bags", ac: "Chilled AC", ratePerKm: 25.0, rating: 4.3, description: "Comfortable sedan with ample boot space for family & luggage." },
-        { id: "sedan_prime", category: "Executive Sedan", badge: "Executive Comfort", models: "Honda City, Ciaz", seats: 4, luggage: "4 Bags", ac: "Climate AC", ratePerKm: 29.0, rating: 4.3, description: "Premium executive sedan with extra legroom and luxury comfort." },
-        { id: "suv", category: "Family SUV (6+1)", badge: "Best for Family & Pilgrimage", models: "Maruti Ertiga, Carens", seats: 6, luggage: "5-6 Bags + Roof Carrier", ac: "Dual AC", ratePerKm: 33.0, rating: 4.3, description: "Spacious multi-seater ideal for large families & heavy luggage." },
-        { id: "innova_crysta", category: "Toyota Innova Crysta", badge: "VIP Luxury", models: "Innova Crysta", seats: 7, luggage: "6-7 Bags", ac: "Triple Row AC", ratePerKm: 44.0, rating: 4.3, description: "Supreme highway stability and VIP recliner seats for long trips." }
+        { id: "hatchback", category: "Go Hatchback", badge: "Budget Outstation", models: "WagonR, Tiago", seats: 4, luggage: "2 Bags", ac: "100% AC", ratePerKm: 20.0, rating: 4.3, description: "Economical AC ride for up to 4 passengers with light luggage." },
+        { id: "sedan", category: "Prime Sedan", badge: "Most Popular in Bihar", models: "Dzire, Etios, Amaze", seats: 4, luggage: "3-4 Bags", ac: "Chilled AC", ratePerKm: 22.0, rating: 4.3, description: "Comfortable sedan with ample boot space for family & luggage." },
+        { id: "sedan_prime", category: "Executive Sedan", badge: "Executive Comfort", models: "Honda City, Ciaz", seats: 4, luggage: "4 Bags", ac: "Climate AC", ratePerKm: 26.0, rating: 4.3, description: "Premium executive sedan with extra legroom and luxury comfort." },
+        { id: "suv", category: "Family SUV (6+1)", badge: "Best for Family & Pilgrimage", models: "Maruti Ertiga, Carens", seats: 6, luggage: "5-6 Bags + Roof Carrier", ac: "Dual AC", ratePerKm: 27.0, rating: 4.3, description: "Spacious multi-seater ideal for large families & heavy luggage." },
+        { id: "innova_crysta", category: "Toyota Innova Crysta", badge: "VIP Luxury", models: "Innova Crysta", seats: 7, luggage: "6-7 Bags", ac: "Triple Row AC", ratePerKm: 34.0, rating: 4.3, description: "Supreme highway stability and VIP recliner seats for long trips." }
       ];
 
       let pendingCabId = null;

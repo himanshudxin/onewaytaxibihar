@@ -26,7 +26,10 @@ class ApiClient {
 
   static async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    const token = localStorage.getItem("otb_adm_token") || localStorage.getItem("otb_auth_token");
+    let token = null;
+    try {
+      token = localStorage.getItem("otb_adm_token") || localStorage.getItem("otb_auth_token");
+    } catch (e) {}
 
     const defaultHeaders = {
       "Content-Type": "application/json",

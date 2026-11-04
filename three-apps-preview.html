@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oneway Taxi • All 3 Apps Preview & Expo Go Hub</title>
+  <meta name="description" content="Interactive visual preview and Expo Go scanner hub for Oneway Taxi Bihar's 3 standalone mobile apps: Passenger, Driver Partner, and Admin Fleet Operations.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #070B13;
+      --bg-card: #0F172A;
+      --bg-card-hover: #1E293B;
+      --emerald: #059669;
+      --emerald-light: #10B981;
+      --emerald-glow: rgba(5, 150, 105, 0.25);
+      --amber: #D97706;
+      --amber-light: #F59E0B;
+      --amber-glow: rgba(217, 119, 6, 0.25);
+      --blue: #2563EB;
+      --blue-light: #3B82F6;
+      --blue-glow: rgba(37, 99, 235, 0.25);
+      --text-white: #FFFFFF;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --phone-bezel: #1E293B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: #F8FAFC;
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Ambient Background Glow */
+    .ambient-glow {
+      position: fixed;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .glow-1 { top: -200px; left: -100px; background: var(--emerald); }
+    .glow-2 { top: 40%; right: -200px; background: var(--amber); }
+    .glow-3 { bottom: -200px; left: 30%; background: var(--blue); }
+
+    /* Top Navigation Header */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 11, 19, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .brand-logo-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      box-shadow: 0 4px 14px var(--emerald-glow);
+    }
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(5, 150, 105, 0.2);
+      color: var(--emerald-light);
+      border: 1px solid rgba(5, 150, 105, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .api-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--emerald-light);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: relative;
+      z-index: 1;
+      padding: 56px 24px 32px;
+      text-align: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .hero-tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #CBD5E1;
+      margin-bottom: 20px;
+    }
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+    }
+
+    /* Mode Switcher Tabs */
+    .tab-pills {
+      display: inline-flex;
+      background: rgba(15, 23, 42, 0.9);
+      padding: 6px;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      gap: 6px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-btn:hover {
+      color: #fff;
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: #1E293B;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .tab-btn.active.passenger {
+      background: var(--emerald);
+      box-shadow: 0 4px 16px var(--emerald-glow);
+    }
+    .tab-btn.active.driver {
+      background: var(--amber);
+      box-shadow: 0 4px 16px var(--amber-glow);
+    }
+    .tab-btn.active.admin {
+      background: var(--blue);
+      box-shadow: 0 4px 16px var(--blue-glow);
+    }
+
+    /* Apps Triple Grid */
+    .apps-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 1200px) {
+      .apps-grid {
+        grid-template-columns: 1fr;
+        max-width: 580px;
+        margin: 0 auto;
+      }
+    }
+
+    /* Single App Column Card */
+    .app-showcase-card {
+      background: var(--bg-card);
+      border-radius: 28px;
+      border: 1px solid var(--border-subtle);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .app-showcase-card:hover {
+      transform: translateY(-4px);
+    }
+    .app-showcase-card.card-passenger { border-top: 4px solid var(--emerald); }
+    .app-showcase-card.card-driver { border-top: 4px solid var(--amber); }
+    .app-showcase-card.card-admin { border-top: 4px solid var(--blue); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .app-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .avatar-passenger { background: linear-gradient(135deg, #059669, #10B981); }
+    .avatar-driver { background: linear-gradient(135deg, #D97706, #F59E0B); }
+    .avatar-admin { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+
+    .card-meta h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .card-meta .package-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .card-desc {
+      font-size: 0.92rem;
+      color: #CBD5E1;
+      margin-bottom: 22px;
+      min-height: 44px;
+    }
+
+    /* Expo Go QR Card Inside Box */
+    .expo-qr-box {
+      background: #090D16;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .expo-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .expo-pill {
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #E2E8F0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .port-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94A3B8;
+    }
+    .qr-canvas-wrap {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 12px;
+      display: inline-block;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      margin-bottom: 14px;
+    }
+    .qr-canvas-wrap img {
+      width: 170px;
+      height: 170px;
+      display: block;
+    }
+    .expo-url-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px 12px;
+      gap: 8px;
+    }
+    .expo-url-text {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #38BDF8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+    }
+    .btn-copy {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      transition: all 0.2s;
+    }
+    .btn-copy:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    /* Terminal Launcher Snippet */
+    .cli-snippet {
+      background: #05080E;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .cli-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #A7F3D0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Phone Mockup Simulator Frame */
+    .phone-simulator {
+      background: #020617;
+      border: 8px solid #1E293B;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      margin-top: auto;
+      position: relative;
+    }
+    .phone-notch {
+      width: 120px;
+      height: 18px;
+      background: #1E293B;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+    .phone-screen {
+      padding: 18px 16px;
+      min-height: 440px;
+      background: #090D16;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      font-size: 0.85rem;
+    }
+
+    /* Passenger Mock Content */
+    .mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mock-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+    .mock-route-card {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .route-node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .node-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .node-dot.pickup { background: #10B981; }
+    .node-dot.drop { background: #EF4444; }
+    .route-loc-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.88rem;
+    }
+    .mock-cab-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .mock-cab-chip {
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mock-cab-chip.selected {
+      border-color: #059669;
+      background: rgba(5, 150, 105, 0.15);
+    }
+    .mock-cab-name { font-weight: 700; color: #fff; font-size: 0.75rem; }
+    .mock-cab-fare { font-weight: 800; color: #34D399; font-size: 0.82rem; margin-top: 2px; }
+
+    .mock-otp-box {
+      background: linear-gradient(135deg, rgba(5, 150, 105, 0.12), rgba(16, 185, 129, 0.05));
+      border: 1px dashed #059669;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .otp-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: #34D399;
+      margin: 4px 0;
+    }
+
+    /* Driver Mock Specifics */
+    .driver-duty-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 10px 14px;
+    }
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: #D97706;
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+    }
+    .toggle-thumb {
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+    }
+    .dispatch-alert-box {
+      background: rgba(217, 119, 6, 0.12);
+      border: 1.5px solid #D97706;
+      border-radius: 16px;
+      padding: 14px;
+      animation: alertPulse 1.8s infinite;
+    }
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(217, 119, 6, 0); }
+      50% { box-shadow: 0 0 15px rgba(217, 119, 6, 0.35); }
+    }
+    .countdown-bar {
+      height: 4px;
+      background: #D97706;
+      border-radius: 2px;
+      width: 82%;
+      margin: 8px 0;
+    }
+
+    /* Admin Mock Specifics */
+    .admin-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .admin-kpi-card {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .kpi-title { font-size: 0.7rem; color: var(--text-muted); }
+    .kpi-val { font-size: 1.15rem; font-weight: 800; color: #fff; margin-top: 2px; }
+    .kpi-val.blue { color: #60A5FA; }
+    .kpi-val.emerald { color: #34D399; }
+
+    .admin-queue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .admin-queue-item {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Action Buttons in Cards */
+    .btn-launch-expo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 0.96rem;
+      text-decoration: none;
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      margin-top: 18px;
+    }
+    .btn-launch-passenger {
+      background: linear-gradient(135deg, #059669, #10B981);
+      box-shadow: 0 4px 18px var(--emerald-glow);
+    }
+    .btn-launch-passenger:hover {
+      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.45);
+      transform: translateY(-2px);
+    }
+    .btn-launch-driver {
+      background: linear-gradient(135deg, #D97706, #F59E0B);
+      box-shadow: 0 4px 18px var(--amber-glow);
+    }
+    .btn-launch-driver:hover {
+      box-shadow: 0 8px 24px rgba(217, 119, 6, 0.45);
+      transform: translateY(-2px);
+    }
+    .btn-launch-admin {
+      background: linear-gradient(135deg, #2563EB, #3B82F6);
+      box-shadow: 0 4px 18px var(--blue-glow);
+    }
+    .btn-launch-admin:hover {
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+      transform: translateY(-2px);
+    }
+
+    /* Verification Checklist / Guide */
+    .guide-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+    }
+    .guide-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .step-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #1E293B;
+      color: #38BDF8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+    .step-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #10B981;
+      color: #022C22;
+      font-weight: 800;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .top-bar { padding: 12px 16px; }
+      .hero-title { font-size: 2rem; }
+      .hero-section { padding: 36px 16px 24px; }
+      .apps-container { padding: 0 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Header -->
+  <header class="top-bar">
+    <a href="/" class="brand-wrap">
+      <div class="brand-logo-img">🚕</div>
+      <div>
+        <div class="brand-title">Oneway Taxi <span style="color:#059669;">Bihar</span></div>
+        <div style="font-size: 0.75rem; color: #94A3B8;">3 Standalone Native Mobile Apps</div>
+      </div>
+    </a>
+
+    <div class="top-actions">
+      <div class="api-status-pill">
+        <span class="pulse-dot"></span>
+        <span>MongoDB Atlas Live API</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-tagline">
+      <span>✨ Expo SDK 58</span>
+      <span>•</span>
+      <span>React Native 0.88</span>
+      <span>•</span>
+      <span>3 Separate Apps</span>
+    </div>
+    <h1 class="hero-title">Live Mobile Apps & Expo Go Preview</h1>
+    <p class="hero-desc">
+      Scan with <strong>Expo Go (Android)</strong> or <strong>Camera (iOS)</strong> to preview each application live on your phone, or explore the interactive UI simulators below.
+    </p>
+
+    <!-- App Filter Pills -->
+    <div class="tab-pills">
+      <button class="tab-btn active passenger" onclick="filterApp('passenger')">👤 Passenger App (Port 8081)</button>
+      <button class="tab-btn driver" onclick="filterApp('driver')">🚖 Driver Partner (Port 8082)</button>
+      <button class="tab-btn admin" onclick="filterApp('admin')">🛡️ Admin Console (Port 8083)</button>
+      <button class="tab-btn" onclick="filterApp('all')">👁️ Show All 3 Apps</button>
+    </div>
+  </section>
+
+  <!-- Triple App Showcase -->
+  <main class="apps-container">
+    <div class="apps-grid">
+
+      <!-- APP 1: PASSENGER APP -->
+      <article class="app-showcase-card card-passenger" id="card-passenger">
+        <div class="card-header">
+          <div class="app-avatar avatar-passenger">👤</div>
+          <div class="card-meta">
+            <h3>Oneway Taxi</h3>
+            <div class="package-name">com.onewaytaxibihar.passenger</div>
+          </div>
+        </div>
+        <p class="card-desc">
+          Customer booking app for 108 Bihar intercity corridors. Real-time doorstep address search, ₹0 return fare comparison, transparent billing, and 4-digit ride start OTP.
+        </p>
+
+        <!-- QR Box -->
+        <div class="expo-qr-box">
+          <div class="expo-badge-row">
+            <span class="expo-pill" style="color: #34D399; background: rgba(5, 150, 105, 0.15);">Expo Go Ready</span>
+            <span class="port-pill">PORT 8081</span>
+          </div>
+          <div class="qr-canvas-wrap">
+            <img src="/images/passenger-expo-qr.png" alt="Passenger App QR Code">
+          </div>
+          <div class="expo-url-box">
+            <span class="expo-url-text" id="url-passenger">exp://192.168.0.179:8081</span>
+            <button class="btn-copy" onclick="copyUrl('exp://192.168.0.179:8081')">Copy</button>
+          </div>
+        </div>
+
+        <!-- CLI Launcher -->
+        <div class="cli-snippet">
+          <span class="cli-text">npm run start:passenger</span>
+          <button class="btn-copy" onclick="copyUrl('npm run start:passenger')">Copy</button>
+        </div>
+
+        <!-- Phone Simulator Mock -->
+        <div class="phone-simulator">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="mock-header">
+              <span style="font-weight: 800; color:#fff;">Oneway Taxi</span>
+              <span class="mock-badge" style="background:#065F46; color:#34D399;">₹0 Advance</span>
+            </div>
+
+            <!-- Route Mock -->
+            <div class="mock-route-card">
+              <div class="route-node">
+                <span class="node-dot pickup"></span>
+                <div>
+                  <div style="font-size:0.7rem; color:#94A3B8;">PICKUP LOCATION</div>
+                  <div class="route-loc-name">Patna Junction / Airport</div>
+                </div>
+              </div>
+              <div style="border-left: 2px dashed #334155; margin-left: 4px; height: 12px;"></div>
+              <div class="route-node">
+                <span class="node-dot drop"></span>
+                <div>
+                  <div style="font-size:0.7rem; color:#94A3B8;">DROP DESTINATION</div>
+                  <div class="route-loc-name">Darbhanga Tower (135 km)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fleet Selection -->
+            <div style="font-size:0.75rem; color:#94A3B8; font-weight:700;">CHOOSE FLEET CATEGORY</div>
+            <div class="mock-cab-row">
+              <div class="mock-cab-chip selected">
+                <div class="mock-cab-name">Prime Sedan</div>
+                <div class="mock-cab-fare">₹1,999</div>
+                <div style="font-size:0.65rem; color:#94A3B8;">Dzire / Etios</div>
+              </div>
+              <div class="mock-cab-chip">
+                <div class="mock-cab-name">Hatchback</div>
+                <div class="mock-cab-fare">₹1,699</div>
+                <div style="font-size:0.65rem; color:#94A3B8;">WagonR</div>
+              </div>
+              <div class="mock-cab-chip">
+                <div class="mock-cab-name">Family SUV</div>
+                <div class="mock-cab-fare">₹2,899</div>
+                <div style="font-size:0.65rem; color:#94A3B8;">Ertiga / Innova</div>
+              </div>
+            </div>
+
+            <!-- Ride OTP -->
+            <div class="mock-otp-box">
+              <div style="font-size:0.7rem; color:#94A3B8; font-weight:700;">START RIDE OTP (SHARE WITH CHAUFFEUR)</div>
+              <div class="otp-code">4 8 2 9</div>
+              <div style="font-size:0.68rem; color:#10B981;">Ref: OTB-749216 • Toll & Driver Included</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="exp://192.168.0.179:8081" class="btn-launch-expo btn-launch-passenger">
+          <span>📲 Open in Expo Go</span>
+        </a>
+      </article>
+
+      <!-- APP 2: DRIVER PARTNER APP -->
+      <article class="app-showcase-card card-driver" id="card-driver">
+        <div class="card-header">
+          <div class="app-avatar avatar-driver">🚖</div>
+          <div class="card-meta">
+            <h3>Oneway Taxi Driver</h3>
+            <div class="package-name">com.onewaytaxibihar.driver</div>
+          </div>
+        </div>
+        <p class="card-desc">
+          Commercial chauffeur partner cockpit. Sunlight-optimized dark cockpit, Online/Offline duty toggle, 30s dispatch offers, 4-stage ride lifecycle, and net earnings ledger.
+        </p>
+
+        <!-- QR Box -->
+        <div class="expo-qr-box">
+          <div class="expo-badge-row">
+            <span class="expo-pill" style="color: #FBBF24; background: rgba(217, 119, 6, 0.15);">Expo Go Ready</span>
+            <span class="port-pill">PORT 8082</span>
+          </div>
+          <div class="qr-canvas-wrap">
+            <img src="/images/driver-expo-qr.png" alt="Driver App QR Code">
+          </div>
+          <div class="expo-url-box">
+            <span class="expo-url-text" id="url-driver">exp://192.168.0.179:8082</span>
+            <button class="btn-copy" onclick="copyUrl('exp://192.168.0.179:8082')">Copy</button>
+          </div>
+        </div>
+
+        <!-- CLI Launcher -->
+        <div class="cli-snippet">
+          <span class="cli-text">npm run start:driver</span>
+          <button class="btn-copy" onclick="copyUrl('npm run start:driver')">Copy</button>
+        </div>
+
+        <!-- Phone Simulator Mock -->
+        <div class="phone-simulator">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <!-- Duty Header -->
+            <div class="driver-duty-toggle">
+              <div>
+                <div style="font-weight: 800; color: #fff;">Chauffeur Duty</div>
+                <div style="font-size:0.7rem; color:#10B981;">🟢 Active Online • GPS Locked</div>
+              </div>
+              <div class="toggle-switch">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+
+            <!-- Earnings Card -->
+            <div style="background:#0F172A; border-radius:14px; padding:12px; border:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between;">
+              <div>
+                <div style="font-size:0.7rem; color:#94A3B8;">TODAY'S NET PAYOUT</div>
+                <div style="font-size:1.25rem; font-weight:900; color:#F59E0B;">₹3,450</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:0.7rem; color:#94A3B8;">TRIPS DONE</div>
+                <div style="font-size:1.25rem; font-weight:900; color:#fff;">2 Rides</div>
+              </div>
+            </div>
+
+            <!-- Dispatch Offer -->
+            <div class="dispatch-alert-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:800; color:#F59E0B; font-size:0.78rem;">🔥 NEW OUTSTATION DISPATCH</span>
+                <span style="font-family:'JetBrains Mono'; font-weight:800; color:#fff;">22s</span>
+              </div>
+              <div class="countdown-bar"></div>
+              <div style="font-weight:800; color:#fff; font-size:0.95rem; margin-top:4px;">Patna ➔ Muzaffarpur</div>
+              <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:0.75rem;">
+                <span style="color:#94A3B8;">Distance: 78 km</span>
+                <span style="font-weight:800; color:#34D399;">Driver Net: ₹1,520</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;">
+                <button style="background:#1E293B; border:none; color:#EF4444; padding:8px; border-radius:8px; font-weight:700; cursor:pointer;">Decline</button>
+                <button style="background:#D97706; border:none; color:#fff; padding:8px; border-radius:8px; font-weight:800; cursor:pointer;">Accept Ride</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="exp://192.168.0.179:8082" class="btn-launch-expo btn-launch-driver">
+          <span>📲 Open in Expo Go</span>
+        </a>
+      </article>
+
+      <!-- APP 3: ADMIN FLEET OPS APP -->
+      <article class="app-showcase-card card-admin" id="card-admin">
+        <div class="card-header">
+          <div class="app-avatar avatar-admin">🛡️</div>
+          <div class="card-meta">
+            <h3>Oneway Taxi Admin</h3>
+            <div class="package-name">com.onewaytaxibihar.admin</div>
+          </div>
+        </div>
+        <p class="card-desc">
+          Central fleet dispatcher & operations console. Real-time customer bookings feed, 2-step manual driver allotment, chauffeur document audit queue, and daily GMV revenue stats.
+        </p>
+
+        <!-- QR Box -->
+        <div class="expo-qr-box">
+          <div class="expo-badge-row">
+            <span class="expo-pill" style="color: #60A5FA; background: rgba(37, 99, 235, 0.15);">Expo Go Ready</span>
+            <span class="port-pill">PORT 8083</span>
+          </div>
+          <div class="qr-canvas-wrap">
+            <img src="/images/admin-expo-qr.png" alt="Admin App QR Code">
+          </div>
+          <div class="expo-url-box">
+            <span class="expo-url-text" id="url-admin">exp://192.168.0.179:8083</span>
+            <button class="btn-copy" onclick="copyUrl('exp://192.168.0.179:8083')">Copy</button>
+          </div>
+        </div>
+
+        <!-- CLI Launcher -->
+        <div class="cli-snippet">
+          <span class="cli-text">npm run start:admin</span>
+          <button class="btn-copy" onclick="copyUrl('npm run start:admin')">Copy</button>
+        </div>
+
+        <!-- Phone Simulator Mock -->
+        <div class="phone-simulator">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="mock-header">
+              <span style="font-weight: 800; color:#fff;">Dispatch Command</span>
+              <span class="mock-badge" style="background:#1E3A8A; color:#60A5FA;">Admin Live</span>
+            </div>
+
+            <!-- KPIs -->
+            <div class="admin-kpi-row">
+              <div class="admin-kpi-card">
+                <div class="kpi-title">ACTIVE RIDES</div>
+                <div class="kpi-val blue">14 Trips</div>
+              </div>
+              <div class="admin-kpi-card">
+                <div class="kpi-title">TODAY'S GMV</div>
+                <div class="kpi-val emerald">₹38,400</div>
+              </div>
+            </div>
+
+            <!-- Dispatch Matching List -->
+            <div style="font-size:0.75rem; color:#94A3B8; font-weight:700;">UNASSIGNED BOOKINGS (DISPATCH QUEUE)</div>
+            <div class="admin-queue-list">
+              <div class="admin-queue-item">
+                <div>
+                  <div style="font-weight:800; color:#fff; font-size:0.8rem;">Patna ➔ Gaya Airport</div>
+                  <div style="font-size:0.68rem; color:#94A3B8;">Cust: Vikash Kumar • Sedan</div>
+                </div>
+                <button style="background:#2563EB; border:none; color:#fff; font-size:0.72rem; font-weight:800; padding:6px 10px; border-radius:6px; cursor:pointer;">Assign Driver</button>
+              </div>
+
+              <div class="admin-queue-item">
+                <div>
+                  <div style="font-weight:800; color:#fff; font-size:0.8rem;">Patna ➔ Bhagalpur</div>
+                  <div style="font-size:0.68rem; color:#94A3B8;">Cust: Anjali Singh • SUV</div>
+                </div>
+                <button style="background:#2563EB; border:none; color:#fff; font-size:0.72rem; font-weight:800; padding:6px 10px; border-radius:6px; cursor:pointer;">Assign Driver</button>
+              </div>
+            </div>
+
+            <!-- Driver KYC Status -->
+            <div style="background:#0F172A; border-radius:12px; padding:10px; border:1px solid rgba(255,255,255,0.06); margin-top:auto;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.72rem; color:#94A3B8;">KYC AUDITS PENDING</span>
+                <span style="font-size:0.78rem; font-weight:800; color:#F59E0B;">3 Applications</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="exp://192.168.0.179:8083" class="btn-launch-expo btn-launch-admin">
+          <span>📲 Open in Expo Go</span>
+        </a>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- Step-by-Step Expo Go Guide -->
+  <section class="guide-section">
+    <h2 class="guide-title">
+      <span>🚀 How to Preview on Your Mobile Device (iOS / Android)</span>
+    </h2>
+    <div class="guide-steps">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-title">Install Expo Go</div>
+        <div class="step-desc">
+          Download <strong>Expo Go</strong> free from Google Play Store or Apple App Store on your smartphone.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-title">Connect to Wi-Fi</div>
+        <div class="step-desc">
+          Ensure your phone is on the same local Wi-Fi network (LAN IP: <code>192.168.0.179</code>) or use tunnel mode.
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-title">Start the App Server</div>
+        <div class="step-desc">
+          In your terminal, navigate to <code>cd mobile</code> and run:
+          <br>
+          <code style="color:#34D399;">npm run start:passenger</code> (or driver / admin).
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-title">Scan QR Code</div>
+        <div class="step-desc">
+          Open <strong>Expo Go</strong> (Android) and tap <em>"Scan QR code"</em> or open the <strong>iOS Camera</strong> app to instantly launch!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast Element -->
+  <div id="toast">Copied to clipboard!</div>
+
+  <script>
+    function copyUrl(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.textContent = 'Copied: ' + text;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      });
+    }
+
+    function filterApp(appName) {
+      const cards = {
+        passenger: document.getElementById('card-passenger'),
+        driver: document.getElementById('card-driver'),
+        admin: document.getElementById('card-admin')
+      };
+
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+
+      if (appName === 'all') {
+        Object.values(cards).forEach(c => c.style.display = 'flex');
+        event.target.classList.add('active');
+        return;
+      }
+
+      event.target.classList.add('active');
+      Object.keys(cards).forEach(key => {
+        cards[key].style.display = (key === appName) ? 'flex' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

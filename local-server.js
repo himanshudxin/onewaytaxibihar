@@ -116,7 +116,21 @@ const server = http.createServer(async (req, res) => {
   const pathname = url.pathname;
 
   // 1. API Route Handler (High Performance Serverless Handler)
-  if (pathname === '/api' || pathname.startsWith('/api/')) {
+  const isApiRoute = pathname === '/api' || 
+    pathname.startsWith('/api/') || 
+    pathname.startsWith('/dispatch/') || 
+    pathname.startsWith('/bookings') || 
+    pathname.startsWith('/rides') || 
+    pathname.startsWith('/driver/') || 
+    pathname.startsWith('/passenger/') || 
+    pathname.startsWith('/payment') || 
+    pathname.startsWith('/payments') || 
+    pathname === '/admin/login' || 
+    pathname.startsWith('/admin/cancel-booking') ||
+    pathname.startsWith('/admin/bookings') ||
+    pathname.startsWith('/admin/assign-driver');
+
+  if (isApiRoute) {
     return apiHandler(req, res);
   }
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>One-Way Taxi in Bihar | OneWayTaxiBihar</title>
   <meta name="description"
     content="Book one-way intercity cabs across all 38 Bihar districts. Transparent fares, no return fare on one-way trips, and 24/7 booking support.">
@@ -219,6 +219,7 @@
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+  <script src="/js/error-tracker.js"></script>
 </head>
 
 <body>
@@ -270,6 +271,7 @@
 
       <!-- Desktop Nav Links -->
       <ul class="nav-links" role="menubar">
+        <li><a href="/app-download.html" style="color:#34D399; font-weight:800;" role="menuitem">📲 Mobile Apps</a></li>
         <li><a href="javascript:void(0)" onclick="window.openServicesModal()" role="menuitem">Services</a></li>
         <li><a href="/fare-chart.html" role="menuitem">Fare Chart</a></li>
         <li><a href="javascript:void(0)" onclick="window.openCorporateModal()" role="menuitem">Corporate</a></li>
@@ -719,19 +721,19 @@
             <div class="voyago-vehicle-card" data-fleet="sedan" onclick="window.selectVoyagoVehicle('sedan', this)">
               <img src="/images/voyago/car-sedan.jpg" alt="Sedan Dzire" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Sedan</div>
-              <div class="voyago-vehicle-rate">₹11/km</div>
+              <div class="voyago-vehicle-rate">₹22/km</div>
               <div class="voyago-vehicle-seats">4 Seats • AC</div>
             </div>
             <div class="voyago-vehicle-card selected" data-fleet="ertiga" onclick="window.selectVoyagoVehicle('ertiga', this)">
               <img src="/images/voyago/car-ertiga.jpg" alt="Ertiga SUV" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Ertiga</div>
-              <div class="voyago-vehicle-rate">₹14/km</div>
+              <div class="voyago-vehicle-rate">₹27/km</div>
               <div class="voyago-vehicle-seats">6 Seats • Dual AC</div>
             </div>
             <div class="voyago-vehicle-card" data-fleet="suv" onclick="window.selectVoyagoVehicle('suv', this)">
               <img src="/images/voyago/car-suv.jpg" alt="Scorpio / Innova" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Scorpio</div>
-              <div class="voyago-vehicle-rate">₹18/km</div>
+              <div class="voyago-vehicle-rate">₹34/km</div>
               <div class="voyago-vehicle-seats">7 Seats • Heavy SUV</div>
             </div>
           </div>
@@ -1465,80 +1467,6 @@
         </div>
       </div>
 
-      <!-- Popular Intercity Routes Footer Block (SEO-Indexed Corridor Network) -->
-      <div class="footer-routes-block" style="text-align: center; padding: 28px 0 16px;">
-        <div class="footer-routes-title" style="margin-bottom: 6px; font-size: 13px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: #f8fafc;">TOP ONE-WAY CAB CORRIDORS ACROSS BIHAR</div>
-        <p style="font-size: 13px; color: var(--owc-text-muted); margin-bottom: 18px; max-width: 680px; margin-left: auto; margin-right: auto;">
-          Fixed, transparent one-way fares across all 38 districts with zero return charges. AC cars, tolls &amp; GST included.
-        </p>
-
-        <!-- SEO Crawlable Route Links Grid -->
-        <div class="footer-corridors-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-bottom: 20px; text-align: left;">
-          <a href="/patna-to-gaya-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Gaya Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,399 ➔</strong>
-          </a>
-          <a href="/patna-to-muzaffarpur-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Muzaffarpur Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,299 ➔</strong>
-          </a>
-          <a href="/patna-to-darbhanga-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Darbhanga Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,799 ➔</strong>
-          </a>
-          <a href="/patna-to-bhagalpur-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Bhagalpur Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹3,499 ➔</strong>
-          </a>
-          <a href="/patna-to-purnia-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Purnia Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹3,999 ➔</strong>
-          </a>
-          <a href="/patna-to-deoghar-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Deoghar Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹3,499 ➔</strong>
-          </a>
-          <a href="/patna-to-bodh-gaya-taxi" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Bodh Gaya Taxi</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,599 ➔</strong>
-          </a>
-          <a href="/patna-to-varanasi-taxi" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Varanasi Taxi</span>
-            <strong style="color: #10b981; font-size: 12px;">₹3,499 ➔</strong>
-          </a>
-          <a href="/patna-airport-taxi" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna Airport Taxi</span>
-            <strong style="color: #10b981; font-size: 12px;">24x7 Pickup ➔</strong>
-          </a>
-          <a href="/bihar-airport-taxi" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Bihar Airport Taxi Transfers</span>
-            <strong style="color: #10b981; font-size: 12px;">All Terminals ➔</strong>
-          </a>
-          <a href="/patna-to-siwan-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Siwan Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹2,199 ➔</strong>
-          </a>
-          <a href="/patna-to-chhapra-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Chhapra Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,199 ➔</strong>
-          </a>
-          <a href="/patna-to-motihari-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Motihari Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹2,399 ➔</strong>
-          </a>
-          <a href="/patna-to-begusarai-cab" class="corridor-link-card" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s;">
-            <span>Patna to Begusarai Cab</span>
-            <strong style="color: #10b981; font-size: 12px;">₹1,899 ➔</strong>
-          </a>
-        </div>
-
-        <button type="button" class="btn-nav-outline" onclick="window.openRoutesModal()" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; padding: 9px 24px; border-radius: 9999px; font-size: 13.5px;" title="Tap to view outstation routes & fares">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          <span>Explore All 38 District Routes &amp; Custom Quotes</span>
-          <span>➔</span>
-        </button>
-      </div>
-
       <!-- Bottom Copyright & Social Row -->
       <div class="footer-bottom-bar">
         <div class="footer-social-links">
@@ -1632,14 +1560,17 @@
       document.body.style.width = '100%';
     };
     window.unlockBodyScroll = window.unlockBodyScroll || function () {
-      if (!document.body.classList.contains('modal-open')) return;
       var y = parseInt(document.body.dataset.scrollY || '0', 10);
       document.documentElement.classList.remove('modal-open');
       document.body.classList.remove('modal-open');
+      document.body.classList.remove('drawer-open');
       document.body.style.position = '';
       document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.width = '';
-      window.scrollTo(0, isNaN(y) ? 0 : y);
+      document.body.style.overflow = '';
+      if (!isNaN(y) && y > 0) window.scrollTo(0, y);
     };
 
     window.navGoTo = function (action) {

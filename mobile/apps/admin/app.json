@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "Oneway Taxi Admin",
+    "slug": "onewaytaxi-admin",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/admin-icon.png",
+    "scheme": "onewaytaxadmin",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/admin-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#090D16"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onewaytaxibihar.admin",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Oneway Taxi Admin displays active fleet locations and corridor traffic status.",
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/admin-icon.png",
+        "backgroundColor": "#1E293B"
+      },
+      "package": "com.onewaytaxibihar.admin",
+      "permissions": [
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "extra": {
+      "apiUrl": "https://onewaytaxibihar.com/api",
+      "supportPhone": "+918002141816",
+      "whatsappPhone": "+916206494214",
+      "appType": "admin"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

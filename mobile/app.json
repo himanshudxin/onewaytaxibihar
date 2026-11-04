@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "OneWayTaxiBihar",
+    "slug": "onewaytaxibihar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "onewaytaxi",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#090D16"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onewaytaxibihar.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "OneWayTaxiBihar requires your location to set accurate pickup addresses across Bihar and calculate precise fares.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "For Driver Partners, continuous location access ensures accurate ride assignment and real-time navigation.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#059669"
+      },
+      "package": "com.onewaytaxibihar.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiUrl": "https://onewaytaxibihar.com/api",
+      "supportPhone": "+918002141816",
+      "whatsappPhone": "+917739406400"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

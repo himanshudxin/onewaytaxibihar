@@ -58,12 +58,12 @@ function verifyAdminCredentials(username, password, dbAdmins = []) {
     }
   }
 
-  // 2. Authorized Master Admin Passwords (Loaded strictly from env with default fallback)
+  // 2. Authorized Master Admin Passwords (Loaded strictly from env with pre-hashed fallback)
   const allowedPasswords = new Set();
   if (process.env.ADMIN_PASSWORD) {
-    allowedPasswords.add(process.env.ADMIN_PASSWORD.trim());
+    const envPass = process.env.ADMIN_PASSWORD.trim().replace(/^["']|["']$/g, '');
+    if (envPass) allowedPasswords.add(envPass);
   }
-  allowedPasswords.add('harharmahadev@1');
 
   const matchesDefaultHash = DEFAULT_HASH && verifyRawHash(cleanPass, DEFAULT_HASH, DEFAULT_SALT);
   const isPassAuthorized = allowedPasswords.has(cleanPass) || matchesDefaultHash;
@@ -255,13 +255,21 @@ function checkRateLimit(identifier, maxRequests = 10, windowMs = 60000) {
 
   if (timestamps.length >= maxRequests) {
     const oldest = timestamps[0];
-    const retryAfter = Math.ceil((windowMs - (now - oldest)) / 1000);
+    const retryAfter = Math.max(1, Math.ceil((windowMs - (now - oldest)) / 1000));
     return { allowed: false, retryAfter };
   }
 
   timestamps.push(now);
   rateLimitMap.set(key, timestamps);
   return { allowed: true, retryAfter: 0 };
+}
+
+function resetRateLimit(identifier) {
+  if (!identifier) {
+    rateLimitMap.clear();
+    return;
+  }
+  rateLimitMap.delete(String(identifier));
 }
 
 // ---------------------------------------------------------------------------
@@ -472,6 +480,7 @@ module.exports = {
   checkBruteForce,
   recordLoginAttempt,
   checkRateLimit,
+  resetRateLimit,
 
   // 2FA / OTP
   requestAdminOtp,

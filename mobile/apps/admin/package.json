@@ -1,0 +1,11 @@
+{
+  "name": "onewaytaxi-admin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "expo start --port 8083 --lan",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
+  }
+}

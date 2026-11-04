@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Confirm Your Booking &amp; OTP Verification | OneWayTaxiBihar</title>
   <meta name="description" content="Verify mobile number via OTP and confirm outstation cab booking with OneWayTaxiBihar. Zero advance required.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -580,6 +580,7 @@
       }
     }
   </style>
+  <script src="/js/error-tracker.js"></script>
 </head>
 
 <body>
@@ -742,6 +743,49 @@
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date & Time Selection: When do you require the cab? -->
+          <div class="form-row" style="background: rgba(16, 185, 129, 0.05); border: 1.5px solid rgba(16, 185, 129, 0.2); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+            <div class="input-box-wrap" style="margin-bottom: 0;">
+              <label for="input-pickup-date">WHEN DO YOU REQUIRE CAB? (PICKUP DATE) <span class="req-star">*</span></label>
+              <div class="pro-input-wrap">
+                <span class="pro-input-icon" title="Required Date">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </span>
+                <input type="date" id="input-pickup-date" class="pro-input-field" required>
+              </div>
+            </div>
+            <div class="input-box-wrap" style="margin-bottom: 0;">
+              <label for="select-pickup-time">REQUIRED PICKUP TIME <span class="req-star">*</span></label>
+              <div class="pro-input-wrap">
+                <span class="pro-input-icon" title="Required Time">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                </span>
+                <select id="select-pickup-time" class="pro-input-field" style="cursor: pointer; background: transparent;">
+                  <option value="Immediate (Next 15-30m)">⚡ Immediate (Next 15-30m)</option>
+                  <option value="05:00 AM">05:00 AM (Early Dawn Flight/Train)</option>
+                  <option value="06:30 AM">06:30 AM (Morning Departure)</option>
+                  <option value="08:00 AM">08:00 AM (Morning Express)</option>
+                  <option value="09:30 AM">09:30 AM (Standard Business)</option>
+                  <option value="11:00 AM">11:00 AM (Midday Transit)</option>
+                  <option value="01:30 PM">01:30 PM (Afternoon)</option>
+                  <option value="03:30 PM">03:30 PM (Afternoon Transit)</option>
+                  <option value="05:30 PM">05:30 PM (Evening Transit)</option>
+                  <option value="07:30 PM">07:30 PM (Evening Departure)</option>
+                  <option value="09:30 PM">09:30 PM (Night Express)</option>
+                  <option value="11:30 PM">11:30 PM (Late Night Departure)</option>
+                </select>
               </div>
             </div>
           </div>
@@ -971,6 +1015,43 @@
       document.getElementById('txt-base-fare').textContent = `₹${(cab.price - Math.round(cab.price * 0.05)).toLocaleString('en-IN')}`;
       document.getElementById('txt-total-fare').textContent = `₹${Number(cab.price).toLocaleString('en-IN')}`;
 
+      // Initialize and handle Date & Time inputs
+      const todayYmd = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('input-pickup-date');
+      const timeSelect = document.getElementById('select-pickup-time');
+      
+      if (dateInput) {
+        dateInput.min = todayYmd;
+        dateInput.value = trip.pickupDate || todayYmd;
+        dateInput.addEventListener('change', () => {
+          trip.pickupDate = dateInput.value;
+          updateScheduleDisplay();
+        });
+      }
+
+      if (timeSelect) {
+        if (trip.pickupTime) {
+          const hasOption = Array.from(timeSelect.options).some(o => o.value === trip.pickupTime);
+          if (hasOption) {
+            timeSelect.value = trip.pickupTime;
+          }
+        }
+        timeSelect.addEventListener('change', () => {
+          trip.pickupTime = timeSelect.value;
+          updateScheduleDisplay();
+        });
+      }
+
+      function updateScheduleDisplay() {
+        const schedEl = document.getElementById('txt-schedule');
+        if (schedEl) {
+          schedEl.textContent = `${trip.pickupDate || 'Today'} at ${trip.pickupTime || '10:00 AM'}`;
+        }
+        sessionStorage.setItem('otb_trip', JSON.stringify(trip));
+        sessionStorage.setItem('otb_search_params', JSON.stringify(trip));
+        sessionStorage.setItem('otb_pickup_time', trip.pickupTime || '10:00 AM');
+      }
+
       // Pre-fill Doorstep Addresses if custom location was selected
       const pickupAddrInput = document.getElementById('input-pickup-addr');
       if (pickupAddrInput && !pickupAddrInput.value && trip.origin) {
@@ -1182,14 +1263,24 @@
           return;
         }
 
+        const finalDate = (dateInput && dateInput.value) ? dateInput.value : (trip.pickupDate || todayYmd);
+        const finalTime = (timeSelect && timeSelect.value) ? timeSelect.value : (trip.pickupTime || '10:00 AM');
+        trip.pickupDate = finalDate;
+        trip.pickupTime = finalTime;
+
         const riderData = {
           passengerName: name,
           passengerPhone: phone,
           pickupAddress: pickupAddr,
           dropAddress: dropAddr || (trip ? trip.dest.name : ''),
+          pickupDate: finalDate,
+          pickupTime: finalTime,
           verified: true
         };
         sessionStorage.setItem('otb_rider_details', JSON.stringify(riderData));
+        sessionStorage.setItem('otb_trip', JSON.stringify(trip));
+        sessionStorage.setItem('otb_search_params', JSON.stringify(trip));
+        sessionStorage.setItem('otb_pickup_time', finalTime);
         window.location.href = 'payment.html';
       };
     })();

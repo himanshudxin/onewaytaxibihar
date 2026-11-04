@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Download Oneway Taxi Mobile Apps | Passenger & Driver APK</title>
+  <meta name="description"
+    content="Download official Oneway Taxi Bihar mobile apps for Android. Passenger App for outstation cab booking and Driver Partner App for Bihar chauffeurs. Fast, secure direct APK download.">
+  <meta name="keywords"
+    content="download oneway taxi app, oneway cab bihar apk, driver partner app bihar, patna cab app download, onewaytaxibihar android app">
+  <link rel="canonical" href="https://onewaytaxibihar.com/app-download.html">
+
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192.png">
+
+  <meta name="theme-color" content="#090d16">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <style>
+    .download-hero {
+      padding: 120px 20px 50px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 10%, rgba(5, 150, 105, 0.18), transparent 70%), #090D16;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(5, 150, 105, 0.15);
+      border: 1px solid #059669;
+      border-radius: 999px;
+      color: #34D399;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .download-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .download-hero p {
+      max-width: 650px;
+      margin: 0 auto;
+      color: #94A3B8;
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      max-width: 1100px;
+      margin: -30px auto 60px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .app-card {
+      background: #0F172A;
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .app-card:hover {
+      transform: translateY(-6px);
+      border-color: #059669;
+    }
+    .app-card.driver-card:hover {
+      border-color: #D97706;
+    }
+    .app-icon-wrapper {
+      width: 76px;
+      height: 76px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 38px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .passenger-badge {
+      background: linear-gradient(135deg, #059669, #10B981);
+    }
+    .driver-badge {
+      background: linear-gradient(135deg, #D97706, #F59E0B);
+    }
+    .app-card h2 {
+      font-size: 1.6rem;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+    .app-card .tagline {
+      color: #94A3B8;
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+      min-height: 44px;
+    }
+    .features-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #CBD5E1;
+      font-size: 0.92rem;
+    }
+    .features-list li .check-icon {
+      color: #10B981;
+      font-weight: 900;
+    }
+    .driver-card .features-list li .check-icon {
+      color: #F59E0B;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 24px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-decoration: none;
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-passenger {
+      background: #059669;
+    }
+    .btn-passenger:hover {
+      background: #047857;
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+    }
+    .btn-driver {
+      background: #D97706;
+    }
+    .btn-driver:hover {
+      background: #B45309;
+      box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4);
+    }
+    .secondary-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .btn-secondary {
+      flex: 1;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #94A3B8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+    }
+    .install-steps {
+      max-width: 900px;
+      margin: 40px auto 80px;
+      padding: 36px 30px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      text-align: center;
+    }
+    .install-steps h3 {
+      font-size: 1.4rem;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+    }
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    .step-box {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 20px;
+      border-radius: 14px;
+      border-left: 3px solid #059669;
+    }
+    .step-box.driver-step {
+      border-left-color: #D97706;
+    }
+    .step-box .num {
+      font-size: 12px;
+      font-weight: 900;
+      color: #34D399;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .step-box.driver-step .num {
+      color: #FBBF24;
+    }
+    .step-box h4 {
+      color: #FFFFFF;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+    .step-box p {
+      color: #94A3B8;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .whatsapp-share-bar {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .btn-wa-share {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #25D366;
+      color: #FFFFFF;
+      border-radius: 30px;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Global Navigation Bar -->
+  <header class="main-header" id="site-header">
+    <div class="header-container" style="display:flex; justify-content:space-between; align-items:center; max-width:1200px; margin:0 auto; padding:16px 20px;">
+      <a href="/" class="brand-logo" style="text-decoration:none; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:24px;">🚖</span>
+        <span style="font-weight:900; font-size:1.3rem; color:#FFFFFF;">OneWay<span style="color:#10B981;">Taxi</span>Bihar</span>
+      </a>
+      <nav style="display:flex; gap:18px; align-items:center;">
+        <a href="/" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Home</a>
+        <a href="/cabs.html" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Fleet</a>
+        <a href="/driver.html" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Driver Sign Up</a>
+        <a href="tel:+918002141816" style="background:#059669; color:#FFFFFF; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:800; font-size:0.9rem;">📞 8002141816</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="download-hero">
+    <div class="badge-pill">⚡ OFFICIAL ANDROID MOBILE APPLICATIONS</div>
+    <h1>Download Oneway Taxi Bihar Apps</h1>
+    <p>Install the dedicated mobile apps for instant outstation cab booking and high-earnings chauffeur dispatches across all 38 districts of Bihar.</p>
+  </section>
+
+  <!-- Main Apps Grid -->
+  <div class="apps-grid">
+    <!-- Passenger App -->
+    <div class="app-card">
+      <div class="app-icon-wrapper passenger-badge">👤</div>
+      <h2>Oneway Taxi • Passenger App</h2>
+      <div class="tagline">Guaranteed lowest outstation fares across Bihar with zero return cab charges.</div>
+
+      <ul class="features-list">
+        <li><span class="check-icon">✓</span> 226 Bihar Outstation Corridors Covered</li>
+        <li><span class="check-icon">✓</span> Sedans, SUVs & Innova Doorstep Pickup</li>
+        <li><span class="check-icon">✓</span> Secure Ride Start OTP with Live Status</li>
+        <li><span class="check-icon">✓</span> Pay via UPI, Cash or Card on Arrival</li>
+        <li><span class="check-icon">✓</span> 24/7 Verified Driver & Helpline Support</li>
+      </ul>
+
+      <a href="/downloads/onewaytaxi-passenger.apk" class="btn-download btn-passenger" download>
+        <span>⬇️</span> Download Passenger APK (Android)
+      </a>
+
+      <div class="secondary-actions">
+        <a href="/" class="btn-secondary">🌐 Open Web Version</a>
+        <a href="exp://192.168.0.179:8081" class="btn-secondary">📲 Launch Expo Go</a>
+      </div>
+    </div>
+
+    <!-- Driver Partner App -->
+    <div class="app-card driver-card">
+      <div class="app-icon-wrapper driver-badge">🚖</div>
+      <h2>Oneway Taxi • Driver Partner</h2>
+      <div class="tagline">Earn ₹45,000 - ₹75,000/month with transparent daily outstation dispatches.</div>
+
+      <ul class="features-list">
+        <li><span class="check-icon">✓</span> Keep 85% of Total Booking Tariff</li>
+        <li><span class="check-icon">✓</span> Real-Time Turn-by-Turn GPS Navigation</li>
+        <li><span class="check-icon">✓</span> Immediate Cash/UPI Passenger Collection</li>
+        <li><span class="check-icon">✓</span> Zero Commission Lock on Joining Bonus</li>
+        <li><span class="check-icon">✓</span> 1-Minute Fast Document Verification</li>
+      </ul>
+
+      <a href="/downloads/onewaytaxi-driver.apk" class="btn-download btn-driver" download>
+        <span>⬇️</span> Download Driver APK (Android)
+      </a>
+
+      <div class="secondary-actions">
+        <a href="/driver.html" class="btn-secondary">📝 Driver Online Form</a>
+        <a href="exp://192.168.0.179:8082" class="btn-secondary">📲 Launch Driver Expo</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Easy 3-Step Installation Guide -->
+  <div class="install-steps">
+    <h3>📱 3-Step Simple Installation Guide (Android)</h3>
+    <div class="steps-row">
+      <div class="step-box">
+        <div class="num">Step 1</div>
+        <h4>Tap Download APK</h4>
+        <p>Click the download button above. If Chrome asks "File might be harmful", tap <strong>Download anyway</strong>.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="num">Step 2</div>
+        <h4>Allow Installation</h4>
+        <p>Open the downloaded file. When prompted, tap <strong>Settings ➔ Allow from this source</strong>.</p>
+      </div>
+
+      <div class="step-box">
+        <div class="num">Step 3</div>
+        <h4>Open & Go</h4>
+        <p>Tap <strong>Install</strong>. Once complete, open Oneway Taxi and sign in with your 10-digit mobile number.</p>
+      </div>
+    </div>
+
+    <div class="whatsapp-share-bar">
+      <a href="https://api.whatsapp.com/send?text=Namaste%20Ji!%20Download%20Oneway%20Taxi%20Bihar%20App%20for%20fast%20outstation%20bookings%20and%20driver%20duties%20across%20Bihar:%20https://onewaytaxibihar.com/app-download.html" target="_blank" class="btn-wa-share">
+        <span>💬</span> Share App Link on WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background:#050914; border-top:1px solid rgba(255,255,255,0.08); padding:30px 20px; text-align:center; color:#64748B; font-size:0.9rem;">
+    <p>© 2026 OneWayTaxiBihar Mobility Pvt Ltd. All rights reserved. Registered Office: Patna, Bihar.</p>
+    <p style="margin-top:8px;">
+      <a href="/privacy-policy.html" style="color:#94A3B8; text-decoration:none;">Privacy Policy</a> • 
+      <a href="/terms-of-service.html" style="color:#94A3B8; text-decoration:none;">Terms of Service</a> • 
+      <a href="/contact.html" style="color:#94A3B8; text-decoration:none;">24/7 Helpline: 8002141816</a>
+    </p>
+  </footer>
+</body>
+
+</html>

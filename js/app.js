@@ -48,39 +48,48 @@ window.themeManager = null;
 
   // Passive touchmove barrier: prevents dragging backdrop from scrolling page behind modal/drawer
   document.addEventListener("touchmove", function(e) {
-    const hasModal = !!document.querySelector(".modal-overlay.open");
+    const hasModal = !!document.querySelector(".modal-overlay.open, .exec-picker-modal.open, .route-unlock-overlay[style*='flex'], .modal-overlay[style*='flex']");
     const hasDrawer = (document.getElementById("mobile-drawer") && document.getElementById("mobile-drawer").classList.contains("open")) || document.body.classList.contains("drawer-open");
     if (hasModal || hasDrawer) {
-      const scrollable = e.target.closest(".modal-dialog-box, .modal-body, .drawer-body, .mobile-nav-drawer, .drawer-content, .booking-flow-card");
+      const scrollable = e.target.closest(".modal-dialog-box, .modal-body, .drawer-body, .mobile-nav-drawer, .drawer-content, .booking-flow-card, .exec-sheet-card, .route-unlock-dialog, .exec-picker-modal");
       if (!scrollable) {
         if (e.cancelable) e.preventDefault();
         return;
-      }
-      if (scrollable.scrollHeight <= scrollable.clientHeight) {
-        if (e.cancelable) e.preventDefault();
       }
     }
   }, { passive: false });
 
   // Site-wide MutationObserver fallback: accurately tracks open modal overlays and drawer
   if (typeof MutationObserver !== "undefined") {
+    const isAnyModalActive = function() {
+      const openOverlays = document.querySelectorAll(".modal-overlay, .exec-picker-modal, .route-unlock-overlay");
+      for (let i = 0; i < openOverlays.length; i++) {
+        const el = openOverlays[i];
+        if (el.classList.contains("open") || el.classList.contains("active")) return true;
+        if (el.style.display === "flex" || el.style.display === "block") return true;
+      }
+      return false;
+    };
+
     const checkScrollState = function() {
-      const hasModal = !!document.querySelector(".modal-overlay.open");
+      const hasModal = isAnyModalActive();
       const hasDrawer = (document.getElementById("mobile-drawer") && document.getElementById("mobile-drawer").classList.contains("open")) || document.body.classList.contains("drawer-open");
       const shouldLock = hasModal || hasDrawer;
       if (shouldLock && !isScrollLocked) {
         window.lockBodyScroll();
-      } else if (!shouldLock && isScrollLocked) {
-        window.unlockBodyScroll();
+      } else if (!shouldLock) {
+        if (isScrollLocked || document.body.classList.contains("modal-open") || document.documentElement.classList.contains("modal-open") || document.body.style.position === "fixed") {
+          window.unlockBodyScroll();
+        }
       }
     };
 
     const observer = new MutationObserver(checkScrollState);
     if (document.body) {
-      observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
+      observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class", "style"] });
     } else {
       document.addEventListener("DOMContentLoaded", function() {
-        observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
+        observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class", "style"] });
       });
     }
   }
@@ -3165,8 +3174,14 @@ window.applyAiParsedTrip = (intent) => {
    ========================================================================== */
 class CustomerNotificationManager {
   constructor() {
-    this.isEnabled = localStorage.getItem("otb_customer_notifications") !== "false";
-    this.audioEnabled = localStorage.getItem("otb_customer_audio") !== "false";
+    let notif = true;
+    let audio = true;
+    try {
+      notif = localStorage.getItem("otb_customer_notifications") !== "false";
+      audio = localStorage.getItem("otb_customer_audio") !== "false";
+    } catch (e) {}
+    this.isEnabled = notif;
+    this.audioEnabled = audio;
     this.knownStates = new Map();
     this.pollTimer = null;
     this.audioContext = null;

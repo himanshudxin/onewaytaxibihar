@@ -1266,3 +1266,27 @@
   - 100% TypeScript compilation clean (npx tsc --noEmit, 0 errors).
   - 9/9 master test suites passing 100%.
   - Pushed to main on GitHub (commit d778c57).
+
+[2026-11-16] Phase 82: Telecom SMS OTP Service Across All 3 Mobile Apps & Permanent Corporate Desk Cache-Lock Remediation:
+- 1. Corporate Desk Cache-Lock Resolution:
+  - Diagnosed why user's laptop screen still showed the obsolete modal with black input boxes and fake client organization names (AIIMS Patna, NTPC Barh, etc.):
+    - `local-server.js` was serving `.html` files with `max-age=3600` (1 hour browser disk cache), and `vercel.json` cached JS/CSS for 7 days (`max-age=604800`).
+    - Asset URLs in `index.html` were still pinned to old cache tag `?v=20261116_v43_clean_header`.
+  - Fixed `local-server.js` and `vercel.json` to enforce `Cache-Control: public, max-age=0, must-revalidate` for HTML files.
+  - Bumped cache version string to `20261116_v45_desk_otp` across `index.html` and assets.
+  - Added defensive CSS in `css/components.css` guaranteeing `#modal-corporate input` is always `#ffffff` background with `#0f172a` text, and explicitly hiding any legacy `.corporate-trusted-tags`.
+  - Validated live render via Chrome CDP (`live-corporate-modal-desktop.png` and `live-corporate-modal-mobile-form.png`).
+- 2. Unified Telecom SMS OTP Service (`mobile/shared/services/otpService.ts`):
+  - Created `OtpService` supporting `sendOtp`, `verifyOtp`, `sendAdmin2FA`, `verifyAdmin2FA`, and `getWhatsAppFallbackUrl`.
+  - Upgraded backend endpoints in `api/index.js` (`/auth/send-otp`, `/auth/verify-otp`, `/admin/send-2fa-otp`, `/admin/verify-2fa-otp`) supporting `passenger`, `driver`, and `admin` roles with custom SMS templates and zero OTP leakage.
+- 3. Passenger App (`AuthScreen.tsx`):
+  - 6-digit OTP entry, 30s resend timer, telecom provider status indicator, and WhatsApp fallback assistance.
+- 4. Driver Partner App (`DriverAuthScreen.tsx`):
+  - SMS OTP chauffeur authentication, 6-digit OTP input, 30s timer, telecom status indicator, and demo fallback (`1234`).
+- 5. Admin Fleet Operations Console (`AdminLoginScreen.tsx`):
+  - 2-Step 2FA Security Login: Step 1 (Username & Password) -> Step 2 (6-digit 2FA OTP dispatched to registered admin mobile `+91 80021 41816`), with 30s resend timer and 1-tap demo bypass (`1234`).
+- 6. Verification & Deployment:
+  - Mobile TypeScript compilation: 0 errors (`npx tsc -p mobile/tsconfig.json --noEmit`).
+  - Master Production Test Runner (`scripts/run-all-tests.js`): 9/9 suites passing 100%.
+  - In-memory production OTP test (`scripts/test-otp-flow.js`): All 6 OTP tests passed 100%.
+  - Git commit `e13014c` pushed to `origin main`.

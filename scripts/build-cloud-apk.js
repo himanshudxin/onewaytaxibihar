@@ -33,7 +33,7 @@ try {
   console.log(`  - App Type: ${targetConfig.expo.extra.appType}`);
 
   const token = '7eWhz4D90dcg93GeuBB6vntrs50MwF33rtKFOiKG';
-  const cmd = `cd mobile; $env:EXPO_TOKEN="${token}"; npx --yes eas-cli build -p android --profile preview --non-interactive`;
+  const cmd = `cd mobile; $env:EXPO_TOKEN="${token}"; npx --yes eas-cli build -p android --profile preview --non-interactive --no-wait`;
   console.log(`[EAS Build] Launching EAS cloud build...`);
   execSync(cmd, { shell: 'powershell', stdio: 'inherit' });
 } catch (err) {

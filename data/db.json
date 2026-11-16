@@ -5,14 +5,13 @@
       "advancePaid": 0,
       "balanceDue": 2499,
       "bookingSource": "Mobile App",
-      "bookingStatus": "DRIVER ASSIGNED",
+      "bookingStatus": "SEARCHING_DRIVER",
       "broadcastCandidates": [
-        "drv_101",
         "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_101",
-      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.100Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -28,16 +27,9 @@
       "customerName": "App Rider 3160",
       "customerPhone": "+91 9876543211",
       "destCity": "Muzaffarpur",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 75,
-      "driverDetails": {
-        "id": "drv_101",
-        "name": "Ramesh Kumar Sharma",
-        "phone": "+91 94310 12345",
-        "vehicleNumber": "BR 01 PA 4921",
-        "vehicleModel": "Swift Dzire (White)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bhagwanpur Chowk",
       "dropCity": "Muzaffarpur",
       "duration": "1h 43m",
@@ -113,17 +105,12 @@
         "drv_768",
         "drv_488",
         "drv_359",
-        "drv_415"
+        "drv_415",
+        "drv_101"
       ],
       "source": "app",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.450Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -267,6 +254,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.100Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
         }
       ],
       "totalFare": 2499,
@@ -275,10 +268,10 @@
       "verifiedAt": "2026-11-15T21:37:46.310Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PA 4921",
-      "assignedDriverId": "drv_101",
-      "assignedDriverName": "Ramesh Kumar Sharma",
-      "assignedDriverPhone": "+91 94310 12345",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -462,13 +455,12 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "website",
-      "bookingStatus": "DRIVER ASSIGNED",
+      "bookingStatus": "SEARCHING_DRIVER",
       "broadcastCandidates": [
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_104",
-      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -484,16 +476,9 @@
       "customerName": "Web Rider 3075",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_104",
-        "name": "Sanjay Paswan",
-        "phone": "+91 82103 44556",
-        "vehicleNumber": "BR 01 PD 6024",
-        "vehicleModel": "Honda City (Brown)",
-        "rating": 5
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -570,17 +555,12 @@
         "drv_488",
         "drv_359",
         "drv_415",
-        "drv_101"
+        "drv_101",
+        "drv_104"
       ],
       "source": "website",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.450Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -724,6 +704,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -732,10 +718,10 @@
       "verifiedAt": "2026-11-15T21:34:13.232Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PD 6024",
-      "assignedDriverId": "drv_104",
-      "assignedDriverName": "Sanjay Paswan",
-      "assignedDriverPhone": "+91 82103 44556",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -893,12 +879,10 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "Website",
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -914,16 +898,9 @@
       "customerName": "Anil Kumar (Web User)",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1001,17 +978,12 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
       "source": "Website",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.451Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -1155,6 +1127,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -1163,10 +1141,10 @@
       "verifiedAt": "2026-11-15T21:13:11.687Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -1324,12 +1302,10 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "Website",
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -1345,16 +1321,9 @@
       "customerName": "Anil Kumar (Web User)",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1432,17 +1401,12 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
       "source": "Website",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.451Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -1586,6 +1550,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -1594,10 +1564,10 @@
       "verifiedAt": "2026-11-15T21:10:40.454Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -1755,12 +1725,10 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "Website",
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -1776,16 +1744,9 @@
       "customerName": "Anil Kumar (Web User)",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1863,17 +1824,12 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
       "source": "Website",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.451Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -2017,6 +1973,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -2025,10 +1987,10 @@
       "verifiedAt": "2026-11-15T21:09:28.384Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -2181,12 +2143,10 @@
       "bookingId": "OTB-2026-9139",
       "advancePaid": 0,
       "balanceDue": 2199,
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -2201,16 +2161,9 @@
       "customerName": "Anil Kumar (Web User)",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -2287,16 +2240,11 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.452Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -2440,6 +2388,12 @@
           "timestamp": "2026-11-16T03:09:12.870Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -2448,10 +2402,10 @@
       "verifiedAt": "2026-11-15T21:07:25.653Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
@@ -2604,12 +2558,10 @@
       "bookingId": "OTB-2026-2958",
       "advancePaid": 0,
       "balanceDue": 2199,
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -2624,16 +2576,9 @@
       "customerName": "Anil Kumar (Web User)",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -2710,16 +2655,11 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:51:09.452Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:06:09.690Z",
@@ -2863,6 +2803,12 @@
           "timestamp": "2026-11-16T03:09:12.871Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:24:13.101Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -2871,10 +2817,10 @@
       "verifiedAt": "2026-11-15T21:05:42.707Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:09:12.871Z",
@@ -5287,7 +5233,7 @@
       "ratingsCount": 15,
       "dutyStatus": "OFFLINE",
       "isAvailable": false,
-      "lastGhostTimeoutAt": "2026-11-16T03:07:42.843Z",
+      "lastGhostTimeoutAt": "2026-11-16T03:24:13.100Z",
       "tokenRevocationTime": null
     },
     {
@@ -5309,7 +5255,7 @@
       "ratingsCount": 13,
       "dutyStatus": "OFFLINE",
       "isAvailable": false,
-      "lastGhostTimeoutAt": "2026-11-16T03:07:42.844Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:24:13.101Z"
     },
     {
       "id": "drv_103",
@@ -5343,7 +5289,7 @@
       "speed": 35,
       "isAvailable": false,
       "dutyStatus": "OFFLINE",
-      "lastGhostTimeoutAt": "2026-11-15T21:30:08.857Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:24:13.101Z"
     }
   ],
   "driver_applications": [],

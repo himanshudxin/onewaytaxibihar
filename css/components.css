@@ -7051,3 +7051,213 @@ body.drawer-open .mobile-sticky-bottom-bar {
     font-size: 20px;
   }
 }
+
+/* =============================================================================
+   CORPORATE TRAVEL & GOVERNMENT DESK MODAL (Fully Responsive)
+   ============================================================================= */
+.corporate-modal-layout {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.corporate-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.corporate-modal-title {
+  font-size: 21px;
+  font-weight: 850;
+  color: var(--owc-text);
+  margin-bottom: 8px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+.corporate-modal-subtitle {
+  font-size: 13.5px;
+  color: var(--owc-text-muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.corporate-features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.corporate-feature-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.corporate-feature-icon {
+  color: var(--owc-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  flex-shrink: 0;
+}
+
+.corporate-feature-title {
+  font-size: 13.5px;
+  font-weight: 750;
+  color: var(--owc-text);
+  margin-bottom: 2px;
+}
+
+.corporate-feature-desc {
+  font-size: 12px;
+  color: var(--owc-text-muted);
+  line-height: 1.5;
+}
+
+.corporate-trusted-title {
+  font-size: 11px;
+  color: var(--owc-text-dim);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.corporate-trusted-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.corporate-trusted-tag {
+  background: var(--owc-slate-50);
+  border: 1px solid var(--owc-border);
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--owc-text);
+}
+
+/* Corporate Form Card */
+.corporate-form-card {
+  background: var(--owc-slate-50);
+  border: 1.5px solid var(--owc-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.corporate-form-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--owc-text);
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.corporate-form-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 16px;
+}
+
+.corporate-input-field {
+  width: 100% !important;
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--owc-border) !important;
+  background: var(--owc-surface) !important;
+  color: var(--owc-text) !important;
+  font-size: 14.5px !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.corporate-input-field:focus {
+  border-color: var(--owc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.corporate-input-field::placeholder {
+  color: var(--owc-text-dim) !important;
+  font-size: 13.5px !important;
+}
+
+/* Mobile & Tablet Responsiveness (< 860px) */
+@media (max-width: 860px) {
+  .corporate-modal-layout {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .corporate-modal-title {
+    font-size: 18px !important;
+  }
+
+  .corporate-modal-subtitle {
+    font-size: 13px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .corporate-form-card {
+    padding: 20px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .corporate-form-title {
+    font-size: 15px !important;
+  }
+
+  .corporate-features-list {
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .corporate-feature-title {
+    font-size: 13px !important;
+  }
+
+  .corporate-feature-desc {
+    font-size: 11.5px !important;
+  }
+}
+
+/* Base Promo / Search / Modal Input Field */
+.promo-input {
+  width: 100% !important;
+  padding: 12px 14px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--owc-border) !important;
+  background: var(--owc-surface) !important;
+  color: var(--owc-text) !important;
+  font-size: 14.5px !important;
+  font-weight: 500 !important;
+  outline: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.promo-input:focus {
+  border-color: var(--owc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+.promo-input::placeholder {
+  color: var(--owc-text-dim) !important;
+  font-size: 13.5px !important;
+}
+

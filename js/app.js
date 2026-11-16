@@ -1733,44 +1733,47 @@ window.openCorporateModal = () => {
   if (!modal || !body) return;
 
   body.innerHTML = `
-    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px;">
-      <div>
-        <h3 style="font-size: 20px; font-weight: 800; color: var(--owc-text); margin-bottom: 8px;">${OTB_CORPORATE_DATA.title}</h3>
-        <p style="font-size: 13.5px; color: var(--owc-text-muted); line-height: 1.6; margin-bottom: 18px;">${OTB_CORPORATE_DATA.subtitle}</p>
+    <div class="corporate-modal-layout">
+      <div class="corporate-info-col">
+        <h3 class="corporate-modal-title">${OTB_CORPORATE_DATA.title}</h3>
+        <p class="corporate-modal-subtitle">${OTB_CORPORATE_DATA.subtitle}</p>
 
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        <div class="corporate-features-list">
           ${OTB_CORPORATE_DATA.features.map(f => `
-            <div style="display: flex; gap: 10px; align-items: flex-start;">
-              <span style="color: var(--owc-primary); display: inline-flex; align-items: center; margin-top: 2px;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="corporate-feature-item">
+              <span class="corporate-feature-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </span>
               <div>
-                <strong style="font-size: 13.5px; color: var(--owc-text);">${f.title}</strong>
-                <div style="font-size: 12px; color: var(--owc-text-muted);">${f.desc}</div>
+                <div class="corporate-feature-title">${f.title}</div>
+                <div class="corporate-feature-desc">${f.desc}</div>
               </div>
             </div>
           `).join("")}
         </div>
 
-        <div style="font-size: 12px; color: var(--owc-text-dim); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Trusted By Leading Organizations in Bihar:</div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="corporate-trusted-title">Trusted By Leading Organizations in Bihar:</div>
+        <div class="corporate-trusted-tags">
           ${OTB_CORPORATE_DATA.trustedBy.map(c => `
-            <span style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); padding: 4px 10px; border-radius: var(--radius-sm); font-size: 11.5px; font-weight: 600;">${c}</span>
+            <span class="corporate-trusted-tag">${c}</span>
           `).join("")}
         </div>
       </div>
 
       <!-- Corporate Inquiry Form -->
-      <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: var(--radius-lg); padding: 20px;">
-        <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">Corporate Inquiry Desk</h4>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
-          <input type="text" class="promo-input" placeholder="Company / Institution Name" id="corp-company">
-          <input type="text" class="promo-input" placeholder="GSTIN Number (Optional)" id="corp-gstin">
-          <input type="text" class="promo-input" placeholder="Contact Person Name" id="corp-person">
-          <input type="tel" class="promo-input" placeholder="Official Mobile Number" id="corp-phone">
-          <input type="email" class="promo-input" placeholder="Official Email Address" id="corp-email">
+      <div class="corporate-form-card">
+        <h4 class="corporate-form-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Corporate Inquiry Desk</span>
+        </h4>
+        <div class="corporate-form-inputs">
+          <input type="text" class="corporate-input-field" placeholder="Company / Institution Name" id="corp-company" autocomplete="organization">
+          <input type="text" class="corporate-input-field" placeholder="GSTIN Number (Optional)" id="corp-gstin">
+          <input type="text" class="corporate-input-field" placeholder="Contact Person Name" id="corp-person" autocomplete="name">
+          <input type="tel" class="corporate-input-field" placeholder="Official 10-Digit Mobile" id="corp-phone" autocomplete="tel" maxlength="10">
+          <input type="email" class="corporate-input-field" placeholder="Official Email Address" id="corp-email" autocomplete="email">
         </div>
-        <button type="button" class="check-fare-primary-btn" style="margin-bottom: 0;" onclick="window.submitCorporateInquiry()">
+        <button type="button" class="check-fare-primary-btn" style="margin-bottom: 0; width: 100%;" onclick="window.submitCorporateInquiry()">
           Submit Corporate Inquiry
         </button>
       </div>

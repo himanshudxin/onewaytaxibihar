@@ -134,7 +134,7 @@ export const MyTripsScreen = ({ navigation }: any) => {
         <View style={styles.routeRow}>
           <MapPin size={16} color="#059669" />
           <Text style={styles.routeText}>
-            {item.pickupCity} ➔ {item.dropCity}
+            {item.pickupCity} → {item.dropCity}
           </Text>
         </View>
 

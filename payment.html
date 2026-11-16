@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 
 <head>
   <meta charset="UTF-8">
@@ -12,7 +12,7 @@
     (function () {
       try {
         const savedTheme = localStorage.getItem('owc_theme_preference');
-        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
+        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'light';
         document.documentElement.setAttribute('data-theme', activeTheme);
         document.documentElement.setAttribute('data-theme-mode', activeTheme);
       } catch (e) {
@@ -830,12 +830,12 @@
       function updateThemeIcon(t) {
         if (themeIcon) themeIcon.textContent = (t === 'light') ? '🌙' : '☀';
       }
-      const initialTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
       updateThemeIcon(initialTheme);
 
       if (themeBtn) {
         themeBtn.addEventListener('click', function () {
-          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const current = document.documentElement.getAttribute('data-theme') || 'light';
           const next = (current === 'light') ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', next);
           document.documentElement.setAttribute('data-theme-mode', next);

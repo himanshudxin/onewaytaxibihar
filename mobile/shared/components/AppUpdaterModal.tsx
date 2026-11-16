@@ -8,6 +8,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { checkAppVersion, launchApkDownload, VersionCheckResult } from '../services/updater';
+import { resolveApiBaseUrl } from '../services/api';
 
 export interface AppUpdaterModalProps {
   app: 'passenger' | 'driver';
@@ -18,7 +19,7 @@ export interface AppUpdaterModalProps {
 export const AppUpdaterModal: React.FC<AppUpdaterModalProps> = ({
   app,
   currentVersion = '1.0.0',
-  baseUrl = 'https://onewaytaxibihar.com'
+  baseUrl
 }) => {
   const [updateInfo, setUpdateInfo] = useState<VersionCheckResult | null>(null);
   const [dismissed, setDismissed] = useState<boolean>(false);
@@ -28,7 +29,8 @@ export const AppUpdaterModal: React.FC<AppUpdaterModalProps> = ({
     let isMounted = true;
     (async () => {
       try {
-        const res = await checkAppVersion(app, currentVersion, baseUrl);
+        const resolvedBase = baseUrl || resolveApiBaseUrl().replace(/\/api\/?$/, '');
+        const res = await checkAppVersion(app, currentVersion, resolvedBase);
         if (isMounted && res.updateAvailable) {
           setUpdateInfo(res);
         }

@@ -76,7 +76,7 @@ export const BookingConfirmScreen = ({ route, navigation }: any) => {
           <View style={styles.itineraryRow}>
             <Text style={styles.itineraryLabel}>Route:</Text>
             <Text style={styles.itineraryVal}>
-              {booking.pickupCity} ➔ {booking.dropCity}
+              {booking.pickupCity} → {booking.dropCity}
             </Text>
           </View>
 
@@ -90,7 +90,7 @@ export const BookingConfirmScreen = ({ route, navigation }: any) => {
           <View style={styles.scheduleHighlightRow}>
             <Text style={styles.scheduleHighlightLabel}>Pickup Time:</Text>
             <Text style={styles.scheduleHighlightVal}>
-              📅 {booking.pickupDate || 'Today'} • 🕒 {booking.pickupTime || '10:00 AM'}
+              {booking.pickupDate || 'Today'} • {booking.pickupTime || '10:00 AM'}
             </Text>
           </View>
 

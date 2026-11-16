@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Platform, Linking } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { View, StyleSheet, Platform } from 'react-native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PassengerColors } from '../../../../shared/theme/colors';
+import { useTheme } from '../../../../shared/theme/ThemeContext';
 
 // Screens
 import { SplashScreen } from '../screens/SplashScreen';
@@ -21,86 +21,99 @@ import { PrivacyPolicyScreen } from '../../../../shared/screens/PrivacyPolicyScr
 import { TermsOfServiceScreen } from '../../../../shared/screens/TermsOfServiceScreen';
 import { NotFoundScreen } from '../../../../shared/components/NotFoundScreen';
 
-import { Home, Calendar, Navigation, Headphones, User } from 'lucide-react-native';
+import { Compass, Calendar, Navigation2, Headphones, User } from 'lucide-react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// 5-Item Bottom Navigation mandated by User Specification #4
+// 5-Item Bottom Navigation styled like Uber / Bolt
 const MainTabNavigator = () => {
+  const { colors, isDark } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#E2E8F0',
+          backgroundColor: colors.tabBarBg,
+          borderTopColor: colors.tabBarBorder,
           borderTopWidth: 1,
           height: Platform.OS === 'ios' ? 84 : 64,
           paddingBottom: Platform.OS === 'ios' ? 24 : 10,
           paddingTop: 8,
-          shadowColor: '#0F172A',
+          shadowColor: '#000000',
           shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.05,
+          shadowOpacity: isDark ? 0.3 : 0.05,
           shadowRadius: 10,
           elevation: 8,
         },
-        tabBarActiveTintColor: '#D97706', // Golden Yellow Accent
-        tabBarInactiveTintColor: '#94A3B8', // Muted Slate
+        tabBarActiveTintColor: colors.tabBarActive,
+        tabBarInactiveTintColor: colors.tabBarInactive,
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 10.5,
           fontWeight: '800',
+          letterSpacing: 0.2,
           marginTop: 2,
         },
       }}
     >
-      {/* 1. Home */}
+      {/* 1. Explore / Home */}
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size }) => <Home color={color} size={21} strokeWidth={2.3} />,
+          tabBarLabel: 'Ride',
+          tabBarIcon: ({ color, size }) => (
+            <Compass size={22} color={color} strokeWidth={2.4} />
+          ),
         }}
       />
 
       {/* 2. My Bookings */}
       <Tab.Screen
-        name="MyTrips"
+        name="MyBookings"
         component={MyTripsScreen}
         options={{
-          tabBarLabel: 'My Bookings',
-          tabBarIcon: ({ color, size }) => <Calendar color={color} size={21} strokeWidth={2.3} />,
+          tabBarLabel: 'Activity',
+          tabBarIcon: ({ color, size }) => (
+            <Calendar size={21} color={color} strokeWidth={2.4} />
+          ),
         }}
       />
 
-      {/* 3. Track */}
+      {/* 3. Track Ride */}
       <Tab.Screen
-        name="Track"
+        name="TrackRide"
         component={BookingTimelineScreen}
         options={{
-          tabBarLabel: 'Track',
-          tabBarIcon: ({ color, size }) => <Navigation color={color} size={21} strokeWidth={2.3} />,
+          tabBarLabel: 'Tracking',
+          tabBarIcon: ({ color, size }) => (
+            <Navigation2 size={21} color={color} strokeWidth={2.4} />
+          ),
         }}
       />
 
-      {/* 4. Support */}
+      {/* 4. Support Desk */}
       <Tab.Screen
         name="Support"
         component={SupportScreen}
         options={{
-          tabBarLabel: 'Support',
-          tabBarIcon: ({ color, size }) => <Headphones color={color} size={21} strokeWidth={2.3} />,
+          tabBarLabel: 'Helpdesk',
+          tabBarIcon: ({ color, size }) => (
+            <Headphones size={21} color={color} strokeWidth={2.4} />
+          ),
         }}
       />
 
-      {/* 5. Profile */}
+      {/* 5. Account / Profile */}
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <User color={color} size={21} strokeWidth={2.3} />,
+          tabBarLabel: 'Account',
+          tabBarIcon: ({ color, size }) => (
+            <User size={21} color={color} strokeWidth={2.4} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -108,25 +121,40 @@ const MainTabNavigator = () => {
 };
 
 export const PassengerNavigator = () => {
+  const { colors, isDark } = useTheme();
+
+  const navigationTheme = {
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      background: colors.background,
+      card: colors.cardSurface,
+      text: colors.textPrimary,
+      border: colors.cardBorder,
+      primary: colors.accentGold,
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
         initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
-          animation: 'slide_from_right',
+          animation: 'fade_from_bottom',
+          contentStyle: { backgroundColor: colors.background },
         }}
       >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
-        <Stack.Screen name="Auth" component={AuthScreen} options={{ presentation: 'modal' }} />
-        <Stack.Screen name="AddressSelect" component={AddressSelectScreen} />
-        <Stack.Screen name="CabSelect" component={CabSelectScreen} />
-        <Stack.Screen name="Checkout" component={CheckoutScreen} />
-        <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} />
-        <Stack.Screen name="BookingTimeline" component={BookingTimelineScreen} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-        <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
+        <Stack.Screen name="Auth" component={AuthScreen} options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="AddressSelect" component={AddressSelectScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="CabSelect" component={CabSelectScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="BookingConfirm" component={BookingConfirmScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="BookingTimeline" component={BookingTimelineScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="NotFound" component={NotFoundScreen} />
       </Stack.Navigator>
     </NavigationContainer>

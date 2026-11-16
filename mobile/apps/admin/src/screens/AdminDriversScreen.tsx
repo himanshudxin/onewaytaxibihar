@@ -9,7 +9,8 @@ import {
   Linking,
   Alert,
   Modal,
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -232,7 +233,7 @@ export const AdminDriversScreen: React.FC<{ navigation: any }> = () => {
               styles.filterText,
               { color: filter === 'pending' ? '#000000' : pendingCount > 0 ? colors.warning : colors.textMuted }
             ]}>
-              ⚠️ PENDING AUDIT ({pendingCount})
+              PENDING AUDIT ({pendingCount})
             </Text>
           </TouchableOpacity>
 
@@ -241,7 +242,7 @@ export const AdminDriversScreen: React.FC<{ navigation: any }> = () => {
             onPress={() => setFilter('approved')}
           >
             <Text style={[styles.filterText, { color: filter === 'approved' ? '#FFFFFF' : colors.textMuted }]}>
-              ✅ VERIFIED ({approvedCount})
+              VERIFIED ({approvedCount})
             </Text>
           </TouchableOpacity>
         </View>
@@ -255,6 +256,10 @@ export const AdminDriversScreen: React.FC<{ navigation: any }> = () => {
         contentContainerStyle={styles.listContent}
         refreshing={isLoading}
         onRefresh={refreshData}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS === 'android'}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <AlertCircle size={36} color={colors.textMuted} />

@@ -9,7 +9,8 @@ import {
   StyleSheet,
   Linking,
   Modal,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -23,7 +24,8 @@ import {
   CheckCircle2,
   Clock,
   ArrowRight,
-  ShieldAlert
+  ShieldAlert,
+  Star
 } from 'lucide-react-native';
 import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
@@ -118,13 +120,29 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
     const rawStatus = (item.status || item.bookingStatus || 'CONFIRMED').toLowerCase();
     const isCompleted = rawStatus.includes('complete');
     const isTransit = rawStatus.includes('start') || rawStatus.includes('transit') || rawStatus === 'in_progress';
+    const isApp = Boolean(item.isApp || (item.source && String(item.source).toLowerCase().includes('app')) || (item.channel && String(item.channel).toLowerCase().includes('app')));
 
     return (
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: !hasDriver && !isCompleted ? colors.warning : colors.border }]}>
         
-        {/* Header: Reference + Status Pill */}
+        {/* Header: Reference + Channel Badge + Status Pill */}
         <View style={styles.cardHeader}>
-          <Text style={[styles.refCode, { color: colors.primary }]}>{refCode}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={[styles.refCode, { color: colors.primary }]}>{refCode}</Text>
+            <View style={[
+              styles.sourceBadge,
+              isApp
+                ? { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: 'rgba(16, 185, 129, 0.3)' }
+                : { backgroundColor: 'rgba(59, 130, 246, 0.15)', borderColor: 'rgba(59, 130, 246, 0.3)' }
+            ]}>
+              <Text style={[
+                styles.sourceBadgeText,
+                { color: isApp ? colors.primary : colors.info }
+              ]}>
+                {isApp ? 'App' : 'Web'}
+              </Text>
+            </View>
+          </View>
           
           <View style={[
             styles.statusBadge,
@@ -140,21 +158,21 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
               hasDriver && !isTransit && !isCompleted && { color: colors.primary },
               !hasDriver && !isCompleted && { color: colors.warning }
             ]}>
-              {isCompleted ? '✅ COMPLETED' : isTransit ? '🛣️ IN TRANSIT' : hasDriver ? '🚖 CHAUFFEUR ALLOTTED' : '⚠️ NEEDS CHAUFFEUR'}
+              {isCompleted ? 'COMPLETED' : isTransit ? 'IN TRANSIT' : hasDriver ? 'CHAUFFEUR ALLOTTED' : 'NEEDS CHAUFFEUR'}
             </Text>
           </View>
         </View>
 
         {/* Route Line */}
         <Text style={[styles.routeText, { color: colors.text }]}>
-          {origin} ➔ {dest}
+          {origin} → {dest}
         </Text>
 
         {/* Schedule & Tier */}
         <View style={[styles.scheduleRow, { backgroundColor: 'rgba(5, 150, 105, 0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(5, 150, 105, 0.25)' }]}>
           <Clock size={14} color={colors.primary} />
           <Text style={[styles.scheduleText, { color: colors.text, fontWeight: '700' }]}>
-            Required: <Text style={{ color: colors.primary, fontWeight: '800' }}>📅 {item.pickupDate || 'Today'} • 🕒 {item.pickupTime || '10:00 AM'}</Text>
+            Required: <Text style={{ color: colors.primary, fontWeight: '800' }}>{item.pickupDate || 'Today'} • {item.pickupTime || '10:00 AM'}</Text>
           </Text>
           <Text style={[styles.tierBadge, { backgroundColor: colors.surfaceElevated, color: colors.textSecondary }]}>
             {cabTier}
@@ -174,7 +192,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
             <Text style={[styles.fareVal, { color: colors.text }]}>{formatCurrency(fare)}</Text>
             {item.paymentMethod === 'advance_token' || (item as any).utr ? (
               <Text style={{ color: colors.primary, fontSize: 10, fontWeight: '800', marginTop: 2 }}>
-                ✓ ₹500 Token {(item as any).utr ? `(UTR: ${(item as any).utr})` : 'Paid'}
+                ₹500 Token {(item as any).utr ? `(UTR: ${(item as any).utr})` : 'Paid'}
               </Text>
             ) : (
               <Text style={{ color: colors.textSecondary, fontSize: 10, fontWeight: '600', marginTop: 2 }}>
@@ -207,7 +225,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
           ) : (
             <View style={{ flex: 1 }}>
               <Text style={[styles.chauffeurSectionLabel, { color: colors.warning }]}>
-                ⚠️ UNASSIGNED TRIP
+                UNASSIGNED TRIP
               </Text>
               <Text style={[styles.chauffeurName, { color: colors.text }]}>
                 No driver allotted yet
@@ -231,7 +249,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
                 styles.dispatchBtnText,
                 { color: hasDriver ? colors.text : '#FFFFFF' }
               ]}>
-                {hasDriver ? 'Change' : 'Allot ➔'}
+                {hasDriver ? 'Change' : 'Allot →'}
               </Text>
             </TouchableOpacity>
           )}
@@ -310,7 +328,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
               styles.filterText,
               { color: filter === 'unassigned' ? '#000000' : unassignedCount > 0 ? colors.warning : colors.textMuted }
             ]}>
-              ⚠️ NEEDS DRIVER ({unassignedCount})
+              NEEDS DRIVER ({unassignedCount})
             </Text>
           </TouchableOpacity>
 
@@ -319,7 +337,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
             onPress={() => setFilter('assigned')}
           >
             <Text style={[styles.filterText, { color: filter === 'assigned' ? '#FFFFFF' : colors.textMuted }]}>
-              🚖 ALLOTTED ({assignedCount})
+              ALLOTTED ({assignedCount})
             </Text>
           </TouchableOpacity>
 
@@ -328,7 +346,7 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
             onPress={() => setFilter('completed')}
           >
             <Text style={[styles.filterText, { color: filter === 'completed' ? '#FFFFFF' : colors.textMuted }]}>
-              ✅ COMPLETED ({completedCount})
+              COMPLETED ({completedCount})
             </Text>
           </TouchableOpacity>
         </View>
@@ -342,6 +360,10 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
         contentContainerStyle={styles.listContent}
         refreshing={isLoading}
         onRefresh={refreshData}
+        initialNumToRender={8}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS === 'android'}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <AlertCircle size={38} color={colors.textMuted} />
@@ -363,11 +385,11 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
               <View style={{ flex: 1, paddingRight: 8 }}>
                 <Text style={[styles.modalTitle, { color: colors.text }]}>Allot Dedicated Chauffeur</Text>
                 <Text style={[styles.modalSub, { color: colors.primary }]}>
-                  {selectedBooking?.referenceNumber || selectedBooking?.bookingId || 'Trip'} • {selectedBooking?.pickupCity || 'Patna'} ➔ {selectedBooking?.dropCity || 'Bihar'}
+                  {selectedBooking?.referenceNumber || selectedBooking?.bookingId || 'Trip'} • {selectedBooking?.pickupCity || 'Patna'} → {selectedBooking?.dropCity || 'Bihar'}
                 </Text>
                 <View style={{ backgroundColor: 'rgba(5, 150, 105, 0.15)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginTop: 6, alignSelf: 'flex-start' }}>
                   <Text style={{ color: colors.primary, fontSize: 11, fontWeight: '800' }}>
-                    ⏰ REQUIRED PICKUP: 📅 {selectedBooking?.pickupDate || 'Today'} • 🕒 {selectedBooking?.pickupTime || '10:00 AM'}
+                    REQUIRED PICKUP: {selectedBooking?.pickupDate || 'Today'} • {selectedBooking?.pickupTime || '10:00 AM'}
                   </Text>
                 </View>
               </View>
@@ -385,6 +407,10 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
               data={drivers}
               keyExtractor={(d) => d.id || d.phone}
               style={{ maxHeight: 340 }}
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
+              windowSize={5}
+              removeClippedSubviews={Platform.OS === 'android'}
               renderItem={({ item: drv }) => (
                 <TouchableOpacity
                   style={[styles.driverOption, { borderColor: colors.border, backgroundColor: colors.surfaceElevated }]}
@@ -402,11 +428,11 @@ export const AdminBookingsScreen: React.FC<{ navigation?: any }> = () => {
                       {drv.vehicleModel || 'AC Taxi'} • {drv.vehicleNumber || 'BR-01 Plate'}
                     </Text>
                     <Text style={[styles.driverOptionRating, { color: colors.gold }]}>
-                      ★ {drv.rating || '4.88'} • {drv.dutyStatus === 'ON_DUTY' ? '● Live On-Duty' : '○ Available'}
+                      Rating: {drv.rating || '4.88'} • {drv.dutyStatus === 'ON_DUTY' ? '● Live On-Duty' : '○ Available'}
                     </Text>
                   </View>
                   <View style={[styles.allotBadge, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.allotBadgeText}>Allot ➔</Text>
+                    <Text style={styles.allotBadgeText}>Allot →</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -495,6 +521,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '900',
     letterSpacing: 0.5
+  },
+  sourceBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 9999,
+    borderWidth: 1
+  },
+  sourceBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '800'
   },
   statusBadge: {
     paddingHorizontal: 8,

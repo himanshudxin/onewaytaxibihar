@@ -6,6 +6,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { AlertTriangle } from 'lucide-react-native';
 
 interface Props {
   children: ReactNode;
@@ -46,7 +47,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <StatusBar style="light" />
           <View style={styles.card}>
             <View style={styles.iconCircle}>
-              <Text style={styles.iconText}>⚠️</Text>
+              <AlertTriangle size={30} color="#F59E0B" />
             </View>
             <Text style={styles.title}>System Continuity Notice</Text>
             <Text style={styles.subtitle}>

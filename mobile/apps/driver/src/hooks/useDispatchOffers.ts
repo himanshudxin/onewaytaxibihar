@@ -5,7 +5,9 @@
  * Exposes: offers list, claimOffer(), rejectOffer(), isLoading, error
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { StorageService } from '../../../../shared/services/storage';
+import { resolveApiBaseUrl } from '../../../../shared/services/api';
 
 const POLL_INTERVAL_MS = 6000; // 6-second polling
 
@@ -30,6 +32,9 @@ export interface BroadcastOffer {
   broadcastTimeoutSec: number;
   candidateCount: number;
   alreadyRejected: boolean;
+  source?: string;
+  channel?: string;
+  isApp?: boolean;
 }
 
 interface ClaimResult {
@@ -41,15 +46,17 @@ interface ClaimResult {
 }
 
 function getApiBase(): string {
-  if (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_API_URL) {
-    return process.env.EXPO_PUBLIC_API_URL;
+  try {
+    const base = resolveApiBaseUrl();
+    return base.replace(/\/api\/?$/, '');
+  } catch {
+    return 'https://onewaytaxibihar.com';
   }
-  return 'https://onewaytaxibihar.com';
 }
 
 async function getDriverToken(): Promise<string | null> {
   try {
-    const token = await StorageService.getItem('driver_token');
+    const token = (await StorageService.getItem('otb_auth_token')) || (await StorageService.getItem('driver_token'));
     return token;
   } catch {
     return null;
@@ -101,27 +108,49 @@ export function useDispatchOffers(isDutyOnline: boolean) {
     }
   }, [isDutyOnline]);
 
-  // Start/stop polling based on duty status
+  // Start/stop polling based on duty status & AppState lifecycle (Battery-aware optimization)
   useEffect(() => {
     isMountedRef.current = true;
+
+    const startPolling = () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = setInterval(fetchOffers, POLL_INTERVAL_MS);
+    };
+
+    const stopPolling = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
 
     if (isDutyOnline) {
       setIsLoading(true);
       fetchOffers(); // immediate first fetch
-      intervalRef.current = setInterval(fetchOffers, POLL_INTERVAL_MS);
+      startPolling();
+
+      // Battery saver: pause high-frequency polling when app is in background/screen locked,
+      // and immediately re-sync when driver brings app back to foreground.
+      const appStateSub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+        if (nextState === 'active') {
+          fetchOffers();
+          startPolling();
+        } else if (nextState === 'background' || nextState === 'inactive') {
+          stopPolling();
+        }
+      });
+
+      return () => {
+        stopPolling();
+        appStateSub.remove();
+      };
     } else {
       setOffers([]);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      stopPolling();
     }
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      stopPolling();
     };
   }, [isDutyOnline, fetchOffers]);
 

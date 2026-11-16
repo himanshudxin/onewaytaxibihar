@@ -122,7 +122,7 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
             disabled={isSubmitting || isLoading}
             activeOpacity={0.8}
           >
-            <Text style={[styles.quickDemoText, { color: colors.primary }]}>⚡ Operator Login (admin)</Text>
+            <Text style={[styles.quickDemoText, { color: colors.primary }]}>Operator Demo Login (admin)</Text>
           </TouchableOpacity>
         </View>
 

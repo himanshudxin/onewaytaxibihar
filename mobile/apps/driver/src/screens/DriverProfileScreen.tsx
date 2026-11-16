@@ -136,7 +136,7 @@ export const DriverProfileScreen = ({ navigation }: any) => {
                 <Sun size={18} color={colors.gold} />
               </View>
               <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Light Mode ☀️</Text>
+                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Light Mode</Text>
                 <Text style={[styles.themeOptionSub, { color: colors.textSecondary }]}>
                   Crisp daylight console with high contrast readability
                 </Text>
@@ -157,7 +157,7 @@ export const DriverProfileScreen = ({ navigation }: any) => {
                 <Moon size={18} color={colors.primary} />
               </View>
               <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Dark Mode 🌙</Text>
+                <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Dark Mode</Text>
                 <Text style={[styles.themeOptionSub, { color: colors.textSecondary }]}>
                   High-contrast night palette optimized for highway driving
                 </Text>
@@ -213,7 +213,7 @@ export const DriverProfileScreen = ({ navigation }: any) => {
             >
               <Phone size={20} color={colors.primary} />
               <View>
-                <Text style={[styles.hotlineBtnTitle, { color: colors.text }]}>Central Dispatch Desk</Text>
+                <Text style={[styles.hotlineBtnTitle, { color: colors.text }]}>Driver Partner Helpline</Text>
                 <Text style={[styles.hotlineBtnVal, { color: colors.primary }]}>6206494214</Text>
               </View>
             </TouchableOpacity>
@@ -227,6 +227,51 @@ export const DriverProfileScreen = ({ navigation }: any) => {
                 <Text style={[styles.hotlineBtnTitle, { color: colors.danger }]}>Emergency Police SOS</Text>
                 <Text style={[styles.hotlineBtnVal, { color: colors.danger }]}>Call 112</Text>
               </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Statutory Legal & Partner Compliance */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Statutory Compliance &amp; Policies</Text>
+          <View style={[styles.profileCard, { backgroundColor: colors.surface, borderColor: colors.border, padding: 0, overflow: 'hidden' }]}>
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border, gap: 12 }}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/privacy-policy')}
+              activeOpacity={0.7}
+            >
+              <Shield size={18} color={colors.primary} />
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text }}>Privacy Policy</Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted }}>DPDP Act 2023 &amp; Location Telemetry Rules</Text>
+              </View>
+              <ChevronRight size={16} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, borderBottomColor: colors.border, gap: 12 }}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/terms-of-service')}
+              activeOpacity={0.7}
+            >
+              <FileText size={18} color={colors.primary} />
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text }}>Partner Terms &amp; Intermediary Policy</Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted }}>MoRTH 2020 Guidelines &amp; Section 79 IT Act</Text>
+              </View>
+              <ChevronRight size={16} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 }}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/contact')}
+              activeOpacity={0.7}
+            >
+              <Phone size={18} color={colors.primary} />
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text }}>Chauffeur Grievance Redressal</Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted }}>Officer: Himanshu Kumar Dubey (Patna, Bihar)</Text>
+              </View>
+              <ChevronRight size={16} color={colors.textMuted} />
             </TouchableOpacity>
           </View>
         </View>

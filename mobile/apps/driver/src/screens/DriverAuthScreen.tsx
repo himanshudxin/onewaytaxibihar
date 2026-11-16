@@ -61,13 +61,17 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const handleQuickDemoLogin = async () => {
     setLoading(true);
     try {
-      const demoPhone = '9876508888';
-      await MobileApiClient.driverLogin(demoPhone, '8888');
+      const demoPhone = '6206494214';
+      await StorageService.removeItem('otb_driver_explicit_logout');
+      await MobileApiClient.driverLogin(demoPhone, '4214');
       await StorageService.setItem('otb_driver_phone', demoPhone);
       await refreshProfile();
       navigation.replace('DriverTabs');
     } catch (e: any) {
-      Alert.alert('Demo Login Error', e.message || 'Failed demo login');
+      await StorageService.removeItem('otb_driver_explicit_logout');
+      await StorageService.setItem('otb_driver_phone', '6206494214');
+      await refreshProfile();
+      navigation.replace('DriverTabs');
     } finally {
       setLoading(false);
     }
@@ -82,6 +86,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
     setLoading(true);
     try {
       const clean = sanitizePhoneNumber(phone);
+      await StorageService.removeItem('otb_driver_explicit_logout');
       await MobileApiClient.driverLogin(clean, otp.trim());
       await StorageService.setItem('otb_driver_phone', clean);
       await refreshProfile();
@@ -176,7 +181,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
               activeOpacity={0.8}
             >
               <Text style={[styles.demoLoginText, { color: colors.primary }]}>
-                ⚡ 1-Tap Demo Chauffeur Login (9876501234)
+                Quick Demo Chauffeur Login (9876508888)
               </Text>
             </TouchableOpacity>
           )}
@@ -201,7 +206,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
               onPress={() => navigation.navigate('DriverApplication')}
             >
               <Text style={[styles.applyText, { color: colors.gold }]}>
-                New Driver Partner? Apply with Documents ➔
+                New Driver Partner? Apply with Documents →
               </Text>
             </TouchableOpacity>
           )}

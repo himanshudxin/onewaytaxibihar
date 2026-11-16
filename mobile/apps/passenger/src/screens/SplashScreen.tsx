@@ -1,25 +1,25 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors } from '../../../../shared/theme/colors';
+import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
-import { ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react-native';
+import { Shield, Sparkles, Navigation } from 'lucide-react-native';
 
 export const SplashScreen = ({ navigation }: any) => {
+  const { colors, isDark } = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.92)).current;
+  const scaleAnim = useRef(new Animated.Value(0.94)).current;
 
   useEffect(() => {
-    // Smooth entry animation
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 700,
+        duration: 650,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
-        friction: 6,
+        friction: 7,
         tension: 40,
         useNativeDriver: true,
       }),
@@ -27,15 +27,30 @@ export const SplashScreen = ({ navigation }: any) => {
 
     const timer = setTimeout(() => {
       navigation.replace('MainTabs');
-    }, 2000);
+    }, 2200);
     return () => clearTimeout(timer);
   }, [navigation, fadeAnim, scaleAnim]);
 
+  // Executive high-contrast colors
+  const bgCanvas = isDark ? '#0B0F19' : '#FFFFFF';
+  const cardSurface = isDark ? '#131B2E' : '#F8FAFC';
+  const cardBorder = isDark ? '#1E293B' : '#E2E8F0';
+  const primaryText = isDark ? '#FFFFFF' : '#0F172A';
+  const subText = isDark ? '#94A3B8' : '#64748B';
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
-      <View style={styles.glowCircleTop} />
-      <View style={styles.glowCircleBottom} />
+    <View style={[styles.container, { backgroundColor: bgCanvas }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+
+      {/* Subtle background glow */}
+      <View
+        style={[
+          styles.ambientGlow,
+          {
+            backgroundColor: isDark ? 'rgba(245, 158, 11, 0.08)' : 'rgba(5, 150, 105, 0.06)',
+          }
+        ]}
+      />
 
       <Animated.View
         style={[
@@ -46,35 +61,51 @@ export const SplashScreen = ({ navigation }: any) => {
           },
         ]}
       >
-        {/* Preserved Authentic Brand Logo with Green Badge */}
-        <View style={styles.logoCard}>
-          <BrandLogo size="hero" showSubtitle subtitleText="BIHAR INTERCITY CAB NETWORK" />
+        {/* Executive Minimalist Brand Header - Guaranteed Contrast on Light & Dark */}
+        <View
+          style={[
+            styles.logoContainer,
+            {
+              backgroundColor: cardSurface,
+              borderColor: cardBorder,
+            }
+          ]}
+        >
+          <BrandLogo
+            size="hero"
+            variant="website"
+            showSubtitle={true}
+            subtitleText="BIHAR INTERCITY CAB NETWORK"
+            onLightBackground={!isDark}
+          />
         </View>
 
-        {/* Professional App Badges */}
+        {/* Minimalist Micro-Badges */}
         <View style={styles.badgeRow}>
-          <View style={styles.pillBadge}>
-            <Sparkles size={14} color="#0F172A" />
-            <Text style={styles.pillText}>Zero Return Fare</Text>
+          <View style={[styles.pillBadge, { backgroundColor: cardSurface, borderColor: cardBorder }]}>
+            <Sparkles size={13} color="#F59E0B" />
+            <Text style={[styles.pillText, { color: primaryText }]}>Zero Return Fare</Text>
           </View>
-          <View style={styles.pillBadge}>
-            <CheckCircle2 size={14} color="#059669" />
-            <Text style={styles.pillText}>Doorstep Pickup</Text>
+          <View style={[styles.pillBadge, { backgroundColor: cardSurface, borderColor: cardBorder }]}>
+            <Navigation size={13} color="#10B981" />
+            <Text style={[styles.pillText, { color: primaryText }]}>Doorstep GPS</Text>
           </View>
-          <View style={styles.pillBadge}>
-            <ShieldCheck size={14} color="#0F172A" />
-            <Text style={styles.pillText}>Commercial GPS</Text>
+          <View style={[styles.pillBadge, { backgroundColor: cardSurface, borderColor: cardBorder }]}>
+            <Shield size={13} color="#38BDF8" />
+            <Text style={[styles.pillText, { color: primaryText }]}>All 38 Districts</Text>
           </View>
         </View>
 
-        <Text style={styles.tagline}>
-          Premium Intercity Cab Service Across All 38 Districts of Bihar
+        <Text style={[styles.tagline, { color: subText }]}>
+          Guaranteed One-Way Outstation Taxi Service
         </Text>
       </Animated.View>
 
       <View style={styles.footer}>
-        <ActivityIndicator size="small" color="#0F172A" />
-        <Text style={styles.footerText}>Connecting to Bihar Outstation Dispatch Network...</Text>
+        <ActivityIndicator size="small" color="#F59E0B" />
+        <Text style={[styles.footerText, { color: subText }]}>
+          Connecting to Dispatch Network...
+        </Text>
       </View>
     </View>
   );
@@ -83,29 +114,17 @@ export const SplashScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F59E0B', // Premium Golden Yellow
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 60,
+    paddingVertical: 64,
     paddingHorizontal: 24,
   },
-  glowCircleTop: {
+  ambientGlow: {
     position: 'absolute',
-    top: -80,
-    right: -60,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-  },
-  glowCircleBottom: {
-    position: 'absolute',
-    bottom: -100,
-    left: -80,
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: 'rgba(234, 179, 8, 0.35)',
+    top: '25%',
+    width: 320,
+    height: 320,
+    borderRadius: 160,
   },
   brandContainer: {
     flex: 1,
@@ -113,26 +132,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  logoCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    paddingVertical: 24,
-    paddingHorizontal: 28,
+  logoContainer: {
+    borderRadius: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 20,
-    elevation: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 14,
+    elevation: 4,
   },
   badgeRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: 26,
     gap: 8,
   },
   pillBadge: {
@@ -142,36 +159,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 999,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.95)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
   },
   pillText: {
-    fontSize: 12,
+    fontSize: 11.5,
     fontWeight: '700',
-    color: '#0F172A',
+    letterSpacing: -0.2,
   },
   tagline: {
-    marginTop: 18,
-    fontSize: 13,
+    marginTop: 20,
+    fontSize: 12.5,
     fontWeight: '600',
-    color: '#334155',
     textAlign: 'center',
-    lineHeight: 18,
-    maxWidth: 290,
+    letterSpacing: -0.2,
   },
   footer: {
     alignItems: 'center',
-    gap: 12,
+    gap: 10,
   },
   footerText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#451A03',
+    letterSpacing: 0.2,
   },
 });

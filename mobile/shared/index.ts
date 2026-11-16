@@ -13,3 +13,4 @@ export * from './services/offlineVault';
 export * from './services/notifications';
 export * from './services/gmapTollService';
 export * from './components/ErrorBoundary';
+export * from './data/patnaFares';

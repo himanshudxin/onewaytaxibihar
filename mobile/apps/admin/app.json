@@ -1,22 +1,28 @@
 {
   "expo": {
     "name": "Oneway Taxi Admin",
-    "slug": "onewaytaxi-admin",
+    "slug": "onewaytaxibihar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/admin-icon.png",
-    "scheme": "onewaytaxadmin",
+    "scheme": "onewaytaxiadmin",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/admin-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#090D16"
+      "backgroundColor": "#070B13"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.onewaytaxibihar.admin",
+      "buildNumber": "1",
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        },
         "NSLocationWhenInUseUsageDescription": "Oneway Taxi Admin displays active fleet locations and corridor traffic status.",
         "UIBackgroundModes": [
           "remote-notification"
@@ -26,9 +32,11 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/admin-icon.png",
-        "backgroundColor": "#1E293B"
+        "backgroundColor": "#070B13"
       },
       "package": "com.onewaytaxibihar.admin",
+      "versionCode": 1,
+      "usesCleartextTraffic": false,
       "permissions": [
         "POST_NOTIFICATIONS"
       ]
@@ -37,8 +45,12 @@
       "apiUrl": "https://onewaytaxibihar.com/api",
       "supportPhone": "+918002141816",
       "whatsappPhone": "+916206494214",
-      "appType": "admin"
+      "appType": "admin",
+      "eas": {
+        "projectId": "ee1c401a-e93f-414e-9e57-5845a902305c"
+      }
     },
+    "owner": "himanshud",
     "plugins": [
       "expo-asset"
     ]

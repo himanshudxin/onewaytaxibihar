@@ -171,7 +171,7 @@ export class GMapTollService {
         destination: cleanDest,
         distanceKm,
         higherPriceTollApplied: true,
-        notes: `Selected higher peak toll gate rate for ${cleanOrigin} ➔ ${cleanDest}`
+        notes: `Selected higher peak toll gate rate for ${cleanOrigin} → ${cleanDest}`
       };
     }
 

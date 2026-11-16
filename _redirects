@@ -6,8 +6,16 @@
 /payment                  /payment.html                  200
 /passenger                /passenger.html                200
 /fare-chart               /fare-chart.html               200
+/app-download             /app-download.html             200
+/three-apps-preview       /three-apps-preview.html       200
 /404                      /404.html                      200
 /500                      /500.html                      200
+
+# APK Direct Downloads & Canonical Aliases
+/downloads/onewaytaxi-driver.apk      /downloads/driver-latest.apk      200
+/downloads/onewaytaxi-passenger.apk   /downloads/passenger-latest.apk   200
+/downloads/onewaytaxi-admin.apk       /downloads/admin-latest.apk       200
+/downloads/OneWayTaxiBihar-Latest.apk /downloads/passenger-latest.apk   200
 
 # Statutory Legal & Compliance Pages (DPDP Act 2023 & Consumer Protection)
 /privacy-policy           /privacy-policy.html           200
@@ -15,6 +23,7 @@
 /refund-policy            /refund-policy.html            200
 /cookie-policy            /cookie-policy.html            200
 /contact                  /contact.html                  200
+/grievance-officer        /grievance-officer.html        200
 /data-deletion            /data-deletion.html            200
 
 # Route Corridor Landing Pages

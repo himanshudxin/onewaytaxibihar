@@ -9,7 +9,7 @@ function walk(dir) {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory() && entry.name !== 'node_modules' && entry.name !== '.git') {
+    if (entry.isDirectory() && entry.name !== 'node_modules' && entry.name !== '.git' && entry.name !== 'scratch' && entry.name !== 'data' && entry.name !== 'dist-apk') {
       walk(full);
     } else if (entry.isFile() && entry.name.endsWith('.js')) {
       checked++;

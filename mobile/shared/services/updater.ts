@@ -53,7 +53,7 @@ export async function checkAppVersion(
         currentVersion,
         latestVersion: data.latestVersion || currentVersion,
         minSupportedVersion: data.minSupportedVersion || currentVersion,
-        downloadUrl: data.downloadUrl || `${baseUrl}/downloads/${app}-latest.apk`,
+        downloadUrl: data.downloadUrl || `${baseUrl}/downloads/onewaytaxi-${app}.apk`,
         updateAvailable: Boolean(data.updateAvailable || compareSemver(currentVersion, data.latestVersion) < 0),
         forceUpdate: Boolean(data.forceUpdate || compareSemver(currentVersion, data.minSupportedVersion) < 0),
         releaseNotes: data.releaseNotes || 'Performance improvements and bug fixes.'
@@ -69,7 +69,7 @@ export async function checkAppVersion(
     currentVersion,
     latestVersion: currentVersion,
     minSupportedVersion: currentVersion,
-    downloadUrl: `${baseUrl}/downloads/${app}-latest.apk`,
+    downloadUrl: `${baseUrl}/downloads/onewaytaxi-${app}.apk`,
     updateAvailable: false,
     forceUpdate: false,
     releaseNotes: ''

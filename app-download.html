@@ -57,7 +57,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 28px;
-      max-width: 1100px;
+      max-width: 1200px;
       margin: -30px auto 60px;
       padding: 0 20px;
       position: relative;
@@ -79,6 +79,9 @@
     }
     .app-card.driver-card:hover {
       border-color: #D97706;
+    }
+    .app-card.admin-card:hover {
+      border-color: #2563EB;
     }
     .app-icon-wrapper {
       width: 76px;
@@ -131,6 +134,9 @@
     .driver-card .features-list li .check-icon {
       color: #F59E0B;
     }
+    .admin-card .features-list li .check-icon {
+      color: #3B82F6;
+    }
     .btn-download {
       display: inline-flex;
       align-items: center;
@@ -161,6 +167,13 @@
     .btn-driver:hover {
       background: #B45309;
       box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4);
+    }
+    .btn-admin {
+      background: #2563EB;
+    }
+    .btn-admin:hover {
+      background: #1D4ED8;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
     }
     .secondary-actions {
       display: flex;
@@ -258,14 +271,15 @@
   <header class="main-header" id="site-header">
     <div class="header-container" style="display:flex; justify-content:space-between; align-items:center; max-width:1200px; margin:0 auto; padding:16px 20px;">
       <a href="/" class="brand-logo" style="text-decoration:none; display:flex; align-items:center; gap:8px;">
-        <span style="font-size:24px;">🚖</span>
+        <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="36" height="36" style="width:36px; height:36px; object-fit:contain; border-radius:8px; display:block;">
         <span style="font-weight:900; font-size:1.3rem; color:#FFFFFF;">OneWay<span style="color:#10B981;">Taxi</span>Bihar</span>
       </a>
-      <nav style="display:flex; gap:18px; align-items:center;">
+      <nav style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
         <a href="/" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Home</a>
         <a href="/cabs.html" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Fleet</a>
         <a href="/driver.html" style="color:#CBD5E1; text-decoration:none; font-weight:700; font-size:0.95rem;">Driver Sign Up</a>
-        <a href="tel:+918002141816" style="background:#059669; color:#FFFFFF; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:800; font-size:0.9rem;">📞 8002141816</a>
+        <a href="tel:+918002141816" style="background:#059669; color:#FFFFFF; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:800; font-size:0.88rem;">📞 Passenger: 8002141816</a>
+        <a href="tel:+916206494214" style="background:#D97706; color:#FFFFFF; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:800; font-size:0.88rem;">🚖 Driver Helpline: 6206494214</a>
       </nav>
     </div>
   </header>
@@ -281,7 +295,9 @@
   <div class="apps-grid">
     <!-- Passenger App -->
     <div class="app-card">
-      <div class="app-icon-wrapper passenger-badge">👤</div>
+      <div class="app-icon-wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+        <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="Passenger App Icon" width="76" height="76" style="width: 76px; height: 76px; object-fit: contain; border-radius: 20px; box-shadow: 0 4px 18px rgba(5, 150, 105, 0.4); display: block;">
+      </div>
       <h2>Oneway Taxi • Passenger App</h2>
       <div class="tagline">Guaranteed lowest outstation fares across Bihar with zero return cab charges.</div>
 
@@ -293,7 +309,7 @@
         <li><span class="check-icon">✓</span> 24/7 Verified Driver & Helpline Support</li>
       </ul>
 
-      <a href="/downloads/onewaytaxi-passenger.apk" class="btn-download btn-passenger" download>
+      <a href="/downloads/passenger-latest.apk" class="btn-download btn-passenger" download>
         <span>⬇️</span> Download Passenger APK (Android)
       </a>
 
@@ -305,7 +321,9 @@
 
     <!-- Driver Partner App -->
     <div class="app-card driver-card">
-      <div class="app-icon-wrapper driver-badge">🚖</div>
+      <div class="app-icon-wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+        <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="Driver App Icon" width="76" height="76" style="width: 76px; height: 76px; object-fit: contain; border-radius: 20px; box-shadow: 0 4px 18px rgba(217, 119, 6, 0.4); display: block;">
+      </div>
       <h2>Oneway Taxi • Driver Partner</h2>
       <div class="tagline">Earn ₹45,000 - ₹75,000/month with transparent daily outstation dispatches.</div>
 
@@ -315,15 +333,43 @@
         <li><span class="check-icon">✓</span> Immediate Cash/UPI Passenger Collection</li>
         <li><span class="check-icon">✓</span> Zero Commission Lock on Joining Bonus</li>
         <li><span class="check-icon">✓</span> 1-Minute Fast Document Verification</li>
+        <li><span class="check-icon">✓</span> Dedicated Driver Fleet Helpline: <strong>6206494214</strong></li>
       </ul>
 
-      <a href="/downloads/onewaytaxi-driver.apk" class="btn-download btn-driver" download>
+      <a href="/downloads/driver-latest.apk" class="btn-download btn-driver" download>
         <span>⬇️</span> Download Driver APK (Android)
       </a>
 
       <div class="secondary-actions">
+        <a href="tel:+916206494214" class="btn-secondary" style="border-color:#10B981; color:#34D399;">📞 Call Helpline: 6206494214</a>
         <a href="/driver.html" class="btn-secondary">📝 Driver Online Form</a>
         <a href="exp://192.168.0.179:8082" class="btn-secondary">📲 Launch Driver Expo</a>
+      </div>
+    </div>
+
+    <!-- Admin Fleet Desk App -->
+    <div class="app-card admin-card">
+      <div class="app-icon-wrapper" style="background: transparent; box-shadow: none; padding: 0;">
+        <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="Admin App Icon" width="76" height="76" style="width: 76px; height: 76px; object-fit: contain; border-radius: 20px; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.4); display: block;">
+      </div>
+      <h2>Oneway Taxi • Admin Fleet Desk</h2>
+      <div class="tagline">Enterprise operations desk for real-time dispatch, corridor tariffs, and revenue analytics.</div>
+
+      <ul class="features-list">
+        <li><span class="check-icon">✓</span> Unified Web &amp; Mobile App Booking Stream</li>
+        <li><span class="check-icon">✓</span> Chauffeur Allocation &amp; Broadcast Management</li>
+        <li><span class="check-icon">✓</span> Real-Time Bihar Fleet GPS Radar Map</li>
+        <li><span class="check-icon">✓</span> Live Revenue, Ledger &amp; Settlement Tracking</li>
+        <li><span class="check-icon">✓</span> Instant Chauffeur Onboarding Verification</li>
+      </ul>
+
+      <a href="/downloads/admin-latest.apk" class="btn-download btn-admin" download>
+        <span>⬇️</span> Download Admin APK (Android)
+      </a>
+
+      <div class="secondary-actions">
+        <a href="/admin.html" class="btn-secondary">🖥️ Web Admin Console</a>
+        <a href="exp://192.168.0.179:8083" class="btn-secondary">📲 Launch Admin Expo</a>
       </div>
     </div>
   </div>

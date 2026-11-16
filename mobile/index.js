@@ -10,24 +10,31 @@ import {
   Platform,
   StatusBar
 } from 'react-native';
+import { Car, Navigation, ShieldCheck } from 'lucide-react-native';
 
+import Constants from 'expo-constants';
 import PassengerApp from './apps/passenger/src/App';
 import DriverApp from './apps/driver/src/App';
 import AdminApp from './apps/admin/src/App';
 
-const envTarget = process.env.APP_TARGET || process.env.EXPO_PUBLIC_APP_TARGET || '';
+const envTarget =
+  process.env.APP_TARGET ||
+  process.env.EXPO_PUBLIC_APP_TARGET ||
+  Constants.expoConfig?.extra?.appType ||
+  '';
 
 function UniversalAppContainer() {
+  const isStandalone = !__DEV__ || Boolean(Constants.expoConfig?.extra?.appType);
   const [activeApp, setActiveApp] = useState(envTarget || 'passenger');
   const [modalVisible, setModalVisible] = useState(false);
-  const [showBadge, setShowBadge] = useState(true);
+  const [showBadge, setShowBadge] = useState(!isStandalone);
 
   const getAppName = (app) => {
     switch (app) {
-      case 'passenger': return '🚖 Passenger';
-      case 'driver': return '🧑‍✈️ Driver Partner';
-      case 'admin': return '🛡️ Admin V2';
-      default: return '🚖 Passenger';
+      case 'passenger': return 'Passenger App';
+      case 'driver': return 'Driver Partner App';
+      case 'admin': return 'Admin Operations Hub';
+      default: return 'Passenger App';
     }
   };
 
@@ -99,7 +106,7 @@ function UniversalAppContainer() {
                 }}
               >
                 <View style={[styles.iconCircle, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
-                  <Text style={styles.optionEmoji}>🚖</Text>
+                  <Car size={22} color="#059669" />
                 </View>
                 <View style={styles.optionDetails}>
                   <View style={styles.optionTitleRow}>
@@ -129,7 +136,7 @@ function UniversalAppContainer() {
                 }}
               >
                 <View style={[styles.iconCircle, { backgroundColor: 'rgba(217, 119, 6, 0.15)' }]}>
-                  <Text style={styles.optionEmoji}>👨‍✈️</Text>
+                  <Navigation size={22} color="#D97706" />
                 </View>
                 <View style={styles.optionDetails}>
                   <View style={styles.optionTitleRow}>
@@ -159,7 +166,7 @@ function UniversalAppContainer() {
                 }}
               >
                 <View style={[styles.iconCircle, { backgroundColor: 'rgba(37, 99, 235, 0.15)' }]}>
-                  <Text style={styles.optionEmoji}>🛡️</Text>
+                  <ShieldCheck size={22} color="#2563EB" />
                 </View>
                 <View style={styles.optionDetails}>
                   <View style={styles.optionTitleRow}>
@@ -364,4 +371,16 @@ const styles = StyleSheet.create({
   },
 });
 
-registerRootComponent(UniversalAppContainer);
+// Register dedicated standalone root component based on target or default to Passenger App
+if (envTarget === 'driver') {
+  registerRootComponent(DriverApp);
+} else if (envTarget === 'admin') {
+  registerRootComponent(AdminApp);
+} else if (envTarget === 'passenger') {
+  registerRootComponent(PassengerApp);
+} else if (process.env.SHOW_SWITCHER === 'true') {
+  registerRootComponent(UniversalAppContainer);
+} else {
+  // Default clean standalone is Passenger App
+  registerRootComponent(PassengerApp);
+}

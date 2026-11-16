@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { MobileApiClient } from '../../../../shared/services/api';
 import { StorageService } from '../../../../shared/services/storage';
@@ -103,13 +104,41 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return unsub;
   }, []);
 
-  // 10-second automatic polling for live market website bookings & driver status changes
+  // 10-second automatic polling for live market website bookings & driver status changes (AppState-aware)
   useEffect(() => {
     if (!admin) return;
-    const interval = setInterval(() => {
-      refreshData();
-    }, 10000);
-    return () => clearInterval(interval);
+
+    let interval: any = null;
+
+    const startPolling = () => {
+      if (interval) clearInterval(interval);
+      interval = setInterval(() => {
+        refreshData();
+      }, 10000);
+    };
+
+    const stopPolling = () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+
+    startPolling();
+
+    const appSub = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      if (nextState === 'active') {
+        refreshData();
+        startPolling();
+      } else if (nextState === 'background' || nextState === 'inactive') {
+        stopPolling();
+      }
+    });
+
+    return () => {
+      stopPolling();
+      appSub.remove();
+    };
   }, [admin]);
 
   const login = async (u: string, p: string): Promise<boolean> => {

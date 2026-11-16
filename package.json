@@ -8,6 +8,9 @@
   "scripts": {
     "start": "node local-server.js",
     "dev": "node local-server.js",
+    "expo:passenger": "npm --prefix mobile run start:passenger",
+    "expo:driver": "npm --prefix mobile run start:driver",
+    "expo:admin": "npm --prefix mobile run start:admin",
     "test": "node scripts/check-syntax.js && node scripts/check-html-scripts.js",
     "db:backup": "node scripts/backup-db.js",
     "db:verify-backup": "node scripts/backup-db.js --verify",

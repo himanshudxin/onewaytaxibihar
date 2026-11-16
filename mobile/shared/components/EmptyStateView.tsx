@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StyleProp, ViewStyle } from 'react-native';
+import { Car } from 'lucide-react-native';
 
 export interface EmptyStateViewProps {
   title: string;
@@ -20,7 +21,7 @@ export const EmptyStateView: React.FC<EmptyStateViewProps> = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.iconCircle}>
-        <Text style={styles.iconText}>🚖</Text>
+        <Car size={28} color="#D97706" />
       </View>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.message}>{message}</Text>

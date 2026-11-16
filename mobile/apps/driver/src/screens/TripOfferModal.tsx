@@ -13,7 +13,9 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
+import { UberMapView } from '../../../../shared/components/UberMapView';
 import { NotificationService } from '../../../../shared/services/notifications';
+import { resolveApiBaseUrl } from '../../../../shared/services/api';
 import { useDriver } from '../context/DriverContext';
 import { formatCurrency } from '../../../../shared/utils/formatters';
 import {
@@ -115,7 +117,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onClaim, onReject, colors,
         <View style={styles.routeRow}>
           <View style={[styles.routeDot, { backgroundColor: colors.primary }]} />
           <View style={{ flex: 1 }}>
-            <Text style={[styles.routeLabel, { color: colors.textMuted }]}>📍 PICKUP</Text>
+            <Text style={[styles.routeLabel, { color: colors.textMuted }]}>PICKUP</Text>
             <Text style={[styles.routeCity, { color: colors.text }]}>{offer.originCity}</Text>
             <Text style={[styles.routeAddr, { color: colors.textSecondary }]} numberOfLines={2}>{offer.pickupLocation}</Text>
           </View>
@@ -124,11 +126,21 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onClaim, onReject, colors,
         <View style={styles.routeRow}>
           <View style={[styles.routeDot, { backgroundColor: '#F59E0B' }]} />
           <View style={{ flex: 1 }}>
-            <Text style={[styles.routeLabel, { color: colors.textMuted }]}>🏁 DROP</Text>
+            <Text style={[styles.routeLabel, { color: colors.textMuted }]}>DROP</Text>
             <Text style={[styles.routeCity, { color: colors.text }]}>{offer.destCity}</Text>
             <Text style={[styles.routeAddr, { color: colors.textSecondary }]} numberOfLines={2}>{offer.dropLocation}</Text>
           </View>
         </View>
+      </View>
+
+      {/* Highway Route Corridor Preview */}
+      <View style={[styles.offerMapContainer, { borderColor: colors.border }]}>
+        <UberMapView
+          originCity={offer.originCity || 'Patna'}
+          destinationCity={offer.destCity || 'Gaya'}
+          height={140}
+          interactive={false}
+        />
       </View>
 
       {/* Fare Breakdown */}
@@ -167,7 +179,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onClaim, onReject, colors,
           {offer.candidateCount > 0 && (
             <View style={[styles.candidateNote, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
               <Text style={{ color: '#F59E0B', fontSize: 11, fontWeight: '700' }}>
-                ⚡ {offer.candidateCount} driver(s) notified — First to claim wins!
+                {offer.candidateCount} driver(s) notified — First to claim wins!
               </Text>
             </View>
           )}
@@ -260,8 +272,9 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
 
     try {
-      const token = await (await import('../../../../shared/services/storage')).StorageService.getItem('driver_token');
-      const res = await fetch('https://onewaytaxibihar.com/api/dispatch/claim', {
+      const storage = (await import('../../../../shared/services/storage')).StorageService;
+      const token = (await storage.getItem('otb_auth_token')) || (await storage.getItem('driver_token'));
+      const res = await fetch(`${resolveApiBaseUrl()}/dispatch/claim`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -332,7 +345,7 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
   const handleLegacyDecline = () => {
     NotificationService.stopUrgentDispatchAlert();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    fetch('https://onewaytaxibihar.com/api/dispatch/reject-broadcast', {
+    fetch(`${resolveApiBaseUrl()}/dispatch/reject-broadcast`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ bookingId: legacyOffer?.bookingReference || legacyOffer?.id, reason: 'DECLINED_BY_DRIVER' }),
@@ -344,8 +357,9 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
   // ── Broadcast offer actions ──
   const handleClaimBroadcast = useCallback(async (bookingId: string) => {
     try {
-      const token = await (await import('../../../../shared/services/storage')).StorageService.getItem('driver_token');
-      const res = await fetch('https://onewaytaxibihar.com/api/dispatch/claim', {
+      const storage = (await import('../../../../shared/services/storage')).StorageService;
+      const token = (await storage.getItem('otb_auth_token')) || (await storage.getItem('driver_token'));
+      const res = await fetch(`${resolveApiBaseUrl()}/dispatch/claim`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -363,7 +377,7 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
 
       if (res.ok && data.success) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        Alert.alert('🎉 Trip Claimed!', 'You successfully claimed the trip. Check your Active Trip details.', [
+        Alert.alert('Trip Claimed', 'You successfully claimed the trip. Check your Active Trip details.', [
           { text: 'View Trip', onPress: () => navigation.navigate('TripExecution') },
           { text: 'OK', onPress: () => navigation.goBack() },
         ]);
@@ -377,8 +391,9 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
 
   const handleRejectBroadcast = useCallback(async (bookingId: string) => {
     try {
-      const token = await (await import('../../../../shared/services/storage')).StorageService.getItem('driver_token');
-      await fetch('https://onewaytaxibihar.com/api/dispatch/reject-broadcast', {
+      const storage = (await import('../../../../shared/services/storage')).StorageService;
+      const token = (await storage.getItem('otb_auth_token')) || (await storage.getItem('driver_token'));
+      await fetch(`${resolveApiBaseUrl()}/dispatch/reject-broadcast`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -435,7 +450,7 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
             <View style={styles.routeRow}>
               <View style={[styles.routeDot, { backgroundColor: colors.primary }]} />
               <View style={{ flex: 1 }}>
-                <Text style={[styles.routeLabel, { color: colors.textMuted }]}>📍 PICKUP</Text>
+                <Text style={[styles.routeLabel, { color: colors.textMuted }]}>PICKUP</Text>
                 <Text style={[styles.routeCity, { color: colors.text }]}>{legacyOffer.pickupCity}</Text>
                 <Text style={[styles.routeAddr, { color: colors.textSecondary }]}>{legacyOffer.pickupAddress}</Text>
               </View>
@@ -444,11 +459,21 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
             <View style={styles.routeRow}>
               <View style={[styles.routeDot, { backgroundColor: '#F59E0B' }]} />
               <View style={{ flex: 1 }}>
-                <Text style={[styles.routeLabel, { color: colors.textMuted }]}>🏁 DROP</Text>
+                <Text style={[styles.routeLabel, { color: colors.textMuted }]}>DROP</Text>
                 <Text style={[styles.routeCity, { color: colors.text }]}>{legacyOffer.dropCity}</Text>
                 <Text style={[styles.routeAddr, { color: colors.textSecondary }]}>{legacyOffer.dropAddress}</Text>
               </View>
             </View>
+          </View>
+
+          {/* Highway Route Corridor Preview */}
+          <View style={[styles.offerMapContainer, { borderColor: colors.border, marginHorizontal: 0, marginBottom: 14 }]}>
+            <UberMapView
+              originCity={legacyOffer.pickupCity || 'Patna'}
+              destinationCity={legacyOffer.dropCity || 'Gaya'}
+              height={160}
+              interactive={false}
+            />
           </View>
 
           {/* Action Buttons */}
@@ -573,6 +598,13 @@ const styles = StyleSheet.create({
   routeLabel: { fontSize: 9, fontWeight: '800', letterSpacing: 0.5, textTransform: 'uppercase' },
   routeCity: { fontSize: 16, fontWeight: '800', marginTop: 1 },
   routeAddr: { fontSize: 12, marginTop: 2, lineHeight: 16 },
+  offerMapContainer: {
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+    marginHorizontal: 12,
+    marginBottom: 8,
+  },
 
   // Fare row
   fareRow: {

@@ -10,9 +10,11 @@ import {
   Image,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
+import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { usePassenger } from '../context/PassengerContext';
+import { UberMapView } from '../components/UberMapView';
 import { MobileApiClient } from '../../../../shared/services/api';
+import { findMatchingFare } from '../../../../shared/data/patnaFares';
 import { formatCurrency, formatDistance } from '../../../../shared/utils/formatters';
 import {
   Car,
@@ -29,7 +31,6 @@ import {
   Wind,
 } from 'lucide-react-native';
 
-// Vehicle studio images
 const VEHICLE_IMAGES = {
   hatchback: require('../../assets/vehicles/hatchback.jpg'),
   sedan: require('../../assets/vehicles/sedan.jpg'),
@@ -39,37 +40,35 @@ const VEHICLE_IMAGES = {
 };
 
 export const CabSelectScreen = ({ navigation }: any) => {
+  const { colors, isDark } = useTheme();
   const { search, selectedTier, setSelectedTier, fares } = usePassenger();
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  // Match destination from live backend fares database
-  const matchedFare = fares.find(
-    f => (f.destination && f.destination.toLowerCase().includes(search.destination.toLowerCase())) ||
-         (f.destCity && f.destCity.toLowerCase().includes(search.destination.toLowerCase()))
-  );
+  // Match destination from live backend fares database or authoritative master dataset
+  const matchedFare = findMatchingFare(search.origin || 'Patna', search.destination || 'Gaya', fares);
 
-  const tripMultiplier = search.tripType === 'round-trip' ? 1.8 : 1.0;
+  const isRoundTrip = search.tripType === 'round-trip';
   const distanceKm = matchedFare ? matchedFare.distanceKm : 104;
 
-  // Authoritative FLEET_RATES calculation matching backend api/index.js
-  const rawHatch = matchedFare?.hatchback || Math.max(1698, Math.round(distanceKm * 20.0));
-  const rawSedan = matchedFare?.sedan || Math.max(2198, Math.round(distanceKm * 22.0));
-  const rawExecSedan = Math.max(2698, Math.round(distanceKm * 26.0));
-  const rawXuv = matchedFare?.suv || Math.max(3398, Math.round(distanceKm * 27.0));
-  const rawLuxuryXuv = Math.max(4598, Math.round(distanceKm * 34.0));
+  // Authoritative FLEET_RATES calculation matching backend api/index.js and patna_fares.json
+  const rawHatch = matchedFare?.hatchback || Math.max(1698, (matchedFare?.sedan || 2198) - 200);
+  const rawSedan = matchedFare?.sedan || Math.max(2198, Math.round(distanceKm * 21.0));
+  const rawExecSedan = matchedFare?.execSedan || (rawSedan + 250);
+  const rawXuv = matchedFare?.suv || (rawSedan + 400);
+  const rawLuxuryXuv = matchedFare?.luxSuv || (rawSedan + 700);
 
-  const baseHatch = Math.round(rawHatch * tripMultiplier);
-  const baseSedan = Math.round(rawSedan * tripMultiplier);
-  const baseExecSedan = Math.round(rawExecSedan * tripMultiplier);
-  const baseXuv = Math.round(rawXuv * tripMultiplier);
-  const baseLuxuryXuv = Math.round(rawLuxuryXuv * tripMultiplier);
+  const baseHatch = isRoundTrip ? (matchedFare?.twoWay?.hatchback || Math.round(rawHatch * 1.8)) : rawHatch;
+  const baseSedan = isRoundTrip ? (matchedFare?.twoWay?.sedan || Math.round(rawSedan * 1.8)) : rawSedan;
+  const baseExecSedan = isRoundTrip ? (matchedFare?.twoWay?.execSedan || Math.round(rawExecSedan * 1.8)) : rawExecSedan;
+  const baseXuv = isRoundTrip ? (matchedFare?.twoWay?.suv || Math.round(rawXuv * 1.8)) : rawXuv;
+  const baseLuxuryXuv = isRoundTrip ? (matchedFare?.twoWay?.luxSuv || Math.round(rawLuxuryXuv * 1.8)) : rawLuxuryXuv;
 
   // The 5 Required Vehicle Categories
   const cabTiers = [
     {
       id: 'hatchback',
       title: 'Hatchback',
-      subTitle: 'Go Hatchback • ₹20/km',
+      subTitle: 'One-Way Drop • No Return Fare',
       models: 'Maruti WagonR, Tata Tiago, Celerio',
       price: baseHatch,
       badge: 'BEST VALUE',
@@ -82,7 +81,7 @@ export const CabSelectScreen = ({ navigation }: any) => {
     {
       id: 'sedan',
       title: 'Sedan',
-      subTitle: 'Prime Sedan • ₹22/km',
+      subTitle: 'Prime Sedan • No Return Fare',
       models: 'Maruti Dzire, Toyota Etios, Honda Amaze',
       price: baseSedan,
       badge: 'MOST POPULAR',
@@ -93,22 +92,9 @@ export const CabSelectScreen = ({ navigation }: any) => {
       desc: 'High comfort sedan with spacious boot for outstation travel.'
     },
     {
-      id: 'suv',
-      title: 'XUV',
-      subTitle: 'Family XUV (6+1) • ₹27/km',
-      models: 'Maruti Ertiga, Kia Carens, Scorpio',
-      price: baseXuv,
-      badge: 'FAMILY & LUGGAGE',
-      pax: '6 Passengers',
-      bags: '4-5 Large Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.suv,
-      desc: 'Spacious 6-seater family carrier with roof carrier.'
-    },
-    {
       id: 'sedan_prime',
       title: 'Executive Sedan',
-      subTitle: 'Executive Sedan • ₹26/km',
+      subTitle: 'Executive One-Way • No Return Fare',
       models: 'Honda City, Maruti Ciaz, Hyundai Verna',
       price: baseExecSedan,
       badge: 'PREMIUM COMFORT',
@@ -119,9 +105,22 @@ export const CabSelectScreen = ({ navigation }: any) => {
       desc: 'Plush executive sedan with extra legroom & VIP amenities.'
     },
     {
+      id: 'suv',
+      title: 'XUV',
+      subTitle: 'Family Carrier (6+1) • No Return Fare',
+      models: 'Maruti Ertiga, Kia Carens, Scorpio',
+      price: baseXuv,
+      badge: 'FAMILY & LUGGAGE',
+      pax: '6 Passengers',
+      bags: '4-5 Large Bags',
+      ac: true,
+      image: VEHICLE_IMAGES.suv,
+      desc: 'Spacious 6-seater family carrier with roof carrier.'
+    },
+    {
       id: 'innova_crysta',
       title: 'Luxury XUV',
-      subTitle: 'Luxury XUV (Innova Crysta) • ₹34/km',
+      subTitle: 'VIP Outstation • No Return Fare',
       models: 'Toyota Innova Crysta (Captain Seats)',
       price: baseLuxuryXuv,
       badge: 'VIP LUXURY',
@@ -136,7 +135,6 @@ export const CabSelectScreen = ({ navigation }: any) => {
   // Selected tier resolution
   const currentTierObj = cabTiers.find(c => c.id === selectedTier) || cabTiers[1]; // default to Sedan
 
-  // Breakdown calculation
   const mappedTierKey = (currentTierObj.id === 'suv' || currentTierObj.id === 'innova_crysta')
     ? 'suv'
     : currentTierObj.id === 'hatchback'
@@ -158,42 +156,74 @@ export const CabSelectScreen = ({ navigation }: any) => {
       cabName: `${currentTierObj.title} (${currentTierObj.subTitle})`,
       price: currentTierObj.price,
       distanceKm,
-      cabTier: currentTierObj.id,
+      tierId: currentTierObj.id
     });
   };
 
-  const estimatedDuration = Math.ceil(distanceKm / 45);
+  const estimatedDuration = Math.max(1, Math.round(distanceKm / 45));
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
+    <SafeAreaView edges={['top', 'bottom']} style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
 
       {/* Top Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.8}>
-          <ArrowLeft size={20} color="#0F172A" />
+      <View style={[styles.header, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={[styles.backBtn, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}
+          activeOpacity={0.8}
+        >
+          <ArrowLeft size={18} color={colors.textPrimary} strokeWidth={2.4} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>
-            {search.origin || 'Patna'} ➔ {search.destination || 'Gaya'}
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]} numberOfLines={1}>
+            {search.origin || 'Patna'} <Text style={{ color: colors.accentGold }}>→</Text> {search.destination || 'Gaya'}
           </Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
             {formatDistance(distanceKm)} • ~{estimatedDuration}h journey • {search.tripType === 'one-way' ? 'One-Way' : 'Round Trip'}
           </Text>
         </View>
-        <TouchableOpacity onPress={() => setShowBreakdown(true)} style={styles.infoBtn} activeOpacity={0.8}>
-          <Info size={20} color="#D97706" />
+        <TouchableOpacity
+          onPress={() => setShowBreakdown(true)}
+          style={[styles.infoBtn, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}
+          activeOpacity={0.8}
+        >
+          <Info size={18} color={colors.accentGold} strokeWidth={2.4} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
         {/* Value Proposition Strip */}
-        <View style={styles.promoStrip}>
-          <ShieldCheck size={18} color="#059669" />
-          <Text style={styles.promoText}>
+        <View style={[styles.promoStrip, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.12)' : '#ECFDF5', borderColor: isDark ? 'rgba(16, 185, 129, 0.25)' : '#A7F3D0' }]}>
+          <ShieldCheck size={16} color={colors.brandGreen} strokeWidth={2.4} />
+          <Text style={[styles.promoText, { color: isDark ? '#A7F3D0' : '#065F46' }]}>
             All-Inclusive Guaranteed Fares: Fuel, driver allowance & doorstep pickup included. Zero return fee.
           </Text>
+        </View>
+
+        {/* Route Preview Map */}
+        <View style={[styles.mapWrap, { borderColor: colors.cardBorder }]}>
+          <UberMapView
+            originCity={search.origin || 'Patna'}
+            destinationCity={search.destination || 'Gaya'}
+            height={160}
+          />
+        </View>
+
+        {/* "Return Fare Is Not Fair — Pay Only For What You Travel" Advertising Strip */}
+        <View style={[styles.fairnessBanner, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.08)' : '#ECFDF5', borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : '#A7F3D0' }]}>
+          <View style={styles.fairnessIconBadge}>
+            <ShieldCheck size={20} color="#10B981" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.fairnessTitle, { color: isDark ? '#34D399' : '#065F46' }]}>
+              Return Fare Is Not Fair!
+            </Text>
+            <Text style={[styles.fairnessSub, { color: isDark ? '#94A3B8' : '#047857' }]}>
+              Pay only for what you travel. Never pay double for an empty return trip.
+            </Text>
+          </View>
         </View>
 
         {/* 5 Vehicle Selection Cards */}
@@ -205,6 +235,10 @@ export const CabSelectScreen = ({ navigation }: any) => {
                 key={tier.id}
                 style={[
                   styles.tierCard,
+                  {
+                    backgroundColor: colors.cardSurface,
+                    borderColor: isSelected ? colors.accentGold : colors.cardBorder,
+                  },
                   isSelected && styles.tierCardSelected
                 ]}
                 onPress={() => setSelectedTier(tier.id as any)}
@@ -214,16 +248,16 @@ export const CabSelectScreen = ({ navigation }: any) => {
                 <View style={styles.tierHeader}>
                   <View style={styles.tierTitleCol}>
                     <View style={styles.tierBadgeRow}>
-                      <Text style={styles.tierTitle}>{tier.title}</Text>
-                      <View style={[styles.badge, isSelected && { backgroundColor: '#FDE68A' }]}>
-                        <Text style={styles.badgeText}>{tier.badge}</Text>
+                      <Text style={[styles.tierTitle, { color: colors.textPrimary }]}>{tier.title}</Text>
+                      <View style={[styles.badge, { backgroundColor: isSelected ? colors.accentGold : colors.inputBg }]}>
+                        <Text style={[styles.badgeText, { color: isSelected ? '#0F172A' : colors.textMuted }]}>{tier.badge}</Text>
                       </View>
                     </View>
-                    <Text style={styles.tierSubTitle}>{tier.subTitle}</Text>
+                    <Text style={[styles.tierSubTitle, { color: colors.textMuted }]}>{tier.subTitle}</Text>
                   </View>
                   <View style={styles.tierFareCol}>
-                    <Text style={styles.tierPrice}>{formatCurrency(tier.price)}</Text>
-                    <Text style={styles.allIncText}>All-Inclusive</Text>
+                    <Text style={[styles.tierPrice, { color: colors.accentGold }]}>{formatCurrency(tier.price)}</Text>
+                    <Text style={[styles.allIncText, { color: colors.brandGreen }]}>All-Inclusive</Text>
                   </View>
                 </View>
 
@@ -231,137 +265,130 @@ export const CabSelectScreen = ({ navigation }: any) => {
                 <View style={styles.tierBodyRow}>
                   <Image source={tier.image} style={styles.carPhoto} />
                   <View style={styles.tierSpecsCol}>
-                    <Text style={styles.tierModels} numberOfLines={2}>
+                    <Text style={[styles.tierModels, { color: colors.textPrimary }]} numberOfLines={2}>
                       {tier.models}
                     </Text>
                     <View style={styles.specsPillsRow}>
-                      <View style={styles.specPill}>
-                        <Users size={12} color="#475569" />
-                        <Text style={styles.specPillText}>{tier.pax}</Text>
+                      <View style={[styles.specPill, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                        <Users size={11} color={colors.textMuted} />
+                        <Text style={[styles.specPillText, { color: colors.textPrimary }]}>{tier.pax}</Text>
                       </View>
-                      <View style={styles.specPill}>
-                        <Briefcase size={12} color="#475569" />
-                        <Text style={styles.specPillText}>{tier.bags}</Text>
+                      <View style={[styles.specPill, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                        <Briefcase size={11} color={colors.textMuted} />
+                        <Text style={[styles.specPillText, { color: colors.textPrimary }]}>{tier.bags}</Text>
                       </View>
-                      <View style={styles.acPill}>
-                        <Wind size={11} color="#059669" />
-                        <Text style={styles.acPillText}>AC</Text>
+                      <View style={[styles.acPill, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#DCFCE7' }]}>
+                        <Wind size={10} color={colors.brandGreen} />
+                        <Text style={[styles.acPillText, { color: colors.brandGreen }]}>AC</Text>
                       </View>
                     </View>
                   </View>
                 </View>
 
-                {/* Selection Footer Indicator */}
-                {isSelected ? (
-                  <View style={styles.selectedIndicatorRow}>
-                    <CheckCircle2 size={16} color="#059669" />
-                    <Text style={styles.selectedIndicatorText}>Selected Category • Guaranteed Commercial Taxi</Text>
+                {/* Selection Indicator */}
+                <View style={[styles.tierFooterRow, { borderTopColor: colors.cardBorder }]}>
+                  <Text style={[styles.tierDesc, { color: colors.textMuted }]} numberOfLines={1}>
+                    {tier.desc}
+                  </Text>
+                  <View style={styles.radioWrapper}>
+                    <View style={[styles.radioOuter, { borderColor: isSelected ? colors.accentGold : colors.cardBorder }]}>
+                      {isSelected && <View style={[styles.radioInner, { backgroundColor: colors.accentGold }]} />}
+                    </View>
+                    <Text style={[styles.selectLabel, { color: isSelected ? colors.accentGold : colors.textMuted }]}>
+                      {isSelected ? 'Selected' : 'Select'}
+                    </Text>
                   </View>
-                ) : (
-                  <View style={styles.unselectedIndicatorRow}>
-                    <Text style={styles.tapToSelectText}>Tap to select {tier.title}</Text>
-                    <ChevronRight size={14} color="#94A3B8" />
-                  </View>
-                )}
+                </View>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        {/* Fare Breakdown Button */}
-        <TouchableOpacity
-          style={styles.breakdownTrigger}
-          onPress={() => setShowBreakdown(true)}
-          activeOpacity={0.8}
-        >
-          <FileText size={16} color="#D97706" />
-          <Text style={styles.breakdownTriggerText}>
-            View Itemized Fare Breakdown, Tolls & Tax Policies
-          </Text>
-          <ChevronRight size={18} color="#94A3B8" />
-        </TouchableOpacity>
-
       </ScrollView>
 
-      {/* Bottom Sticky Action Bar */}
-      <View style={styles.bottomBar}>
-        <View>
-          <Text style={styles.bottomBarLabel}>ALL-INCLUSIVE TOTAL</Text>
-          <Text style={styles.bottomBarPrice}>
-            {formatCurrency(currentTierObj.price)}
+      {/* Floating Bottom Bar (inDrive Outstation Style) */}
+      <View style={[styles.bottomBar, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}>
+        <View style={styles.bottomFareSummary}>
+          <Text style={[styles.bottomTotalLabel, { color: colors.textMuted }]}>TOTAL GUARANTEED FARE</Text>
+          <View style={styles.bottomPriceRow}>
+            <Text style={[styles.bottomPriceVal, { color: colors.textPrimary }]}>
+              {formatCurrency(currentTierObj.price)}
+            </Text>
+            <TouchableOpacity onPress={() => setShowBreakdown(true)} style={styles.breakdownLink}>
+              <Text style={[styles.breakdownLinkText, { color: colors.accentGold }]}>View Fare Details</Text>
+              <ChevronRight size={13} color={colors.accentGold} />
+            </TouchableOpacity>
+          </View>
+          <Text style={[styles.bottomTierName, { color: colors.textMuted }]}>
+            {currentTierObj.title} • Zero Return Fee
           </Text>
-          <Text style={styles.bottomBarTierName}>{currentTierObj.title} ({currentTierObj.subTitle})</Text>
         </View>
+
         <TouchableOpacity
-          style={styles.proceedBtn}
+          style={[styles.proceedBtn, { backgroundColor: colors.accentGold }]}
           onPress={handleProceed}
           activeOpacity={0.88}
         >
-          <Text style={styles.proceedBtnText}>Select & Book</Text>
-          <ChevronRight size={18} color="#0F172A" strokeWidth={2.5} />
+          <Text style={styles.proceedBtnText}>Confirm {currentTierObj.title}</Text>
+          <ChevronRight size={18} color="#0F172A" strokeWidth={2.8} />
         </TouchableOpacity>
       </View>
 
       {/* Fare Breakdown Modal */}
       <Modal visible={showBreakdown} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <TouchableOpacity style={styles.modalDismissArea} onPress={() => setShowBreakdown(false)} />
+          <View style={[styles.breakdownModal, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}>
             <View style={styles.modalHeader}>
               <View>
-                <Text style={styles.modalTitle}>Itemized Fare Breakdown</Text>
-                <Text style={styles.modalSubtitle}>{search.origin} ➔ {search.destination} ({formatDistance(distanceKm)})</Text>
+                <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Fare Breakdown</Text>
+                <Text style={[styles.modalSub, { color: colors.textMuted }]}>
+                  {currentTierObj.title} • {search.tripType === 'one-way' ? 'One-Way Drop' : 'Round Trip'}
+                </Text>
               </View>
-              <TouchableOpacity onPress={() => setShowBreakdown(false)}>
-                <X size={22} color="#64748B" />
+              <TouchableOpacity
+                onPress={() => setShowBreakdown(false)}
+                style={[styles.modalCloseBtn, { backgroundColor: colors.inputBg }]}
+              >
+                <X size={18} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.breakdownTable}>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>Base Transit Charge ({distanceKm} km)</Text>
-                <Text style={styles.tableVal}>{formatCurrency(fareBreakdown.baseFare)}</Text>
+            <ScrollView style={{ maxHeight: 360 }}>
+              <View style={[styles.breakdownRow, { borderBottomColor: colors.cardBorder }]}>
+                <Text style={[styles.breakdownLabel, { color: colors.textPrimary }]}>Base Rate ({distanceKm} km)</Text>
+                <Text style={[styles.breakdownValue, { color: colors.textPrimary }]}>{formatCurrency(fareBreakdown.baseFare)}</Text>
               </View>
-              <View style={styles.tableRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.tableLabel}>State Tolls & FASTag Toll Plazas</Text>
-                  <Text style={styles.tollSubLabel}>✓ Highest Highway / Expressway Rate</Text>
-                </View>
-                <Text style={styles.tableVal}>{formatCurrency(fareBreakdown.tollCharges)}</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>Commercial Driver Allowance</Text>
-                <Text style={styles.tableVal}>{formatCurrency(fareBreakdown.driverAllowance)}</Text>
-              </View>
-              <View style={styles.tableRow}>
-                <Text style={styles.tableLabel}>GST (5% Transport Tax)</Text>
-                <Text style={styles.tableVal}>{formatCurrency(fareBreakdown.gstAmount)}</Text>
-              </View>
-              {fareBreakdown.stateTaxPermit > 0 && (
-                <View style={styles.tableRow}>
-                  <Text style={styles.tableLabel}>Interstate Border Permit</Text>
-                  <Text style={styles.tableVal}>{formatCurrency(fareBreakdown.stateTaxPermit)}</Text>
-                </View>
-              )}
-              <View style={styles.tableDivider} />
-              <View style={styles.tableRowTotal}>
-                <Text style={styles.totalLabel}>Total All-Inclusive Payable</Text>
-                <Text style={styles.totalVal}>{formatCurrency(currentTierObj.price)}</Text>
-              </View>
-            </View>
 
-            <View style={styles.inclusionCard}>
-              <Text style={styles.inclusionTitle}>✓ Guaranteed Inclusions:</Text>
-              <Text style={styles.inclusionItem}>• Doorstep pickup & doorstep drop-off</Text>
-              <Text style={styles.inclusionItem}>• Dedicated AC running for complete journey duration</Text>
-              <Text style={styles.inclusionItem}>• Zero return fare — pay only for actual travel distance</Text>
-              <Text style={styles.inclusionItem}>• 45 mins complimentary doorstep wait time</Text>
-            </View>
+              <View style={[styles.breakdownRow, { borderBottomColor: colors.cardBorder }]}>
+                <Text style={[styles.breakdownLabel, { color: colors.textPrimary }]}>Driver Allowance</Text>
+                <Text style={[styles.breakdownValue, { color: colors.textPrimary }]}>₹300 (Included)</Text>
+              </View>
+
+              <View style={[styles.breakdownRow, { borderBottomColor: colors.cardBorder }]}>
+                <Text style={[styles.breakdownLabel, { color: colors.textPrimary }]}>GST & Tolls</Text>
+                <Text style={[styles.breakdownValue, { color: colors.textPrimary }]}>Included</Text>
+              </View>
+
+              <View style={[styles.breakdownRow, { borderBottomColor: colors.cardBorder }]}>
+                <Text style={[styles.breakdownLabel, { color: colors.textPrimary }]}>Return Fare</Text>
+                <Text style={[styles.breakdownValue, { color: colors.brandGreen, fontWeight: '800' }]}>₹0 (Zero Return Fee)</Text>
+              </View>
+
+              <View style={[styles.breakdownTotalRow, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                <Text style={[styles.breakdownTotalLabel, { color: colors.textPrimary }]}>Total Payable</Text>
+                <Text style={[styles.breakdownTotalVal, { color: colors.accentGold }]}>{formatCurrency(currentTierObj.price)}</Text>
+              </View>
+            </ScrollView>
 
             <TouchableOpacity
-              style={styles.modalCloseBtn}
-              onPress={() => setShowBreakdown(false)}
+              style={[styles.modalConfirmBtn, { backgroundColor: colors.accentGold }]}
+              onPress={() => {
+                setShowBreakdown(false);
+                handleProceed();
+              }}
             >
-              <Text style={styles.modalCloseBtnText}>Close</Text>
+              <Text style={styles.modalConfirmText}>Proceed with {currentTierObj.title}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -372,104 +399,85 @@ export const CabSelectScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F8FAFC',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerCenter: {
-    alignItems: 'center',
     flex: 1,
-    paddingHorizontal: 8,
+    marginHorizontal: 12,
   },
   headerTitle: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#0F172A',
   },
   headerSubtitle: {
     fontSize: 11,
-    color: '#64748B',
     marginTop: 2,
-    fontWeight: '600',
   },
   infoBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
+    borderRadius: 10,
+    borderWidth: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    padding: 16,
     paddingBottom: 110,
   },
   promoStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    padding: 12,
-    borderRadius: 14,
-    backgroundColor: 'rgba(5, 150, 105, 0.08)',
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(5, 150, 105, 0.2)',
-    marginVertical: 12,
+    gap: 8,
+    marginBottom: 12,
   },
   promoText: {
-    fontSize: 11,
+    fontSize: 11.5,
     fontWeight: '600',
-    color: '#065F46',
     flex: 1,
     lineHeight: 16,
+  },
+  mapWrap: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    marginBottom: 16,
   },
   tierList: {
     gap: 12,
   },
   tierCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    padding: 14,
   },
   tierCardSelected: {
-    borderColor: '#F59E0B', // Golden Yellow
     borderWidth: 2,
-    backgroundColor: '#FFFDF5',
-    shadowColor: '#EAB308',
-    shadowOpacity: 0.15,
-    elevation: 5,
   },
   tierHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   tierTitleCol: {
     flex: 1,
@@ -478,56 +486,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    flexWrap: 'wrap',
   },
   tierTitle: {
-    fontSize: 17,
-    fontWeight: '900',
-    color: '#0F172A',
+    fontSize: 16,
+    fontWeight: '800',
   },
   badge: {
-    backgroundColor: '#FEF3C7',
     paddingHorizontal: 7,
-    paddingVertical: 3,
+    paddingVertical: 2.5,
     borderRadius: 6,
   },
   badgeText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#92400E',
-    letterSpacing: 0.4,
+    fontSize: 9.5,
+    fontWeight: '900',
   },
   tierSubTitle: {
-    fontSize: 12,
-    color: '#64748B',
-    marginTop: 2,
-    fontWeight: '600',
+    fontSize: 11.5,
+    marginTop: 3,
   },
   tierFareCol: {
     alignItems: 'flex-end',
   },
   tierPrice: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
-    color: '#0F172A',
   },
   allIncText: {
-    fontSize: 10,
-    color: '#059669',
+    fontSize: 10.5,
     fontWeight: '700',
+    marginTop: 1,
   },
   tierBodyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    marginVertical: 6,
+    gap: 12,
+    marginBottom: 10,
   },
   carPhoto: {
-    width: 120,
-    height: 72,
-    resizeMode: 'contain',
+    width: 76,
+    height: 52,
     borderRadius: 8,
-    backgroundColor: '#F8FAFC',
+    resizeMode: 'contain',
   },
   tierSpecsCol: {
     flex: 1,
@@ -535,33 +534,30 @@ const styles = StyleSheet.create({
   tierModels: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#334155',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   specsPillsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 6,
   },
   specPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 7,
+    paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 6,
+    borderWidth: 1,
   },
   specPillText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#475569',
   },
   acPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: 'rgba(5, 150, 105, 0.1)',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 6,
@@ -569,219 +565,200 @@ const styles = StyleSheet.create({
   acPillText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#059669',
   },
-  selectedIndicatorRow: {
+  tierFooterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 10,
+    borderTopWidth: 1,
+  },
+  tierDesc: {
+    fontSize: 11,
+    flex: 1,
+    marginRight: 10,
+  },
+  radioWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: 10,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#FEF3C7',
   },
-  selectedIndicatorText: {
-    fontSize: 11,
+  radioOuter: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  selectLabel: {
+    fontSize: 11.5,
     fontWeight: '800',
-    color: '#059669',
-  },
-  unselectedIndicatorRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-  },
-  tapToSelectText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontWeight: '600',
-  },
-  breakdownTrigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
-    gap: 10,
-    marginTop: 16,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  breakdownTriggerText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#0F172A',
-    flex: 1,
   },
   bottomBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  bottomBarLabel: {
-    fontSize: 10,
+  bottomFareSummary: {
+    flex: 1,
+  },
+  bottomTotalLabel: {
+    fontSize: 9.5,
     fontWeight: '800',
-    color: '#64748B',
     letterSpacing: 0.5,
   },
-  bottomBarPrice: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#0F172A',
-  },
-  bottomBarTierName: {
-    fontSize: 11,
-    color: '#D97706',
-    fontWeight: '700',
-  },
-  proceedBtn: {
-    backgroundColor: '#F59E0B', // Golden Yellow
+  bottomPriceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 22,
-    paddingVertical: 13,
-    borderRadius: 14,
+    gap: 8,
+    marginTop: 2,
+  },
+  bottomPriceVal: {
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  breakdownLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  breakdownLinkText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  bottomTierName: {
+    fontSize: 11,
+    marginTop: 1,
+  },
+  proceedBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
-    shadowColor: '#EAB308',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
   },
   proceedBtnText: {
-    color: '#0F172A',
     fontSize: 14,
     fontWeight: '900',
-    letterSpacing: 0.2,
+    color: '#0F172A',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.65)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'flex-end',
   },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
+  modalDismissArea: {
+    flex: 1,
+  },
+  breakdownModal: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    borderTopWidth: 1,
     padding: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderBottomWidth: 0,
+    paddingBottom: 32,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 16,
   },
   modalTitle: {
     fontSize: 17,
-    fontWeight: '900',
-    color: '#0F172A',
+    fontWeight: '800',
   },
-  modalSubtitle: {
+  modalSub: {
     fontSize: 12,
-    color: '#64748B',
     marginTop: 2,
-    fontWeight: '600',
-  },
-  breakdownTable: {
-    gap: 10,
-    marginBottom: 16,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tableLabel: {
-    fontSize: 13,
-    color: '#475569',
-    fontWeight: '600',
-  },
-  tollSubLabel: {
-    fontSize: 10,
-    color: '#059669',
-    fontWeight: '700',
-    marginTop: 1,
-  },
-  tableVal: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  tableDivider: {
-    height: 1,
-    backgroundColor: '#E2E8F0',
-    marginVertical: 4,
-  },
-  tableRowTotal: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  totalLabel: {
-    fontSize: 15,
-    fontWeight: '900',
-    color: '#0F172A',
-  },
-  totalVal: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#B45309',
-  },
-  inclusionCard: {
-    backgroundColor: 'rgba(5, 150, 105, 0.08)',
-    padding: 14,
-    borderRadius: 14,
-    gap: 4,
-    marginBottom: 18,
-    borderWidth: 1,
-    borderColor: 'rgba(5, 150, 105, 0.15)',
-  },
-  inclusionTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#065F46',
-    marginBottom: 4,
-  },
-  inclusionItem: {
-    fontSize: 11,
-    lineHeight: 17,
-    color: '#047857',
-    fontWeight: '600',
   },
   modalCloseBtn: {
-    backgroundColor: '#F59E0B',
-    paddingVertical: 13,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  modalCloseBtnText: {
-    color: '#0F172A',
+  breakdownRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  breakdownLabel: {
+    fontSize: 13,
+  },
+  breakdownValue: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  breakdownTotalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 14,
+    marginBottom: 16,
+  },
+  breakdownTotalLabel: {
     fontSize: 14,
     fontWeight: '800',
+  },
+  breakdownTotalVal: {
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  modalConfirmBtn: {
+    paddingVertical: 13,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalConfirmText: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0F172A',
+  },
+  fairnessBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  fairnessIconBadge: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(16, 185, 129, 0.16)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fairnessTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    marginBottom: 2,
+    letterSpacing: -0.2,
+  },
+  fairnessSub: {
+    fontSize: 11,
+    fontWeight: '500',
+    lineHeight: 15,
   },
 });

@@ -178,10 +178,171 @@ function verifyJwt(token, secret = JWT_SECRET) {
 }
 
 // ---------------------------------------------------------------------------
-// 4. BRUTE FORCE PROTECTION & RATE LIMITING
+// 4. BRUTE FORCE PROTECTION, RATE LIMITING & IP THREAT JAIL
 // ---------------------------------------------------------------------------
 const loginAttempts = new Map(); // ip_user -> { count, lockedUntil }
 const rateLimitMap = new Map();  // ip_action -> { timestamps: [] }
+const threatJail = new Map();    // ip -> { reason, bannedUntil, count }
+
+function isIpJailed(ip) {
+  if (!ip) return { jailed: false, remainingSec: 0 };
+  const cleanIp = String(ip).trim().replace(/^::ffff:/, '');
+  // Whitelist localhost
+  if (cleanIp === '127.0.0.1' || cleanIp === '::1' || cleanIp === 'localhost') {
+    return { jailed: false, remainingSec: 0 };
+  }
+  const entry = threatJail.get(cleanIp);
+  if (!entry) return { jailed: false, remainingSec: 0 };
+
+  const now = Date.now();
+  if (entry.bannedUntil > now) {
+    const remainingSec = Math.ceil((entry.bannedUntil - now) / 1000);
+    return { jailed: true, remainingSec, reason: entry.reason };
+  }
+
+  // Ban expired
+  threatJail.delete(cleanIp);
+  return { jailed: false, remainingSec: 0 };
+}
+
+function jailIp(ip, reason = 'Exploit probe or malicious activity detected', durationMs = 3600000) {
+  if (!ip) return;
+  const cleanIp = String(ip).trim().replace(/^::ffff:/, '');
+  if (cleanIp === '127.0.0.1' || cleanIp === '::1' || cleanIp === 'localhost') return;
+
+  const existing = threatJail.get(cleanIp);
+  const count = (existing?.count || 0) + 1;
+  // Multiplier for repeat offenders (1h -> 4h -> 24h)
+  const multiplier = Math.min(24, Math.pow(2, count - 1));
+  const finalDuration = durationMs * multiplier;
+
+  threatJail.set(cleanIp, {
+    reason: String(reason),
+    bannedUntil: Date.now() + finalDuration,
+    count
+  });
+
+  console.warn(`[CYBER DEFENSE JAIL] 🚨 BANNED IP ${cleanIp} for ${Math.round(finalDuration / 60000)}m (Offense #${count}). Reason: ${reason}`);
+}
+
+function unJailIp(ip) {
+  if (!ip) {
+    threatJail.clear();
+    return;
+  }
+  const cleanIp = String(ip).trim().replace(/^::ffff:/, '');
+  threatJail.delete(cleanIp);
+}
+
+// Known attack probing signatures (Automated scanners, path traversal, exploit seekers)
+const EXPLOIT_PATTERNS = [
+  // Path traversal
+  /\.\.\//,
+  /%2e%2e/i,
+  // Sensitive files & environments
+  /\.env($|\.|\/)/i,
+  /\.git($|\/)/i,
+  /\.svn/i,
+  /\.ds_store/i,
+  /\.aws/i,
+  /id_rsa/i,
+  /\.ht(access|passwd)/i,
+  // CMS / Framework vulnerabilities
+  /wp-(login|admin|includes|content)/i,
+  /xmlrpc\.php/i,
+  /phpmyadmin/i,
+  /\bpma\b/i,
+  /cgi-bin/i,
+  /actuator/i,
+  /solr/i,
+  /telescope/i,
+  /vendor\/composer/i,
+  /phpunit/i,
+  /eval-stdin/i,
+  // Source & database files
+  /data\/db\.json/i,
+  /local-server\.js/i,
+  /\.sql$/i,
+  /\.sqlite/i,
+  /\.bak$/i,
+  /\.key$/i,
+  /\.pem$/i,
+  // Injection probes in URLs
+  /(\%27)|(\')|(\-\-)|(\%23)|(#)/i,
+  /union\s+(all\s+)?select/i,
+  /sleep\(\s*\d+\s*\)/i,
+  /benchmark\(\s*\d+\s*\,/i
+];
+
+function detectExploitPattern(urlPath = '', userAgent = '') {
+  const url = String(urlPath || '');
+  for (const pattern of EXPLOIT_PATTERNS) {
+    if (pattern.test(url)) {
+      return { isMalicious: true, pattern: pattern.toString() };
+    }
+  }
+
+  // Malicious vulnerability scanners in User-Agent header
+  const ua = String(userAgent || '').toLowerCase();
+  const scannerBots = ['sqlmap', 'nikto', 'masscan', 'nmap', 'acunetix', 'wpscan', 'dirbuster', 'gobuster', 'havij'];
+  for (const bot of scannerBots) {
+    if (ua.includes(bot)) {
+      return { isMalicious: true, pattern: `Malicious Scanner Bot: ${bot}` };
+    }
+  }
+
+  return { isMalicious: false };
+}
+
+// ---------------------------------------------------------------------------
+// 4B. RECURSIVE NoSQL INJECTION & XSS SANITIZATION
+// ---------------------------------------------------------------------------
+function deepSanitizePayload(val) {
+  if (val === null || val === undefined) return val;
+  if (typeof val === 'string') {
+    // Strip XSS tags, malicious script injection, and event handlers
+    return val
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/javascript\s*:/gi, '')
+      .replace(/on\w+\s*=/gi, '')
+      .trim();
+  }
+  if (Array.isArray(val)) {
+    return val.map(item => deepSanitizePayload(item));
+  }
+  if (typeof val === 'object') {
+    const cleanObj = {};
+    for (const [key, subVal] of Object.entries(val)) {
+      // Strip any MongoDB query operator injection ($gt, $ne, $where, $regex) or field traversal (.)
+      if (key.startsWith('$') || key.includes('.')) {
+        console.warn(`[Cyber Defense Alert] 🚨 Stripped unauthorized query operator key: "${key}"`);
+        continue;
+      }
+      cleanObj[key] = deepSanitizePayload(subVal);
+    }
+    return cleanObj;
+  }
+  return val;
+}
+
+function isPayloadMalicious(payload) {
+  if (!payload) return false;
+  const str = typeof payload === 'string' ? payload : JSON.stringify(payload);
+  if (!str) return false;
+  const attackPatterns = [
+    /\$where/i,
+    /\$regex/i,
+    /\$gt/i,
+    /\$ne/i,
+    /\$or/i,
+    /<script[\s\S]*?>/i,
+    /UNION\s+(ALL\s+)?SELECT/i,
+    /benchmark\s*\(/i,
+    /sleep\s*\(/i,
+    /\.\.\//i
+  ];
+  return attackPatterns.some(p => p.test(str));
+}
 
 function checkBruteForce(identifier, ip = null) {
   const keys = [String(identifier || 'unknown').toLowerCase()];
@@ -476,11 +637,15 @@ module.exports = {
   createJwt,
   verifyJwt,
 
-  // Brute Force & Rate Limit
+  // Brute Force & Rate Limit & Threat Jail
   checkBruteForce,
   recordLoginAttempt,
   checkRateLimit,
   resetRateLimit,
+  isIpJailed,
+  jailIp,
+  unJailIp,
+  detectExploitPattern,
 
   // 2FA / OTP
   requestAdminOtp,
@@ -491,7 +656,9 @@ module.exports = {
   getRolePermissions,
   recordAuditLog,
 
-  // Sanitization
+  // Sanitization & Anti-Injection
   sanitizeString,
-  sanitizePhone
+  sanitizePhone,
+  deepSanitizePayload,
+  isPayloadMalicious
 };

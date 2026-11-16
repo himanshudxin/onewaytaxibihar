@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -12,11 +12,14 @@ import {
   Modal
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Location from 'expo-location';
 import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
+import { UberMapView } from '../../../../shared/components/UberMapView';
 import { useDriver } from '../context/DriverContext';
 import { MobileApiClient } from '../../../../shared/services/api';
 import { FleetSyncService } from '../../../../shared/services/fleetSync';
+import { ForegroundTrackingService } from '../services/ForegroundTrackingService';
 import { formatCurrency, formatDistance } from '../../../../shared/utils/formatters';
 import {
   Navigation,
@@ -30,7 +33,8 @@ import {
   ArrowRight,
   ShieldAlert,
   Check,
-  ChevronRight
+  ChevronRight,
+  Calendar
 } from 'lucide-react-native';
 
 export const TripExecutionScreen = ({ navigation }: any) => {
@@ -42,6 +46,43 @@ export const TripExecutionScreen = ({ navigation }: any) => {
   const [enteredOtp, setEnteredOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [showCollectModal, setShowCollectModal] = useState(false);
+  const [driverCoords, setDriverCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    let sub: any = null;
+    let isMounted = true;
+
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') return;
+
+        const initial = await Location.getLastKnownPositionAsync().catch(() => null);
+        if (initial && isMounted) {
+          const { latitude, longitude, heading, speed } = initial.coords;
+          setDriverCoords({ lat: latitude, lng: longitude });
+          ForegroundTrackingService.broadcastCoordinates(latitude, longitude, heading || 0, speed || 0);
+        }
+
+        sub = await Location.watchPositionAsync(
+          { accuracy: Location.Accuracy.High, timeInterval: 2000, distanceInterval: 5 },
+          (loc) => {
+            if (!isMounted) return;
+            const { latitude, longitude, heading, speed } = loc.coords;
+            setDriverCoords({ lat: latitude, lng: longitude });
+            ForegroundTrackingService.broadcastCoordinates(latitude, longitude, heading || 0, speed || 0);
+          }
+        );
+      } catch (e) {
+        console.warn('[TripExecution] Location watcher notice:', e);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+      if (sub) sub.remove();
+    };
+  }, []);
 
   if (!activeTrip) {
     return (
@@ -147,11 +188,14 @@ export const TripExecutionScreen = ({ navigation }: any) => {
         <View>
           <Text style={[styles.headerRef, { color: colors.primary }]}>{activeTrip.referenceNumber}</Text>
           <Text style={[styles.headerRoute, { color: colors.text }]}>
-            {activeTrip.pickupCity} ➔ {activeTrip.dropCity}
+            {activeTrip.pickupCity} → {activeTrip.dropCity}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.gold, fontWeight: '700', marginTop: 2 }}>
-            📅 {activeTrip.pickupDate || 'Today'} • 🕒 {activeTrip.pickupTime || '10:00 AM'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 }}>
+            <Calendar size={12} color={colors.gold} />
+            <Text style={{ fontSize: 11, color: colors.gold, fontWeight: '700' }}>
+              {activeTrip.pickupDate || 'Today'} • {activeTrip.pickupTime || '10:00 AM'}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.topActions}>
@@ -169,6 +213,34 @@ export const TripExecutionScreen = ({ navigation }: any) => {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
+        {/* Real-time Highway Route & Turn-by-Turn Map */}
+        <View style={[styles.mapContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.mapHeaderRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Navigation size={14} color={colors.primary} />
+              <Text style={[styles.mapHeaderTitle, { color: colors.text }]}>
+                {tripStage === 'NAVIGATE'
+                  ? `ROUTE TO PICKUP • ${activeTrip.pickupCity}`
+                  : `HIGHWAY CORRIDOR • ${activeTrip.pickupCity} → ${activeTrip.dropCity}`}
+              </Text>
+            </View>
+            <View style={[styles.stageBadge, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
+              <Text style={[styles.stageBadgeText, { color: colors.primary }]}>
+                {tripStage === 'NAVIGATE' ? 'NAVIGATE' : tripStage === 'IN_TRANSIT' ? 'IN TRANSIT' : 'DOORSTEP'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.mapWrapper}>
+            <UberMapView
+              originCity={tripStage === 'NAVIGATE' ? (activeTrip.pickupCity || 'Patna') : activeTrip.pickupCity}
+              destinationCity={tripStage === 'NAVIGATE' ? '' : activeTrip.dropCity}
+              liveUserLocation={driverCoords ? { lat: driverCoords.lat, lng: driverCoords.lng } : undefined}
+              height={230}
+              interactive={true}
+            />
+          </View>
+        </View>
+
         {/* State Machine Status Card */}
         <View style={[styles.stateCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.stateIndicator}>
@@ -193,7 +265,7 @@ export const TripExecutionScreen = ({ navigation }: any) => {
               <View style={{ backgroundColor: 'rgba(5, 150, 105, 0.12)', borderWidth: 1, borderColor: colors.primary, padding: 10, borderRadius: 10, marginVertical: 8, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Clock size={16} color={colors.primary} />
                 <Text style={{ color: colors.text, fontSize: 13, fontWeight: '700' }}>
-                  Required Pickup: <Text style={{ color: colors.primary, fontWeight: '800' }}>📅 {activeTrip.pickupDate || 'Today'} • 🕒 {activeTrip.pickupTime || '10:00 AM'}</Text>
+                  Required Pickup: <Text style={{ color: colors.primary, fontWeight: '800' }}>{activeTrip.pickupDate || 'Today'} • {activeTrip.pickupTime || '10:00 AM'}</Text>
                 </Text>
               </View>
 
@@ -241,7 +313,7 @@ export const TripExecutionScreen = ({ navigation }: any) => {
                 onPress={() => setEnteredOtp(activeTrip.startOtp || '4921')}
               >
                 <Text style={[styles.autofillText, { color: colors.primary }]}>
-                  ⚡ Autofill Passenger OTP ({activeTrip.startOtp || '4921'})
+                  Autofill Passenger OTP ({activeTrip.startOtp || '4921'})
                 </Text>
               </TouchableOpacity>
 
@@ -329,7 +401,7 @@ export const TripExecutionScreen = ({ navigation }: any) => {
               style={[styles.confirmCollectBtn, { backgroundColor: colors.primary }]}
               onPress={handleConfirmCollectionAndFinish}
             >
-              <Text style={styles.confirmCollectText}>✓ Payment Collected • Settle Trip</Text>
+              <Text style={styles.confirmCollectText}>Payment Collected • Settle Trip</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -395,6 +467,39 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 40,
     gap: 14,
+  },
+  mapContainer: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    overflow: 'hidden',
+  },
+  mapHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  mapHeaderTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  stageBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  stageBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  mapWrapper: {
+    width: '100%',
+    height: 230,
+    overflow: 'hidden',
+    borderRadius: 12,
   },
   stateCard: {
     borderRadius: 18,

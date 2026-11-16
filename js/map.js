@@ -1,6 +1,6 @@
 /**
- * Lightweight Spatial & Highway Intelligence Manager for OneWayTaxiBihar (onewaytaxibihar.com)
- * High-efficiency, silent zero-latency routing intelligence without heavy external map rendering.
+ * Real-World 3D Spatial & Highway Intelligence Manager for OneWayTaxiBihar (onewaytaxibihar.com)
+ * High-performance 3D MapLibre Edge CDN engine for genuine Bihar Outstation routes.
  */
 
 class BiharMapManager {
@@ -11,14 +11,15 @@ class BiharMapManager {
     this.currentDropName = "Mahabodhi Temple, Bodh Gaya";
   }
 
-  // Safe initialization
   initMap() {
-    // Silent mode - no heavy map tiles loaded
+    if (window.onewayMap) {
+      window.onewayMap.initMap();
+    }
     return true;
   }
 
   setMapTheme(theme) {
-    // Theme handled by CSS
+    // Theme handled dynamically
   }
 
   plotRoute(originId, destId, pickupCoords, dropCoords, pickupName, dropName) {
@@ -27,7 +28,11 @@ class BiharMapManager {
     this.currentPickupName = pickupName || this.currentPickupName;
     this.currentDropName = dropName || this.currentDropName;
 
-    // Silent instantaneous execution
+    if (window.onewayMap) {
+      const origin = { name: this.currentPickupName, lat: this.currentPickupCoords.lat, lng: this.currentPickupCoords.lng };
+      const dest = { name: this.currentDropName, lat: this.currentDropCoords.lat, lng: this.currentDropCoords.lng };
+      window.onewayMap.updateRoute(origin, dest, 110);
+    }
     return true;
   }
 

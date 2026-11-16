@@ -198,7 +198,7 @@ export const BookingTimelineScreen = ({ route, navigation }: any) => {
         </View>
         <TouchableOpacity
           style={styles.shareBtn}
-          onPress={() => Alert.alert('Share Trip', `Live Status for ${booking.pickupCity} ➔ ${booking.dropCity}. Ref: ${booking.referenceNumber}`)}
+          onPress={() => Alert.alert('Share Trip', `Live Status for ${booking.pickupCity} → ${booking.dropCity}. Ref: ${booking.referenceNumber}`)}
           activeOpacity={0.8}
         >
           <Share2 size={18} color="#0F172A" />

@@ -4496,7 +4496,7 @@
               <div class="calc-cab-models">${t.models}</div>
               <div class="calc-cab-price-row">
                 <span class="calc-cab-price">₹${finalPrice.toLocaleString('en-IN')}</span>
-                <span class="calc-cab-per-km">₹${effPerKm}/km</span>
+                <span class="calc-cab-per-km" style="color:#10B981;font-weight:700;">No Return Fare</span>
               </div>
               <div class="calc-cab-market">${isTwoWay ? 'Save ₹400 on Round-Trip' : 'Market: ~₹' + marketEst.toLocaleString('en-IN')}</div>
             </div>
@@ -4629,23 +4629,23 @@
             </td>
             <td class="fare-price-cell hatchback col-hatchback">
               <span class="price-amount">${hatchDisplay}</span>
-              ${hatchPerKm ? `<span class="price-per-km-tag">₹${hatchPerKm}/km</span>` : ''}
+              <span class="price-per-km-tag" style="color:#10B981;">No Return Fare</span>
             </td>
             <td class="fare-price-cell sedan col-sedan">
               <span class="price-amount">${sedanDisplay}</span>
-              ${sedanPerKm ? `<span class="price-per-km-tag">₹${sedanPerKm}/km</span>` : ''}
+              <span class="price-per-km-tag" style="color:#10B981;">No Return Fare</span>
             </td>
             <td class="fare-price-cell exec-sedan col-exec-sedan">
               <span class="price-amount">${execDisplay}</span>
-              ${execPerKm ? `<span class="price-per-km-tag">₹${execPerKm}/km</span>` : ''}
+              <span class="price-per-km-tag" style="color:#10B981;">No Return Fare</span>
             </td>
             <td class="fare-price-cell suv col-suv">
               <span class="price-amount">${suvDisplay}</span>
-              ${suvPerKm ? `<span class="price-per-km-tag">₹${suvPerKm}/km</span>` : ''}
+              <span class="price-per-km-tag" style="color:#10B981;">No Return Fare</span>
             </td>
             <td class="fare-price-cell lux-suv col-lux-suv">
               <span class="price-amount">${luxSuvDisplay}</span>
-              ${luxSuvPerKm ? `<span class="price-per-km-tag">₹${luxSuvPerKm}/km</span>` : ''}
+              <span class="price-per-km-tag" style="color:#10B981;">No Return Fare</span>
             </td>
             <td class="market-cell">
               <span class="market-tag">${marketFormatted}</span>

@@ -5,58 +5,51 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   ScrollView,
   Alert,
-  Platform,
   Modal,
   Linking,
+  ActivityIndicator,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
-import { OnboardingModal } from '../../../../shared/components/OnboardingModal';
-import { AppUpdaterModal } from '../../../../shared/components/AppUpdaterModal';
-import { StorageService } from '../../../../shared/services/storage';
+import { UberMapView } from '../components/UberMapView';
 import { usePassenger } from '../context/PassengerContext';
+import { getCurrentDeviceLocation, watchLiveLocation, LiveGpsUpdate } from '../services/locationService';
 import {
-  MapPin,
+  Menu,
+  ArrowUpDown,
+  User,
+  LogOut,
+  ChevronRight,
   Calendar,
   Clock,
   ArrowRight,
   ShieldCheck,
   PhoneCall,
-  Sparkles,
-  Users,
+  Crosshair,
   Repeat,
-  Compass,
-  Bookmark,
-  ChevronDown,
   Check,
   X,
   MessageCircle,
-  ArrowUpDown,
-  Navigation,
-  Car,
+  Sun,
+  Moon,
 } from 'lucide-react-native';
 
-const POPULAR_CORRIDORS = [
-  { dest: 'Gaya', dist: '104 km', fare: '₹2,198' },
-  { dest: 'Muzaffarpur', dist: '75 km', fare: '₹1,898' },
-  { dest: 'Darbhanga', dist: '140 km', fare: '₹2,698' },
-  { dest: 'Bhagalpur', dist: '235 km', fare: '₹4,198' },
-  { dest: 'Begusarai', dist: '125 km', fare: '₹2,498' },
-  { dest: 'Varanasi', dist: '255 km', fare: '₹4,898' },
-  { dest: 'Purnea', dist: '310 km', fare: '₹5,498' },
-  { dest: 'Siwan', dist: '145 km', fare: '₹2,898' }
-];
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const SAVED_HUBS = [
-  { name: 'Patna Airport (PAT)', city: 'Patna' },
-  { name: 'Patna Junction Railway Station', city: 'Patna' },
-  { name: 'Gaya Airport / Bodh Gaya', city: 'Gaya' },
-  { name: 'AIIMS Patna Phulwari Sharif', city: 'Patna' }
+const POPULAR_CORRIDORS = [
+  { dest: 'Gaya', dist: '104 km', fare: '₹1,999' },
+  { dest: 'Muzaffarpur', dist: '78 km', fare: '₹1,600' },
+  { dest: 'Darbhanga', dist: '145 km', fare: '₹2,399' },
+  { dest: 'Bhagalpur', dist: '235 km', fare: '₹3,299' },
+  { dest: 'Begusarai', dist: '125 km', fare: '₹2,399' },
+  { dest: 'Varanasi', dist: '246 km', fare: '₹3,299' },
+  { dest: 'Purnea', dist: '290 km', fare: '₹3,299' },
+  { dest: 'Siwan', dist: '135 km', fare: '₹2,299' }
 ];
 
 const getDynamicDateOptions = () => {
@@ -101,22 +94,60 @@ const TIME_OPTIONS = [
 ];
 
 export const HomeScreen = ({ navigation }: any) => {
-  const { search, updateSearch, isLoggedIn, userPhone, myTrips } = usePassenger();
-  const { colors, isDark } = useTheme();
+  const { search, updateSearch, isLoggedIn, userPhone } = usePassenger();
+  const { colors, isDark, setThemeMode } = useTheme();
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [detectingGps, setDetectingGps] = useState(false);
+  const [showAccountDrawer, setShowAccountDrawer] = useState(false);
+  const [isMapExpanded, setIsMapExpanded] = useState(false);
+  const [liveGps, setLiveGps] = useState<LiveGpsUpdate | null>(null);
 
+  const dateOptions = getDynamicDateOptions();
+
+  // Automatically fetch user's current GPS location on app open and continuously watch live GPS motion
   useEffect(() => {
+    let isMounted = true;
+    let watcherSub: any = null;
+
     (async () => {
       try {
-        const seen = await StorageService.getItem('otb_has_seen_onboarding');
-        if (!seen) {
-          setShowOnboarding(true);
+        setDetectingGps(true);
+        const location = await getCurrentDeviceLocation();
+        if (isMounted && location) {
+          updateSearch({
+            origin: location.city,
+            pickupAddress: location.formattedAddress,
+            originCoords: { lat: location.latitude, lng: location.longitude },
+          });
         }
-      } catch (e) {}
+      } catch (err) {
+        // Silently default to Patna hub if permission not granted
+        if (isMounted && !search.origin) {
+          updateSearch({
+            origin: 'Patna',
+            pickupAddress: 'Patna, Bihar (Default Pickup Hub)',
+            originCoords: { lat: 25.5941, lng: 85.1376 },
+          });
+        }
+      } finally {
+        if (isMounted) setDetectingGps(false);
+      }
+
+      // Continuous Live GPS Watcher (tracks location smoothly as user walks or drives)
+      watcherSub = await watchLiveLocation((update) => {
+        if (!isMounted) return;
+        setLiveGps(update);
+      });
     })();
+
+    return () => {
+      isMounted = false;
+      if (watcherSub && typeof watcherSub.remove === 'function') {
+        watcherSub.remove();
+      }
+    };
   }, []);
 
   const handleSearchCabs = () => {
@@ -142,1044 +173,1237 @@ export const HomeScreen = ({ navigation }: any) => {
     });
   };
 
-  const selectCorridor = (dest: string) => {
-    updateSearch({ destination: dest, origin: 'Patna' });
+  const handleGpsInstantPickup = async (showNoticeOnError = false) => {
+    setDetectingGps(true);
+    try {
+      const location = await getCurrentDeviceLocation();
+      updateSearch({
+        origin: location.city,
+        pickupAddress: location.formattedAddress,
+        originCoords: { lat: location.latitude, lng: location.longitude },
+      });
+    } catch (err: any) {
+      if (showNoticeOnError) {
+        Alert.alert(
+          'Location Permission Required',
+          'Please allow location access in your device settings to detect your pickup location.'
+        );
+      }
+    } finally {
+      setDetectingGps(false);
+    }
   };
 
-  const latestTrip = myTrips && myTrips.length > 0 ? myTrips[0] : null;
+  const toggleTheme = async () => {
+    await setThemeMode(isDark ? 'light' : 'dark');
+  };
+
+  // Dynamic Uber Map & Bottom Sheet split
+  const mapHeight = isMapExpanded
+    ? Math.round(SCREEN_HEIGHT * 0.74)
+    : Math.max(280, Math.round(SCREEN_HEIGHT * 0.44));
+
+  const sheetHeight = isMapExpanded ? '28%' : '58%';
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* Top Header Row with Customer Greeting & Official Brand Logo */}
-        <View style={styles.topHeader}>
-          <View style={styles.greetingContainer}>
-            <Text style={styles.greetingOverline}>NAMASTE & WELCOME</Text>
-            <Text style={styles.greetingTitle}>
-              {isLoggedIn ? `Traveler (${userPhone?.slice(-4) || 'Member'})` : 'Explore Bihar Taxis'}
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={styles.profileBadge}
-            onPress={() => navigation.navigate(isLoggedIn ? 'Profile' : 'Auth')}
-            activeOpacity={0.8}
-          >
-            <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>{isLoggedIn ? '👤' : '🔑'}</Text>
-            </View>
-            <Text style={styles.profileBadgeText}>
-              {isLoggedIn ? 'My Account' : 'Sign In'}
-            </Text>
-          </TouchableOpacity>
+    <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+
+      {/* Layer 1: True Full-Bleed 3D Map View (Uber Top Half) */}
+      <View style={[styles.mapContainer, { height: mapHeight }]}>
+        <UberMapView
+          originCity={search.origin || 'Patna'}
+          destinationCity={search.destination || ''}
+          originCoords={search.originCoords}
+          destinationCoords={search.destinationCoords}
+          liveUserLocation={liveGps ? { lat: liveGps.latitude, lng: liveGps.longitude, heading: liveGps.heading, speed: liveGps.speed } : undefined}
+          height={mapHeight}
+          isExpanded={isMapExpanded}
+          onToggleExpand={setIsMapExpanded}
+          onRecenterPress={() => handleGpsInstantPickup(true)}
+          onLocationSelected={(coords) => {
+            updateSearch({
+              pickupAddress: `Pinned at ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)} (Live Map)`,
+              originCoords: { lat: coords.lat, lng: coords.lng }
+            });
+          }}
+        />
+      </View>
+
+      {/* Layer 2: Floating 3-Line Menu Button on Top Left (Uber / inDrive Minimalist Header) */}
+      <SafeAreaView edges={['top']} pointerEvents="box-none" style={styles.floatingTopBar}>
+        <TouchableOpacity
+          style={[
+            styles.floatingMenuBtn,
+            {
+              backgroundColor: isDark ? 'rgba(11, 15, 25, 0.94)' : 'rgba(255, 255, 255, 0.96)',
+              borderColor: colors.cardBorder,
+            }
+          ]}
+          onPress={() => setShowAccountDrawer(true)}
+          activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Menu size={22} color={colors.textPrimary} strokeWidth={2.4} />
+        </TouchableOpacity>
+      </SafeAreaView>
+
+      {/* Layer 3: Uber Sliding Bottom Sheet Drawer */}
+      <View
+        style={[
+          styles.uberBottomSheet,
+          {
+            height: sheetHeight as any,
+            backgroundColor: colors.cardSurface,
+            borderColor: colors.cardBorder,
+            shadowColor: '#000',
+            shadowOpacity: isDark ? 0.4 : 0.12,
+          }
+        ]}
+      >
+        {/* Handle Pill */}
+        <View style={styles.dragHandleContainer}>
+          <View style={[styles.dragHandle, { backgroundColor: isDark ? '#334155' : '#CBD5E1' }]} />
         </View>
 
-        {/* Brand Banner Card */}
-        <View style={styles.brandCard}>
-          <BrandLogo size="header" showSubtitle subtitleText="BIHAR INTERCITY CAB NETWORK" />
-          <View style={styles.zeroReturnPill}>
-            <Sparkles size={13} color="#92400E" />
-            <Text style={styles.zeroReturnPillText}>Zero Return Fare</Text>
-          </View>
-        </View>
-
-        {/* Trip Type Selector (One-Way vs Round Trip) */}
-        <View style={styles.tripTypeCard}>
-          <TouchableOpacity
+        <ScrollView
+          style={styles.sheetScroll}
+          contentContainerStyle={styles.sheetScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Segmented Trip Control (One-Way vs Round Trip) */}
+          <View
             style={[
-              styles.tripTypeBtn,
-              search.tripType === 'one-way' && styles.tripTypeBtnActive
+              styles.segmentContainer,
+              {
+                backgroundColor: colors.inputBg,
+                borderColor: colors.cardBorder,
+              }
             ]}
-            onPress={() => updateSearch({ tripType: 'one-way' })}
-            activeOpacity={0.8}
           >
-            <ArrowRight size={16} color={search.tripType === 'one-way' ? '#0F172A' : '#64748B'} strokeWidth={2.5} />
-            <Text
-              style={[
-                styles.tripTypeText,
-                search.tripType === 'one-way' && styles.tripTypeTextActive
-              ]}
-            >
-              One-Way Drop
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.tripTypeBtn,
-              search.tripType === 'round-trip' && styles.tripTypeBtnActive
-            ]}
-            onPress={() => updateSearch({ tripType: 'round-trip' })}
-            activeOpacity={0.8}
-          >
-            <Repeat size={16} color={search.tripType === 'round-trip' ? '#0F172A' : '#64748B'} strokeWidth={2.5} />
-            <Text
-              style={[
-                styles.tripTypeText,
-                search.tripType === 'round-trip' && styles.tripTypeTextActive
-              ]}
-            >
-              Round Trip
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Main Route Booking Card */}
-        <View style={styles.bookingCard}>
-          
-          {/* Pickup City Input */}
-          <TouchableOpacity
-            style={styles.inputRow}
-            onPress={() => navigation.navigate('AddressSelect', { mode: 'pickup' })}
-            activeOpacity={0.7}
-          >
-            <View style={styles.iconCirclePickup}>
-              <MapPin size={18} color="#059669" />
-            </View>
-            <View style={styles.inputBody}>
-              <Text style={styles.inputLabel}>PICKUP LOCATION / AIRPORT</Text>
-              <Text style={styles.inputValue} numberOfLines={1}>
-                {search.origin || 'Select Pickup Location'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Swap Cities Floating Action */}
-          <View style={styles.swapDividerRow}>
-            <View style={styles.swapDividerLine} />
-            <TouchableOpacity style={styles.swapButton} onPress={swapCities} activeOpacity={0.8}>
-              <ArrowUpDown size={14} color="#D97706" />
-            </TouchableOpacity>
-            <View style={styles.swapDividerLine} />
-          </View>
-
-          {/* Drop Destination Input */}
-          <TouchableOpacity
-            style={styles.inputRow}
-            onPress={() => navigation.navigate('AddressSelect', { mode: 'drop' })}
-            activeOpacity={0.7}
-          >
-            <View style={styles.iconCircleDrop}>
-              <Compass size={18} color="#D97706" />
-            </View>
-            <View style={styles.inputBody}>
-              <Text style={styles.inputLabel}>DROP DESTINATION (OUTSTATION)</Text>
-              <Text style={styles.inputValue} numberOfLines={1}>
-                {search.destination || 'Select Drop City'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Schedule Date & Time Row */}
-          <View style={styles.dateTimeRow}>
             <TouchableOpacity
-              style={styles.dateTimeItem}
-              onPress={() => setShowDatePicker(true)}
+              style={[
+                styles.segmentBtn,
+                search.tripType === 'one-way' && {
+                  backgroundColor: colors.cardSurface,
+                  shadowColor: '#000',
+                  shadowOpacity: isDark ? 0.3 : 0.08,
+                  shadowRadius: 6,
+                  elevation: 2,
+                }
+              ]}
+              onPress={() => updateSearch({ tripType: 'one-way' })}
               activeOpacity={0.8}
             >
-              <Calendar size={16} color="#D97706" />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>TRAVEL DATE</Text>
-                <Text style={styles.dateText}>{search.pickupDate || 'Today'}</Text>
-              </View>
-              <ChevronDown size={14} color="#94A3B8" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.dateTimeItem}
-              onPress={() => setShowTimePicker(true)}
-              activeOpacity={0.8}
-            >
-              <Clock size={16} color="#D97706" />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.inputLabel}>PICKUP TIME</Text>
-                <Text style={styles.dateText}>{search.pickupTime || '10:00 AM'}</Text>
-              </View>
-              <ChevronDown size={14} color="#94A3B8" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Passenger Count Picker */}
-          <View style={styles.passengerRow}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Users size={16} color="#475569" />
-              <Text style={styles.passengerLabel}>Passengers:</Text>
-            </View>
-            <View style={styles.countSelector}>
-              {[1, 2, 4, 6].map(num => (
-                <TouchableOpacity
-                  key={num}
-                  style={[
-                    styles.countPill,
-                    search.passengerCount === num && styles.countPillActive
-                  ]}
-                  onPress={() => updateSearch({ passengerCount: num })}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={[
-                      styles.countText,
-                      search.passengerCount === num && styles.countTextActive
-                    ]}
-                  >
-                    {num}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* Golden Search Taxis CTA Button */}
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={handleSearchCabs}
-            activeOpacity={0.88}
-          >
-            <Car size={20} color="#0F172A" />
-            <Text style={styles.searchButtonText}>Search Taxis • Guaranteed Fares</Text>
-            <ArrowRight size={18} color="#0F172A" strokeWidth={2.5} />
-          </TouchableOpacity>
-        </View>
-
-        {/* Recent Booking Quick Card */}
-        {latestTrip && (
-          <View style={styles.recentBookingCard}>
-            <View style={styles.recentHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Navigation size={14} color="#D97706" />
-                <Text style={styles.recentTitle}>Recent Outstation Ride</Text>
-              </View>
-              <View style={styles.recentStatusBadge}>
-                <Text style={styles.recentStatusText}>{latestTrip.bookingStatus || latestTrip.status || 'Active'}</Text>
-              </View>
-            </View>
-            <Text style={styles.recentRoute}>
-              {latestTrip.pickupCity} ➔ {latestTrip.dropCity}
-            </Text>
-            <View style={styles.recentFooter}>
-              <Text style={styles.recentMeta}>
-                PNR: {latestTrip.referenceNumber || latestTrip.id} • ₹{latestTrip.fareBreakdown?.totalFare || (latestTrip as any).totalFare || '2,198'}
-              </Text>
-              <TouchableOpacity
-                style={styles.trackShortcutBtn}
-                onPress={() => navigation.navigate('BookingTimeline', { booking: latestTrip, bookingId: latestTrip.id })}
+              <ArrowRight size={14} color={search.tripType === 'one-way' ? colors.accentGold : colors.textMuted} strokeWidth={2.6} />
+              <Text
+                style={[
+                  styles.segmentText,
+                  { color: search.tripType === 'one-way' ? colors.textPrimary : colors.textMuted }
+                ]}
               >
-                <Text style={styles.trackShortcutText}>Track Trip</Text>
-                <ArrowRight size={12} color="#0F172A" />
+                One-Way Drop
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.segmentBtn,
+                search.tripType === 'round-trip' && {
+                  backgroundColor: colors.cardSurface,
+                  shadowColor: '#000',
+                  shadowOpacity: isDark ? 0.3 : 0.08,
+                  shadowRadius: 6,
+                  elevation: 2,
+                }
+              ]}
+              onPress={() => updateSearch({ tripType: 'round-trip' })}
+              activeOpacity={0.8}
+            >
+              <Repeat size={14} color={search.tripType === 'round-trip' ? colors.accentGold : colors.textMuted} strokeWidth={2.6} />
+              <Text
+                style={[
+                  styles.segmentText,
+                  { color: search.tripType === 'round-trip' ? colors.textPrimary : colors.textMuted }
+                ]}
+              >
+                Round Trip
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Uber Route Input Card */}
+          <View
+            style={[
+              styles.routeCard,
+              {
+                backgroundColor: colors.inputBg,
+                borderColor: colors.cardBorder,
+                position: 'relative',
+              }
+            ]}
+          >
+            {/* Pickup Row */}
+            <View style={styles.locationInputGroup}>
+              <TouchableOpacity
+                style={styles.locationInputMain}
+                onPress={() => navigation.navigate('AddressSelect', { mode: 'pickup' })}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.bulletIcon, { backgroundColor: colors.brandGreen }]}>
+                  <View style={styles.bulletInner} />
+                </View>
+                <View style={{ flex: 1, paddingRight: 42 }}>
+                  <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>PICKUP LOCATION</Text>
+                  <Text style={[styles.fieldValue, { color: colors.textPrimary }]} numberOfLines={1}>
+                    {search.origin || 'Select Pickup City'}
+                  </Text>
+                  {search.pickupAddress ? (
+                    <Text style={[styles.fieldAddressDetail, { color: colors.textMuted }]} numberOfLines={1}>
+                      {search.pickupAddress}
+                    </Text>
+                  ) : null}
+                </View>
+              </TouchableOpacity>
+
+              {/* GPS Instant Trigger */}
+              <TouchableOpacity
+                style={[
+                  styles.gpsIconBtn,
+                  {
+                    backgroundColor: isDark ? 'rgba(56, 189, 248, 0.12)' : 'rgba(2, 132, 199, 0.08)',
+                    borderColor: isDark ? 'rgba(56, 189, 248, 0.3)' : 'rgba(2, 132, 199, 0.2)',
+                    marginRight: 40,
+                  }
+                ]}
+                onPress={() => handleGpsInstantPickup(true)}
+                disabled={detectingGps}
+                activeOpacity={0.7}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                {detectingGps ? (
+                  <ActivityIndicator size="small" color={colors.accentBlue} />
+                ) : (
+                  <Crosshair size={18} color={colors.accentBlue} strokeWidth={2.4} />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {/* Connecting Vertical Route Line */}
+            <View style={styles.routeDividerRow}>
+              <View style={[styles.verticalRouteLine, { backgroundColor: colors.divider }]} />
+              <View style={[styles.horizontalDivider, { backgroundColor: colors.divider }]} />
+            </View>
+
+            {/* Destination Drop Row */}
+            <TouchableOpacity
+              style={styles.locationInputGroup}
+              onPress={() => navigation.navigate('AddressSelect', { mode: 'destination' })}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.squareIcon, { backgroundColor: colors.accentGold }]}>
+                <View style={styles.squareInner} />
+              </View>
+              <View style={{ flex: 1, paddingRight: 42 }}>
+                <Text style={[styles.fieldLabel, { color: colors.textMuted }]}>DROP DESTINATION</Text>
+                <Text style={[styles.fieldValue, { color: colors.textPrimary }]} numberOfLines={1}>
+                  {search.destination || 'Select Drop City'}
+                </Text>
+                <Text style={[styles.fieldAddressDetail, { color: colors.textMuted }]} numberOfLines={1}>
+                  {search.dropAddress || 'Doorstep drop in Bihar district'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Professional Right-Side Swap Button */}
+            <TouchableOpacity
+              style={[
+                styles.rightSwapBtn,
+                {
+                  backgroundColor: colors.cardSurface,
+                  borderColor: colors.cardBorder,
+                }
+              ]}
+              onPress={swapCities}
+              activeOpacity={0.7}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <ArrowUpDown size={15} color={colors.accentGold} strokeWidth={2.4} />
+            </TouchableOpacity>
+
+            {/* Date & Time Row */}
+            <View style={[styles.scheduleBar, { borderTopColor: colors.cardBorder }]}>
+              <TouchableOpacity
+                style={styles.scheduleItem}
+                onPress={() => setShowDatePicker(true)}
+                activeOpacity={0.7}
+              >
+                <Calendar size={15} color={colors.accentGold} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.scheduleLabel, { color: colors.textMuted }]}>DATE</Text>
+                  <Text style={[styles.scheduleValue, { color: colors.textPrimary }]} numberOfLines={1}>
+                    {search.departureDate ? search.departureDate.split(' • ')[0] : 'Today'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <View style={[styles.scheduleDivider, { backgroundColor: colors.cardBorder }]} />
+
+              <TouchableOpacity
+                style={styles.scheduleItem}
+                onPress={() => setShowTimePicker(true)}
+                activeOpacity={0.7}
+              >
+                <Clock size={15} color={colors.accentGold} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.scheduleLabel, { color: colors.textMuted }]}>TIME</Text>
+                  <Text style={[styles.scheduleValue, { color: colors.textPrimary }]} numberOfLines={1}>
+                    {search.departureTime ? search.departureTime.split(' ')[0] : 'Immediate'}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
           </View>
-        )}
 
-        {/* Popular Bihar Outstation Corridors */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <View>
-              <Text style={styles.sectionTitle}>Popular Bihar Destinations</Text>
-              <Text style={styles.sectionSubtitle}>Verified fixed fares from Patna doorstep</Text>
+          {/* Primary Action Button: Choose Vehicle (Uber Style) */}
+          <TouchableOpacity
+            style={[styles.searchCtaBtn, { backgroundColor: colors.textPrimary }]}
+            onPress={handleSearchCabs}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.searchCtaText, { color: isDark ? '#000000' : '#FFFFFF' }]}>
+              Choose Vehicle & Fares
+            </Text>
+            <ArrowRight size={17} color={isDark ? '#000000' : '#FFFFFF'} strokeWidth={2.8} />
+          </TouchableOpacity>
+
+          {/* Zero Return Toll Guarantee Strip */}
+          <View
+            style={[
+              styles.assuranceStrip,
+              {
+                backgroundColor: isDark ? 'rgba(245, 158, 11, 0.08)' : 'rgba(217, 119, 6, 0.06)',
+                borderColor: isDark ? 'rgba(245, 158, 11, 0.2)' : 'rgba(217, 119, 6, 0.15)',
+              }
+            ]}
+          >
+            <ShieldCheck size={17} color={colors.accentGold} />
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.assuranceTitle, { color: colors.accentGold }]}>
+                Zero Return Toll & Fare Guarantee
+              </Text>
+              <Text style={[styles.assuranceSub, { color: colors.textSecondary }]}>
+                Guaranteed one-way billing across all 38 Bihar districts.
+              </Text>
             </View>
+          </View>
+
+          {/* Popular Corridors Horizontal Carousel */}
+          <View style={styles.corridorsHeader}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Popular Bihar Corridors</Text>
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.corridorScroll}>
-            {POPULAR_CORRIDORS.map((c, i) => (
+            {POPULAR_CORRIDORS.map((item, idx) => (
               <TouchableOpacity
-                key={i}
+                key={idx}
                 style={[
                   styles.corridorCard,
-                  search.destination === c.dest && styles.corridorCardActive
+                  {
+                    backgroundColor: colors.inputBg,
+                    borderColor: colors.cardBorder,
+                  }
                 ]}
-                onPress={() => selectCorridor(c.dest)}
-                activeOpacity={0.8}
-              >
-                <View style={styles.corridorBadge}>
-                  <Text style={styles.corridorBadgeText}>Fixed Route</Text>
-                </View>
-                <Text style={styles.corridorDest}>Patna ➔ {c.dest}</Text>
-                <Text style={styles.corridorDist}>{c.dist} • Highway AC</Text>
-                <View style={styles.corridorFareRow}>
-                  <Text style={styles.corridorFare}>From {c.fare}</Text>
-                  <ArrowRight size={14} color="#D97706" />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* 24x7 Customer Support & WhatsApp Shortcut */}
-        <View style={styles.supportCard}>
-          <View style={styles.supportHeader}>
-            <View style={styles.supportIconBadge}>
-              <MessageCircle size={20} color="#059669" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.supportTitle}>24x7 Chauffeur & Booking Desk</Text>
-              <Text style={styles.supportSubtitle}>Direct WhatsApp booking & urgent assistance</Text>
-            </View>
-          </View>
-          <View style={styles.supportActionsRow}>
-            <TouchableOpacity
-              style={styles.supportBtnWhatsApp}
-              onPress={() => Linking.openURL('https://wa.me/917739406400?text=Hello%20OneWayTaxiBihar,%20I%20want%20to%20inquire%20about%20a%20taxi%20booking.')}
-              activeOpacity={0.8}
-            >
-              <MessageCircle size={16} color="#FFFFFF" />
-              <Text style={styles.supportBtnWhatsAppText}>WhatsApp Chat</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.supportBtnCall}
-              onPress={() => Linking.openURL('tel:+918002141816')}
-              activeOpacity={0.8}
-            >
-              <PhoneCall size={16} color="#0F172A" />
-              <Text style={styles.supportBtnCallText}>Call Helpline</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Saved Transit Hubs */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Major Bihar Transit Hubs</Text>
-          <View style={styles.hubsGrid}>
-            {SAVED_HUBS.map((h, i) => (
-              <TouchableOpacity
-                key={i}
-                style={styles.hubCard}
                 onPress={() => {
-                  updateSearch({ pickupAddress: h.name, origin: h.city });
-                  Alert.alert('Departure Set', `${h.name} set as your pickup.`);
+                  updateSearch({ origin: 'Patna', destination: item.dest });
+                  navigation.navigate('CabSelect');
                 }}
                 activeOpacity={0.8}
               >
-                <Bookmark size={14} color="#D97706" />
-                <Text style={styles.hubName} numberOfLines={1}>
-                  {h.name}
+                <Text style={[styles.corridorRoute, { color: colors.textPrimary }]}>
+                  Patna → {item.dest}
                 </Text>
+                <Text style={[styles.corridorDist, { color: colors.textMuted }]}>{item.dist}</Text>
+                <Text style={[styles.corridorFare, { color: colors.accentGold }]}>{item.fare}</Text>
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
+          </ScrollView>
 
-        {/* Value Guarantee */}
-        <View style={styles.guaranteeCard}>
-          <ShieldCheck size={28} color="#059669" />
-          <View style={styles.guaranteeText}>
-            <Text style={styles.guaranteeTitle}>Transparent One-Way Billing</Text>
-            <Text style={styles.guaranteeDesc}>
-              Never pay for return taxi kilometers. Every fare is guaranteed all-inclusive with fuel and commercial driver allowance.
-            </Text>
-          </View>
-        </View>
+          {/* 24x7 Helpdesk Strip */}
+          <View
+            style={[
+              styles.helpStrip,
+              {
+                backgroundColor: colors.inputBg,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.helpTitle, { color: colors.textPrimary }]}>Need Immediate Help?</Text>
+              <Text style={[styles.helpSub, { color: colors.textMuted }]}>Direct phone & WhatsApp dispatch</Text>
+            </View>
 
-      </ScrollView>
-
-      {/* Date Picker Modal */}
-      <Modal visible={showDatePicker} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHeaderRow}>
-              <Text style={styles.modalTitle}>Select Travel Date</Text>
-              <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                <X size={20} color="#64748B" />
+            <View style={styles.helpActions}>
+              <TouchableOpacity
+                style={[styles.helpBtn, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}
+                onPress={() => Linking.openURL('tel:+918002141816')}
+              >
+                <PhoneCall size={15} color={colors.accentGold} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.helpBtn, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}
+                onPress={() => Linking.openURL('https://wa.me/917739406400')}
+              >
+                <MessageCircle size={15} color={colors.brandGreen} />
               </TouchableOpacity>
             </View>
-            <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
-              <View style={styles.modalOptionsContainer}>
-                {getDynamicDateOptions().map((opt, idx) => {
-                  const isSelected = search.pickupDate === opt.label || search.pickupDate === opt.iso || (search.pickupDate === 'Today' && idx === 0);
-                  return (
-                    <TouchableOpacity
-                      key={idx}
-                      style={[
-                        styles.modalOptionItem,
-                        isSelected && styles.modalOptionItemSelected
-                      ]}
-                      onPress={() => {
-                        updateSearch({ pickupDate: opt.label });
-                        setShowDatePicker(false);
-                      }}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text style={[styles.modalOptionTitle, isSelected && { color: '#B45309', fontWeight: '800' }]}>{opt.label}</Text>
-                        <Text style={styles.modalOptionSub}>{opt.sub}</Text>
-                      </View>
-                      {isSelected && <Check size={18} color="#D97706" />}
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+          </View>
+        </ScrollView>
+      </View>
+
+      {/* Date Picker Modal */}
+      <Modal visible={showDatePicker} transparent animationType="fade">
+        <View style={styles.drawerBackdrop}>
+          <View style={[styles.pickerModal, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitleText, { color: colors.textPrimary }]}>Select Departure Date</Text>
+              <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                <X size={20} color={colors.textMuted} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={{ maxHeight: 320 }}>
+              {dateOptions.map((opt, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={[
+                    styles.pickerOption,
+                    {
+                      borderBottomColor: colors.cardBorder,
+                      backgroundColor: search.departureDate === opt.value
+                        ? isDark ? 'rgba(245, 158, 11, 0.12)' : 'rgba(217, 119, 6, 0.08)'
+                        : 'transparent'
+                    }
+                  ]}
+                  onPress={() => {
+                    updateSearch({ departureDate: opt.value });
+                    setShowDatePicker(false);
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.pickerOptionLabel, { color: colors.textPrimary, fontWeight: search.departureDate === opt.value ? '800' : '600' }]}>
+                      {opt.label}
+                    </Text>
+                    <Text style={[styles.pickerOptionSub, { color: colors.textMuted }]}>{opt.sub}</Text>
+                  </View>
+                  {search.departureDate === opt.value && (
+                    <Check size={18} color={colors.accentGold} strokeWidth={2.8} />
+                  )}
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </View>
         </View>
       </Modal>
 
       {/* Time Picker Modal */}
-      <Modal visible={showTimePicker} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHeaderRow}>
-              <Text style={styles.modalTitle}>Select Pickup Time</Text>
+      <Modal visible={showTimePicker} transparent animationType="fade">
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.pickerModal, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}>
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitleText, { color: colors.textPrimary }]}>Select Pickup Time</Text>
               <TouchableOpacity onPress={() => setShowTimePicker(false)}>
-                <X size={20} color="#64748B" />
+                <X size={20} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
-            <ScrollView style={{ maxHeight: 320 }} showsVerticalScrollIndicator={false}>
-              <View style={styles.modalOptionsContainer}>
-                {TIME_OPTIONS.map((timeStr, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    style={[
-                      styles.modalOptionItem,
-                      search.pickupTime === timeStr && styles.modalOptionItemSelected
-                    ]}
-                    onPress={() => {
-                      updateSearch({ pickupTime: timeStr });
-                      setShowTimePicker(false);
-                    }}
-                  >
-                    <Text style={[styles.modalOptionTitle, search.pickupTime === timeStr && { color: '#B45309', fontWeight: '800' }]}>{timeStr}</Text>
-                    {search.pickupTime === timeStr && <Check size={18} color="#D97706" />}
-                  </TouchableOpacity>
-                ))}
-              </View>
+
+            <ScrollView style={{ maxHeight: 320 }}>
+              {TIME_OPTIONS.map((time, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={[
+                    styles.pickerOption,
+                    {
+                      borderBottomColor: colors.cardBorder,
+                      backgroundColor: search.departureTime === time
+                        ? isDark ? 'rgba(245, 158, 11, 0.12)' : 'rgba(217, 119, 6, 0.08)'
+                        : 'transparent'
+                    }
+                  ]}
+                  onPress={() => {
+                    updateSearch({ departureTime: time });
+                    setShowTimePicker(false);
+                  }}
+                >
+                  <Text style={[styles.pickerOptionLabel, { color: colors.textPrimary, fontWeight: search.departureTime === time ? '800' : '600' }]}>
+                    {time}
+                  </Text>
+                  {search.departureTime === time && (
+                    <Check size={18} color={colors.accentGold} strokeWidth={2.8} />
+                  )}
+                </TouchableOpacity>
+              ))}
             </ScrollView>
           </View>
         </View>
       </Modal>
+    
+      {/* Account & Login Drawer Segment (Left Vertical Sidebar) */}
+      <Modal
+        visible={showAccountDrawer}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setShowAccountDrawer(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[
+              styles.drawerSheet,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            {/* Drawer Header: Brand Logo & Name Open At Top */}
+            <View style={[styles.drawerTopRow, { borderBottomColor: colors.cardBorder, borderBottomWidth: 1, paddingBottom: 14, marginBottom: 12 }]}>
+              <BrandLogo size="header" showSubtitle={false} />
+              <TouchableOpacity
+                style={[styles.closeDrawerBtn, { backgroundColor: colors.inputBg }]}
+                onPress={() => setShowAccountDrawer(false)}
+              >
+                <X size={18} color={colors.textPrimary} />
+              </TouchableOpacity>
+            </View>
 
-      {/* Self-Hosted APK In-App Updater */}
-      <AppUpdaterModal app="passenger" currentVersion="1.0.0" />
+            {/* Drawer Body: Login & Account Details */}
+            <ScrollView style={styles.drawerScroll} showsVerticalScrollIndicator={false}>
+              {isLoggedIn ? (
+                /* Logged In Account Details Segment */
+                <View style={[styles.accountCard, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                  <View style={[styles.avatarCircle, { backgroundColor: colors.accentGold }]}>
+                    <Text style={styles.avatarText}>{userPhone?.slice(-2) || 'OK'}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.accountName, { color: colors.textPrimary }]}>Verified Passenger</Text>
+                    <Text style={[styles.accountPhone, { color: colors.textMuted }]}>
+                      +91 {userPhone || '98765 43210'}
+                    </Text>
+                  </View>
+                  <View style={[styles.verifiedPill, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                    <Check size={12} color={colors.brandGreen} />
+                    <Text style={[styles.verifiedText, { color: colors.brandGreen }]}>Active</Text>
+                  </View>
+                </View>
+              ) : (
+                /* Login / Sign In Prompt Segment */
+                <View style={[styles.loginPromptCard, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                  <View style={styles.loginPromptHeader}>
+                    <User size={22} color={colors.accentGold} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.loginPromptTitle, { color: colors.textPrimary }]}>Sign In to Account</Text>
+                      <Text style={[styles.loginPromptSub, { color: colors.textMuted }]}>
+                        Manage bookings, view invoices & track driver live
+                      </Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={[styles.loginCtaBtn, { backgroundColor: colors.accentGold }]}
+                    onPress={() => {
+                      setShowAccountDrawer(false);
+                      navigation.navigate('Auth');
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.loginCtaText}>Sign In / Register (+91 OTP)</Text>
+                    <ChevronRight size={16} color="#0F172A" strokeWidth={2.4} />
+                  </TouchableOpacity>
+                </View>
+              )}
 
-      {/* First-Launch Onboarding Walkthrough */}
-      <OnboardingModal visible={showOnboarding} onClose={() => setShowOnboarding(false)} />
+              {/* Theme Selection Row (Inside Account Drawer) */}
+              <View style={[styles.themeRowCard, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                  {isDark ? <Moon size={18} color={colors.accentGold} /> : <Sun size={18} color={colors.accentGold} />}
+                  <View>
+                    <Text style={[styles.themeRowTitle, { color: colors.textPrimary }]}>App Appearance</Text>
+                    <Text style={[styles.themeRowSub, { color: colors.textMuted }]}>
+                      {isDark ? 'Dark Theme (Executive)' : 'Light Theme (Daylight)'}
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.themeSwitchPill,
+                    {
+                      backgroundColor: colors.cardSurface,
+                      borderColor: colors.accentGold,
+                    }
+                  ]}
+                  onPress={toggleTheme}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.themeSwitchText, { color: colors.accentGold }]}>
+                    {isDark ? 'Light Mode' : 'Dark Mode'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-    </SafeAreaView>
+              {/* Drawer Links */}
+              <View style={[styles.drawerLinksList, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+                <TouchableOpacity
+                  style={styles.drawerLinkItem}
+                  onPress={() => {
+                    setShowAccountDrawer(false);
+                    navigation.navigate('MyBookings');
+                  }}
+                >
+                  <Text style={[styles.drawerLinkText, { color: colors.textPrimary }]}>My Rides & Invoices</Text>
+                  <ChevronRight size={16} color={colors.textMuted} />
+                </TouchableOpacity>
+
+                <View style={[styles.drawerLinkDivider, { backgroundColor: colors.divider }]} />
+
+                <TouchableOpacity
+                  style={styles.drawerLinkItem}
+                  onPress={() => Linking.openURL('tel:+919123456789')}
+                >
+                  <Text style={[styles.drawerLinkText, { color: colors.textPrimary }]}>24x7 Driver Helpline (+91 91234 56789)</Text>
+                  <ChevronRight size={16} color={colors.textMuted} />
+                </TouchableOpacity>
+
+                {isLoggedIn && (
+                  <>
+                    <View style={[styles.drawerLinkDivider, { backgroundColor: colors.divider }]} />
+                    <TouchableOpacity
+                      style={styles.drawerLinkItem}
+                      onPress={() => {
+                        setShowAccountDrawer(false);
+                        Alert.alert('Sign Out', 'You have been signed out.');
+                      }}
+                    >
+                      <Text style={[styles.drawerLinkText, { color: colors.accentRed }]}>Sign Out</Text>
+                      <LogOut size={16} color={colors.accentRed} />
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+            </ScrollView>
+          </View>
+          <TouchableOpacity
+            style={styles.drawerBackdrop}
+            activeOpacity={1}
+            onPress={() => setShowAccountDrawer(false)}
+          />
+        </View>
+      </Modal>
+
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-  },
-  topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  greetingContainer: {
-    flex: 1,
-  },
-  greetingOverline: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#D97706',
-    letterSpacing: 1,
-    marginBottom: 2,
-  },
-  greetingTitle: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#0F172A',
-  },
-  profileBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
+  liveStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    shadowColor: '#10B981',
+    shadowOpacity: 0.6,
     shadowRadius: 6,
-    elevation: 2,
   },
-  avatarCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    fontSize: 12,
-  },
-  profileBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  brandCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  zeroReturnPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  zeroReturnPillText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#92400E',
-  },
-  tripTypeCard: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 4,
-    marginBottom: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  tripTypeBtn: {
-    flex: 1,
-    flexDirection: 'row',
+  navMenuBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 12,
-    gap: 6,
-  },
-  tripTypeBtnActive: {
-    backgroundColor: '#F59E0B', // Golden Yellow
-    shadowColor: '#EAB308',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  tripTypeText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#64748B',
-  },
-  tripTypeTextActive: {
-    color: '#0F172A',
-    fontWeight: '800',
-  },
-  bookingCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
-    gap: 12,
-    marginBottom: 18,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 4,
   },
-  inputRow: {
-    flexDirection: 'row',
+  rightSwapBtn: {
+    position: 'absolute',
+    right: 12,
+    top: 50,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 12,
-  },
-  iconCirclePickup: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(5, 150, 105, 0.12)',
     justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconCircleDrop: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputBody: {
-    flex: 1,
-  },
-  inputLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#64748B',
-    marginBottom: 2,
-    letterSpacing: 0.5,
-  },
-  inputValue: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  swapDividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: -4,
-  },
-  swapDividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#E2E8F0',
-  },
-  swapButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    marginHorizontal: 10,
+    borderWidth: 1.5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 2,
-  },
-  dateTimeRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  dateTimeItem: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    gap: 8,
-  },
-  dateText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  passengerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  passengerLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#334155',
-  },
-  countSelector: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  countPill: {
-    width: 34,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  countPillActive: {
-    backgroundColor: '#F59E0B',
-    borderColor: '#D97706',
-  },
-  countText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  countTextActive: {
-    color: '#0F172A',
-    fontWeight: '900',
-  },
-  searchButton: {
-    backgroundColor: '#F59E0B', // Golden Yellow
-    height: 52,
-    borderRadius: 14,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 4,
-    shadowColor: '#EAB308',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
     elevation: 4,
-  },
-  searchButtonText: {
-    color: '#0F172A',
-    fontSize: 15,
-    fontWeight: '900',
-    letterSpacing: 0.2,
-  },
-  recentBookingCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
-    marginBottom: 18,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  recentHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  recentTitle: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: '#334155',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  recentStatusBadge: {
-    backgroundColor: 'rgba(5, 150, 105, 0.12)',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 999,
-  },
-  recentStatusText: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#059669',
-    textTransform: 'uppercase',
-  },
-  recentRoute: {
-    fontSize: 15,
-    fontWeight: '900',
-    color: '#0F172A',
-    marginBottom: 8,
-  },
-  recentFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: 8,
-  },
-  recentMeta: {
-    fontSize: 12,
-    color: '#64748B',
-    fontWeight: '600',
-  },
-  trackShortcutBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  trackShortcutText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: '#0F172A',
-    letterSpacing: -0.2,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    color: '#64748B',
-    marginTop: 2,
-  },
-  corridorScroll: {
-    paddingVertical: 4,
-    gap: 12,
-  },
-  corridorCard: {
-    width: 170,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  corridorCardActive: {
-    borderColor: '#F59E0B',
-    borderWidth: 2,
-    backgroundColor: '#FFFBEB',
-  },
-  corridorBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginBottom: 8,
-  },
-  corridorBadgeText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#92400E',
-    textTransform: 'uppercase',
-  },
-  corridorDest: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#0F172A',
-    marginBottom: 4,
-  },
-  corridorDist: {
-    fontSize: 11,
-    color: '#64748B',
-    marginBottom: 8,
-  },
-  corridorFareRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-    paddingTop: 6,
-  },
-  corridorFare: {
-    fontSize: 13,
-    fontWeight: '900',
-    color: '#B45309',
-  },
-  supportCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 20,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
-  },
-  supportHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 14,
-  },
-  supportIconBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(5, 150, 105, 0.12)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  supportTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  supportSubtitle: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
-  },
-  supportActionsRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  supportBtnWhatsApp: {
-    flex: 1,
-    height: 42,
-    backgroundColor: '#059669',
-    borderRadius: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-  },
-  supportBtnWhatsAppText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  supportBtnCall: {
-    flex: 1,
-    height: 42,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-  },
-  supportBtnCallText: {
-    color: '#0F172A',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  hubsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 8,
-  },
-  hubCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    width: '48%',
-  },
-  hubName: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#0F172A',
-    flex: 1,
-  },
-  guaranteeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: 'rgba(5, 150, 105, 0.08)',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(5, 150, 105, 0.2)',
-  },
-  guaranteeText: {
-    flex: 1,
-  },
-  guaranteeTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#065F46',
-    marginBottom: 4,
-  },
-  guaranteeDesc: {
-    fontSize: 11,
-    color: '#047857',
-    lineHeight: 16,
+    zIndex: 10,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.55)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  drawerBackdrop: {
+    flex: 1,
+  },
+  drawerSheet: {
+    width: '82%',
+    maxWidth: 320,
+    height: '100%',
+    borderRightWidth: 1,
+    paddingHorizontal: 18,
+    paddingTop: Platform.OS === 'android' ? 44 : 54,
+    paddingBottom: 28,
+  },
+  drawerHeader: {
+    alignItems: 'center',
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
+  drawerHandle: {
+    width: 38,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#64748B',
+    marginBottom: 12,
+    opacity: 0.5,
+  },
+  drawerTopRow: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  closeDrawerBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  drawerScroll: {
+    marginTop: 8,
+  },
+  accountCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 16,
+    borderWidth: 1,
+    gap: 12,
+    marginBottom: 12,
+  },
+  avatarCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#0F172A',
+  },
+  accountName: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  accountPhone: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  verifiedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  verifiedText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  loginPromptCard: {
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  loginPromptHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  loginPromptTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  loginPromptSub: {
+    fontSize: 11.5,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  loginCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 11,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  loginCtaText: {
+    color: '#0F172A',
+    fontSize: 13,
+    fontWeight: '900',
+  },
+  themeRowCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  themeRowTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  themeRowSub: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  themeSwitchPill: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  themeSwitchText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  drawerLinksList: {
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    marginBottom: 20,
+  },
+  drawerLinkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+  },
+  drawerLinkText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  drawerLinkDivider: {
+    height: 1,
+    width: '100%',
+  },
+
+  mainWrapper: {
+    flex: 1,
+    position: 'relative',
+  },
+  mapContainer: {
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  floatingTopBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 36 : 8,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  floatingMenuBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  islandNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  navActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconActionBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  accountPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  accountDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  accountPillText: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  uberBottomSheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    shadowOffset: { width: 0, height: -6 },
+    shadowRadius: 16,
+    elevation: 12,
+    zIndex: 20,
+    overflow: 'hidden',
+  },
+  dragHandleContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
+  dragHandle: {
+    width: 44,
+    height: 4.5,
+    borderRadius: 3,
+  },
+  sheetScroll: {
+    flex: 1,
+  },
+  sheetScrollContent: {
+    paddingHorizontal: 18,
+    paddingBottom: 40,
+  },
+  segmentContainer: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 3,
+    marginBottom: 12,
+  },
+  segmentBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 9,
+  },
+  segmentText: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  routeCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    marginBottom: 14,
+  },
+  locationInputGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  locationInputMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  bulletIcon: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bulletInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FFFFFF',
+  },
+  squareIcon: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  squareInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 2,
+    backgroundColor: '#0F172A',
+  },
+  fieldLabel: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+    marginBottom: 2,
+  },
+  fieldValue: {
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+  },
+  fieldAddressDetail: {
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 2,
+  },
+  gpsIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  routeDividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 6,
+    paddingLeft: 9,
+  },
+  verticalRouteLine: {
+    width: 2,
+    height: 20,
+    borderRadius: 1,
+  },
+  swapCityBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 14,
+    marginRight: 10,
+  },
+  horizontalDivider: {
+    flex: 1,
+    height: 1,
+  },
+  scheduleBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    marginTop: 12,
+    paddingTop: 10,
+  },
+  scheduleItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  scheduleDivider: {
+    width: 1,
+    height: 24,
+    marginHorizontal: 12,
+  },
+  scheduleLabel: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+  },
+  scheduleValue: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+    marginTop: 1,
+  },
+  searchCtaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 14,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  searchCtaText: {
+    fontSize: 14.5,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  assuranceStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  assuranceTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  assuranceSub: {
+    fontSize: 10.5,
+    fontWeight: '500',
+    marginTop: 1,
+  },
+  corridorsHeader: {
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 13.5,
+    fontWeight: '900',
+    letterSpacing: -0.3,
+  },
+  corridorScroll: {
+    gap: 10,
+    paddingBottom: 16,
+  },
+  corridorCard: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    minWidth: 130,
+  },
+  corridorRoute: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  corridorDist: {
+    fontSize: 10,
+    fontWeight: '500',
+    marginVertical: 2,
+  },
+  corridorFare: {
+    fontSize: 12.5,
+    fontWeight: '900',
+  },
+  helpStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 4,
+  },
+  helpTitle: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  helpSub: {
+    fontSize: 10.5,
+    fontWeight: '500',
+    marginTop: 1,
+  },
+  helpActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  helpBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
     justifyContent: 'flex-end',
   },
-  modalSheet: {
-    backgroundColor: '#FFFFFF',
+  pickerModal: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    borderTopWidth: 1,
     padding: 20,
-    paddingBottom: Platform.OS === 'ios' ? 36 : 24,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    maxHeight: '75%',
   },
-  modalHeaderRow: {
+  modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
   },
-  modalTitle: {
-    fontSize: 17,
-    fontWeight: '900',
-    color: '#0F172A',
+  modalTitleText: {
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: -0.3,
   },
-  modalOptionsContainer: {
-    gap: 8,
-  },
-  modalOptionItem: {
+  pickerOption: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 14,
-    borderRadius: 14,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderRadius: 10,
   },
-  modalOptionItemSelected: {
-    backgroundColor: '#FFFBEB',
-    borderColor: '#F59E0B',
-    borderWidth: 1.5,
-  },
-  modalOptionTitle: {
+  pickerOptionLabel: {
     fontSize: 14,
-    fontWeight: '700',
-    color: '#0F172A',
   },
-  modalOptionSub: {
+  pickerOptionSub: {
     fontSize: 11,
-    color: '#64748B',
     marginTop: 2,
   },
 });

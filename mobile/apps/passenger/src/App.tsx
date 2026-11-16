@@ -6,7 +6,7 @@ import { ErrorBoundary } from '../../../shared/components/ErrorBoundary';
 
 export default function App() {
   return (
-    <ErrorBoundary appName="OneWay Taxi Passenger">
+    <ErrorBoundary appName="OneWayTaxiBihar">
       <ThemeProvider>
         <PassengerProvider>
           <PassengerNavigator />

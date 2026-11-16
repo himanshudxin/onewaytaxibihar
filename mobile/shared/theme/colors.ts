@@ -1,141 +1,166 @@
 /**
  * OneWayTaxiBihar Shared Theme Tokens
- * Upgraded Passenger Palette: Premium Golden Yellow & Clean White
- * Preserves Driver & Admin compatibility while delivering modern ride-hailing styling.
+ * Fully reactive to Light Mode & Dark Mode.
+ * Preserves legacy token keys (surface, border, text, primary, etc.) for Driver & Admin screens
+ * while providing precision Uber/Bolt styling for Passenger screens.
  */
 
-export const PassengerColors = {
-  // Primary Golden Yellow Accent Spectrum
-  primaryYellow: '#EAB308',      // Vivid Golden Amber (Primary Accent)
-  primaryGold: '#F59E0B',        // Warm Amber Gold (Badges & Highlights)
-  primaryDarkGold: '#D97706',    // Deep Gold (Buttons, CTAs, Active States)
-  primaryLightYellow: '#FEF3C7', // Soft Butter/Cream (Card fills & icon badges)
-  primaryGlow: 'rgba(234, 179, 8, 0.18)',
+export const UberDarkColors = {
+  isDark: true,
+  // Canvas & Surfaces
+  background: '#0B0F19',         // Deep Obsidian Black
+  surface: '#131B2E',            // Elevated Midnight Surface
+  surfaceElevated: '#1F2937',
+  surfaceHighlight: '#374151',
+  cardSurface: '#131B2E',
+  cardSurfaceAlt: '#1E293B',
+  border: '#1E293B',             // Subtle Slate Border
+  borderLight: '#374151',
+  cardBorder: '#1E293B',
+  cardBorderSelected: '#F59E0B', // Amber Gold Glow
+  divider: '#1E293B',
 
-  // Pure Clean Modern Base
+  // High-Contrast Typography
+  text: '#FFFFFF',               // Crisp Pure White
+  textPrimary: '#FFFFFF',
+  textSecondary: '#94A3B8',      // Cool Slate
+  textMuted: '#64748B',          // Muted Charcoal
+
+  // Luxury Accents
+  primary: '#F59E0B',            // Amber Gold
+  primaryHover: '#D97706',
+  primaryGlow: 'rgba(245, 158, 11, 0.25)',
+  gold: '#F59E0B',
+  goldGlow: 'rgba(245, 158, 11, 0.2)',
+  accentGold: '#F59E0B',
+  accentGoldLight: '#FEF3C7',
+  accentGoldDark: '#D97706',
+  accentGlow: 'rgba(245, 158, 11, 0.15)',
+
+  // Functional Status
+  brandGreen: '#10B981',
+  brandGreenBg: 'rgba(16, 185, 129, 0.12)',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  dangerGlow: 'rgba(239, 68, 68, 0.2)',
+  error: '#EF4444',
+  success: '#10B981',
+  info: '#38BDF8',
+  accent: '#38BDF8',
+  accentRed: '#EF4444',
+  accentRedBg: 'rgba(239, 68, 68, 0.12)',
+  accentBlue: '#38BDF8',
+  accentBlueBg: 'rgba(56, 189, 248, 0.12)',
   white: '#FFFFFF',
-  background: '#F8FAFC',         // Soft Slate Gray-White for screen background
-  backgroundLight: '#F8FAFC',
-  cardSurface: '#FFFFFF',        // Pure white cards
-  cardBorder: '#F1F5F9',         // Minimalist border separation
-  cardBorderSelected: '#EAB308', // 2px Highlight border when selected
-  cardBorderMuted: '#E2E8F0',
 
-  // Modern High-Contrast Typography
-  textPrimary: '#0F172A',        // Slate 900 (High contrast headers, fares)
-  textSecondary: '#334155',      // Slate 700 (Labels, vehicle specs)
-  textMuted: '#64748B',          // Slate 500 (Placeholders, inactive indicators)
+  // Navigation & Headers
+  headerBg: '#0B0F19',
+  tabBarBg: '#0B0F19',
+  tabBarBorder: '#1E293B',
+  tabBarActive: '#F59E0B',
+  tabBarInactive: '#64748B',
 
-  // Status & Brand Integrity
-  brandGreen: '#059669',         // Preserved for authentic Logo Badge & AC Included badges
-  accentRed: '#EF4444',          // Errors, cancellation, urgent notice
-  accentBlue: '#2563EB',         // Live navigation & location indicators
-  accentGreen: '#10B981',        // Success states
+  // Inputs
+  inputBg: '#131B2E',
+  inputBorder: '#334155',
+  inputText: '#FFFFFF',
+  inputPlaceholder: '#64748B',
+};
+
+export const UberLightColors = {
+  isDark: false,
+  // Canvas & Surfaces
+  background: '#F8FAFC',         // Crisp Off-White Canvas
+  surface: '#FFFFFF',            // Pure White Surface
+  surfaceElevated: '#F1F5F9',
+  surfaceHighlight: '#E2E8F0',
+  cardSurface: '#FFFFFF',
+  cardSurfaceAlt: '#F1F5F9',
+  border: '#E2E8F0',             // Soft Grey Border
+  borderLight: '#CBD5E1',
+  cardBorder: '#E2E8F0',
+  cardBorderSelected: '#0F172A',
+  divider: '#E2E8F0',
+
+  // High-Contrast Typography
+  text: '#0F172A',               // Deep Charcoal / Obsidian
+  textPrimary: '#0F172A',
+  textSecondary: '#475569',
+  textMuted: '#94A3B8',
+
+  // Luxury Accents
+  primary: '#D97706',            // Polished Amber
+  primaryHover: '#B45309',
+  primaryGlow: 'rgba(217, 119, 6, 0.2)',
+  gold: '#D97706',
+  goldGlow: 'rgba(217, 119, 6, 0.15)',
+  accentGold: '#D97706',
+  accentGoldLight: '#FFFBEB',
+  accentGoldDark: '#B45309',
+  accentGlow: 'rgba(217, 119, 6, 0.12)',
+
+  // Functional Status
+  brandGreen: '#059669',
+  brandGreenBg: 'rgba(5, 150, 105, 0.1)',
+  warning: '#D97706',
+  danger: '#DC2626',
+  dangerGlow: 'rgba(220, 38, 38, 0.15)',
+  error: '#DC2626',
+  success: '#059669',
+  info: '#0284C7',
+  accent: '#0284C7',
+  accentRed: '#DC2626',
+  accentRedBg: 'rgba(220, 38, 38, 0.08)',
+  accentBlue: '#0284C7',
+  accentBlueBg: 'rgba(2, 132, 199, 0.08)',
+  white: '#FFFFFF',
+
+  // Navigation & Headers
+  headerBg: '#FFFFFF',
+  tabBarBg: '#FFFFFF',
+  tabBarBorder: '#E2E8F0',
+  tabBarActive: '#0F172A',
+  tabBarInactive: '#94A3B8',
+
+  // Inputs
+  inputBg: '#F8FAFC',
+  inputBorder: '#E2E8F0',
+  inputText: '#0F172A',
+  inputPlaceholder: '#94A3B8',
+};
+
+export const PassengerColors = UberLightColors;
+
+export const Colors = {
+  dark: UberDarkColors,
+  light: UberLightColors,
+  passenger: UberLightColors,
 };
 
 export const PassengerTheme = {
-  colors: PassengerColors,
   borderRadius: {
-    card: 18,
-    cardSm: 14,
-    button: 14,
+    xs: 6,
+    sm: 10,
+    card: 16,
+    cardSm: 12,
+    button: 12,
     input: 12,
     pill: 999,
   },
   shadows: {
     soft: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 4 },
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.06,
-      shadowRadius: 12,
-      elevation: 3,
+      shadowRadius: 8,
+      elevation: 2,
     },
-    golden: {
-      shadowColor: '#EAB308',
+    hover: {
+      shadowColor: '#000000',
       shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.25,
-      shadowRadius: 14,
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
       elevation: 5,
     },
   },
-};
-
-export const Colors = {
-  emerald: {
-    50: '#ecfdf5',
-    100: '#d1fae5',
-    200: '#a7f3d0',
-    300: '#6ee7b7',
-    400: '#34d399',
-    500: '#10b981',
-    600: '#059669', // Brand Primary
-    700: '#047857',
-    800: '#065f46',
-    900: '#064e3b',
-  },
-  passenger: PassengerColors,
-  dark: {
-    background: '#090D16',
-    surface: '#111827',
-    surfaceElevated: '#1F2937',
-    surfaceHighlight: '#374151',
-    border: '#1F2937',
-    borderLight: '#374151',
-    text: '#F9FAFB',
-    textSecondary: '#9CA3AF',
-    textMuted: '#6B7280',
-    primary: '#F59E0B',
-    primaryHover: '#D97706',
-    primaryGlow: 'rgba(245, 158, 11, 0.25)',
-    gold: '#F59E0B',
-    goldGlow: 'rgba(245, 158, 11, 0.2)',
-    warning: '#F59E0B',
-    danger: '#EF4444',
-    dangerGlow: 'rgba(239, 68, 68, 0.2)',
-    error: '#EF4444',
-    success: '#10B981',
-    info: '#3B82F6',
-    accent: '#38BDF8',
-    brandGreen: '#059669',
-    white: '#FFFFFF',
-    primaryYellow: '#EAB308',
-    primaryGold: '#F59E0B',
-    primaryDarkGold: '#D97706',
-    primaryLightYellow: '#FEF3C7',
-    cardSurface: '#111827',
-    cardBorder: '#1F2937',
-    cardBorderSelected: '#F59E0B',
-  },
-  light: {
-    background: '#F8FAFC',
-    surface: '#FFFFFF',
-    surfaceElevated: '#FFFFFF',
-    surfaceHighlight: '#FEF3C7',
-    border: '#E2E8F0',
-    borderLight: '#F1F5F9',
-    text: '#0F172A',
-    textSecondary: '#334155',
-    textMuted: '#64748B',
-    primary: '#EAB308',
-    primaryHover: '#D97706',
-    primaryGlow: 'rgba(234, 179, 8, 0.2)',
-    gold: '#F59E0B',
-    goldGlow: 'rgba(245, 158, 11, 0.2)',
-    warning: '#D97706',
-    danger: '#DC2626',
-    dangerGlow: 'rgba(220, 38, 38, 0.15)',
-    error: '#DC2626',
-    success: '#059669',
-    info: '#2563EB',
-    accent: '#0284C7',
-    brandGreen: '#059669',
-    white: '#FFFFFF',
-    primaryYellow: '#EAB308',
-    primaryGold: '#F59E0B',
-    primaryDarkGold: '#D97706',
-    primaryLightYellow: '#FEF3C7',
-    cardSurface: '#FFFFFF',
-    cardBorder: '#F1F5F9',
-    cardBorderSelected: '#EAB308',
-  }
 };

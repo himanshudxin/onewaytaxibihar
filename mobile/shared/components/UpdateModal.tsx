@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Animated
 } from 'react-native';
+import { X } from 'lucide-react-native';
 import { checkAppVersion, launchApkDownload, VersionCheckResult } from '../services/updater';
 
 export interface UpdateModalProps {
@@ -125,7 +126,7 @@ export const UpdateModal: React.FC<UpdateModalProps> = ({
             )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.bannerDismissBtn} onPress={handleDismiss}>
-            <Text style={styles.bannerDismissText}>✕</Text>
+            <X size={14} color="#6B7280" />
           </TouchableOpacity>
         </View>
       </View>

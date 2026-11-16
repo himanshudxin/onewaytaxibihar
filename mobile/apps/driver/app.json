@@ -1,22 +1,28 @@
 {
   "expo": {
     "name": "Oneway Taxi Driver",
-    "slug": "onewaytaxidriver",
+    "slug": "onewaytaxibihar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/driver-icon.png",
     "scheme": "onewaytaxidriver",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/driver-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#090D16"
+      "backgroundColor": "#070B13"
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.onewaytaxibihar.driver",
+      "buildNumber": "1",
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        },
         "NSLocationWhenInUseUsageDescription": "Oneway Taxi Driver requires real-time location to receive nearby outstation trip offers and provide turn-by-turn navigation.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Continuous background location is required while on-duty to dispatch rides accurately and maintain rider safety.",
         "UIBackgroundModes": [
@@ -29,9 +35,11 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/driver-icon.png",
-        "backgroundColor": "#D97706"
+        "backgroundColor": "#070B13"
       },
       "package": "com.onewaytaxibihar.driver",
+      "versionCode": 1,
+      "usesCleartextTraffic": false,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -44,10 +52,15 @@
     },
     "extra": {
       "apiUrl": "https://onewaytaxibihar.com/api",
-      "supportPhone": "+918002141816",
+      "supportPhone": "+916206494214",
+      "helplinePhone": "+916206494214",
       "emergencyPhone": "112",
-      "appType": "driver"
+      "appType": "driver",
+      "eas": {
+        "projectId": "ee1c401a-e93f-414e-9e57-5845a902305c"
+      }
     },
+    "owner": "himanshud",
     "plugins": [
       "expo-asset"
     ]

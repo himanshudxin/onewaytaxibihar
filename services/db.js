@@ -64,8 +64,9 @@ let pgPool = null;
 let activeEngine = 'local';
 let isDbConnected = false;
 let isInitializing = false;
+let isPulling = false;
 let lastHydrationTime = 0;
-const CACHE_TTL_MS = 3000; // 3 seconds in-memory cache TTL for instant sub-millisecond API response
+const CACHE_TTL_MS = 15000; // 15 seconds in-memory cache TTL for instant sub-millisecond API response with low heap overhead
 
 // Global In-Memory Tombstone Sets to prevent read-lag resurrection across polls
 const deletedBookingIds = new Set();
@@ -286,8 +287,10 @@ async function initDatabase() {
   return { engine: activeEngine, connected: isDbConnected };
 }
 
-// Low-Latency Parallel Collection Hydration
+// Low-Latency Parallel Collection Hydration with Re-entrancy Mutex Lock & Memory Ceiling
 async function pullFromRemoteCloud(targetCollection = null) {
+  if (isPulling) return;
+  isPulling = true;
   try {
     if (activeEngine === 'mongodb' && mongoDbInstance) {
       if (!memoryDb) loadLocalDb();
@@ -302,11 +305,20 @@ async function pullFromRemoteCloud(targetCollection = null) {
               memoryDb.settings = rest;
             }
           } else {
-            const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(500).toArray();
+            const docs = await mongoDbInstance.collection(colName).find({}).sort({ createdAt: -1, updatedAt: -1 }).limit(300).toArray();
             if (Array.isArray(docs)) {
               let sanitized = docs.map(({ _id, ...rest }) => rest);
               if (colName === 'bookings') {
                 sanitized = sanitized.filter(b => !deletedBookingIds.has(b.bookingId) && !deletedBookingIds.has(b.id));
+                const remoteIds = new Set(sanitized.map(b => b.bookingId || b.id));
+                const localPending = (memoryDb.bookings || []).filter(b => !remoteIds.has(b.bookingId || b.id) && !deletedBookingIds.has(b.bookingId) && !deletedBookingIds.has(b.id));
+                const combined = [...localPending, ...sanitized];
+                combined.forEach(b => {
+                  if (Array.isArray(b.statusHistory) && b.statusHistory.length > 25) {
+                    b.statusHistory = b.statusHistory.slice(-25);
+                  }
+                });
+                memoryDb.bookings = combined.slice(0, 300);
               } else if (colName === 'leads') {
                 sanitized = sanitized.filter(l => {
                   if (deletedLeadIds.has(l.id) || deletedLeadIds.has(l.leadId)) return false;
@@ -314,8 +326,10 @@ async function pullFromRemoteCloud(targetCollection = null) {
                   if (p && deletedLeadIds.has(p)) return false;
                   return true;
                 });
-              }
-              if (colName === 'fares') {
+                const remoteLeadIds = new Set(sanitized.map(l => l.id || l.cleanPhone));
+                const localPendingLeads = (memoryDb.leads || []).filter(l => !remoteLeadIds.has(l.id || l.cleanPhone) && !deletedLeadIds.has(l.id));
+                memoryDb.leads = [...localPendingLeads, ...sanitized].slice(0, 300);
+              } else if (colName === 'fares') {
                 if (sanitized.length < 90) {
                   let masterFares = null;
                   try {
@@ -348,10 +362,10 @@ async function pullFromRemoteCloud(targetCollection = null) {
                 } else if (sanitized.length > 0) {
                   const remoteBookingIds = new Set(sanitized.map(b => b.bookingId || b.id));
                   const localPending = (memoryDb.tourism_bookings || []).filter(b => !remoteBookingIds.has(b.bookingId || b.id));
-                  memoryDb.tourism_bookings = [...localPending, ...sanitized];
+                  memoryDb.tourism_bookings = [...localPending, ...sanitized].slice(0, 200);
                 }
-              } else {
-                memoryDb[colName] = sanitized;
+              } else if (colName !== 'bookings' && colName !== 'leads') {
+                memoryDb[colName] = sanitized.slice(0, 300);
               }
             }
           }
@@ -371,6 +385,8 @@ async function pullFromRemoteCloud(targetCollection = null) {
     }
   } catch (err) {
     console.warn('[Database Service] Pull warning:', err.message);
+  } finally {
+    isPulling = false;
   }
 }
 

@@ -99,6 +99,11 @@ export interface Booking {
   assignedDriverPhone?: string | null;
   assignedDriverCarNo?: string | null;
   bookingStatus?: string;
+  bookingId?: string;
+  source?: string;
+  bookingSource?: string;
+  channel?: string;
+  isApp?: boolean;
   createdAt: string;
   updatedAt: string;
   cancellationReason?: string;
@@ -139,6 +144,7 @@ export interface DriverProfile {
   rating: number;
   totalTrips: number;
   isDutyOnline: boolean;
+  currentCity?: string;
   currentLat?: number;
   currentLng?: number;
   lastActive: string;

@@ -1842,6 +1842,16 @@ class BookingManager {
       hatchPrice = patnaMatched.hatchback;
       sedanPrice = patnaMatched.sedan;
       suvPrice = patnaMatched.suv;
+    } else if (patnaMatched && this.tripType === 'roundtrip') {
+      if (patnaMatched.twoWay) {
+        hatchPrice = patnaMatched.twoWay.hatchback;
+        sedanPrice = patnaMatched.twoWay.sedan;
+        suvPrice = patnaMatched.twoWay.suv;
+      } else {
+        hatchPrice = Math.round(patnaMatched.hatchback * 1.8);
+        sedanPrice = Math.round(patnaMatched.sedan * 1.8);
+        suvPrice = Math.round(patnaMatched.suv * 1.8);
+      }
     } else {
       hatchPrice = Math.round(this.calculatedDistanceKm * hatchFleet.ratePerKm);
       hatchPrice = Math.max(hatchPrice, 1698);
@@ -1850,9 +1860,9 @@ class BookingManager {
       suvPrice = Math.round(this.calculatedDistanceKm * suvFleet.ratePerKm);
       suvPrice = Math.max(suvPrice, 3398);
       if (this.tripType === 'roundtrip') {
-        hatchPrice = Math.round(hatchPrice * 1.88);
-        sedanPrice = Math.round(sedanPrice * 1.88);
-        suvPrice = Math.round(suvPrice * 1.88);
+        hatchPrice = Math.round(hatchPrice * 1.8);
+        sedanPrice = Math.round(sedanPrice * 1.8);
+        suvPrice = Math.round(suvPrice * 1.8);
       }
     }
 
@@ -2152,15 +2162,31 @@ class BookingManager {
         if (patnaMatched && (!this.tripType || this.tripType === 'oneway')) {
           if (fleet.id === 'hatchback') baseFare = patnaMatched.hatchback;
           else if (fleet.id === 'sedan') baseFare = patnaMatched.sedan;
-          else if (fleet.id === 'sedan_prime') baseFare = Math.round(patnaMatched.sedan * 1.2);
+          else if (fleet.id === 'sedan_prime') baseFare = patnaMatched.execSedan || (patnaMatched.sedan + 250);
           else if (fleet.id === 'suv') baseFare = patnaMatched.suv;
-          else if (fleet.id === 'innova_crysta') baseFare = Math.round(patnaMatched.suv * 1.35);
+          else if (fleet.id === 'innova_crysta') baseFare = patnaMatched.luxSuv || (patnaMatched.suv + 300);
           else baseFare = patnaMatched.sedan;
+        } else if (patnaMatched && this.tripType === 'roundtrip') {
+          if (patnaMatched.twoWay) {
+            if (fleet.id === 'hatchback') baseFare = patnaMatched.twoWay.hatchback;
+            else if (fleet.id === 'sedan') baseFare = patnaMatched.twoWay.sedan;
+            else if (fleet.id === 'sedan_prime') baseFare = patnaMatched.twoWay.execSedan || (patnaMatched.twoWay.sedan + 500);
+            else if (fleet.id === 'suv') baseFare = patnaMatched.twoWay.suv;
+            else if (fleet.id === 'innova_crysta') baseFare = patnaMatched.twoWay.luxSuv || (patnaMatched.twoWay.suv + 600);
+            else baseFare = patnaMatched.twoWay.sedan;
+          } else {
+            const raw = fleet.id === 'hatchback' ? patnaMatched.hatchback
+              : fleet.id === 'sedan' ? patnaMatched.sedan
+              : fleet.id === 'sedan_prime' ? (patnaMatched.execSedan || (patnaMatched.sedan + 250))
+              : fleet.id === 'suv' ? patnaMatched.suv
+              : (patnaMatched.luxSuv || (patnaMatched.suv + 300));
+            baseFare = Math.round(raw * 1.8);
+          }
         } else {
           baseFare = this.calculatedDistanceKm * fleet.ratePerKm;
           baseFare = Math.max(baseFare, fleet.id === 'hatchback' ? 1698 : fleet.id === 'sedan' ? 2198 : 3398);
           if (this.tripType === "roundtrip") {
-            baseFare = (baseFare * 1.88); // 12% discount for roundtrip
+            baseFare = Math.round(baseFare * 1.8);
           }
         }
 
@@ -3890,7 +3916,11 @@ class BookingManager {
         verifiedAt: new Date().toISOString(),
         advancePaid: amountToCharge,
         balanceDue: Math.max(0, netTripFare - amountToCharge),
-        upiUtr: utrVal
+        upiUtr: utrVal,
+        source: "Website",
+        bookingSource: "Website",
+        channel: "Website Portal",
+        isApp: false
       };
 
       // Live Razorpay Checkout flow ONLY if online cards/gateway selected AND configured with live keys

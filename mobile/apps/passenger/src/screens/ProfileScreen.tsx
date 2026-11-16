@@ -12,30 +12,27 @@ import {
   Modal,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { usePassenger } from '../context/PassengerContext';
-import { MobileApiClient } from '../../../../shared/services/api';
 import {
   User,
   Phone,
   MessageCircle,
-  HelpCircle,
   Shield,
   FileText,
   LogOut,
-  Trash2,
   ChevronRight,
   ShieldCheck,
   Headphones,
-  Smartphone,
   Sun,
   Moon,
   Check,
-  Sparkles,
   Edit3,
   X,
-  CheckCircle2,
+  CreditCard,
+  Sliders,
+  RotateCcw,
+  Trash2,
 } from 'lucide-react-native';
 
 const FAQS = [
@@ -47,7 +44,7 @@ const FAQS = [
 
 export const ProfileScreen = ({ navigation }: any) => {
   const { userPhone, isLoggedIn, logout, search, updateSearch } = usePassenger();
-  const { isDark, themeMode, setThemeMode } = useTheme();
+  const { isDark, themeMode, setThemeMode, colors } = useTheme();
 
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -58,31 +55,31 @@ export const ProfileScreen = ({ navigation }: any) => {
   };
 
   const handleWhatsAppSupport = () => {
-    Linking.openURL('https://wa.me/917739406400?text=Hello%20OneWayTaxiBihar%20Support,%20I%20need%20assistance%20with%20my%20booking.');
+    Linking.openURL('https://wa.me/917739406400?text=Namaste%20OneWayTaxiBihar%2C%20I%20need%20assistance%20with%20my%20cab%20booking.');
   };
 
-  const handleSaveProfile = () => {
-    if (editName.trim()) {
-      updateSearch({ passengerName: editName.trim() });
-      setShowEditModal(false);
-      Alert.alert('Profile Updated', 'Passenger name updated successfully.');
+  const handleSaveName = () => {
+    if (!editName.trim()) {
+      Alert.alert('Required', 'Please enter your name.');
+      return;
     }
+    updateSearch({ passengerName: editName.trim() });
+    setShowEditModal(false);
+    Alert.alert('Profile Updated', 'Passenger name updated successfully.');
   };
 
-  const handleDeleteAccount = () => {
+  const handleLogout = () => {
     Alert.alert(
-      'Delete Account & Personal Data',
-      'Under DPDP Act 2023, your profile, ride history, and personal contact details will be permanently scheduled for erasure.',
+      'Sign Out',
+      'Are you sure you want to sign out from your OneWayTaxiBihar session?',
       [
-        { text: 'Keep Account', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Permanently Delete',
+          text: 'Sign Out',
           style: 'destructive',
           onPress: async () => {
-            const res = await MobileApiClient.requestAccountDeletion(userPhone || search.phone || '9876543210', 'User requested via mobile app');
-            Alert.alert('Account Deleted', res.message || 'Data erasure scheduled.');
             await logout();
-            navigation.navigate('Home');
+            Alert.alert('Signed Out', 'You have been signed out successfully.');
           }
         }
       ]
@@ -90,231 +87,448 @@ export const ProfileScreen = ({ navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
-        {/* Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarEmoji}>{isLoggedIn ? '👤' : '🚖'}</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Text style={styles.userName}>
-                {search.passengerName || (isLoggedIn ? 'Verified Passenger' : 'Guest Rider')}
-              </Text>
-              <TouchableOpacity onPress={() => setShowEditModal(true)} style={styles.editBtn}>
-                <Edit3 size={14} color="#D97706" />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.userPhone}>
-              {userPhone || search.phone ? `+91 ${userPhone || search.phone}` : 'Sign in to access verified trips'}
-            </Text>
-            <View style={styles.verifiedRow}>
-              <ShieldCheck size={13} color="#059669" />
-              <Text style={styles.verifiedText}>
-                {isLoggedIn ? 'DPDP Act Verified Passenger' : 'Guest Booking Mode'}
-              </Text>
-            </View>
-          </View>
+
+        {/* Executive Header */}
+        <View style={styles.topHeader}>
+          <Text style={[styles.screenTitle, { color: colors.textPrimary }]}>Account</Text>
+          <Text style={[styles.screenSubtitle, { color: colors.textMuted }]}>Settings, preferences & support</Text>
         </View>
 
-        {/* 24x7 Support Hub Shortcuts */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>24x7 Outstation Support Hub</Text>
-          <View style={styles.supportGrid}>
-            <TouchableOpacity
-              style={styles.supportBtn}
-              onPress={handleCallHelpdesk}
-              activeOpacity={0.85}
-            >
-              <View style={styles.supportIconPhone}>
-                <Phone size={18} color="#0F172A" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.supportBtnTitle}>24x7 Helpline</Text>
-                <Text style={styles.supportBtnVal}>+91 80021 41816</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.supportBtn}
-              onPress={handleWhatsAppSupport}
-              activeOpacity={0.85}
-            >
-              <View style={styles.supportIconWhatsApp}>
-                <MessageCircle size={18} color="#059669" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.supportBtnTitle}>WhatsApp Desk</Text>
-                <Text style={styles.supportBtnVal}>+91 77394 06400</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Display & Theme Appearance */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Display & Theme Appearance</Text>
-          <View style={styles.card}>
-            <TouchableOpacity
+        {/* User Profile Card */}
+        <View
+          style={[
+            styles.profileCard,
+            {
+              backgroundColor: colors.cardSurface,
+              borderColor: colors.cardBorder,
+            }
+          ]}
+        >
+          <View style={styles.profileHeader}>
+            <View
               style={[
-                styles.themeOptionRow,
-                themeMode === 'light' && styles.themeOptionRowActive,
+                styles.avatarCircle,
+                {
+                  backgroundColor: isDark ? '#1E293B' : '#0F172A',
+                  borderColor: isDark ? colors.accentGold : '#0F172A',
+                }
               ]}
-              onPress={() => setThemeMode('light')}
-              activeOpacity={0.7}
             >
-              <View style={styles.themeIconBox}>
-                <Sun size={18} color="#D97706" />
-              </View>
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={styles.themeOptionTitle}>Premium Light Mode (Recommended) ☀️</Text>
-                <Text style={styles.themeOptionSub}>Golden yellow & pure white modern interface</Text>
-              </View>
-              {themeMode === 'light' && <Check size={18} color="#D97706" strokeWidth={2.5} />}
-            </TouchableOpacity>
+              <Text style={[styles.avatarInitial, { color: '#F59E0B' }]}>
+                {search.passengerName ? search.passengerName[0].toUpperCase() : 'O'}
+              </Text>
+            </View>
 
-            <View style={styles.divider} />
-
-            <TouchableOpacity
-              style={[
-                styles.themeOptionRow,
-                themeMode === 'system' && styles.themeOptionRowActive,
-              ]}
-              onPress={() => setThemeMode('system')}
-              activeOpacity={0.7}
-            >
-              <View style={styles.themeIconBox}>
-                <Smartphone size={18} color="#64748B" />
+            <View style={styles.profileInfo}>
+              <View style={styles.nameRow}>
+                <Text style={[styles.userName, { color: colors.textPrimary }]}>
+                  {search.passengerName || (isLoggedIn ? 'Verified Passenger' : 'Guest Traveler')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setEditName(search.passengerName || '');
+                    setShowEditModal(true);
+                  }}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Edit3 size={15} color={colors.accentGold} />
+                </TouchableOpacity>
               </View>
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={styles.themeOptionTitle}>System Appearance (Auto)</Text>
-                <Text style={styles.themeOptionSub}>Matches your phone's OS light/dark setting</Text>
-              </View>
-              {themeMode === 'system' && <Check size={18} color="#D97706" strokeWidth={2.5} />}
-            </TouchableOpacity>
-          </View>
-        </View>
 
-        {/* FAQs */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
-          <View style={styles.card}>
-            {FAQS.map((faq, i) => (
-              <TouchableOpacity
-                key={i}
-                style={[styles.faqRow, i < FAQS.length - 1 && styles.faqRowBorder]}
-                onPress={() => setExpandedFaq(expandedFaq === i ? null : i)}
-                activeOpacity={0.8}
-              >
-                <View style={styles.faqHeader}>
-                  <Text style={styles.faqQ}>{faq.q}</Text>
-                  <ChevronRight
-                    size={16}
-                    color="#94A3B8"
-                    style={{ transform: [{ rotate: expandedFaq === i ? '90deg' : '0deg' }] }}
-                  />
+              <Text style={[styles.userPhone, { color: colors.textMuted }]}>
+                {isLoggedIn ? `+91 ${userPhone}` : 'No phone linked • Tap Sign In'}
+              </Text>
+
+              <View style={styles.badgeRow}>
+                <View
+                  style={[
+                    styles.kycBadge,
+                    {
+                      backgroundColor: isLoggedIn ? colors.brandGreenBg : 'rgba(100, 116, 139, 0.12)',
+                      borderColor: isLoggedIn ? colors.brandGreen : colors.textMuted,
+                    }
+                  ]}
+                >
+                  <ShieldCheck size={11} color={isLoggedIn ? colors.brandGreen : colors.textMuted} />
+                  <Text
+                    style={[
+                      styles.kycBadgeText,
+                      { color: isLoggedIn ? colors.brandGreen : colors.textMuted }
+                    ]}
+                  >
+                    {isLoggedIn ? 'OTP Verified' : 'Guest'}
+                  </Text>
                 </View>
-                {expandedFaq === i && (
-                  <Text style={styles.faqA}>{faq.a}</Text>
-                )}
-              </TouchableOpacity>
-            ))}
+
+                <View
+                  style={[
+                    styles.walletBadge,
+                    {
+                      backgroundColor: isDark ? 'rgba(245, 158, 11, 0.12)' : 'rgba(217, 119, 6, 0.08)',
+                      borderColor: colors.accentGold,
+                    }
+                  ]}
+                >
+                  <CreditCard size={11} color={colors.accentGold} />
+                  <Text style={[styles.walletBadgeText, { color: colors.accentGold }]}>
+                    Zero Return Charge
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
-        </View>
 
-        {/* Legal & Privacy */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Statutory Legal & Security</Text>
-          <View style={styles.card}>
+          {!isLoggedIn ? (
             <TouchableOpacity
-              style={[styles.menuRow, styles.faqRowBorder]}
-              onPress={() => Linking.openURL('https://onewaytaxibihar.com/privacy-policy.html')}
-              activeOpacity={0.7}
-            >
-              <Shield size={18} color="#64748B" />
-              <Text style={styles.menuText}>Privacy Policy (DPDP Act 2023)</Text>
-              <ChevronRight size={18} color="#94A3B8" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.menuRow, styles.faqRowBorder]}
-              onPress={() => Linking.openURL('https://onewaytaxibihar.com/terms-of-service.html')}
-              activeOpacity={0.7}
-            >
-              <FileText size={18} color="#64748B" />
-              <Text style={styles.menuText}>Terms & Conditions of Service</Text>
-              <ChevronRight size={18} color="#94A3B8" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.menuRow}
-              onPress={() => Linking.openURL('https://onewaytaxibihar.com/refund-policy.html')}
-              activeOpacity={0.7}
-            >
-              <FileText size={18} color="#64748B" />
-              <Text style={styles.menuText}>Refund & Zero Cancellation Policy</Text>
-              <ChevronRight size={18} color="#94A3B8" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Account Actions */}
-        <View style={styles.dangerSection}>
-          {isLoggedIn ? (
-            <TouchableOpacity style={styles.logoutBtn} onPress={logout} activeOpacity={0.8}>
-              <LogOut size={16} color="#475569" />
-              <Text style={styles.logoutText}>Sign Out from Device</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.signInBtn}
+              style={[styles.signInCta, { backgroundColor: colors.accentGold }]}
               onPress={() => navigation.navigate('Auth')}
-              activeOpacity={0.88}
+              activeOpacity={0.8}
             >
-              <Text style={styles.signInBtnText}>Sign In with Mobile OTP</Text>
+              <Text style={styles.signInCtaText}>Sign In with Mobile OTP</Text>
             </TouchableOpacity>
-          )}
-
-          <TouchableOpacity style={styles.deleteBtn} onPress={handleDeleteAccount} activeOpacity={0.8}>
-            <Trash2 size={15} color="#DC2626" />
-            <Text style={styles.deleteText}>Delete Account & Data (Right to Erasure)</Text>
-          </TouchableOpacity>
+          ) : null}
         </View>
 
+        {/* 1. Theme Mode Switcher (Uber / Bolt Style) */}
+        <View style={styles.sectionBlock}>
+          <Text style={[styles.sectionHeading, { color: colors.textMuted }]}>APPEARANCE</Text>
+          <View
+            style={[
+              styles.cardGroup,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            <View style={styles.themeRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.rowTitle, { color: colors.textPrimary }]}>Dark Mode</Text>
+                <Text style={[styles.rowSubtitle, { color: colors.textMuted }]}>
+                  {themeMode === 'system'
+                    ? `System Match (${isDark ? 'Dark' : 'Light'})`
+                    : isDark ? 'Enabled (Obsidian Black)' : 'Disabled (Crisp White)'}
+                </Text>
+              </View>
+
+              <View style={[styles.themePillsContainer, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder }]}>
+                {/* Light Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.themePillBtn,
+                    themeMode === 'light' && {
+                      backgroundColor: isDark ? '#334155' : '#FFFFFF',
+                      shadowColor: '#000',
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }
+                  ]}
+                  onPress={() => setThemeMode('light')}
+                  activeOpacity={0.8}
+                >
+                  <Sun size={15} color={themeMode === 'light' ? colors.accentGold : colors.textMuted} />
+                  <Text
+                    style={[
+                      styles.themePillText,
+                      { color: themeMode === 'light' ? colors.textPrimary : colors.textMuted }
+                    ]}
+                  >
+                    Light
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Dark Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.themePillBtn,
+                    themeMode === 'dark' && {
+                      backgroundColor: isDark ? '#334155' : '#FFFFFF',
+                      shadowColor: '#000',
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }
+                  ]}
+                  onPress={() => setThemeMode('dark')}
+                  activeOpacity={0.8}
+                >
+                  <Moon size={15} color={themeMode === 'dark' ? colors.accentGold : colors.textMuted} />
+                  <Text
+                    style={[
+                      styles.themePillText,
+                      { color: themeMode === 'dark' ? colors.textPrimary : colors.textMuted }
+                    ]}
+                  >
+                    Dark
+                  </Text>
+                </TouchableOpacity>
+
+                {/* System Auto Button */}
+                <TouchableOpacity
+                  style={[
+                    styles.themePillBtn,
+                    themeMode === 'system' && {
+                      backgroundColor: isDark ? '#334155' : '#FFFFFF',
+                      shadowColor: '#000',
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }
+                  ]}
+                  onPress={() => setThemeMode('system')}
+                  activeOpacity={0.8}
+                >
+                  <Sliders size={14} color={themeMode === 'system' ? colors.accentGold : colors.textMuted} />
+                  <Text
+                    style={[
+                      styles.themePillText,
+                      { color: themeMode === 'system' ? colors.textPrimary : colors.textMuted }
+                    ]}
+                  >
+                    Auto
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* 2. Quick Support Section */}
+        <View style={styles.sectionBlock}>
+          <Text style={[styles.sectionHeading, { color: colors.textMuted }]}>24×7 SUPPORT HELPDESK</Text>
+          <View
+            style={[
+              styles.cardGroup,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            <TouchableOpacity
+              style={[styles.menuItem, { borderBottomColor: colors.cardBorder }]}
+              onPress={handleCallHelpdesk}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <Phone size={17} color={colors.accentGold} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>Call Patna Operations Desk</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>+91 80021 41816 • Instant Call</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={handleWhatsAppSupport}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <MessageCircle size={17} color={colors.brandGreen} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>WhatsApp Dispatcher</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>+91 77394 06400 • Quick Support</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 3. Statutory Legal Pages */}
+        <View style={styles.sectionBlock}>
+          <Text style={[styles.sectionHeading, { color: colors.textMuted }]}>LEGAL & POLICIES</Text>
+          <View
+            style={[
+              styles.cardGroup,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            <TouchableOpacity
+              style={[styles.menuItem, { borderBottomColor: colors.cardBorder }]}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/privacy-policy')}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <Shield size={17} color={colors.textSecondary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>Privacy Policy</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>DPDP Act 2023 & IT Act 2000 compliant</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.menuItem, { borderBottomColor: colors.cardBorder }]}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/terms-of-service')}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <FileText size={17} color={colors.textSecondary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>Terms of Service</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>Zero return fare booking rules</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.menuItem, { borderBottomColor: colors.cardBorder }]}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/refund-policy')}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <RotateCcw size={17} color={colors.textSecondary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>Refund &amp; Cancellation Policy</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>Zero cancellation fees &amp; 24-48h refund</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => Linking.openURL('https://onewaytaxibihar.com/data-deletion')}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconBox, { backgroundColor: colors.inputBg }]}>
+                <Trash2 size={17} color={colors.danger || '#EF4444'} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuTitle, { color: colors.textPrimary }]}>Right to Erasure (Data Deletion)</Text>
+                <Text style={[styles.menuSubtitle, { color: colors.textMuted }]}>Statutory DPDP Act 2023 Self-Service</Text>
+              </View>
+              <ChevronRight size={17} color={colors.textMuted} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 4. Frequently Asked Questions */}
+        <View style={styles.sectionBlock}>
+          <Text style={[styles.sectionHeading, { color: colors.textMuted }]}>FREQUENTLY ASKED QUESTIONS</Text>
+          <View
+            style={[
+              styles.cardGroup,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
+            {FAQS.map((faq, index) => {
+              const isExpanded = expandedFaq === index;
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.faqItem,
+                    index !== FAQS.length - 1 && { borderBottomColor: colors.cardBorder, borderBottomWidth: 1 }
+                  ]}
+                  onPress={() => setExpandedFaq(isExpanded ? null : index)}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.faqHeader}>
+                    <Text style={[styles.faqQuestion, { color: colors.textPrimary }]}>{faq.q}</Text>
+                    <Text style={[styles.faqToggleIcon, { color: colors.accentGold }]}>{isExpanded ? '−' : '+'}</Text>
+                  </View>
+                  {isExpanded && (
+                    <Text style={[styles.faqAnswer, { color: colors.textSecondary }]}>{faq.a}</Text>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* 5. Sign Out Button */}
+        {isLoggedIn ? (
+          <TouchableOpacity
+            style={[
+              styles.logoutButton,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: isDark ? 'rgba(239, 68, 68, 0.4)' : '#FCA5A5',
+              }
+            ]}
+            onPress={handleLogout}
+            activeOpacity={0.8}
+          >
+            <LogOut size={18} color="#EF4444" />
+            <Text style={styles.logoutButtonText}>Sign Out from Account</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        {/* Footnote */}
+        <View style={styles.footerInfo}>
+          <Text style={[styles.footerText, { color: colors.textMuted }]}>OneWayTaxiBihar • Passenger App v2.4</Text>
+          <Text style={[styles.footerSub, { color: colors.textMuted }]}>Patna • Gaya • Muzaffarpur • Darbhanga • All 38 Districts</Text>
+        </View>
       </ScrollView>
 
-      {/* Edit Profile Modal */}
+      {/* Edit Name Modal */}
       <Modal visible={showEditModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View
+            style={[
+              styles.modalDialog,
+              {
+                backgroundColor: colors.cardSurface,
+                borderColor: colors.cardBorder,
+              }
+            ]}
+          >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Edit Passenger Profile</Text>
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Edit Passenger Name</Text>
               <TouchableOpacity onPress={() => setShowEditModal(false)}>
-                <X size={20} color="#64748B" />
+                <X size={20} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
-            <View style={{ padding: 18, gap: 14 }}>
-              <Text style={styles.modalLabel}>PASSENGER FULL NAME</Text>
-              <TextInput
-                style={styles.modalInput}
-                placeholder="Enter full name"
-                placeholderTextColor="#94A3B8"
-                value={editName}
-                onChangeText={setEditName}
-                autoFocus
-              />
-              <TouchableOpacity style={styles.modalSaveBtn} onPress={handleSaveProfile} activeOpacity={0.88}>
-                <CheckCircle2 size={16} color="#0F172A" />
-                <Text style={styles.modalSaveBtnText}>Save Profile</Text>
+
+            <TextInput
+              style={[
+                styles.modalInput,
+                {
+                  backgroundColor: colors.inputBg,
+                  borderColor: colors.inputBorder,
+                  color: colors.inputText,
+                }
+              ]}
+              value={editName}
+              onChangeText={setEditName}
+              placeholder="Enter full name"
+              placeholderTextColor={colors.inputPlaceholder}
+              autoFocus
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.modalBtnCancel, { borderColor: colors.cardBorder }]}
+                onPress={() => setShowEditModal(false)}
+              >
+                <Text style={[styles.modalBtnCancelText, { color: colors.textPrimary }]}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtnSave, { backgroundColor: colors.accentGold }]}
+                onPress={handleSaveName}
+              >
+                <Text style={styles.modalBtnSaveText}>Save Changes</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 };
@@ -322,319 +536,294 @@ export const ProfileScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 12,
     paddingBottom: 40,
-    gap: 16,
+  },
+  topHeader: {
+    marginBottom: 16,
+  },
+  screenTitle: {
+    fontSize: 26,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+  },
+  screenSubtitle: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginTop: 2,
   },
   profileCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 18,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    padding: 18,
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#F1F5F9',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FEF3C7',
+  avatarCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#FDE68A',
   },
-  avatarEmoji: {
-    fontSize: 26,
+  avatarInitial: {
+    fontSize: 22,
+    fontWeight: '900',
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   userName: {
-    fontSize: 17,
-    fontWeight: '900',
-    color: '#0F172A',
-  },
-  editBtn: {
-    padding: 4,
+    fontSize: 16.5,
+    fontWeight: '800',
   },
   userPhone: {
-    fontSize: 13,
-    color: '#64748B',
+    fontSize: 12.5,
+    fontWeight: '500',
     marginTop: 2,
-    fontWeight: '600',
   },
-  verifiedRow: {
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 6,
+  },
+  kycBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
   },
-  verifiedText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#059669',
+  kycBadgeText: {
+    fontSize: 10.5,
+    fontWeight: '800',
   },
-  section: {
-    gap: 8,
+  walletBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
   },
-  sectionTitle: {
+  walletBadgeText: {
+    fontSize: 10.5,
+    fontWeight: '800',
+  },
+  signInCta: {
+    marginTop: 14,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  signInCtaText: {
+    color: '#000000',
     fontSize: 14,
-    fontWeight: '900',
-    color: '#0F172A',
+    fontWeight: '800',
+  },
+  sectionBlock: {
+    marginBottom: 20,
+  },
+  sectionHeading: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    marginBottom: 8,
     marginLeft: 4,
   },
-  supportGrid: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  supportBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    padding: 14,
+  cardGroup: {
     borderRadius: 14,
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  supportIconPhone: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  supportIconWhatsApp: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: 'rgba(5, 150, 105, 0.12)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  supportBtnTitle: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#64748B',
-  },
-  supportBtnVal: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: '#0F172A',
-    marginTop: 2,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
     overflow: 'hidden',
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 6,
-    elevation: 2,
   },
-  themeOptionRow: {
+  themeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 14,
+    gap: 12,
   },
-  themeOptionRowActive: {
-    backgroundColor: '#FFFBEB',
+  rowTitle: {
+    fontSize: 14.5,
+    fontWeight: '700',
   },
-  themeIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F1F5F9',
+  rowSubtitle: {
+    fontSize: 11.5,
+    fontWeight: '500',
+    marginTop: 2,
+  },
+  themePillsContainer: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 1,
+  },
+  themePillBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  themePillText: {
+    fontSize: 11.5,
+    fontWeight: '700',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    gap: 12,
+    borderBottomWidth: 1,
+  },
+  menuIconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  themeOptionTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#0F172A',
+  menuTitle: {
+    fontSize: 14,
+    fontWeight: '700',
   },
-  themeOptionSub: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
+  menuSubtitle: {
+    fontSize: 11.5,
+    fontWeight: '500',
+    marginTop: 1,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#F1F5F9',
-  },
-  faqRow: {
+  faqItem: {
     padding: 14,
-  },
-  faqRowBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
   },
   faqHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  faqQ: {
-    fontSize: 13,
+  faqQuestion: {
+    fontSize: 13.5,
     fontWeight: '700',
-    color: '#0F172A',
     flex: 1,
-    paddingRight: 8,
+    paddingRight: 10,
   },
-  faqA: {
-    fontSize: 12,
+  faqToggleIcon: {
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  faqAnswer: {
+    fontSize: 12.5,
+    fontWeight: '500',
     lineHeight: 18,
-    color: '#475569',
     marginTop: 8,
   },
-  menuRow: {
+  logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    gap: 12,
-  },
-  menuText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#334155',
-    flex: 1,
-  },
-  dangerSection: {
-    gap: 10,
-    marginTop: 4,
-  },
-  signInBtn: {
-    backgroundColor: '#F59E0B',
-    height: 48,
-    borderRadius: 14,
     justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#EAB308',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    gap: 8,
+    paddingVertical: 13,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 24,
   },
-  signInBtnText: {
-    color: '#0F172A',
+  logoutButtonText: {
+    color: '#EF4444',
     fontSize: 14,
     fontWeight: '800',
   },
-  logoutBtn: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  footerInfo: {
     alignItems: 'center',
-    height: 46,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-    backgroundColor: '#FFFFFF',
-    gap: 8,
+    gap: 3,
+    paddingBottom: 10,
   },
-  logoutText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  deleteBtn: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(220, 38, 38, 0.25)',
-    backgroundColor: 'rgba(239, 68, 68, 0.04)',
-    gap: 8,
-  },
-  deleteText: {
+  footerText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#DC2626',
+    letterSpacing: 0.5,
+  },
+  footerSub: {
+    fontSize: 10,
+    fontWeight: '500',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.6)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
-  modalCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+  modalDialog: {
     width: '100%',
+    maxWidth: 360,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
+    padding: 18,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 18,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    marginBottom: 14,
   },
   modalTitle: {
     fontSize: 16,
-    fontWeight: '900',
-    color: '#0F172A',
-  },
-  modalLabel: {
-    fontSize: 10,
     fontWeight: '800',
-    color: '#64748B',
-    letterSpacing: 0.5,
   },
   modalInput: {
-    height: 48,
-    borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#E2E8F0',
-    paddingHorizontal: 14,
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#0F172A',
-    backgroundColor: '#F8FAFC',
-  },
-  modalSaveBtn: {
-    backgroundColor: '#F59E0B',
-    height: 46,
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 6,
-  },
-  modalSaveBtnText: {
-    color: '#0F172A',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     fontSize: 14,
+    marginBottom: 16,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  modalBtnCancel: {
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  modalBtnCancelText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  modalBtnSave: {
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 8,
+  },
+  modalBtnSaveText: {
+    color: '#000000',
+    fontSize: 13,
     fontWeight: '800',
   },
 });

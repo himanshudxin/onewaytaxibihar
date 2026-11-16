@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
   <meta charset="UTF-8">
@@ -192,8 +192,8 @@
     (function() {
       try {
         const savedTheme = localStorage.getItem('owc_theme_preference');
-        // Default to dark mode on initial visit; respect saved preference if client changed it
-        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
+        // Default to light mode on initial visit; respect saved preference if client changed it
+        const activeTheme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'light';
         document.documentElement.setAttribute('data-theme', activeTheme);
         document.documentElement.setAttribute('data-theme-mode', activeTheme);
       } catch (e) {
@@ -208,14 +208,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800&display=swap"
     rel="stylesheet">
 
-  <!-- Leaflet CSS for Interactive Map (Non-blocking preload) -->
-  <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>
+  <!-- MapLibre GL CSS for Authentic 3D Interactive Map -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.6.2/maplibre-gl.css" />
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261023_v40_navbar">
-  <link rel="stylesheet" href="/css/components.css?v=20261023_v40_navbar">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261023_v40_navbar">
+  <link rel="stylesheet" href="/css/style.css?v=20261116_v43_clean_header">
+  <link rel="stylesheet" href="/css/components.css?v=20261116_v43_clean_header">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261116_v43_clean_header">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -224,41 +223,8 @@
 
 <body>
 
-  <!-- Sticky Navbar Header -->
+  <!-- Sticky Navbar Header - Single Clean Unified Horizontal Bar -->
   <header class="navbar">
-    <!-- Top Executive Dispatch & Call Bar (Collapsible) -->
-    <div class="header-top-bar" id="header-top-bar">
-      <div class="container header-top-inner">
-        <div class="top-bar-left-status">
-          <span class="top-status-live-dot"></span>
-          <span class="top-status-text">Bihar State-Wide 24×7 Dispatch Desk • All 38 Districts • Zero Dead Mileage</span>
-        </div>
-        <div class="header-top-actions">
-          <a href="tel:+918002141816" class="top-help-link" id="top-help-link" title="Call 24x7 Priority Desk: +91 80021 41816" aria-label="Call 24x7 Priority Desk: +91 80021 41816">
-            <span class="top-phone-badge" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="lucide-phone-icon">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-            </span>
-            <span class="top-phone-label">24×7 Hotline</span>
-            <span class="top-phone-divider" aria-hidden="true"></span>
-            <span class="top-phone-number">+91 80021 41816</span>
-            <span class="top-phone-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </span>
-          </a>
-          <button type="button" class="call-bar-collapse-btn" id="call-bar-collapse-btn" onclick="window.toggleCallBar(true)" title="Hide top bar" aria-label="Hide top bar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
     <div class="container nav-content">
       <a href="#" class="brand-wrapper" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
         <div class="brand-badge-icon" aria-label="OneWayTaxiBihar Brand Emblem">
@@ -269,9 +235,12 @@
         </div>
       </a>
 
-      <!-- Desktop Nav Links -->
+      <!-- Desktop Nav Links Capsule -->
       <ul class="nav-links" role="menubar">
-        <li><a href="/app-download.html" style="color:#34D399; font-weight:800;" role="menuitem">📲 Mobile Apps</a></li>
+        <li><a href="/app-download.html" class="nav-link-apps" role="menuitem" title="Download iOS & Android Apps">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right: 2px;"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          <span>Mobile Apps</span>
+        </a></li>
         <li><a href="javascript:void(0)" onclick="window.openServicesModal()" role="menuitem">Services</a></li>
         <li><a href="/fare-chart.html" role="menuitem">Fare Chart</a></li>
         <li><a href="javascript:void(0)" onclick="window.openCorporateModal()" role="menuitem">Corporate</a></li>
@@ -279,37 +248,23 @@
         <li><a href="javascript:void(0)" onclick="window.openInvoiceModal()" title="GST Tax Invoice &amp; Receipts" role="menuitem">Tax Invoice</a></li>
       </ul>
 
-      <!-- Nav Actions -->
+      <!-- Nav Actions (All in the same horizontal bar) -->
       <div class="nav-actions">
-        <!-- Quick Call Pill (Appears when top Call bar is collapsed) -->
-        <a href="tel:+918002141816" class="navbar-call-mini-pill" id="navbar-call-mini-pill" title="Call">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          <span>Call</span>
-        </a>
-
-        <!-- Install App Button (PWA) -->
-        <button type="button" class="btn-nav-outline btn-nav-install" id="btn-pwa-install" style="display: none; background: rgba(5, 150, 105, 0.1); border-color: #059669; color: #10b981; font-weight: 750;" title="Install OneWayTaxiBihar App on your phone">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Install App</span>
-        </button>
-
         <!-- Drive With Us Partner Pill -->
-        <a href="driver.html" class="btn-nav-partner" title="Driver Partner Desk & Registration">
+        <a href="driver.html" class="btn-nav-partner" title="Driver Partner Desk &amp; Registration">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           <span>Drive With Us</span>
         </a>
-
-
 
         <!-- Auth Button / Profile Slot -->
         <div id="nav-auth-slot">
           <button type="button" class="btn-nav-outline btn-nav-auth" onclick="window.openAuthModal()" title="Login with OTP">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Login with OTP</span>
+            <span>Login</span>
           </button>
         </div>
 
-        <!-- Theme Toggle Switch (Desktop) -->
+        <!-- Theme Toggle Switch -->
         <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Dark / Light Theme" title="Toggle Light / Dark Mode">
           <span class="theme-switch-track">
             <span class="theme-switch-thumb">
@@ -320,10 +275,8 @@
           </span>
         </button>
 
-        <!-- Mobile Direct WhatsApp Pill -->
-        <a href="https://wa.me/917739406400?text=Hi%20OneWayTaxiBihar,%20I%20need%20a%20cab" target="_blank" rel="noopener noreferrer" class="mobile-nav-wa-pill" title="WhatsApp">
-          WhatsApp
-        </a>
+        <!-- Mobile Direct Call Pill (Visible on small screens) -->
+        
 
         <!-- Mobile Hamburger Trigger -->
         <button type="button" class="hamburger-btn" id="btn-hamburger" onclick="window.toggleMobileDrawer()" aria-label="Toggle Menu">
@@ -498,7 +451,7 @@
 
         <!-- Emergency Incident / Booking Pause Banner Container -->
         <div id="emergency-pause-container" style="display:none;" role="alert" aria-live="assertive"></div>
-
+        <!-- Prestigious National Identity Badge & Main Hero Headline AT THE TOP -->
         <!-- Main Booking Widget Card -->
         <div class="booking-widget-card voyago-booking-card">
           
@@ -538,7 +491,7 @@
                 <span class="route-point-marker pickup-marker" title="Pickup Point"></span>
                 <div class="input-content">
                   <label id="lbl-pickup" for="input-pickup">PICKUP LOCATION</label>
-                  <input type="text" id="input-pickup" autocomplete="off" placeholder="Enter pickup city or airport" value="Patna (पटना), Bihar">
+                  <input type="text" id="input-pickup" autocomplete="off" placeholder="Enter pickup city or airport" value="Patna, Bihar">
                 </div>
                 <div class="input-actions-cluster">
                   <button type="button" id="btn-clear-pickup" class="booking-clear-btn" title="Clear Pickup" aria-label="Clear pickup">✕</button>
@@ -570,7 +523,7 @@
                 <span class="route-point-marker drop-marker" title="Destination Point"></span>
                 <div class="input-content">
                   <label id="lbl-drop" for="input-drop">DROP LOCATION</label>
-                  <input type="text" id="input-drop" autocomplete="off" placeholder="Enter destination city or airport" value="Gaya (Bodh Gaya) (गया), Bihar">
+                  <input type="text" id="input-drop" autocomplete="off" placeholder="Enter destination city or airport" value="Gaya (Bodh Gaya), Bihar">
                 </div>
                 <div class="input-actions-cluster">
                   <button type="button" id="btn-clear-drop" class="booking-clear-btn" title="Clear Drop" aria-label="Clear drop">✕</button>
@@ -713,6 +666,16 @@
 
 
           <!-- Voyago-Style Vehicle Selection Grid -->
+          <!-- "Return Fare Is Not Fair — Pay Only For What You Travel" Value Pill -->
+          <div class="return-fare-advert-strip" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 30px; height: 30px; border-radius: 50%; background: rgba(16, 185, 129, 0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #10B981;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size: 12.5px; font-weight: 800; color: #10B981; letter-spacing: -0.2px;">Return Fare Is Not Fair!</div>
+              <div style="font-size: 11px; color: var(--owc-text-muted, #94a3b8); font-weight: 600;">Pay only for what you travel. Never pay double for an empty return cab.</div>
+            </div>
+          </div>
           <div class="voyago-vehicle-header">
             <span class="voyago-vehicle-title">SELECT VEHICLE CATEGORY</span>
             <span class="voyago-vehicle-badge">✓ Guaranteed AC</span>
@@ -721,19 +684,19 @@
             <div class="voyago-vehicle-card" data-fleet="sedan" onclick="window.selectVoyagoVehicle('sedan', this)">
               <img src="/images/voyago/car-sedan.jpg" alt="Sedan Dzire" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Sedan</div>
-              <div class="voyago-vehicle-rate">₹22/km</div>
+              <div class="voyago-vehicle-rate" style="color: #10B981; font-weight: 800;">No Return Fare</div>
               <div class="voyago-vehicle-seats">4 Seats • AC</div>
             </div>
             <div class="voyago-vehicle-card selected" data-fleet="ertiga" onclick="window.selectVoyagoVehicle('ertiga', this)">
               <img src="/images/voyago/car-ertiga.jpg" alt="Ertiga SUV" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Ertiga</div>
-              <div class="voyago-vehicle-rate">₹27/km</div>
+              <div class="voyago-vehicle-rate" style="color: #10B981; font-weight: 800;">No Return Fare</div>
               <div class="voyago-vehicle-seats">6 Seats • Dual AC</div>
             </div>
             <div class="voyago-vehicle-card" data-fleet="suv" onclick="window.selectVoyagoVehicle('suv', this)">
               <img src="/images/voyago/car-suv.jpg" alt="Scorpio / Innova" class="voyago-vehicle-img">
               <div class="voyago-vehicle-name">Scorpio</div>
-              <div class="voyago-vehicle-rate">₹34/km</div>
+              <div class="voyago-vehicle-rate" style="color: #10B981; font-weight: 800;">No Return Fare</div>
               <div class="voyago-vehicle-seats">7 Seats • Heavy SUV</div>
             </div>
           </div>
@@ -815,80 +778,41 @@
               <span>Zero Cancellation</span>
             </div>
           </div>
-
-          <!-- BELOW CHECK FARE OPTION: Built in Bihar for BHARAT (Prestigious National Identity Badge) -->
-          <div class="hero-center-header below-check-fare">
-            <div class="hero-pride-badge-wrap">
-              <div class="hero-pride-monumental-badge" title="Built with pride in Bihar, serving all of Bharat">
-                <span class="pride-tricolor-accent"></span>
-                <span class="pride-text-prefix">Built in</span>
-                <span class="pride-bihar-hindi">बिहार</span>
-                <span class="pride-emblem-icon">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </span>
-                <span class="pride-text-mid">for</span>
-                <span class="pride-bharat-bold">BHARAT</span>
-              </div>
-            </div>
-
-            <h1 class="hero-main-title">Bihar's Dedicated &amp; Trusted One-Way Cab Service</h1>
-
-            <!-- Executive Styled Value Proposition Tags -->
-            <div class="hero-value-props">
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Honest Transparent Pricing</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Pay Only For Distance Traveled</span>
-              </div>
-              <span class="prop-dot">•</span>
-              <div class="hero-prop-item">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Dedicated 24×7 State-Wide Support</span>
-              </div>
-            </div>
-          </div>
-
-
-
-          <!-- "Return Fare, Not Fair" Box -->
-          <div class="return-fare-banner">
-            <p class="rf-main-text">Pay only for the distance you travel across Bihar, No return charges.</p>
-            <p class="rf-bold-highlight">Return Fare, Not Fair</p>
-          </div>
-
         </div>
 
-        <!-- Executive Journey Header Card ("Book Your Next Journey") - Positioned after Check Fare & Return Fare Box -->
-        <div class="voyago-journey-card" id="voyago-journey-card">
-          <div class="vjc-content">
-            <div class="vjc-brand-row">
-              <div class="vjc-logo-badge" aria-label="OneWayTaxiBihar Emblem">
-                <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="42" height="42" class="vjc-logo-img">
-              </div>
-              <div class="vjc-brand-text">
-                <div class="vjc-brand-title">OneWay<span class="vjc-brand-highlight">TaxiBihar</span></div>
-                <div class="vjc-brand-subtitle">ZERO DEAD MILEAGE • ALL 38 DISTRICTS</div>
-              </div>
+        
+
+        <div class="hero-center-header below-booking-window">
+          <div class="hero-pride-badge-wrap">
+            <div class="hero-pride-monumental-badge" title="Built with pride in Bihar, serving all of Bharat">
+              <span class="pride-tricolor-accent"></span>
+              <span class="pride-text-prefix">Built in</span>
+              <span class="pride-bihar-hindi">Bihar</span>
+              <span class="pride-emblem-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              <span class="pride-text-mid">for</span>
+              <span class="pride-bharat-bold">BHARAT</span>
             </div>
+          </div>
 
-            <h2 class="vjc-main-title">Book Your Next Journey</h2>
+          <h1 class="hero-main-title">Bihar's Dedicated &amp; Trusted One-Way Cab Service</h1>
 
-            <div class="vjc-pills-row" role="tablist" aria-label="Journey Categories">
-              <div class="vjc-pill-pair">
-                <button type="button" class="vjc-pill-link active" data-trip="oneway" onclick="window.selectVoyagoTripType('oneway', this)" title="Book One-Way Cab">One Way</button>
-                <span class="vjc-pill-separator" aria-hidden="true">•</span>
-                <button type="button" class="vjc-pill-link" data-trip="roundtrip" onclick="window.selectVoyagoTripType('roundtrip', this)" title="Book Round-Trip Cab">Round Trip</button>
-              </div>
-              <span class="vjc-pill-separator vjc-mid-sep" aria-hidden="true">•</span>
-              <div class="vjc-pill-pair">
-                <button type="button" class="vjc-pill-link" data-trip="airport" onclick="window.selectVoyagoTripType('airport', this)" title="Book Airport Taxi">Airport Taxi</button>
-                <span class="vjc-pill-separator" aria-hidden="true">•</span>
-                <button type="button" class="vjc-pill-link" data-trip="tourism" onclick="window.openTourismModal ? window.openTourismModal() : null" title="Explore Bihar Tour Packages">Bihar Tour</button>
-              </div>
+          <!-- Executive Styled Value Proposition Tags -->
+          <div class="hero-value-props">
+            <div class="hero-prop-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Honest Transparent Pricing</span>
+            </div>
+            <span class="prop-dot">•</span>
+            <div class="hero-prop-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Pay Only For Distance Traveled</span>
+            </div>
+            <span class="prop-dot">•</span>
+            <div class="hero-prop-item">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="prop-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Dedicated 24×7 State-Wide Support</span>
             </div>
           </div>
         </div>
@@ -1100,7 +1024,7 @@
     <!-- ======================================================================
          2. CAB FLEET & FARE SELECTION SECTION (MOVED TO DEDICATED CABS.HTML)
          ====================================================================== -->
-    <section class="app-section fare-section-closed" id="cab-selection-section" style="display: none !important;">
+    <section class="app-section fare-section-closed" id="cab-selection-section">
       <div class="container">
         
         <!-- 7-Step Multi-Step Booking Wizard Stepper Bar -->
@@ -1149,7 +1073,7 @@
     <!-- ======================================================================
          3. VERIFIED HIGHWAY ROUTE PREVIEW
          ====================================================================== -->
-    <section class="app-section alt-bg fare-section-closed" id="route-map-section" style="display: none !important;">
+    <section class="app-section alt-bg fare-section-closed" id="route-map-section">
       <div class="container">
         
         <div class="route-overview-card">
@@ -2739,19 +2663,23 @@
       }
     })();
   </script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+  <!-- Map Configuration Gateway (Supports Google Maps Key + Free Edge CDN) -->
+  <script src="/js/map-config.js?v=20261116_v43_clean_header"></script>
+  <!-- MapLibre GL JS for 3D Edge CDN Rendering (Sub-40ms India Edge CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.6.2/maplibre-gl.js" defer></script>
+  <!-- Authentic Bihar Highway Corridors Database -->
+  <script src="/js/bihar-road-corridors.js" defer></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261023_v40_navbar"></script>
-  <script src="/js/data.js?v=20261023_v40_navbar"></script>
-  <script src="/js/calculator.js?v=20261023_v40_navbar"></script>
-  <script src="/js/map.js?v=20261023_v40_navbar"></script>
-  <script src="/js/api.js?v=20261023_v40_navbar"></script>
-  <script src="/js/datetime-picker.js?v=20261023_v40_navbar"></script>
-  <script src="/js/firebase-otp.js?v=20261023_v40_navbar"></script>
-  <script src="/js/booking.js?v=20261023_v40_navbar"></script>
-  <script src="/js/app.js?v=20261023_v40_navbar"></script>
+  <script src="/js/brand-logo.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/data.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/calculator.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/map.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/api.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/datetime-picker.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/firebase-otp.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/booking.js?v=20261116_v43_clean_header"></script>
+  <script src="/js/app.js?v=20261116_v43_clean_header"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
@@ -3013,8 +2941,8 @@
     window.quickSelectRoute = function(fromCity, toCity, approxFare) {
       const pInput = document.getElementById('input-pickup');
       const dInput = document.getElementById('input-drop');
-      if (pInput) pInput.value = fromCity + (fromCity.includes('Patna') ? ' (पटना), Bihar' : ', Bihar');
-      if (dInput) dInput.value = toCity + (toCity.includes('Gaya') ? ' (गया), Bihar' : ', Bihar');
+      if (pInput) pInput.value = fromCity + ', Bihar';
+      if (dInput) dInput.value = toCity + ', Bihar';
 
       const hero = document.getElementById('booking-hero');
       if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3035,7 +2963,7 @@
     };
 </script>
 <script src="/js/analytics.js"></script>
-<script src="/js/cookie-consent.js?v=20261023_v40_navbar"></script>
+<script src="/js/cookie-consent.js?v=20261116_v43_clean_header"></script>
 
   <!-- Floating WhatsApp Quick Booking Desk (Safe Non-Intrusive Widget) -->
   <style>

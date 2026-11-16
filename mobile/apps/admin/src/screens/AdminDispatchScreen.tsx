@@ -21,6 +21,7 @@ import {
 } from 'lucide-react-native';
 import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
+import { UberMapView } from '../../../../shared/components/UberMapView';
 import { formatCurrency } from '../../../../shared/utils/formatters';
 import { useAdmin } from '../context/AdminContext';
 
@@ -42,6 +43,9 @@ export const AdminDispatchScreen: React.FC<{ navigation: any }> = () => {
     return d.isVerified || (d.status || '').toLowerCase() === 'approved';
   });
 
+  // Selected booking for live highway route inspection
+  const selectedBooking = unassignedBookings.find(x => (x.bookingId || x.id) === selectedBookingId);
+
   const handleExecuteDispatch = async () => {
     if (!selectedBookingId || !selectedDriverId) {
       Alert.alert('Selection Required', 'Please select one pending booking and one driver partner to dispatch.');
@@ -57,7 +61,7 @@ export const AdminDispatchScreen: React.FC<{ navigation: any }> = () => {
       if (ok) {
         Alert.alert(
           'Dispatch Dispatched!',
-          `Booking ${selectedBookingId} (${b?.originCity || 'Patna'} ➔ ${b?.destCity || 'Bihar'}) successfully allotted to Chauffeur ${d?.name || 'Driver'}. Push notification sent!`
+          `Booking ${selectedBookingId} (${b?.originCity || 'Patna'} → ${b?.destCity || 'Bihar'}) successfully allotted to Chauffeur ${d?.name || 'Driver'}. Push notification sent!`
         );
         setSelectedBookingId(null);
         setSelectedDriverId(null);
@@ -107,7 +111,7 @@ export const AdminDispatchScreen: React.FC<{ navigation: any }> = () => {
           unassignedBookings.map(b => {
             const bId = b.bookingId || b.id;
             const isSelected = selectedBookingId === bId;
-            const routeStr = `${b.originCity || b.pickupCity || 'Patna'} ➔ ${b.destCity || b.dropCity || 'Bihar'}`;
+            const routeStr = `${b.originCity || b.pickupCity || 'Patna'} → ${b.destCity || b.dropCity || 'Bihar'}`;
             const fare = Number(b.totalFare || b.price || b.estimatedFare) || 0;
 
             return (
@@ -144,6 +148,33 @@ export const AdminDispatchScreen: React.FC<{ navigation: any }> = () => {
               </TouchableOpacity>
             );
           })
+        )}
+
+        {/* Selected Ride Corridor Preview */}
+        {selectedBooking && (
+          <View style={[styles.routePreviewCard, { backgroundColor: colors.surface, borderColor: colors.primary }]}>
+            <View style={styles.routePreviewHeader}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
+                <Navigation size={14} color={colors.primary} />
+                <Text style={[styles.routePreviewTitle, { color: colors.text }]} numberOfLines={1}>
+                  ROUTE CORRIDOR: {selectedBooking.originCity || selectedBooking.pickupCity || 'Patna'} → {selectedBooking.destCity || selectedBooking.dropCity || 'Bihar'}
+                </Text>
+              </View>
+              <View style={[styles.farePreviewBadge, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
+                <Text style={{ color: colors.primary, fontSize: 11, fontWeight: '800' }}>
+                  {formatCurrency(Number(selectedBooking.totalFare || selectedBooking.price || selectedBooking.estimatedFare) || 0)}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.mapPreviewWrapper}>
+              <UberMapView
+                originCity={selectedBooking.originCity || selectedBooking.pickupCity || 'Patna'}
+                destinationCity={selectedBooking.destCity || selectedBooking.dropCity || 'Gaya'}
+                height={160}
+                interactive={false}
+              />
+            </View>
+          </View>
         )}
 
         {/* Step 2: Select Driver */}
@@ -375,5 +406,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '900',
     letterSpacing: 0.8
+  },
+  routePreviewCard: {
+    borderRadius: 14,
+    borderWidth: 1.5,
+    overflow: 'hidden',
+    marginTop: 4,
+    marginBottom: 12
+  },
+  routePreviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10
+  },
+  routePreviewTitle: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.5
+  },
+  farePreviewBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  mapPreviewWrapper: {
+    width: '100%',
+    height: 160,
+    overflow: 'hidden'
   }
 });

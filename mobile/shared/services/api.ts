@@ -3,10 +3,13 @@
  * Connects both Passenger and Driver mobile apps to the enterprise backend
  */
 
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import { StorageService } from './storage';
 import { FleetSyncService } from './fleetSync';
 import { GMapTollService } from './gmapTollService';
 import { generateIdempotencyKey } from '../utils/formatters';
+import { MASTER_PATNA_FARES } from '../data/patnaFares';
 import {
   Booking,
   FareBreakdown,
@@ -16,59 +19,157 @@ import {
   DriverEarningsLedger
 } from '../types';
 
-const API_BASE_URL = 'https://onewaytaxibihar.com/api';
+export function resolveApiBaseUrl(): string {
+  // 1. Explicit environment variable override
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL.replace(/\/+$/, '');
+  }
+
+  // 2. Web browser platform (desktop preview or mobile web)
+  if (Platform.OS === 'web') {
+    if (typeof window !== 'undefined' && window.location) {
+      const hostname = window.location.hostname || 'localhost';
+      const port = window.location.port;
+      if (port === '8080') {
+        return `${window.location.origin}/api`;
+      }
+      if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.')) {
+        return `http://${hostname}:8080/api`;
+      }
+      return `${window.location.origin}/api`;
+    }
+  }
+
+  // 3. Native app running via Expo Go or local dev build
+  const hostUri = Constants.expoConfig?.hostUri ||
+    (Constants as any)?.manifest2?.extra?.expoClient?.hostUri ||
+    (Constants as any)?.manifest?.debuggerHost ||
+    '';
+
+  if (hostUri) {
+    const hostIp = hostUri.split(':')[0];
+    if (hostIp && hostIp !== 'localhost' && hostIp !== '127.0.0.1') {
+      return `http://${hostIp}:8080/api`;
+    }
+  }
+
+  // 4. In development mode (__DEV__), prefer local LAN server
+  if (typeof __DEV__ !== 'undefined' && __DEV__) {
+    return 'http://192.168.0.179:8080/api';
+  }
+
+  // 5. Standalone production APK
+  return 'https://onewaytaxibihar.com/api';
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 class ApiClient {
   private baseUrl: string = API_BASE_URL;
+  private inFlightMap: Map<string, Promise<any>> = new Map();
+
+  public getBaseUrl(): string {
+    return this.baseUrl;
+  }
+
+  public setBaseUrl(url: string): void {
+    this.baseUrl = url.replace(/\/+$/, '');
+  }
 
   private async getAuthToken(): Promise<string | null> {
     return StorageService.getItem('otb_auth_token');
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const token = await this.getAuthToken();
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'User-Agent': 'OneWayTaxiBihar-MobileApp/2.0',
-      ...(options.headers as Record<string, string> || {})
-    };
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    // Request deduplication for identical concurrent in-flight calls
+    const method = (options.method || 'GET').toUpperCase();
+    const reqKey = `${method}:${endpoint}:${typeof options.body === 'string' ? options.body : ''}`;
+    if (this.inFlightMap.has(reqKey)) {
+      return this.inFlightMap.get(reqKey)!;
     }
 
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+    const execPromise = (async (): Promise<T> => {
+      const token = await this.getAuthToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'User-Agent': 'OneWayTaxiBihar-MobileApp/2.0',
+        ...(options.headers as Record<string, string> || {})
+      };
 
-    const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    const timeoutId = controller ? setTimeout(() => controller.abort(), 18000) : null;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers,
-        signal: options.signal || (controller ? controller.signal : undefined)
-      });
-      if (timeoutId) clearTimeout(timeoutId);
+      // Try primary baseUrl first, then try fallback candidate URLs if connection fails
+      const candidateBases = [
+        this.baseUrl,
+        'http://192.168.0.179:8080/api',
+        'http://localhost:8080/api',
+        'https://onewaytaxibihar.com/api'
+      ].filter((u, idx, arr) => arr.indexOf(u) === idx);
 
-      const contentType = response.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || data.error || `HTTP ${response.status}`);
+      let lastError: any = null;
+
+      for (let i = 0; i < candidateBases.length; i++) {
+        const base = candidateBases[i];
+        const url = endpoint.startsWith('http') ? endpoint : `${base}${endpoint}`;
+
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const timeoutMs = i === 0 ? 4500 : 2500;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers,
+            signal: options.signal || (controller ? controller.signal : undefined)
+          });
+          if (timeoutId) clearTimeout(timeoutId);
+
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(data.message || data.error || `HTTP ${response.status}`);
+            }
+            if (this.baseUrl !== base && !endpoint.startsWith('http')) {
+              this.baseUrl = base;
+            }
+            return data;
+          }
+
+          const text = await response.text();
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${text}`);
+          }
+          if (this.baseUrl !== base && !endpoint.startsWith('http')) {
+            this.baseUrl = base;
+          }
+          return { success: true, text } as any;
+        } catch (err: any) {
+          if (timeoutId) clearTimeout(timeoutId);
+          lastError = err;
+          if (err.message && (err.message.includes('HTTP 4') || err.message.includes('already exists') || err.message.includes('required'))) {
+            throw err;
+          }
+          if (endpoint.startsWith('http')) {
+            throw err;
+          }
         }
-        return data;
       }
 
-      const text = await response.text();
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${text}`);
+      if (typeof __DEV__ !== 'undefined' && __DEV__) {
+        console.warn(`[API] All candidate servers failed for ${endpoint}:`, lastError?.message);
       }
-      return { success: true, text } as any;
-    } catch (err: any) {
-      if (timeoutId) clearTimeout(timeoutId);
-      console.warn(`[API] Error on ${endpoint}:`, err.message);
-      throw err;
+      throw lastError || new Error(`Network failure connecting to ${endpoint}`);
+    })();
+
+    this.inFlightMap.set(reqKey, execPromise);
+    try {
+      return await execPromise;
+    } finally {
+      this.inFlightMap.delete(reqKey);
     }
   }
 
@@ -128,17 +229,16 @@ class ApiClient {
   async getCorridorFares(): Promise<any[]> {
     try {
       const res = await this.request<any>('/fares');
-      return res.fares || (Array.isArray(res) ? res : []);
+      if (res && res.success && Array.isArray(res.fares) && res.fares.length > 0) {
+        return res.fares;
+      }
+      if (Array.isArray(res) && res.length > 0) {
+        return res;
+      }
+      return MASTER_PATNA_FARES;
     } catch (e) {
-      // Offline fallback corridor fares
-      return [
-        { destination: 'Gaya', destCity: 'Gaya', distanceKm: 104, hatchback: 1698, sedan: 2198, suv: 3398 },
-        { destination: 'Muzaffarpur', destCity: 'Muzaffarpur', distanceKm: 75, hatchback: 1398, sedan: 1898, suv: 2998 },
-        { destination: 'Darbhanga', destCity: 'Darbhanga', distanceKm: 140, hatchback: 2198, sedan: 2698, suv: 4198 },
-        { destination: 'Bhagalpur', destCity: 'Bhagalpur', distanceKm: 235, hatchback: 3398, sedan: 4198, suv: 6298 },
-        { destination: 'Begusarai', destCity: 'Begusarai', distanceKm: 125, hatchback: 1998, sedan: 2498, suv: 3798 },
-        { destination: 'Varanasi', destCity: 'Varanasi', distanceKm: 255, hatchback: 3998, sedan: 4898, suv: 7298 }
-      ];
+      // Authoritative master corridor fares across all 108 Bihar routes
+      return MASTER_PATNA_FARES;
     }
   }
 
@@ -196,107 +296,104 @@ class ApiClient {
     const dest = bookingData.dropCity || 'Gaya';
     const cabTier = (bookingData.cabTier || 'sedan').toLowerCase();
     const totalFare = bookingData.fareBreakdown?.totalFare || 2198;
+    const refNumber = `OTB-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    const payload = {
+    const confirmedBooking: Booking = {
+      id: `bkg_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`,
+      referenceNumber: refNumber,
       passengerName: bookingData.passengerName || 'Valued Passenger',
+      passengerPhone: cleanPhone,
+      pickupCity: origin,
+      pickupAddress: bookingData.pickupAddress || `${origin} Doorstep`,
+      dropCity: dest,
+      dropAddress: bookingData.dropAddress || `${dest} Doorstep`,
+      tripType: bookingData.tripType || 'one-way',
+      pickupDate: bookingData.pickupDate || new Date().toISOString().split('T')[0],
+      pickupTime: bookingData.pickupTime || 'Immediate',
+      passengerCount: bookingData.passengerCount || 2,
+      cabTier: cabTier as any,
+      cabName: bookingData.cabName || (cabTier === 'suv' ? 'Family SUV (Innova/Ertiga)' : cabTier === 'hatchback' ? 'Go Hatchback (WagonR)' : 'Prime Sedan (Dzire/Etios)'),
+      fareBreakdown: bookingData.fareBreakdown || this.calculateFareBreakdown(104, cabTier as any, totalFare),
+      paymentMethod: bookingData.paymentMethod || 'driver_cash',
+      paymentStatus: (bookingData.paymentStatus as any) || 'pending',
+      status: 'confirmed',
+      startOtp: `${Math.floor(1000 + Math.random() * 9000)}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    // 1. Prepare base booking structure
+    const payload = {
+      passengerName: confirmedBooking.passengerName,
       passengerPhone: cleanPhone,
       passengerEmail: (bookingData as any).passengerEmail || '',
       originCity: origin,
       destCity: dest,
       pickupCity: origin,
       dropCity: dest,
-      pickupAddress: bookingData.pickupAddress || `${origin} City`,
-      dropAddress: bookingData.dropAddress || `${dest} City`,
-      pickupDate: bookingData.pickupDate || new Date().toISOString().split('T')[0],
-      pickupTime: bookingData.pickupTime || '10:00 AM',
+      pickupAddress: confirmedBooking.pickupAddress,
+      dropAddress: confirmedBooking.dropAddress,
+      pickupDate: confirmedBooking.pickupDate,
+      pickupTime: confirmedBooking.pickupTime,
       cabTier,
       totalFare,
       fare: totalFare,
       paymentMethod: bookingData.paymentMethod === 'driver_cash' ? 'Cash on Ride (Zero Advance)' : (bookingData.paymentMethod || 'Cash on Ride (Zero Advance)'),
       idempotencyKey,
-      clientTimestamp: new Date().toISOString()
+      clientTimestamp: new Date().toISOString(),
+      source: 'Mobile App',
+      bookingSource: 'Mobile App',
+      channel: 'Mobile App',
+      isApp: true
     };
 
+    // 2. Network dispatch directly to server
     try {
       const res = await this.request<any>('/bookings', {
         method: 'POST',
-        headers: {
-          'Idempotency-Key': idempotencyKey
-        },
+        headers: { 'Idempotency-Key': idempotencyKey },
         body: JSON.stringify(payload)
       });
-
-      const sBooking = res.booking || res;
-      const refNumber = sBooking.bookingId || sBooking.id || res.bookingId || `OTB-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      const confirmedBooking: Booking = {
-        id: sBooking.id || sBooking.bookingId || refNumber,
-        referenceNumber: refNumber,
-        passengerName: payload.passengerName,
-        passengerPhone: payload.passengerPhone,
-        pickupCity: origin,
-        pickupAddress: payload.pickupAddress,
-        dropCity: dest,
-        dropAddress: payload.dropAddress,
-        tripType: bookingData.tripType || 'one-way',
-        pickupDate: payload.pickupDate,
-        pickupTime: payload.pickupTime,
-        passengerCount: bookingData.passengerCount || 2,
-        cabTier: cabTier as any,
-        cabName: bookingData.cabName || (cabTier === 'suv' ? 'Family SUV (Innova/Ertiga)' : cabTier === 'hatchback' ? 'Go Hatchback (WagonR)' : 'Prime Sedan (Dzire/Etios)'),
-        fareBreakdown: bookingData.fareBreakdown || this.calculateFareBreakdown(104, cabTier as any, totalFare),
-        paymentMethod: bookingData.paymentMethod || 'driver_cash',
-        paymentStatus: 'pending',
-        status: (sBooking.bookingStatus || sBooking.status || 'confirmed').toLowerCase() as any,
-        startOtp: sBooking.tripOtp || sBooking.startOtp || `${Math.floor(1000 + Math.random() * 9000)}`,
-        createdAt: sBooking.createdAt || new Date().toISOString(),
-        updatedAt: sBooking.updatedAt || new Date().toISOString()
-      };
-
-      // Persist in shared FleetSyncService for instant cross-app sync
-      await FleetSyncService.addBooking(confirmedBooking);
-      const existing = await StorageService.getJson<Booking[]>('otb_my_bookings', []);
-      await StorageService.setJson('otb_my_bookings', [confirmedBooking, ...existing]);
-
-      return confirmedBooking;
+      if (res) {
+        const sBooking = res.booking || res;
+        if (sBooking.id || sBooking.bookingId) {
+          confirmedBooking.id = sBooking.id || sBooking.bookingId;
+        }
+        if (sBooking.referenceNumber || sBooking.bookingId) {
+          confirmedBooking.referenceNumber = sBooking.referenceNumber || sBooking.bookingId;
+        }
+        if (sBooking.tripOtp || sBooking.startOtp) {
+          confirmedBooking.startOtp = sBooking.tripOtp || sBooking.startOtp;
+        }
+        (confirmedBooking as any).source = 'Mobile App';
+        (confirmedBooking as any).bookingSource = 'Mobile App';
+        (confirmedBooking as any).channel = 'Mobile App';
+        (confirmedBooking as any).isApp = true;
+      }
     } catch (e: any) {
-      console.warn('[Booking] Server failed, saving offline booking:', e.message);
-      // Offline fallback: create local verified booking
-      const fallbackBooking: Booking = {
-        id: `offline_${Date.now()}`,
-        referenceNumber: `OTB-${Math.floor(100000 + Math.random() * 900000)}`,
-        passengerName: bookingData.passengerName || 'Passenger',
-        passengerPhone: cleanPhone,
-        pickupCity: origin,
-        pickupAddress: bookingData.pickupAddress || '',
-        dropCity: dest,
-        dropAddress: bookingData.dropAddress || '',
-        tripType: bookingData.tripType || 'one-way',
-        pickupDate: bookingData.pickupDate || new Date().toISOString().split('T')[0],
-        pickupTime: bookingData.pickupTime || '10:00 AM',
-        passengerCount: bookingData.passengerCount || 2,
-        cabTier: cabTier as any,
-        cabName: bookingData.cabName || 'Prime Sedan',
-        fareBreakdown: bookingData.fareBreakdown || this.calculateFareBreakdown(104, 'sedan', totalFare),
-        paymentMethod: bookingData.paymentMethod || 'driver_cash',
-        paymentStatus: 'pending',
-        status: 'confirmed',
-        startOtp: `${Math.floor(1000 + Math.random() * 9000)}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      await FleetSyncService.addBooking(fallbackBooking);
-      const existing = await StorageService.getJson<Booking[]>('otb_my_bookings', []);
-      await StorageService.setJson('otb_my_bookings', [fallbackBooking, ...existing]);
-      return fallbackBooking;
+      console.warn('[ApiClient] Server sync warning on createBooking (continuing with local confirmation):', e.message);
     }
+
+    // 3. Persist confirmed booking in local sync service & storage
+    await FleetSyncService.addBooking(confirmedBooking);
+    const existing = await StorageService.getJson<Booking[]>('otb_my_bookings', []);
+    await StorageService.setJson('otb_my_bookings', [confirmedBooking, ...existing]);
+
+    return confirmedBooking;
   }
 
   async getPassengerTrips(phone: string): Promise<Booking[]> {
     const clean = (phone || '').replace(/\D/g, '').slice(-10);
+    const localBookings = FleetSyncService.getBookings();
+    const localMatched = clean ? localBookings.filter(b => (b.passengerPhone || '').replace(/\D/g, '').slice(-10) === clean) : localBookings;
+
     try {
-      const res = await this.request<any>(`/passenger/trips?phone=${clean}`);
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = controller ? setTimeout(() => controller.abort(), 1800) : null;
+      const res = await this.request<any>(`/passenger/trips?phone=${clean}`, {
+        signal: controller ? controller.signal : undefined
+      });
+      if (timer) clearTimeout(timer);
       const rawList = res.bookings || res.trips || (Array.isArray(res) ? res : []);
       if (Array.isArray(rawList) && rawList.length > 0) {
         const mapped: Booking[] = rawList.map((b: any) => ({
@@ -334,12 +431,7 @@ class ApiClient {
       }
     } catch (e) {}
 
-    const all = FleetSyncService.getBookings();
-    if (clean) {
-      const matched = all.filter(b => (b.passengerPhone || '').replace(/\D/g, '').slice(-10) === clean);
-      if (matched.length > 0) return matched;
-    }
-    return all;
+    return localMatched.length > 0 ? localMatched : localBookings;
   }
 
   async cancelBooking(bookingId: string, reason: string): Promise<boolean> {
@@ -615,6 +707,11 @@ class ApiClient {
         const mapped: Booking[] = res.bookings.map((sb: any) => ({
           id: sb.bookingId || sb.id,
           referenceNumber: sb.bookingId || sb.id,
+          bookingId: sb.bookingId || sb.id,
+          source: sb.source || sb.bookingSource || (sb.isApp ? 'Mobile App' : 'Website'),
+          bookingSource: sb.bookingSource || sb.source || (sb.isApp ? 'Mobile App' : 'Website'),
+          channel: sb.channel || (sb.isApp ? 'Mobile App' : 'Website Portal'),
+          isApp: Boolean(sb.isApp || (sb.source && sb.source.toLowerCase().includes('app'))),
           passengerName: sb.customerName || sb.passengerName || 'Passenger',
           passengerPhone: sb.customerPhone || sb.passengerPhone || '',
           pickupCity: sb.originCity || sb.pickupCity || 'Patna',

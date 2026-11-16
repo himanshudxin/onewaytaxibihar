@@ -373,7 +373,10 @@ function buildTripOfferCard(booking, driverId) {
     broadcastStartedAt: booking.broadcastStartedAt,
     broadcastTimeoutSec: booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC,
     candidateCount: (booking.broadcastCandidates || []).length,
-    alreadyRejected: (booking.rejectedDrivers || []).includes(driverId)
+    alreadyRejected: (booking.rejectedDrivers || []).includes(driverId),
+    source: booking.source || booking.bookingSource || (booking.isApp ? 'Mobile App' : 'Website'),
+    channel: booking.channel || (booking.isApp || (booking.source && String(booking.source).toLowerCase().includes('app')) ? 'Mobile App' : 'Website Portal'),
+    isApp: Boolean(booking.isApp || (booking.source && String(booking.source).toLowerCase().includes('app')) || (booking.channel && String(booking.channel).toLowerCase().includes('app')))
   };
 }
 

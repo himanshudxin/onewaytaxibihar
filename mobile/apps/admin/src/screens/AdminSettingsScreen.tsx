@@ -216,7 +216,7 @@ export const AdminSettingsScreen: React.FC<{ navigation: any }> = () => {
               <Sun size={18} color={colors.gold} />
             </View>
             <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Light Mode ☀️</Text>
+              <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Light Mode</Text>
               <Text style={[styles.themeOptionSub, { color: colors.textSecondary }]}>
                 High-clarity executive white layout
               </Text>
@@ -237,7 +237,7 @@ export const AdminSettingsScreen: React.FC<{ navigation: any }> = () => {
               <Moon size={18} color={colors.primary} />
             </View>
             <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Dark Mode 🌙</Text>
+              <Text style={[styles.themeOptionTitle, { color: colors.text }]}>Dark Mode</Text>
               <Text style={[styles.themeOptionSub, { color: colors.textSecondary }]}>
                 High-tech dark operations room console
               </Text>
@@ -440,6 +440,82 @@ export const AdminSettingsScreen: React.FC<{ navigation: any }> = () => {
             </View>
             <ChevronRight size={18} color={colors.textMuted} />
           </TouchableOpacity>
+        </View>
+
+        {/* Legal & Regulatory Compliance Shield */}
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>STATUTORY LEGAL & REGULATORY AUDIT</Text>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <TouchableOpacity
+            style={styles.helplineRow}
+            onPress={() => Linking.openURL('https://onewaytaxibihar.com/terms-of-service.html')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.callIconBox, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
+              <ShieldCheck size={18} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={[styles.helplineTitle, { color: colors.text }]}>Terms & Aggregator Intermediary Policy</Text>
+              <Text style={[styles.helplineNumber, { color: colors.textSecondary }]}>MoRTH 2020 & IT Act Sec 79 Immunity Shield</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.helplineRow}
+            onPress={() => Linking.openURL('https://onewaytaxibihar.com/privacy-policy.html')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.callIconBox, { backgroundColor: 'rgba(56, 189, 248, 0.15)' }]}>
+              <FileText size={18} color={colors.accent} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={[styles.helplineTitle, { color: colors.text }]}>DPDP Act 2023 Privacy Policy</Text>
+              <Text style={[styles.helplineNumber, { color: colors.textSecondary }]}>Consent lifecycle, encryption & GPS data safeguards</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.helplineRow}
+            onPress={() => Linking.openURL('https://onewaytaxibihar.com/grievance-officer.html')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.callIconBox, { backgroundColor: 'rgba(234, 179, 8, 0.15)' }]}>
+              <Lock size={18} color={colors.gold} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={[styles.helplineTitle, { color: colors.text }]}>Statutory Grievance Redressal Desk</Text>
+              <Text style={[styles.helplineNumber, { color: colors.textSecondary }]}>CPA 2019 E-Commerce Rules (48h Ack / 30d SLA)</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+          <TouchableOpacity
+            style={styles.helplineRow}
+            onPress={() => Linking.openURL('https://onewaytaxibihar.com/data-deletion')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.callIconBox, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
+              <Lock size={18} color={colors.error} />
+            </View>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={[styles.helplineTitle, { color: colors.text }]}>Right to Erasure (Data Deletion Portal)</Text>
+              <Text style={[styles.helplineNumber, { color: colors.textSecondary }]}>Google Play & DPDP compliant account removal</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </TouchableOpacity>
+
+          <View style={{ marginTop: 14, padding: 12, borderRadius: 8, backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
+            <Text style={{ fontSize: 11, color: colors.textMuted, lineHeight: 16 }}>
+              <Text style={{ fontWeight: '700', color: colors.primary }}>Regulatory Note:</Text> As an electronic intermediary platform under Section 79 of the IT Act 2000 and the MoRTH Motor Vehicle Aggregator Guidelines 2020, operators must ensure all onboarded vehicles possess commercial tourist taxi permits (yellow plate), verified fitness, and commercial passenger insurance.
+            </Text>
+          </View>
         </View>
 
         {/* Legal & Compliance Footprint */}

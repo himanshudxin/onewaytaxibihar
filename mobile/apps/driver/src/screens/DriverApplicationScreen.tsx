@@ -181,7 +181,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 activeOpacity={0.8}
               >
                 <Text style={[styles.autofillAppText, { color: colors.primary }]}>
-                  ⚡ Autofill Demo Application Details
+                  Autofill Demo Application Details
                 </Text>
               </TouchableOpacity>
 
@@ -270,7 +270,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   Alert.alert(
                     nextState ? 'DL Photo Attached' : 'Photo Removed',
                     nextState
-                      ? '✓ Driving Licence photo (dl_bihar_commercial_front.jpg • 2.4 MB) attached for verification.'
+                      ? 'Driving Licence photo (dl_bihar_commercial_front.jpg • 2.4 MB) attached for verification.'
                       : 'Driving Licence photo removed.'
                   );
                 }}
@@ -278,7 +278,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 {dlPhotoAttached ? (
                   <>
                     <CheckCircle2 size={24} color={colors.primary} />
-                    <Text style={[styles.uploadText, { color: colors.primary }]}>✓ Driving Licence Photo Attached</Text>
+                    <Text style={[styles.uploadText, { color: colors.primary }]}>Driving Licence Photo Attached</Text>
                     <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>dl_bihar_commercial_front.jpg • 2.4 MB (Tap to change)</Text>
                   </>
                 ) : (
@@ -339,7 +339,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   Alert.alert(
                     nextState ? 'Vehicle RC Attached' : 'RC Removed',
                     nextState
-                      ? '✓ Commercial RC certificate (rc_commercial_8291.jpg • 1.9 MB) attached for verification.'
+                      ? 'Commercial RC certificate (rc_commercial_8291.jpg • 1.9 MB) attached for verification.'
                       : 'Vehicle RC certificate removed.'
                   );
                 }}
@@ -347,7 +347,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 {rcPhotoAttached ? (
                   <>
                     <CheckCircle2 size={24} color={colors.info} />
-                    <Text style={[styles.uploadText, { color: colors.info }]}>✓ Commercial RC Certificate Attached</Text>
+                    <Text style={[styles.uploadText, { color: colors.info }]}>Commercial RC Certificate Attached</Text>
                     <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>rc_commercial_8291.jpg • 1.9 MB (Tap to change)</Text>
                   </>
                 ) : (

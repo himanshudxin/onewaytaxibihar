@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+mobile/
+.expo/
+seo-bot/
+scripts/
+tests/
+
+# Mobile Builds & Artifacts
+downloads/
+dist-apk/
+*.apk
+*.aab
+*.ipa
+*.jks
+*.keystore
+
+# Local Development & Backups
+data/backups/
+scratch/
+.git/
+*.log
+*.tmp
+*.bak
+PREVIEW_URL.txt
+
+# Environment & Secrets
+.env*
+GOOGLE_ADS_CAMPAIGN_COPY.txt

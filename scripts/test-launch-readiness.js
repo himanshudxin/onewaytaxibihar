@@ -192,7 +192,7 @@ setTimeout(async () => {
         awaitPromise: true,
         returnByValue: true
       });
-      console.log('Customer Portal Result:', JSON.stringify(customerCheck.result?.value, null, 2));
+      console.log('Customer Portal Result:', JSON.stringify(customerCheck?.result?.value || customerCheck?.value, null, 2));
 
       console.log('\n======================================================');
       console.log('PHASE 2: Admin Dispatch Console & Live Ops');
@@ -250,7 +250,7 @@ setTimeout(async () => {
         awaitPromise: true,
         returnByValue: true
       });
-      console.log('Admin Portal Result:', JSON.stringify(adminCheck.result?.value, null, 2));
+      console.log('Admin Portal Result:', JSON.stringify(adminCheck?.result?.value || adminCheck?.value, null, 2));
 
       console.log('\n======================================================');
       console.log('PHASE 3: Driver Partner Console');
@@ -283,7 +283,7 @@ setTimeout(async () => {
         awaitPromise: true,
         returnByValue: true
       });
-      console.log('Driver Portal Result:', JSON.stringify(driverCheck.result?.value, null, 2));
+      console.log('Driver Portal Result:', JSON.stringify(driverCheck?.result?.value || driverCheck?.value, null, 2));
 
       console.log('\n======================================================');
       console.log('LAUNCH READINESS SUMMARY');

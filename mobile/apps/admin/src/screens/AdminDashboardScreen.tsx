@@ -43,6 +43,7 @@ import {
 import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
+import { UberMapView } from '../../../../shared/components/UberMapView';
 import { formatCurrency } from '../../../../shared/utils/formatters';
 import { useAdmin } from '../context/AdminContext';
 
@@ -61,6 +62,14 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
   // Fleet Broadcast Modal State
   const [broadcastVisible, setBroadcastVisible] = useState(false);
   const [broadcastText, setBroadcastText] = useState('');
+
+  // Operations Command Center Map Active Corridor
+  const [selectedCorridor, setSelectedCorridor] = useState({
+    id: 'patna_gaya',
+    label: 'Patna → Gaya',
+    origin: 'Patna',
+    dest: 'Gaya'
+  });
 
   // Unassigned bookings computation
   const unassignedBookings = useMemo(() => {
@@ -96,11 +105,11 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
   const corridorStats = useMemo(() => {
     const list = bookings || [];
     const corridors = [
-      { id: 'patna_gaya', name: 'Patna ➔ Gaya / Bodh Gaya', code: 'NH-22 / NH-83', baseKm: 110 },
-      { id: 'patna_muzaffarpur', name: 'Patna ➔ Muzaffarpur', code: 'JP Setu / NH-77', baseKm: 78 },
-      { id: 'patna_darbhanga', name: 'Patna ➔ Darbhanga', code: 'NH-57 Gateway', baseKm: 135 },
-      { id: 'patna_bhagalpur', name: 'Patna ➔ Bhagalpur', code: 'NH-31 Highway', baseKm: 240 },
-      { id: 'patna_varanasi', name: 'Patna ➔ Varanasi / Kashi', code: 'GT Road / NH-19', baseKm: 250 }
+      { id: 'patna_gaya', name: 'Patna → Gaya / Bodh Gaya', code: 'NH-22 / NH-83', baseKm: 110 },
+      { id: 'patna_muzaffarpur', name: 'Patna → Muzaffarpur', code: 'JP Setu / NH-77', baseKm: 78 },
+      { id: 'patna_darbhanga', name: 'Patna → Darbhanga', code: 'NH-57 Gateway', baseKm: 135 },
+      { id: 'patna_bhagalpur', name: 'Patna → Bhagalpur', code: 'NH-31 Highway', baseKm: 240 },
+      { id: 'patna_varanasi', name: 'Patna → Varanasi / Kashi', code: 'GT Road / NH-19', baseKm: 250 }
     ];
 
     const total = list.length || 1;
@@ -475,6 +484,69 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
           </View>
         </View>
 
+        {/* Bihar Operations Command Center Live Fleet Map */}
+        <View style={[styles.mapSectionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.mapSectionHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+              <View style={[styles.pulseBeacon, { backgroundColor: colors.primary }]} />
+              <Text style={[styles.mapSectionTitle, { color: colors.text }]}>
+                BIHAR OPERATIONS COMMAND CENTER
+              </Text>
+            </View>
+            <View style={[styles.livePill, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
+              <Text style={[styles.livePillText, { color: colors.primary }]}>
+                {verifiedDrivers.length} FLEET READY • {unassignedBookings.length} QUEUED
+              </Text>
+            </View>
+          </View>
+
+          {/* Quick Corridor Filter Pills */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.corridorPillsScroll}>
+            {[
+              { id: 'patna_gaya', label: 'Patna → Gaya', origin: 'Patna', dest: 'Gaya' },
+              { id: 'patna_muz', label: 'Patna → Muzaffarpur', origin: 'Patna', dest: 'Muzaffarpur' },
+              { id: 'patna_dar', label: 'Patna → Darbhanga', origin: 'Patna', dest: 'Darbhanga' },
+              { id: 'patna_bha', label: 'Patna → Bhagalpur', origin: 'Patna', dest: 'Bhagalpur' },
+              { id: 'patna_hub', label: 'Patna Central Hub', origin: 'Patna', dest: '' }
+            ].map(corridor => {
+              const isSelected = selectedCorridor.id === corridor.id;
+              return (
+                <TouchableOpacity
+                  key={corridor.id}
+                  style={[
+                    styles.corridorFilterPill,
+                    {
+                      backgroundColor: isSelected ? colors.primary : (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'),
+                      borderColor: isSelected ? colors.primary : colors.border
+                    }
+                  ]}
+                  onPress={() => setSelectedCorridor(corridor)}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.corridorFilterText,
+                      { color: isSelected ? '#FFFFFF' : colors.textSecondary }
+                    ]}
+                  >
+                    {corridor.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {/* Map Viewer */}
+          <View style={styles.commandMapWrapper}>
+            <UberMapView
+              originCity={selectedCorridor.origin}
+              destinationCity={selectedCorridor.dest}
+              height={230}
+              interactive={true}
+            />
+          </View>
+        </View>
+
         {/* Corridor Traffic Pulse (Bihar Intercity Arteries) */}
         <View style={[styles.corridorCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.corridorHeader}>
@@ -558,7 +630,7 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
               onPress={() => setActiveFilter('unassigned')}
             >
               <Text style={[styles.filterPillText, { color: activeFilter === 'unassigned' ? '#FFFFFF' : unassignedBookings.length > 0 ? colors.warning : colors.textSecondary }]}>
-                ⚠️ Unassigned ({unassignedBookings.length})
+                Unassigned ({unassignedBookings.length})
               </Text>
             </TouchableOpacity>
 
@@ -570,7 +642,7 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
               onPress={() => setActiveFilter('in_transit')}
             >
               <Text style={[styles.filterPillText, { color: activeFilter === 'in_transit' ? '#FFFFFF' : colors.textSecondary }]}>
-                🚗 In-Transit ({inTransitBookings.length})
+                In-Transit ({inTransitBookings.length})
               </Text>
             </TouchableOpacity>
 
@@ -582,7 +654,7 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
               onPress={() => setActiveFilter('completed')}
             >
               <Text style={[styles.filterPillText, { color: activeFilter === 'completed' ? '#FFFFFF' : colors.textSecondary }]}>
-                ✅ Completed ({completedBookings.length})
+                Completed ({completedBookings.length})
               </Text>
             </TouchableOpacity>
           </ScrollView>
@@ -600,7 +672,7 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
         ) : (
           filteredTrips.slice(0, 15).map((b, idx) => {
             const bId = b.referenceNumber || b.bookingId || b.id || `OTB-${idx}`;
-            const routeStr = `${b.originCity || b.pickupCity || 'Patna'} ➔ ${b.destCity || b.dropCity || 'Bihar'}`;
+            const routeStr = `${b.originCity || b.pickupCity || 'Patna'} → ${b.destCity || b.dropCity || 'Bihar'}`;
             const fare = Number(b.fareBreakdown?.totalFare || b.totalFare || b.price || b.estimatedFare) || 0;
             const advancePaid = Number(b.advanceAmount || b.fareBreakdown?.advancePayment || fare * 0.15) || 0;
             const status = (b.bookingStatus || b.status || 'CONFIRMED').toUpperCase();
@@ -723,9 +795,12 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
                     <Text style={[styles.passengerNameLabel, { color: colors.text }]}>{passengerName}</Text>
                     {passengerPhone ? (
                       <TouchableOpacity onPress={() => callNumber(passengerPhone)}>
-                        <Text style={[styles.passengerPhoneLink, { color: colors.primary }]}>
-                          📞 {passengerPhone}
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <Phone size={11} color={colors.primary} />
+                          <Text style={[styles.passengerPhoneLink, { color: colors.primary }]}>
+                            {passengerPhone}
+                          </Text>
+                        </View>
                       </TouchableOpacity>
                     ) : (
                       <Text style={[styles.passengerPhoneLink, { color: colors.textMuted }]}>Direct Booking</Text>
@@ -773,7 +848,7 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
 
             <View style={[styles.modalTripSummary, { backgroundColor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }]}>
               <Text style={[styles.modalRouteText, { color: colors.text }]}>
-                {selectedBookingForAssign?.originCity || 'Patna'} ➔ {selectedBookingForAssign?.destCity || 'Bihar'}
+                {selectedBookingForAssign?.originCity || 'Patna'} → {selectedBookingForAssign?.destCity || 'Bihar'}
               </Text>
               <Text style={[styles.modalFareText, { color: colors.primary }]}>
                 Fare: {formatCurrency(Number(selectedBookingForAssign?.totalFare || selectedBookingForAssign?.price || 0))}
@@ -812,7 +887,10 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
                         <Text style={[styles.modalDriverCar, { color: colors.textMuted }]}>
                           {dCar} {dPlate ? `• ${dPlate}` : ''}
                         </Text>
-                        <Text style={[styles.modalDriverPhone, { color: colors.primary }]}>📞 {dPhone}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                          <Phone size={11} color={colors.primary} />
+                          <Text style={[styles.modalDriverPhone, { color: colors.primary }]}>{dPhone}</Text>
+                        </View>
                       </View>
                       <View style={[styles.modalSelectBtn, { backgroundColor: colors.primary }]}>
                         <Check size={16} color="#FFFFFF" />
@@ -854,10 +932,10 @@ export const AdminDashboardScreen: React.FC<{ navigation: any }> = ({ navigation
             <Text style={[styles.presetTitle, { color: colors.textSecondary }]}>QUICK ADVISORY PRESETS</Text>
             <View style={styles.presetChipsWrap}>
               {[
-                '⚠️ NH-31 Fog Advisory: Limit speed to 50 km/h',
-                '✈️ High Surge at Patna Airport: 15+ rides queued',
-                '🚧 Ganga Path Fastag Lane active: avoid cash queues',
-                '💰 Evening Settlements credited to driver wallets'
+                'NH-31 Fog Advisory: Limit speed to 50 km/h',
+                'High Surge at Patna Airport: 15+ rides queued',
+                'Ganga Path Fastag Lane active: avoid cash queues',
+                'Evening Settlements credited to driver wallets'
               ].map((p, idx) => (
                 <TouchableOpacity
                   key={idx}
@@ -1150,6 +1228,59 @@ const styles = StyleSheet.create({
     fontSize: 10,
     flex: 1,
     lineHeight: 14
+  },
+  mapSectionCard: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    overflow: 'hidden',
+    marginBottom: 14
+  },
+  mapSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 12
+  },
+  pulseBeacon: {
+    width: 8,
+    height: 8,
+    borderRadius: 4
+  },
+  mapSectionTitle: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.6
+  },
+  livePill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6
+  },
+  livePillText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.5
+  },
+  corridorPillsScroll: {
+    paddingHorizontal: 12,
+    paddingBottom: 10,
+    gap: 8
+  },
+  corridorFilterPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1
+  },
+  corridorFilterText: {
+    fontSize: 11,
+    fontWeight: '800'
+  },
+  commandMapWrapper: {
+    width: '100%',
+    height: 230,
+    overflow: 'hidden'
   },
   corridorCard: {
     padding: 16,

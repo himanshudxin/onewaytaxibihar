@@ -3,15 +3,20 @@ import { StorageService } from '../../../../shared/services/storage';
 import { MobileApiClient } from '../../../../shared/services/api';
 import { FleetSyncService } from '../../../../shared/services/fleetSync';
 import { Booking, CabTier, TripType, CabTierId } from '../../../../shared/types';
+import { MASTER_PATNA_FARES } from '../../../../shared/data/patnaFares';
 
 interface SearchState {
   origin: string;
   destination: string;
   pickupAddress: string;
   dropAddress: string;
+  originCoords?: { lat: number; lng: number };
+  destinationCoords?: { lat: number; lng: number };
   tripType: TripType;
   pickupDate: string;
   pickupTime: string;
+  departureDate?: string;
+  departureTime?: string;
   returnDate?: string;
   passengerCount: number;
   phone: string;
@@ -36,8 +41,8 @@ interface PassengerContextType {
 }
 
 const defaultSearch: SearchState = {
-  origin: 'Patna',
-  destination: 'Gaya',
+  origin: '',
+  destination: '',
   pickupAddress: '',
   dropAddress: '',
   tripType: 'one-way',
@@ -53,7 +58,7 @@ const PassengerContext = createContext<PassengerContextType | undefined>(undefin
 export const PassengerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [search, setSearch] = useState<SearchState>(defaultSearch);
   const [selectedTier, setSelectedTier] = useState<CabTierId>('sedan');
-  const [fares, setFares] = useState<any[]>([]);
+  const [fares, setFares] = useState<any[]>(MASTER_PATNA_FARES);
   const [myTrips, setMyTrips] = useState<Booking[]>([]);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
   const [userPhone, setUserPhone] = useState<string>('');
@@ -74,7 +79,9 @@ export const PassengerProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
       try {
         const remoteFares = await MobileApiClient.getCorridorFares();
-        setFares(remoteFares);
+        if (Array.isArray(remoteFares) && remoteFares.length > 0) {
+          setFares(remoteFares);
+        }
       } catch (e) {}
 
       if (savedPhone) {

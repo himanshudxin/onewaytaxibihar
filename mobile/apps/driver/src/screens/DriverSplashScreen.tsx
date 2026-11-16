@@ -8,19 +8,21 @@ import { ShieldCheck, Navigation } from 'lucide-react-native';
 import { useDriver } from '../context/DriverContext';
 
 export const DriverSplashScreen = ({ navigation }: any) => {
-  const { isLoggedIn } = useDriver();
+  const { isLoggedIn, isRestoringSession } = useDriver();
   const { colors, isDark } = useTheme();
 
   useEffect(() => {
+    if (isRestoringSession) return;
+
     const timer = setTimeout(() => {
       if (isLoggedIn) {
         navigation.replace('DriverTabs');
       } else {
         navigation.replace('DriverAuth');
       }
-    }, 1800);
+    }, 1200);
     return () => clearTimeout(timer);
-  }, [navigation, isLoggedIn]);
+  }, [navigation, isLoggedIn, isRestoringSession]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

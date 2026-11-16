@@ -139,7 +139,7 @@
 
 /* "बिहार" in authentic Devanagari */
 .pride-bihar-hindi {
-  font-family: 'Mukta', 'Noto Sans Devanagari', -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 21px;
   font-weight: 900;
   color: #ff9e2c;
@@ -168,7 +168,7 @@
 
 /* "for" separator */
 .pride-text-mid {
-  font-family: 'Inter', Georgia, serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 13.5px;
   font-style: italic;
   font-weight: 400;
@@ -178,7 +178,7 @@
 
 /* "BHARAT" with prestigious typography */
 .pride-bharat-bold {
-  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15.5px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -6813,4 +6813,241 @@ body.modal-open .mobile-sticky-bottom-bar,
 body.drawer-open .mobile-sticky-bottom-bar {
   display: none !important;
   pointer-events: none !important;
+}
+
+/* ==========================================================================
+   ONEWAYTAXIBIHAR MICRO-VIEWPORT RESPONSIVE HARDENING (320px - 430px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  /* Prevent any horizontal overflow */
+  .container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Booking widget card fit */
+  .voyago-booking-card {
+    padding: 12px 10px !important;
+    border-radius: 16px !important;
+    margin: 0 auto 16px auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* 3 Vehicle Cards in Booking Card fit 320px screens */
+  .voyago-vehicle-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    margin-bottom: 12px !important;
+    width: 100% !important;
+  }
+
+  .voyago-vehicle-card {
+    padding: 7px 2px !important;
+    border-radius: 12px !important;
+    min-width: 0 !important;
+  }
+
+  .voyago-vehicle-img {
+    max-width: 58px !important;
+    height: 32px !important;
+  }
+
+  .voyago-vehicle-name {
+    font-size: 11px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .voyago-vehicle-rate {
+    font-size: 10.5px !important;
+  }
+
+  .voyago-vehicle-seats {
+    font-size: 8.5px !important;
+  }
+
+  /* Date & Time Picker Cards */
+  .schedule-row {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .exec-picker-card {
+    padding: 8px 8px !important;
+    border-radius: 12px !important;
+    min-width: 0 !important;
+  }
+
+  .picker-card-label {
+    font-size: 8.5px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  .picker-rel-tag {
+    font-size: 7.5px !important;
+    padding: 1px 4px !important;
+  }
+
+  .picker-primary-val {
+    font-size: 13px !important;
+  }
+
+  .picker-icon-badge {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .picker-icon-badge svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  /* Route Inputs Grid */
+  .route-inputs-grid-2.voyago-stacked-route {
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .input-field-group {
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .input-field-group label {
+    font-size: 9.5px !important;
+    letter-spacing: 0.4px !important;
+  }
+
+  .input-field-group input {
+    font-size: 14.5px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Outstation Fleet Cards */
+  .cab-cards-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .cab-tier-card {
+    padding: 14px 12px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 3D Map viewport fit */
+  .route-overview-card {
+    border-radius: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .route-overview-header {
+    padding: 12px !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: flex-start !important;
+  }
+
+  .route-metrics-bar {
+    width: 100% !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .route-metric-pill {
+    padding: 5px 8px !important;
+    font-size: 10.5px !important;
+  }
+
+  #oneway-route-map {
+    height: 260px !important;
+    width: 100% !important;
+  }
+
+  /* Places Grid */
+  .voyago-places-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .voyago-place-info {
+    padding: 8px 10px !important;
+  }
+
+  .voyago-place-name {
+    font-size: 13px !important;
+  }
+
+  /* Compact section spacing */
+  .app-section {
+    padding: 24px 0 !important;
+  }
+}
+
+@media (max-width: 340px) {
+  /* Extra compact styling for 320px devices */
+  .voyago-vehicle-grid {
+    gap: 3px !important;
+  }
+  .voyago-vehicle-card {
+    padding: 5px 1px !important;
+  }
+  .voyago-vehicle-name {
+    font-size: 10px !important;
+  }
+  .voyago-vehicle-rate {
+    font-size: 9.5px !important;
+  }
+  .voyago-booking-card .trip-tab-btn {
+    padding: 6px 4px !important;
+    font-size: 11px !important;
+  }
+  .voyago-places-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Hero Header Positioned Below Booking Window */
+.hero-center-header.below-booking-window {
+  margin: 36px auto 20px auto;
+  text-align: center;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-center-header.below-booking-window .hero-pride-badge-wrap {
+  margin-bottom: 12px;
+}
+
+.hero-center-header.below-booking-window .hero-main-title {
+  font-size: clamp(22px, 3.2vw, 30px);
+  font-weight: 850;
+  color: var(--owc-text);
+  line-height: 1.25;
+  margin-bottom: 14px;
+  letter-spacing: -0.4px;
+}
+
+@media (max-width: 768px) {
+  .hero-center-header.below-booking-window {
+    margin: 24px auto 16px auto;
+  }
+  .hero-center-header.below-booking-window .hero-main-title {
+    font-size: 20px;
+  }
 }

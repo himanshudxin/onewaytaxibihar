@@ -8,23 +8,24 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  ScrollView,
+  Alert,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
+import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { usePassenger } from '../context/PassengerContext';
+import { getCurrentDeviceLocation } from '../services/locationService';
 import {
   MapPin,
-  Navigation,
+  Crosshair,
   ArrowLeft,
   Check,
   Search,
-  Compass,
   Building,
   Plane,
   Train,
-  CheckCircle2,
   Sparkles,
+  X,
 } from 'lucide-react-native';
 
 const BIHAR_CITIES = [
@@ -78,8 +79,6 @@ const BIHAR_CITIES = [
 const QUICK_HUBS = [
   { name: 'Patna Airport (PAT)', city: 'Patna', type: 'airport' },
   { name: 'Patna Junction Railway Station', city: 'Patna', type: 'train' },
-  { name: 'Danapur Railway Station', city: 'Patna', type: 'train' },
-  { name: 'AIIMS Patna Phulwari', city: 'Patna', type: 'hospital' },
   { name: 'Gaya International Airport', city: 'Gaya', type: 'airport' },
   { name: 'Bodh Gaya Mahabodhi Temple', city: 'Gaya', type: 'tourism' },
   { name: 'Darbhanga Airport (DIB)', city: 'Darbhanga', type: 'airport' },
@@ -89,6 +88,7 @@ const QUICK_HUBS = [
 export const AddressSelectScreen = ({ route, navigation }: any) => {
   const { mode = 'pickup' } = route.params || {};
   const { search, updateSearch } = usePassenger();
+  const { colors, isDark } = useTheme();
 
   const [query, setQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState(mode === 'pickup' ? search.origin : search.destination);
@@ -116,212 +116,200 @@ export const AddressSelectScreen = ({ route, navigation }: any) => {
     navigation.goBack();
   };
 
-  const handleConfirmLocation = () => {
-    const finalCity = selectedCity || (mode === 'pickup' ? 'Patna' : 'Gaya');
-    if (mode === 'pickup') {
-      updateSearch({ origin: finalCity, pickupAddress: addressDetail || `${finalCity} Doorstep` });
-    } else {
-      updateSearch({ destination: finalCity, dropAddress: addressDetail || `${finalCity} Destination` });
-    }
-    navigation.goBack();
-  };
-
-  const handleDetectLocation = () => {
+  const handleLiveGpsDetect = async () => {
     setDetectingGps(true);
-    setTimeout(() => {
-      setDetectingGps(false);
-      const detectedCity = 'Patna';
-      const detectedAddress = 'Patna Airport Terminal, Sheikhpura, Patna, Bihar';
-      setSelectedCity(detectedCity);
-      setAddressDetail(detectedAddress);
+    try {
+      const location = await getCurrentDeviceLocation();
+      setSelectedCity(location.city);
+      setAddressDetail(location.formattedAddress);
       if (mode === 'pickup') {
-        updateSearch({ origin: detectedCity, pickupAddress: detectedAddress });
+        updateSearch({
+          origin: location.city,
+          pickupAddress: location.formattedAddress,
+        });
       } else {
-        updateSearch({ destination: detectedCity, dropAddress: detectedAddress });
+        updateSearch({
+          destination: location.city,
+          dropAddress: location.formattedAddress,
+        });
       }
       navigation.goBack();
-    }, 600);
+    } catch (err: any) {
+      Alert.alert(
+        'GPS Location Notice',
+        err.message || 'Could not fetch current GPS location. Please check device location permissions.'
+      );
+    } finally {
+      setDetectingGps(false);
+    }
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} activeOpacity={0.8}>
-          <ArrowLeft size={20} color="#0F172A" />
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+
+      {/* Top Header */}
+      <View style={[styles.header, { borderBottomColor: colors.cardBorder }]}>
+        <TouchableOpacity
+          style={[styles.backBtn, { backgroundColor: colors.cardSurface, borderColor: colors.cardBorder }]}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
+        >
+          <ArrowLeft size={20} color={colors.textPrimary} />
         </TouchableOpacity>
-        <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text style={styles.headerOverline}>STEP 1: LOCATION SELECTION</Text>
-          <Text style={styles.headerTitle}>
-            {mode === 'pickup' ? 'Select Pickup Point' : 'Select Outstation Destination'}
+        <View style={styles.headerTitleGroup}>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+            {mode === 'pickup' ? 'Pickup Location' : 'Destination'}
+          </Text>
+          <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
+            {mode === 'pickup' ? 'Where should the driver pick you up?' : 'Where are you traveling in Bihar?'}
           </Text>
         </View>
       </View>
 
-      <View style={styles.content}>
-        
-        {/* Visual Map Interface Container */}
-        <View style={styles.visualMapCanvas}>
-          {/* Stylized Grid Lines representing Map Canvas */}
-          <View style={styles.mapGridOverlay} />
-          <View style={styles.mapRoad1} />
-          <View style={styles.mapRoad2} />
-          <View style={styles.mapRoad3} />
-
-          {/* Interactive Map Pin Marker */}
-          <View style={styles.mapPinContainer}>
-            <View style={styles.mapPinPulse} />
-            <View style={[styles.mapPinHead, { backgroundColor: mode === 'pickup' ? '#059669' : '#D97706' }]}>
-              {mode === 'pickup' ? (
-                <MapPin size={18} color="#FFFFFF" />
-              ) : (
-                <Compass size={18} color="#FFFFFF" />
-              )}
-            </View>
-            <View style={styles.mapPinStem} />
-            <View style={styles.mapPinShadow} />
-          </View>
-
-          {/* Map Floating HUD */}
-          <View style={styles.mapHudBadge}>
-            <Sparkles size={12} color="#D97706" />
-            <Text style={styles.mapHudText}>
-              {selectedCity || 'Bihar Outstation Highway Network'}
-            </Text>
-          </View>
-
-          {/* GPS Quick Locate Floating Button */}
-          <TouchableOpacity
-            style={styles.gpsFloatingBtn}
-            onPress={handleDetectLocation}
-            disabled={detectingGps}
-            activeOpacity={0.85}
-          >
-            {detectingGps ? (
-              <ActivityIndicator size="small" color="#0F172A" />
-            ) : (
-              <>
-                <Navigation size={16} color="#059669" />
-                <Text style={styles.gpsFloatingText}>Auto GPS</Text>
-              </>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchBox}>
-          <Search size={18} color="#94A3B8" />
+      {/* Search Bar Input */}
+      <View style={styles.searchContainer}>
+        <View style={[styles.searchInputWrapper, { backgroundColor: colors.inputBg, borderColor: colors.inputBorder }]}>
+          <Search size={18} color={colors.textMuted} style={styles.searchIcon} />
           <TextInput
-            style={styles.searchInput}
-            placeholder={mode === 'pickup' ? "Search pickup district or city..." : "Search drop destination in Bihar..."}
-            placeholderTextColor="#94A3B8"
+            style={[styles.searchInput, { color: colors.inputText }]}
+            placeholder={mode === 'pickup' ? 'Search pickup city, town or district...' : 'Search destination city in Bihar...'}
+            placeholderTextColor={colors.inputPlaceholder}
             value={query}
             onChangeText={setQuery}
-            onSubmitEditing={() => {
-              if (query.trim()) {
-                handleSelectCity(query.trim());
-              }
-            }}
-            returnKeyType="done"
+            autoFocus={false}
           />
           {query.length > 0 && (
-            <TouchableOpacity onPress={() => setQuery('')}>
-              <Text style={{ color: '#94A3B8', fontSize: 16, paddingHorizontal: 4 }}>✕</Text>
+            <TouchableOpacity onPress={() => setQuery('')} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <X size={16} color={colors.textMuted} />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Doorstep Address / Landmark Input */}
-        <View style={styles.detailBox}>
-          <Text style={styles.detailLabel}>
-            {mode === 'pickup' ? 'EXACT PICKUP DOORSTEP ADDRESS' : 'EXACT DROP LOCATION / HOTEL / LANDMARK'}
-          </Text>
-          <TextInput
-            style={styles.detailInput}
-            placeholder="e.g. Near Big Bazaar, Boring Canal Road, Patna"
-            placeholderTextColor="#94A3B8"
-            value={addressDetail}
-            onChangeText={setAddressDetail}
-          />
-        </View>
-
-        {/* Quick Bihar Hub Suggestions Horizontal Chips */}
-        <View style={styles.hubsSection}>
-          <Text style={styles.listHeader}>Frequent Transit Hubs</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hubsScroll}>
-            {QUICK_HUBS.map((hub, idx) => (
-              <TouchableOpacity
-                key={idx}
-                style={[
-                  styles.hubChip,
-                  selectedCity === hub.city && styles.hubChipActive
-                ]}
-                onPress={() => {
-                  setSelectedCity(hub.city);
-                  setAddressDetail(hub.name);
-                }}
-                activeOpacity={0.8}
-              >
-                {hub.type === 'airport' ? (
-                  <Plane size={13} color={selectedCity === hub.city ? '#0F172A' : '#D97706'} />
-                ) : (
-                  <Train size={13} color={selectedCity === hub.city ? '#0F172A' : '#059669'} />
-                )}
-                <Text style={[styles.hubChipText, selectedCity === hub.city && styles.hubChipTextActive]}>
-                  {hub.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* City Suggestions List */}
-        <Text style={[styles.listHeader, { marginTop: 10 }]}>All Bihar Service Districts</Text>
-        <FlatList
-          data={displayCities}
-          keyExtractor={item => item}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => {
-            const isSelected = selectedCity === item;
-            const isCustom = item === query.trim() && !isExactMatch;
-            return (
-              <TouchableOpacity
-                style={[
-                  styles.cityRow,
-                  isSelected && styles.cityRowSelected,
-                  isCustom && styles.cityRowCustom
-                ]}
-                onPress={() => handleSelectCity(item)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.cityLeft}>
-                  <View style={[styles.cityIconWrap, isSelected && { backgroundColor: '#FEF3C7' }]}>
-                    <MapPin size={16} color={isSelected ? '#D97706' : '#64748B'} />
-                  </View>
-                  <Text style={[styles.cityName, isSelected && { color: '#0F172A', fontWeight: '800' }]}>
-                    {isCustom ? `Use "${item}"` : item}
-                  </Text>
-                </View>
-                {isSelected && <Check size={18} color="#D97706" strokeWidth={2.5} />}
-              </TouchableOpacity>
-            );
-          }}
-        />
-
-        {/* Location Confirmation CTA Button */}
+        {/* Uber-Style Instant Current Location Button */}
         <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={handleConfirmLocation}
-          activeOpacity={0.88}
+          style={[
+            styles.gpsPill,
+            {
+              backgroundColor: isDark ? 'rgba(56, 189, 248, 0.1)' : 'rgba(2, 132, 199, 0.08)',
+              borderColor: isDark ? 'rgba(56, 189, 248, 0.25)' : 'rgba(2, 132, 199, 0.2)',
+            }
+          ]}
+          onPress={handleLiveGpsDetect}
+          disabled={detectingGps}
+          activeOpacity={0.8}
         >
-          <CheckCircle2 size={18} color="#0F172A" />
-          <Text style={styles.confirmButtonText}>
-            Confirm {mode === 'pickup' ? 'Pickup' : 'Destination'} ({selectedCity || 'Patna'})
-          </Text>
+          {detectingGps ? (
+            <ActivityIndicator size="small" color={colors.accentBlue} style={{ marginRight: 8 }} />
+          ) : (
+            <Crosshair size={18} color={colors.accentBlue} strokeWidth={2.4} style={{ marginRight: 8 }} />
+          )}
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.gpsPillTitle, { color: isDark ? '#38BDF8' : '#0284C7' }]}>
+              {detectingGps ? 'Locating via GPS Satellite...' : 'Use Current Live GPS Location'}
+            </Text>
+            <Text style={[styles.gpsPillSub, { color: colors.textMuted }]}>
+              Auto-detect doorstep address via device sensors
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
+
+      {/* List of Verified Bihar Hubs & Districts */}
+      <FlatList
+        data={displayCities}
+        keyExtractor={(item) => item}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.listContainer}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={Platform.OS === 'android'}
+        ListHeaderComponent={
+          !query ? (
+            <View style={styles.quickHubsSection}>
+              <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>POPULAR TRANSIT HUBS</Text>
+              <View style={styles.quickHubsGrid}>
+                {QUICK_HUBS.map((hub, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    style={[
+                      styles.hubCard,
+                      {
+                        backgroundColor: colors.cardSurface,
+                        borderColor: colors.cardBorder,
+                      }
+                    ]}
+                    onPress={() => {
+                      setSelectedCity(hub.city);
+                      setAddressDetail(hub.name);
+                      if (mode === 'pickup') {
+                        updateSearch({ origin: hub.city, pickupAddress: hub.name });
+                      } else {
+                        updateSearch({ destination: hub.city, dropAddress: hub.name });
+                      }
+                      navigation.goBack();
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    {hub.type === 'airport' ? (
+                      <Plane size={15} color={colors.accentGold} />
+                    ) : (
+                      <Train size={15} color={colors.brandGreen} />
+                    )}
+                    <Text style={[styles.hubCardText, { color: colors.textPrimary }]} numberOfLines={1}>
+                      {hub.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <Text style={[styles.sectionTitle, { color: colors.textMuted, marginTop: 20 }]}>
+                ALL 38 BIHAR DISTRICT CORRIDORS
+              </Text>
+            </View>
+          ) : undefined
+        }
+        renderItem={({ item }) => {
+          const isSelected = selectedCity?.toLowerCase() === item.toLowerCase();
+          return (
+            <TouchableOpacity
+              style={[
+                styles.cityRow,
+                {
+                  backgroundColor: isSelected
+                    ? isDark ? 'rgba(245, 158, 11, 0.12)' : 'rgba(217, 119, 6, 0.08)'
+                    : colors.cardSurface,
+                  borderColor: isSelected ? colors.accentGold : colors.cardBorder,
+                }
+              ]}
+              onPress={() => handleSelectCity(item)}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[
+                  styles.cityIconBox,
+                  {
+                    backgroundColor: isSelected
+                      ? isDark ? 'rgba(245, 158, 11, 0.2)' : 'rgba(217, 119, 6, 0.15)'
+                      : colors.inputBg,
+                  }
+                ]}
+              >
+                <MapPin size={17} color={isSelected ? colors.accentGold : colors.textMuted} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.cityName, { color: colors.textPrimary, fontWeight: isSelected ? '800' : '600' }]}>
+                  {item}
+                </Text>
+                <Text style={[styles.cityState, { color: colors.textMuted }]}>
+                  Outstation Taxi Corridor • Zero Return Toll
+                </Text>
+              </View>
+              {isSelected && <Check size={18} color={colors.accentGold} strokeWidth={2.8} />}
+            </TouchableOpacity>
+          );
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -329,294 +317,137 @@ export const AddressSelectScreen = ({ route, navigation }: any) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    backgroundColor: '#FFFFFF',
+    gap: 12,
   },
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F8FAFC',
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
-  headerOverline: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#D97706',
-    letterSpacing: 0.8,
+  headerTitleGroup: {
+    flex: 1,
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#0F172A',
+    fontSize: 18,
+    fontWeight: '900',
+    letterSpacing: -0.3,
   },
-  content: {
-    flex: 1,
+  headerSubtitle: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 1,
+  },
+  searchContainer: {
     paddingHorizontal: 16,
     paddingTop: 12,
+    paddingBottom: 8,
+    gap: 10,
   },
-  visualMapCanvas: {
-    height: 140,
-    backgroundColor: '#EEF2F6',
-    borderRadius: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  mapGridOverlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: '#E2E8F0',
-    opacity: 0.25,
-  },
-  mapRoad1: {
-    position: 'absolute',
-    width: '120%',
-    height: 12,
-    backgroundColor: '#FFFFFF',
-    transform: [{ rotate: '-18deg' }],
-  },
-  mapRoad2: {
-    position: 'absolute',
-    width: '120%',
-    height: 8,
-    backgroundColor: '#FFFFFF',
-    transform: [{ rotate: '42deg' }],
-  },
-  mapRoad3: {
-    position: 'absolute',
-    height: '140%',
-    width: 14,
-    backgroundColor: '#FEF3C7',
-    left: '45%',
-  },
-  mapPinContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mapPinPulse: {
-    position: 'absolute',
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(234, 179, 8, 0.25)',
-  },
-  mapPinHead: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  mapPinStem: {
-    width: 2,
-    height: 8,
-    backgroundColor: '#0F172A',
-  },
-  mapPinShadow: {
-    width: 16,
-    height: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  mapHudBadge: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
+  searchInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  mapHudText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  gpsFloatingBtn: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  gpsFloatingText: {
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#0F172A',
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    borderRadius: 12,
     paddingHorizontal: 14,
     height: 48,
-    gap: 10,
-    marginBottom: 10,
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 2,
+  },
+  searchIcon: {
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  clearBtn: {
+    fontSize: 16,
     fontWeight: '700',
-    color: '#0F172A',
+    padding: 4,
   },
-  detailBox: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 12,
-    marginBottom: 12,
-  },
-  detailLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    color: '#64748B',
-    marginBottom: 4,
-    letterSpacing: 0.5,
-  },
-  detailInput: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  hubsSection: {
-    marginBottom: 10,
-  },
-  hubsScroll: {
-    gap: 8,
-    paddingVertical: 2,
-  },
-  hubChip: {
+  gpsPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
-  hubChipActive: {
-    backgroundColor: '#FEF3C7',
-    borderColor: '#F59E0B',
-  },
-  hubChipText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#475569',
-  },
-  hubChipTextActive: {
-    color: '#0F172A',
+  gpsPillTitle: {
+    fontSize: 13.5,
     fontWeight: '800',
+    letterSpacing: -0.2,
   },
-  listHeader: {
+  gpsPillSub: {
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 1,
+  },
+  listContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+  },
+  quickHubsSection: {
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  sectionTitle: {
     fontSize: 11,
     fontWeight: '800',
-    color: '#64748B',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    marginBottom: 10,
+  },
+  quickHubsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  hubCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    gap: 7,
+  },
+  hubCardText: {
+    fontSize: 12.5,
+    fontWeight: '700',
   },
   cityRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 11,
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    borderRadius: 8,
-  },
-  cityRowSelected: {
-    backgroundColor: '#FFFBEB',
-  },
-  cityRowCustom: {
-    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#F59E0B',
+    marginBottom: 8,
+    gap: 12,
   },
-  cityLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  cityIconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#F1F5F9',
+  cityIconBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   cityName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#334155',
+    fontSize: 15,
+    letterSpacing: -0.2,
   },
-  confirmButton: {
-    backgroundColor: '#F59E0B', // Golden Yellow
-    height: 48,
-    borderRadius: 14,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-    marginVertical: 10,
-    shadowColor: '#EAB308',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  confirmButtonText: {
-    color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '800',
+  cityState: {
+    fontSize: 11.5,
+    fontWeight: '500',
+    marginTop: 1,
   },
 });

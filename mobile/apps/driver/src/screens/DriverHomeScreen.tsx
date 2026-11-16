@@ -11,10 +11,12 @@ import {
   Modal
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Location from 'expo-location';
 import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
 import { AppUpdaterModal } from '../../../../shared/components/AppUpdaterModal';
+import { UberMapView } from '../../../../shared/components/UberMapView';
 import { useDriver } from '../context/DriverContext';
 import { FleetSyncService } from '../../../../shared/services/fleetSync';
 import { ForegroundTrackingService } from '../services/ForegroundTrackingService';
@@ -32,7 +34,12 @@ import {
   ShieldCheck,
   AlertTriangle,
   Zap,
-  Radio
+  Radio,
+  Star,
+  BatteryCharging,
+  Calendar,
+  Flag,
+  RefreshCw
 } from 'lucide-react-native';
 import { useDispatchOffers } from '../hooks/useDispatchOffers';
 
@@ -48,6 +55,59 @@ export const DriverHomeScreen = ({ navigation }: any) => {
   } = useDriver();
   const { colors, isDark } = useTheme();
   const [showBatteryModal, setShowBatteryModal] = useState(false);
+  const [driverCoords, setDriverCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Live Location Watcher & Telemetry Pipeline
+  useEffect(() => {
+    let sub: Location.LocationSubscription | null = null;
+    let isMounted = true;
+
+    if (isDutyOnline) {
+      (async () => {
+        try {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') return;
+
+          // Quick initial lock
+          const initial = await Location.getLastKnownPositionAsync().catch(() => null);
+          if (initial && isMounted) {
+            const { latitude, longitude, heading, speed } = initial.coords;
+            setDriverCoords({ lat: latitude, lng: longitude });
+            ForegroundTrackingService.broadcastCoordinates(latitude, longitude, heading || 0, speed || 0);
+          }
+
+          // Active GPS tracking
+          sub = await Location.watchPositionAsync(
+            {
+              accuracy: Location.Accuracy.High,
+              timeInterval: 2500,
+              distanceInterval: 5
+            },
+            (loc) => {
+              if (!isMounted) return;
+              const { latitude, longitude, heading, speed } = loc.coords;
+              setDriverCoords({ lat: latitude, lng: longitude });
+              ForegroundTrackingService.broadcastCoordinates(latitude, longitude, heading || 0, speed || 0);
+            }
+          );
+        } catch (err) {
+          console.warn('[DriverHomeScreen] Location watch notice:', err);
+        }
+      })();
+    } else {
+      if (sub) {
+        (sub as any).remove();
+        sub = null;
+      }
+    }
+
+    return () => {
+      isMounted = false;
+      if (sub) {
+        (sub as any).remove();
+      }
+    };
+  }, [isDutyOnline]);
 
   // Broadcast offers polling
   const { offers: broadcastOffers, claimOffer, rejectOffer } = useDispatchOffers(isDutyOnline);
@@ -95,7 +155,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
         cabTier: pendingBooking.cabTier || 'sedan',
         cabName: pendingBooking.cabName || 'Prime Sedan',
         passengerName: pendingBooking.passengerName || 'Passenger',
-        passengerPhone: pendingBooking.passengerPhone || '6206494214',
+        passengerPhone: pendingBooking.passengerPhone || '8002141816',
         estimatedEarnings: estEarnings,
         totalFare: fare,
         collectFromPassenger: fare,
@@ -132,6 +192,33 @@ export const DriverHomeScreen = ({ navigation }: any) => {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
+        {/* Live Chauffeur Telemetry & Highway Beacon Map */}
+        <View style={[styles.mapCard, { backgroundColor: colors.surface, borderColor: isDutyOnline ? colors.primary : colors.border }]}>
+          <View style={styles.mapHeaderRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+              <View style={[styles.pulseBeacon, { backgroundColor: isDutyOnline ? colors.primary : colors.danger }]} />
+              <Text style={[styles.mapHeaderText, { color: colors.text }]}>
+                {isDutyOnline ? 'LIVE ROAMING BEACON' : 'OFFLINE BEACON'}
+              </Text>
+            </View>
+            <View style={[styles.cityChip, { backgroundColor: isDutyOnline ? 'rgba(5,150,105,0.12)' : colors.surfaceHighlight }]}>
+              <MapPin size={11} color={isDutyOnline ? colors.primary : colors.textMuted} />
+              <Text style={[styles.cityChipText, { color: isDutyOnline ? colors.primary : colors.textSecondary }]}>
+                {activeTrip ? `${activeTrip.pickupCity} → ${activeTrip.dropCity}` : (driver?.currentCity || 'Patna Hub')}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.mapWrapper}>
+            <UberMapView
+              originCity={activeTrip ? activeTrip.pickupCity : (driver?.currentCity || 'Patna')}
+              destinationCity={activeTrip ? activeTrip.dropCity : ''}
+              liveUserLocation={driverCoords ? { lat: driverCoords.lat, lng: driverCoords.lng } : undefined}
+              height={210}
+              interactive={true}
+            />
+          </View>
+        </View>
+
         {/* Broadcast Offers Live Feed */}
         {broadcastOffers.length > 0 && (
           <View style={{ marginBottom: 4 }}>
@@ -146,19 +233,32 @@ export const DriverHomeScreen = ({ navigation }: any) => {
                 key={offer.bookingId}
                 style={[{ borderRadius: 14, borderWidth: 1.5, borderColor: '#F59E0B', backgroundColor: colors.surface, marginBottom: 10, overflow: 'hidden' }]}
               >
-                {/* Pickup DateTime — HIGH VISIBILITY */}
-                <View style={{ backgroundColor: 'rgba(239,68,68,0.12)', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <Text style={{ fontSize: 10, fontWeight: '900', color: '#EF4444', letterSpacing: 0.8 }}>📅 PICKUP:</Text>
+                {/* Pickup DateTime & Origin Channel Badge */}
+                <View style={{ backgroundColor: 'rgba(239,68,68,0.12)', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Calendar size={13} color="#EF4444" />
+                  <Text style={{ fontSize: 10, fontWeight: '900', color: '#EF4444', letterSpacing: 0.8 }}>PICKUP:</Text>
                   <Text style={{ fontSize: 16, fontWeight: '900', color: '#EF4444', flex: 1 }}>{offer.pickupDateTimeFormatted}</Text>
+                  <View style={{ paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, backgroundColor: offer.isApp ? 'rgba(16,185,129,0.2)' : 'rgba(56,189,248,0.2)' }}>
+                    <Text style={{ fontSize: 10, fontWeight: '800', color: offer.isApp ? '#10B981' : '#38BDF8' }}>
+                      {offer.isApp ? '📲 Mobile App' : '🌐 Website'}
+                    </Text>
+                  </View>
                 </View>
                 <View style={{ padding: 12 }}>
                   {/* Route */}
-                  <Text style={{ fontSize: 17, fontWeight: '900', color: colors.text, marginBottom: 4 }}>
+                  <Text style={{ fontSize: 17, fontWeight: '900', color: colors.text, marginBottom: 6 }}>
                     {offer.originCity} → {offer.destCity}
                   </Text>
-                  <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 8 }} numberOfLines={1}>
-                    📍 {offer.pickupLocation}  🏁 {offer.dropLocation}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                    <MapPin size={12} color={colors.primary} />
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, flex: 1 }} numberOfLines={1}>
+                      {offer.pickupLocation}
+                    </Text>
+                    <Flag size={12} color={colors.gold} />
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, flex: 1 }} numberOfLines={1}>
+                      {offer.dropLocation}
+                    </Text>
+                  </View>
                   {/* Fare Row */}
                   <View style={{ flexDirection: 'row', gap: 16, marginBottom: 10 }}>
                     <View>
@@ -186,9 +286,9 @@ export const DriverHomeScreen = ({ navigation }: any) => {
                       onPress={async () => {
                         const res = await claimOffer(offer.bookingId);
                         if (res.alreadyClaimed) {
-                          Alert.alert('Claimed!', 'Trip accepted by another driver.');
+                          Alert.alert('Claimed', 'Trip accepted by another driver.');
                         } else if (res.success) {
-                          Alert.alert('🎉 Claimed!', 'You successfully claimed the trip!');
+                          Alert.alert('Claimed', 'You successfully claimed the trip!');
                         } else {
                           Alert.alert('Error', res.message || 'Try again.');
                         }
@@ -251,7 +351,10 @@ export const DriverHomeScreen = ({ navigation }: any) => {
             <Text style={[styles.kpiVal, { color: colors.gold }]}>
               {driver?.totalTrips || 38}
             </Text>
-            <Text style={[styles.kpiSub, { color: colors.textSecondary }]}>★ 4.88 Rating</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Star size={12} color={colors.gold} fill={colors.gold} />
+              <Text style={[styles.kpiSub, { color: colors.textSecondary }]}>4.88 Rating</Text>
+            </View>
           </View>
         </View>
 
@@ -269,12 +372,12 @@ export const DriverHomeScreen = ({ navigation }: any) => {
             </View>
 
             <Text style={[styles.activeRoute, { color: colors.text }]}>
-              {activeTrip.pickupCity} ➔ {activeTrip.dropCity}
+              {activeTrip.pickupCity} → {activeTrip.dropCity}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginVertical: 4 }}>
-              <Clock size={13} color={colors.primary} />
+              <Calendar size={13} color={colors.primary} />
               <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '800' }}>
-                Required: 📅 {activeTrip.pickupDate || 'Today'} • 🕒 {activeTrip.pickupTime || '10:00 AM'}
+                Required: {activeTrip.pickupDate || 'Today'} • {activeTrip.pickupTime || '10:00 AM'}
               </Text>
             </View>
             <Text style={[styles.activeAddress, { color: colors.textSecondary }]} numberOfLines={1}>
@@ -302,12 +405,12 @@ export const DriverHomeScreen = ({ navigation }: any) => {
             </View>
 
             <Text style={[styles.offerRoute, { color: colors.text }]}>
-              {activeOffer.pickupCity} ➔ {activeOffer.dropCity}
+              {activeOffer.pickupCity} → {activeOffer.dropCity}
             </Text>
             <View style={{ backgroundColor: 'rgba(5, 150, 105, 0.12)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, marginVertical: 6, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Clock size={13} color={colors.primary} />
+              <Calendar size={13} color={colors.primary} />
               <Text style={{ color: colors.text, fontSize: 12, fontWeight: '700' }}>
-                Required: <Text style={{ color: colors.primary, fontWeight: '800' }}>📅 {activeOffer.pickupDate || 'Today'} • 🕒 {activeOffer.pickupTime || '10:00 AM'}</Text>
+                Required: <Text style={{ color: colors.primary, fontWeight: '800' }}>{activeOffer.pickupDate || 'Today'} • {activeOffer.pickupTime || '10:00 AM'}</Text>
               </Text>
             </View>
             <Text style={[styles.offerDistance, { color: colors.textMuted }]}>
@@ -342,9 +445,12 @@ export const DriverHomeScreen = ({ navigation }: any) => {
               onPress={handleOpenOffer}
               activeOpacity={0.8}
             >
-              <Text style={[styles.simulateOfferText, { color: colors.primary }]}>
-                ⚡ Check Active Outstation Dispatches
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <RefreshCw size={14} color={colors.primary} />
+                <Text style={[styles.simulateOfferText, { color: colors.primary }]}>
+                  Check Active Outstation Dispatches
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
         )}
@@ -364,7 +470,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <View style={{ width: '100%', maxWidth: 360, backgroundColor: colors.surface, borderRadius: 18, padding: 22, borderWidth: 1, borderColor: colors.border, alignItems: 'center' }}>
             <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: 'rgba(217, 119, 6, 0.15)', justifyContent: 'center', alignItems: 'center', marginBottom: 14 }}>
-              <Text style={{ fontSize: 24 }}>🔋</Text>
+              <BatteryCharging size={26} color="#D97706" />
             </View>
             <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, textAlign: 'center', marginBottom: 8 }}>
               Keep Rides Ringing in Background
@@ -373,7 +479,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
               Phones from Xiaomi (MIUI/HyperOS), Vivo, Realme, and Samsung kill background cab apps to save power. To ensure you never miss lucrative outstation trips when your phone is locked:
             </Text>
             <View style={{ width: '100%', backgroundColor: colors.surfaceHighlight, borderRadius: 10, padding: 12, marginBottom: 18, gap: 6 }}>
-              <Text style={{ fontSize: 12, color: colors.text, fontWeight: '700' }}>1. Open Android Settings ➔ Apps</Text>
+              <Text style={{ fontSize: 12, color: colors.text, fontWeight: '700' }}>1. Open Android Settings → Apps</Text>
               <Text style={{ fontSize: 12, color: colors.text, fontWeight: '700' }}>2. Select "Oneway Taxi Driver"</Text>
               <Text style={{ fontSize: 12, color: colors.primary, fontWeight: '700' }}>3. Set Battery Saver to "No Restrictions"</Text>
             </View>
@@ -429,6 +535,47 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 40,
     gap: 14,
+  },
+  mapCard: {
+    borderRadius: 16,
+    borderWidth: 1.5,
+    overflow: 'hidden',
+    marginBottom: 4,
+  },
+  mapHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  pulseBeacon: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  mapHeaderText: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+  },
+  cityChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  cityChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  mapWrapper: {
+    width: '100%',
+    height: 210,
+    overflow: 'hidden',
+    borderRadius: 12,
   },
   gpsCard: {
     flexDirection: 'row',

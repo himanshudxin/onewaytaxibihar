@@ -144,7 +144,8 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
       });
 
       setActiveBooking(booking);
-      await refreshTrips();
+      // Run background trips sync asynchronously so confirmation is instant (<100ms)
+      refreshTrips().catch(() => {});
       return booking;
     } catch (e: any) {
       Alert.alert('Booking Error', e.message || 'Could not place booking. Please try again.');
@@ -339,7 +340,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
                 </View>
               </View>
               <View style={styles.changeScheduleBadge}>
-                <Text style={styles.changeScheduleText}>Modify ✏️</Text>
+                <Text style={styles.changeScheduleText}>Modify</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -552,7 +553,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
                   activeOpacity={0.85}
                 >
                   <Text style={styles.applyScheduleText}>
-                    Set Departure: {search.pickupDate || 'Today'} at {search.pickupTime || '10:00 AM'} ✓
+                    Set Departure: {search.pickupDate || 'Today'} at {search.pickupTime || '10:00 AM'}
                   </Text>
                 </TouchableOpacity>
               </ScrollView>

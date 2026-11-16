@@ -86,7 +86,7 @@ html = html.substring(0, popIdx) + '\n\n        ' + heroHeaderBlock + '\n\n     
 console.log('✓ Moved hero title block below booking window');
 
 // Update cache buster
-html = html.replace(/v=20261116_v42_pro_header/g, 'v=20261116_v43_clean_header');
+html = html.replace(/v=20261116_v42_pro_header/g, 'v=20261116_v45_desk_otp');
 
 fs.writeFileSync('index.html', html, 'utf8');
 console.log('✓ Saved updated index.html');

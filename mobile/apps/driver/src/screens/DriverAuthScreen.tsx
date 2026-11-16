@@ -9,17 +9,17 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Linking
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Colors } from '../../../../shared/theme/colors';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
-import { MobileApiClient } from '../../../../shared/services/api';
+import { OtpService } from '../../../../shared/services/otpService';
 import { useDriver } from '../context/DriverContext';
 import { StorageService } from '../../../../shared/services/storage';
 import { isValidIndianMobile, sanitizePhoneNumber } from '../../../../shared/utils/formatters';
-import { ShieldCheck, Phone, KeyRound, ArrowRight, ArrowLeft, Navigation } from 'lucide-react-native';
+import { ShieldCheck, ArrowRight, ArrowLeft, MessageSquare, CheckCircle2, PhoneCall } from 'lucide-react-native';
 
 export const DriverAuthScreen = ({ navigation }: any) => {
   const { refreshProfile } = useDriver();
@@ -30,6 +30,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
+  const [smsStatus, setSmsStatus] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any = null;
@@ -48,11 +49,12 @@ export const DriverAuthScreen = ({ navigation }: any) => {
 
     setLoading(true);
     try {
-      await MobileApiClient.sendOtp(clean, 'driver');
+      const res = await OtpService.sendOtp(clean, 'driver');
       setStep('otp');
-      setResendTimer(30);
+      setResendTimer(res.resendAfterSec || 30);
+      setSmsStatus(res.channel === 'dev_simulation' ? 'Dev Mode (Code: 1234)' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
     } catch (e: any) {
-      Alert.alert('Error', e.message || 'Failed to send OTP.');
+      Alert.alert('Error', e.message || 'Failed to dispatch OTP SMS.');
     } finally {
       setLoading(false);
     }
@@ -62,9 +64,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
     setLoading(true);
     try {
       const demoPhone = '6206494214';
-      await StorageService.removeItem('otb_driver_explicit_logout');
-      await MobileApiClient.driverLogin(demoPhone, '4214');
-      await StorageService.setItem('otb_driver_phone', demoPhone);
+      await OtpService.verifyOtp(demoPhone, '1234', 'driver');
       await refreshProfile();
       navigation.replace('DriverTabs');
     } catch (e: any) {
@@ -78,24 +78,30 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   };
 
   const handleVerifyOtp = async () => {
+    const clean = sanitizePhoneNumber(phone);
     if (!otp.trim()) {
-      Alert.alert('OTP Required', 'Please enter your 4-digit chauffeur PIN or last 4 digits of phone.');
+      Alert.alert('OTP Required', 'Please enter the 6-digit OTP sent to your phone (or test code 1234).');
       return;
     }
 
     setLoading(true);
     try {
-      const clean = sanitizePhoneNumber(phone);
-      await StorageService.removeItem('otb_driver_explicit_logout');
-      await MobileApiClient.driverLogin(clean, otp.trim());
-      await StorageService.setItem('otb_driver_phone', clean);
+      await OtpService.verifyOtp(clean, otp.trim(), 'driver');
       await refreshProfile();
       navigation.replace('DriverTabs');
     } catch (e: any) {
-      Alert.alert('Verification Failed', e.message || 'Invalid code.');
+      Alert.alert('Verification Failed', e.message || 'Invalid OTP code.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleWhatsAppFallback = () => {
+    const clean = sanitizePhoneNumber(phone);
+    const url = OtpService.getWhatsAppFallbackUrl(clean, 'driver');
+    Linking.openURL(url).catch(() => {
+      Alert.alert('WhatsApp Unavailable', 'Please contact support at +91 80021 41816.');
+    });
   };
 
   return (
@@ -106,7 +112,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
         style={styles.keyboardContainer}
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => (step === 'otp' ? setStep('phone') : navigation.goBack())} style={styles.backButton}>
             <ArrowLeft size={22} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.text }]}>
@@ -119,12 +125,12 @@ export const DriverAuthScreen = ({ navigation }: any) => {
           <BrandLogo size="hero" showSubtitle subtitleText="Driver & Fleet Partner Network" style={{ marginBottom: 20 }} />
 
           <Text style={[styles.title, { color: colors.text }]}>
-            {step === 'phone' ? 'Chauffeur Phone Login' : 'Enter 4-Digit Code'}
+            {step === 'phone' ? 'Chauffeur Phone Login' : 'Enter 6-Digit SMS Code'}
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {step === 'phone'
-              ? 'Enter your registered mobile number to access the dispatch console and daily earnings.'
-              : `Verification SMS sent to +91 ${sanitizePhoneNumber(phone)}. Test code: 1234`}
+              ? 'Enter your registered mobile number to receive a secure SMS verification code.'
+              : `Dispatched SMS code to +91 ${sanitizePhoneNumber(phone)}. Valid for 10 minutes. (Test Code: 1234)`}
           </Text>
 
           {step === 'phone' ? (
@@ -142,18 +148,27 @@ export const DriverAuthScreen = ({ navigation }: any) => {
               />
             </View>
           ) : (
-            <View style={[styles.inputBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-              <TextInput
-                style={[styles.otpInput, { color: colors.text }]}
-                placeholder="• • • •"
-                placeholderTextColor={colors.textMuted}
-                keyboardType="number-pad"
-                maxLength={6}
-                value={otp}
-                onChangeText={setOtp}
-                autoFocus
-              />
-            </View>
+            <>
+              <View style={[styles.inputBox, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <TextInput
+                  style={[styles.otpInput, { color: colors.text }]}
+                  placeholder="• • • • • •"
+                  placeholderTextColor={colors.textMuted}
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  value={otp}
+                  onChangeText={setOtp}
+                  autoFocus
+                />
+              </View>
+
+              {smsStatus && (
+                <View style={styles.statusBadge}>
+                  <CheckCircle2 size={13} color="#10b981" />
+                  <Text style={styles.statusText}>{smsStatus}</Text>
+                </View>
+              )}
+            </>
           )}
 
           <TouchableOpacity
@@ -166,7 +181,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
             ) : (
               <>
                 <Text style={styles.primaryButtonText}>
-                  {step === 'phone' ? 'Send Driver Login Code' : 'Verify & Enter Console'}
+                  {step === 'phone' ? 'Send Driver Login OTP' : 'Verify & Enter Console'}
                 </Text>
                 <ArrowRight size={20} color="#FFFFFF" />
               </>
@@ -181,22 +196,29 @@ export const DriverAuthScreen = ({ navigation }: any) => {
               activeOpacity={0.8}
             >
               <Text style={[styles.demoLoginText, { color: colors.primary }]}>
-                Quick Demo Chauffeur Login (9876508888)
+                Quick Demo Chauffeur Login (6206494214)
               </Text>
             </TouchableOpacity>
           )}
 
           {step === 'otp' && (
-            <View style={styles.resendRow}>
-              {resendTimer > 0 ? (
-                <Text style={[styles.resendText, { color: colors.textMuted }]}>
-                  Resend code in {resendTimer}s
-                </Text>
-              ) : (
-                <TouchableOpacity onPress={handleSendOtp}>
-                  <Text style={[styles.resendLink, { color: colors.primary }]}>Resend OTP via SMS</Text>
-                </TouchableOpacity>
-              )}
+            <View style={styles.otpActions}>
+              <View style={styles.resendRow}>
+                {resendTimer > 0 ? (
+                  <Text style={[styles.resendText, { color: colors.textMuted }]}>
+                    Resend SMS code in {resendTimer}s
+                  </Text>
+                ) : (
+                  <TouchableOpacity onPress={handleSendOtp}>
+                    <Text style={[styles.resendLink, { color: colors.primary }]}>Resend OTP via SMS</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <TouchableOpacity style={styles.waFallbackBtn} onPress={handleWhatsAppFallback}>
+                <MessageSquare size={14} color="#25D366" />
+                <Text style={styles.waFallbackText}>Get Code via WhatsApp</Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -214,7 +236,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
           <View style={styles.disclaimerBox}>
             <ShieldCheck size={16} color={colors.primary} />
             <Text style={[styles.disclaimerText, { color: colors.textMuted }]}>
-              Official Chauffeur Gateway of OneWayTaxiBihar Mobility Pvt Ltd. Helpline: 6206494214.
+              Official Chauffeur Gateway of OneWayTaxiBihar Mobility Pvt Ltd. 24×7 Driver Helpline: +91 80021 41816.
             </Text>
           </View>
         </View>
@@ -225,134 +247,170 @@ export const DriverAuthScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
+    flex: 1
   },
   keyboardContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
+    flex: 1
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12
   },
   backButton: {
-    padding: 6,
+    padding: 6
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '700'
   },
   content: {
     flex: 1,
-    paddingTop: 30,
-    alignItems: 'center',
-  },
-  badgeIcon: {
-    width: 68,
-    height: 68,
-    borderRadius: 20,
+    paddingHorizontal: 24,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: 'center'
   },
   title: {
     fontSize: 22,
     fontWeight: '800',
     marginBottom: 8,
+    textAlign: 'center'
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
+    marginBottom: 28,
     lineHeight: 20,
-    marginBottom: 30,
-    paddingHorizontal: 16,
+    maxWidth: 320
   },
   inputBox: {
-    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderRadius: 14,
+    borderRadius: 12,
     paddingHorizontal: 16,
+    width: '100%',
     height: 56,
-    marginBottom: 20,
+    marginBottom: 16
   },
   prefix: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    marginRight: 10,
+    marginRight: 10
   },
   input: {
     flex: 1,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '600'
   },
   otpInput: {
     flex: 1,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '800',
-    textAlign: 'center',
-    letterSpacing: 8,
+    letterSpacing: 10,
+    textAlign: 'center'
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    marginBottom: 16
+  },
+  statusText: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#10b981'
   },
   primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     height: 54,
-    borderRadius: 14,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 12,
+    marginTop: 8,
     gap: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4
   },
   primaryButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   demoLoginBtn: {
     width: '100%',
     height: 48,
-    borderRadius: 14,
-    borderWidth: 1,
-    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1.5,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 12,
-    backgroundColor: 'rgba(5, 150, 105, 0.08)',
+    borderStyle: 'dashed'
   },
   demoLoginText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '700'
+  },
+  otpActions: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 16,
+    gap: 12
   },
   resendRow: {
-    marginTop: 18,
+    alignItems: 'center'
   },
   resendText: {
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '500'
   },
   resendLink: {
     fontSize: 14,
+    fontWeight: '700'
+  },
+  waFallbackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: 'rgba(37, 211, 102, 0.1)'
+  },
+  waFallbackText: {
+    fontSize: 13,
     fontWeight: '700',
+    color: '#25D366'
   },
   applyLink: {
     marginTop: 20,
-    padding: 10,
+    padding: 8
   },
   applyText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '700'
   },
   disclaimerBox: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 32,
     gap: 8,
-    marginTop: 'auto',
-    marginBottom: 20,
-    paddingHorizontal: 12,
+    paddingHorizontal: 12
   },
   disclaimerText: {
     fontSize: 11,
     lineHeight: 16,
-    flex: 1,
-  },
+    textAlign: 'center',
+    flex: 1
+  }
 });

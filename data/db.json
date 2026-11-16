@@ -1,6 +1,453 @@
 {
   "bookings": [
     {
+      "id": "OTB-2026-7734",
+      "bookingId": "OTB-2026-7734",
+      "tripOtp": "4662",
+      "customerId": "usr_9876509988",
+      "customerName": "Anand Kumar",
+      "customerPhone": "+91 9876509988",
+      "customerEmail": "",
+      "source": "Website",
+      "bookingSource": "Website",
+      "channel": "Website Portal",
+      "isApp": false,
+      "paymentTxnId": "TXN_1794823085355_3305",
+      "idempotencyKey": null,
+      "passengerName": "Anand Kumar",
+      "passengerPhone": "+91 9876509988",
+      "passengerEmail": "",
+      "pickupCity": "Patna",
+      "dropCity": "Gaya",
+      "originCity": "Patna",
+      "destCity": "Gaya",
+      "pickupAddress": "Patna City",
+      "dropAddress": "Gaya City",
+      "pickupDate": "2026-11-16",
+      "pickupTime": "10:00 AM",
+      "distanceKm": 104,
+      "duration": "3h 15m",
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "cabName": "Prime Sedan",
+      "cabModel": "Dzire, Etios, Amaze",
+      "vehicleModel": "Dzire, Etios, Amaze",
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "fareBreakdown": {
+        "distanceKm": 135,
+        "duration": "3h 15m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2199,
+        "perKmRate": 16,
+        "distanceCharge": 2199,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "originalFare": 2199,
+        "promoDiscount": 0,
+        "promoInfo": null,
+        "tollFastag": 106,
+        "gst": 105,
+        "totalFare": 2199,
+        "isExplicitRouteFare": true,
+        "routeId": "patna-bodhgaya",
+        "marketComparison": "3958–4838",
+        "inclusions": [
+          "Fuel for the quoted one-way journey",
+          "Vehicle hire charges included",
+          "Driver allowance included",
+          "Pickup and drop-off within agreed municipal city limits"
+        ],
+        "exclusions": [
+          "FASTag toll charges and toll plaza taxes",
+          "Applicable state road permits and other legally payable route charges",
+          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+        ]
+      },
+      "fare": 2199,
+      "totalFare": 2199,
+      "cabPrice": 2199,
+      "originalFare": 2199,
+      "walletUsed": 0,
+      "couponCode": "",
+      "couponDiscount": 0,
+      "advancePaid": 0,
+      "balanceDue": 0,
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAID (Cash Handover to Driver Verified)",
+      "bookingStatus": "COMPLETED",
+      "status": "NEW",
+      "phoneVerified": true,
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "verifiedAt": "2026-11-16T09:58:05.355Z",
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "driverDetails": {
+        "name": "Test Driver 2244",
+        "phone": "9876502244",
+        "vehicleNumber": "BR-01-AB-2244",
+        "vehicleModel": "Maruti Dzire",
+        "rating": 5
+      },
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-11-16T09:58:05.355Z",
+          "actor": "Customer",
+          "note": "Booking request placed for Prime Sedan at ₹2199."
+        },
+        {
+          "status": "BROADCASTING",
+          "timestamp": "2026-11-16T09:58:05.355Z",
+          "actor": "BroadcastEngine",
+          "note": "Broadcast sent to 29 eligible chauffeur(s)."
+        },
+        {
+          "status": "ACCEPTED",
+          "timestamp": "2026-11-16T09:58:05.402Z",
+          "actor": "Driver (Test Driver 2244)",
+          "note": "Chauffeur Test Driver 2244 accepted trip from live queue"
+        },
+        {
+          "status": "TRIP STARTED",
+          "timestamp": "2026-11-16T09:58:05.417Z",
+          "actor": "Driver (Test Driver 2244)",
+          "note": "Chauffeur updated status to TRIP STARTED"
+        },
+        {
+          "status": "COMPLETED",
+          "timestamp": "2026-11-16T09:58:05.453Z",
+          "actor": "Driver (Test Driver 2244)",
+          "note": "Chauffeur updated status to COMPLETED"
+        }
+      ],
+      "createdAt": "2026-11-16T09:58:05.355Z",
+      "dispatchStatus": "ASSIGNED",
+      "broadcastCandidates": [
+        "drv_9934188888",
+        "drv_814",
+        "drv_832",
+        "drv_897",
+        "drv_573",
+        "drv_887",
+        "drv_851",
+        "drv_771",
+        "drv_187",
+        "drv_742",
+        "drv_308",
+        "drv_291",
+        "drv_961",
+        "drv_722",
+        "drv_285",
+        "drv_768",
+        "drv_488",
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104",
+        "drv_102",
+        "drv_test_2201",
+        "drv_test_2202",
+        "drv_test_2203",
+        "drv_test_2235",
+        "drv_test_2237",
+        "drv_test_2242",
+        "drv_test_2244"
+      ],
+      "broadcastStartedAt": "2026-11-16T09:58:05.355Z",
+      "broadcastTimeoutSec": 120,
+      "broadcastClaimedBy": "drv_test_2244",
+      "rejectedDrivers": [],
+      "assignedDriverId": "drv_test_2244",
+      "assignedDriverName": "Test Driver 2244",
+      "assignedDriverPhone": "9876502244",
+      "assignedVehicleNumber": "BR-01-AB-2244",
+      "assignedVehicleModel": "Maruti Dzire",
+      "driverLocation": {
+        "lat": 25.5941,
+        "lng": 85.1376,
+        "heading": 180,
+        "updatedAt": "2026-11-16T09:58:05.433Z"
+      },
+      "completedAt": "2026-11-16T09:58:05.453Z"
+    },
+    {
+      "id": "OTB-2026-8762",
+      "bookingId": "OTB-2026-8762",
+      "tripOtp": "9533",
+      "customerId": "usr_9876509111",
+      "customerName": "Journey Passenger",
+      "customerPhone": "+91 9876509111",
+      "customerEmail": "",
+      "source": "Website",
+      "bookingSource": "Website",
+      "channel": "Website Portal",
+      "isApp": false,
+      "paymentTxnId": "TXN_1794823085248_9913",
+      "idempotencyKey": null,
+      "passengerName": "Journey Passenger",
+      "passengerPhone": "+91 9876509111",
+      "passengerEmail": "",
+      "pickupCity": "Patna",
+      "dropCity": "Gaya",
+      "originCity": "Patna",
+      "destCity": "Gaya",
+      "pickupAddress": "Patna City",
+      "dropAddress": "Gaya City",
+      "pickupDate": "2026-11-10",
+      "pickupTime": "10:00",
+      "distanceKm": 104,
+      "duration": "3h 15m",
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "cabName": "Prime Sedan",
+      "cabModel": "Dzire, Etios, Amaze",
+      "vehicleModel": "Dzire, Etios, Amaze",
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "fareBreakdown": {
+        "distanceKm": 135,
+        "duration": "3h 15m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2199,
+        "perKmRate": 16,
+        "distanceCharge": 2199,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "originalFare": 2199,
+        "promoDiscount": 0,
+        "promoInfo": null,
+        "tollFastag": 106,
+        "gst": 105,
+        "totalFare": 2199,
+        "isExplicitRouteFare": true,
+        "routeId": "patna-bodhgaya",
+        "marketComparison": "3958–4838",
+        "inclusions": [
+          "Fuel for the quoted one-way journey",
+          "Vehicle hire charges included",
+          "Driver allowance included",
+          "Pickup and drop-off within agreed municipal city limits"
+        ],
+        "exclusions": [
+          "FASTag toll charges and toll plaza taxes",
+          "Applicable state road permits and other legally payable route charges",
+          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+        ]
+      },
+      "fare": 2199,
+      "totalFare": 2199,
+      "cabPrice": 2199,
+      "originalFare": 2199,
+      "walletUsed": 0,
+      "couponCode": "",
+      "couponDiscount": 0,
+      "advancePaid": 0,
+      "balanceDue": 2199,
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "bookingStatus": "NEW",
+      "status": "NEW",
+      "phoneVerified": true,
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "verifiedAt": "2026-11-16T09:58:05.248Z",
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "driverDetails": null,
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-11-16T09:58:05.248Z",
+          "actor": "Customer",
+          "note": "Booking request placed for Prime Sedan at ₹2199."
+        },
+        {
+          "status": "BROADCASTING",
+          "timestamp": "2026-11-16T09:58:05.248Z",
+          "actor": "BroadcastEngine",
+          "note": "Broadcast sent to 29 eligible chauffeur(s)."
+        }
+      ],
+      "createdAt": "2026-11-16T09:58:05.248Z",
+      "dispatchStatus": "BROADCASTING",
+      "broadcastCandidates": [
+        "drv_9934188888",
+        "drv_814",
+        "drv_832",
+        "drv_897",
+        "drv_573",
+        "drv_887",
+        "drv_851",
+        "drv_771",
+        "drv_187",
+        "drv_742",
+        "drv_308",
+        "drv_291",
+        "drv_961",
+        "drv_722",
+        "drv_285",
+        "drv_768",
+        "drv_488",
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104",
+        "drv_102",
+        "drv_test_2201",
+        "drv_test_2202",
+        "drv_test_2203",
+        "drv_test_2235",
+        "drv_test_2237",
+        "drv_test_2242",
+        "drv_test_2244"
+      ],
+      "broadcastStartedAt": "2026-11-16T09:58:05.248Z",
+      "broadcastTimeoutSec": 120,
+      "broadcastClaimedBy": null,
+      "rejectedDrivers": []
+    },
+    {
+      "id": "OTB-2026-8222",
+      "bookingId": "OTB-2026-8222",
+      "tripOtp": "1292",
+      "customerId": "usr_9876508111",
+      "customerName": "Booking Passenger",
+      "customerPhone": "+91 9876508111",
+      "customerEmail": "",
+      "source": "Website",
+      "bookingSource": "Website",
+      "channel": "Website Portal",
+      "isApp": false,
+      "paymentTxnId": "TXN_1794823084964_2822",
+      "idempotencyKey": null,
+      "passengerName": "Booking Passenger",
+      "passengerPhone": "+91 9876508111",
+      "passengerEmail": "",
+      "pickupCity": "Patna",
+      "dropCity": "Gaya",
+      "originCity": "Patna",
+      "destCity": "Gaya",
+      "pickupAddress": "Patna City",
+      "dropAddress": "Gaya City",
+      "pickupDate": "2026-11-05",
+      "pickupTime": "10:00 AM",
+      "distanceKm": 104,
+      "duration": "3h 15m",
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "cabName": "Prime Sedan",
+      "cabModel": "Dzire, Etios, Amaze",
+      "vehicleModel": "Dzire, Etios, Amaze",
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "fareBreakdown": {
+        "distanceKm": 135,
+        "duration": "3h 15m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 2199,
+        "perKmRate": 16,
+        "distanceCharge": 2199,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "originalFare": 2199,
+        "promoDiscount": 0,
+        "promoInfo": null,
+        "tollFastag": 106,
+        "gst": 105,
+        "totalFare": 2199,
+        "isExplicitRouteFare": true,
+        "routeId": "patna-bodhgaya",
+        "marketComparison": "3958–4838",
+        "inclusions": [
+          "Fuel for the quoted one-way journey",
+          "Vehicle hire charges included",
+          "Driver allowance included",
+          "Pickup and drop-off within agreed municipal city limits"
+        ],
+        "exclusions": [
+          "FASTag toll charges and toll plaza taxes",
+          "Applicable state road permits and other legally payable route charges",
+          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+        ]
+      },
+      "fare": 2199,
+      "totalFare": 2199,
+      "cabPrice": 2199,
+      "originalFare": 2199,
+      "walletUsed": 0,
+      "couponCode": "",
+      "couponDiscount": 0,
+      "advancePaid": 0,
+      "balanceDue": 2199,
+      "paymentMethod": "Cash on Ride (Zero Advance)",
+      "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
+      "bookingStatus": "NEW",
+      "status": "NEW",
+      "phoneVerified": true,
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "verifiedAt": "2026-11-16T09:58:04.964Z",
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "driverDetails": null,
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-11-16T09:58:04.964Z",
+          "actor": "Customer",
+          "note": "Booking request placed for Prime Sedan at ₹2199."
+        },
+        {
+          "status": "BROADCASTING",
+          "timestamp": "2026-11-16T09:58:04.966Z",
+          "actor": "BroadcastEngine",
+          "note": "Broadcast sent to 29 eligible chauffeur(s)."
+        }
+      ],
+      "createdAt": "2026-11-16T09:58:04.964Z",
+      "dispatchStatus": "BROADCASTING",
+      "broadcastCandidates": [
+        "drv_9934188888",
+        "drv_814",
+        "drv_832",
+        "drv_897",
+        "drv_573",
+        "drv_887",
+        "drv_851",
+        "drv_771",
+        "drv_187",
+        "drv_742",
+        "drv_308",
+        "drv_291",
+        "drv_961",
+        "drv_722",
+        "drv_285",
+        "drv_768",
+        "drv_488",
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104",
+        "drv_102",
+        "drv_test_2201",
+        "drv_test_2202",
+        "drv_test_2203",
+        "drv_test_2235",
+        "drv_test_2237",
+        "drv_test_2242",
+        "drv_test_2244"
+      ],
+      "broadcastStartedAt": "2026-11-16T09:58:04.966Z",
+      "broadcastTimeoutSec": 120,
+      "broadcastClaimedBy": null,
+      "rejectedDrivers": []
+    },
+    {
       "id": "OTB-2026-8317",
       "bookingId": "OTB-2026-8317",
       "tripOtp": "7125",
@@ -251,13 +698,20 @@
       "balanceDue": 2199,
       "paymentMethod": "Cash on Ride (Zero Advance)",
       "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
-      "bookingStatus": "NEW",
-      "status": "NEW",
+      "bookingStatus": "DRIVER ASSIGNED",
+      "status": "DRIVER ASSIGNED",
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "verifiedAt": "2026-11-16T08:50:53.466Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_9934188888",
+        "name": "Santosh Chauffeur",
+        "phone": "+91 9934188888",
+        "vehicleNumber": "BR-01-TAX-5566",
+        "vehicleModel": "Maruti Suzuki Dzire",
+        "rating": 5
+      },
       "statusHistory": [
         {
           "status": "NEW",
@@ -270,10 +724,16 @@
           "timestamp": "2026-11-16T08:50:53.466Z",
           "actor": "BroadcastEngine",
           "note": "Broadcast sent to 29 eligible chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T09:47:42.225Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 3409s broadcast timeout. Best score: 99%."
         }
       ],
       "createdAt": "2026-11-16T08:50:53.466Z",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "broadcastCandidates": [
         "drv_9934188888",
         "drv_814",
@@ -307,8 +767,15 @@
       ],
       "broadcastStartedAt": "2026-11-16T08:50:53.466Z",
       "broadcastTimeoutSec": 120,
-      "broadcastClaimedBy": null,
-      "rejectedDrivers": []
+      "broadcastClaimedBy": "drv_9934188888",
+      "rejectedDrivers": [],
+      "assignedDriverId": "drv_9934188888",
+      "assignedDriverName": "Santosh Chauffeur",
+      "assignedDriverPhone": "+91 9934188888",
+      "assignedDriverCarNo": "BR-01-TAX-5566",
+      "autoDispatched": true,
+      "autoDispatchedAt": "2026-11-16T09:47:42.225Z",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 3409s broadcast timeout. Best score: 99%."
     },
     {
       "id": "OTB-2026-8025",
@@ -388,13 +855,20 @@
       "balanceDue": 2199,
       "paymentMethod": "Cash on Ride (Zero Advance)",
       "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
-      "bookingStatus": "NEW",
-      "status": "NEW",
+      "bookingStatus": "DRIVER ASSIGNED",
+      "status": "DRIVER ASSIGNED",
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "verifiedAt": "2026-11-16T08:50:53.187Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_9934188888",
+        "name": "Santosh Chauffeur",
+        "phone": "+91 9934188888",
+        "vehicleNumber": "BR-01-TAX-5566",
+        "vehicleModel": "Maruti Suzuki Dzire",
+        "rating": 5
+      },
       "statusHistory": [
         {
           "status": "NEW",
@@ -407,10 +881,16 @@
           "timestamp": "2026-11-16T08:50:53.189Z",
           "actor": "BroadcastEngine",
           "note": "Broadcast sent to 29 eligible chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T09:47:42.232Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 3409s broadcast timeout. Best score: 99%."
         }
       ],
       "createdAt": "2026-11-16T08:50:53.187Z",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "broadcastCandidates": [
         "drv_9934188888",
         "drv_814",
@@ -444,21 +924,25 @@
       ],
       "broadcastStartedAt": "2026-11-16T08:50:53.189Z",
       "broadcastTimeoutSec": 120,
-      "broadcastClaimedBy": null,
-      "rejectedDrivers": []
+      "broadcastClaimedBy": "drv_9934188888",
+      "rejectedDrivers": [],
+      "assignedDriverId": "drv_9934188888",
+      "assignedDriverName": "Santosh Chauffeur",
+      "assignedDriverPhone": "+91 9934188888",
+      "assignedDriverCarNo": "BR-01-TAX-5566",
+      "autoDispatched": true,
+      "autoDispatchedAt": "2026-11-16T09:47:42.232Z",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 3409s broadcast timeout. Best score: 99%."
     },
     {
       "bookingId": "OTB-2026-2495",
       "advancePaid": 0,
       "balanceDue": 2499,
       "bookingSource": "Mobile App",
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_104",
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_104",
-      "broadcastStartedAt": "2026-11-16T03:24:13.100Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:57:13.605Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -474,16 +958,9 @@
       "customerName": "App Rider 3160",
       "customerPhone": "+91 9876543211",
       "destCity": "Muzaffarpur",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 75,
-      "driverDetails": {
-        "id": "drv_104",
-        "name": "Sanjay Paswan",
-        "phone": "+91 82103 44556",
-        "vehicleNumber": "BR 01 PD 6024",
-        "vehicleModel": "Honda City (Brown)",
-        "rating": 5
-      },
+      "driverDetails": null,
       "dropAddress": "Bhagwanpur Chowk",
       "dropCity": "Muzaffarpur",
       "duration": "1h 43m",
@@ -560,29 +1037,13 @@
         "drv_488",
         "drv_359",
         "drv_415",
-        "drv_101"
+        "drv_101",
+        "drv_104",
+        "drv_102"
       ],
       "source": "app",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-16T00:07:39.724Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-16T00:22:39.950Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-16T00:24:09.980Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:39:10.171Z",
@@ -714,6 +1175,24 @@
           "timestamp": "2026-11-16T03:25:43.121Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:40:43.343Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:42:13.374Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:57:13.605Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2499,
@@ -722,13 +1201,13 @@
       "verifiedAt": "2026-11-15T21:37:46.310Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PD 6024",
-      "assignedDriverId": "drv_104",
-      "assignedDriverName": "Sanjay Paswan",
-      "assignedDriverPhone": "+91 82103 44556",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T03:25:43.121Z",
+      "autoDispatchedAt": "2026-11-16T03:42:13.374Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -909,12 +1388,10 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "website",
-      "bookingStatus": "DRIVER ASSIGNED",
-      "broadcastCandidates": [
-        "drv_102"
-      ],
-      "broadcastClaimedBy": "drv_102",
-      "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
+      "bookingStatus": "SEARCHING_DRIVER",
+      "broadcastCandidates": [],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-16T03:40:43.343Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -930,16 +1407,9 @@
       "customerName": "Web Rider 3075",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "ASSIGNED",
+      "dispatchStatus": "BROADCASTING",
       "distanceKm": 104,
-      "driverDetails": {
-        "id": "drv_102",
-        "name": "Amit Kumar Singh",
-        "phone": "+91 98350 67890",
-        "vehicleNumber": "BR 01 PB 7712",
-        "vehicleModel": "Maruti Ertiga (Silver)",
-        "rating": 4.9
-      },
+      "driverDetails": null,
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1017,17 +1487,12 @@
         "drv_359",
         "drv_415",
         "drv_101",
-        "drv_104"
+        "drv_104",
+        "drv_102"
       ],
       "source": "website",
-      "status": "DRIVER ASSIGNED",
+      "status": "SEARCHING_DRIVER",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-16T00:07:39.725Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
         {
           "status": "DRIVER_GHOST_REASSIGNED",
           "timestamp": "2026-11-16T00:22:39.962Z",
@@ -1171,6 +1636,12 @@
           "timestamp": "2026-11-16T03:25:43.121Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:40:43.343Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Amit Kumar Singh inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 0 chauffeur(s)."
         }
       ],
       "totalFare": 2199,
@@ -1179,10 +1650,10 @@
       "verifiedAt": "2026-11-15T21:34:13.232Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 PB 7712",
-      "assignedDriverId": "drv_102",
-      "assignedDriverName": "Amit Kumar Singh",
-      "assignedDriverPhone": "+91 98350 67890",
+      "assignedDriverCarNo": null,
+      "assignedDriverId": null,
+      "assignedDriverName": null,
+      "assignedDriverPhone": null,
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
       "autoDispatchedAt": "2026-11-16T03:25:43.121Z",
@@ -5716,7 +6187,7 @@
       "ratingsCount": 13,
       "dutyStatus": "OFFLINE",
       "isAvailable": false,
-      "lastGhostTimeoutAt": "2026-11-16T03:24:13.101Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:40:43.343Z"
     },
     {
       "id": "drv_103",
@@ -5750,99 +6221,16 @@
       "speed": 35,
       "isAvailable": false,
       "dutyStatus": "OFFLINE",
-      "lastGhostTimeoutAt": "2026-11-16T03:24:13.101Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:57:13.605Z"
     },
     {
-      "id": "drv_test_2201",
-      "name": "Test Driver 2201",
-      "phone": "9876502201",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2201",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY"
-    },
-    {
-      "id": "drv_test_2202",
-      "name": "Test Driver 2202",
-      "phone": "9876502202",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2202",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY"
-    },
-    {
-      "id": "drv_test_2203",
-      "name": "Test Driver 2203",
-      "phone": "9876502203",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2203",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY"
-    },
-    {
-      "id": "drv_test_2222",
-      "name": "Deleted Driver Partner",
-      "phone": "DELETED_DRV_987****222_1794819052030",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2222",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "OFF_DUTY",
-      "tokenRevocationTime": null,
-      "pinUpdatedAt": 1794819051876,
-      "updatedAt": "2026-11-16T08:50:51.876Z",
-      "isDeleted": true,
-      "deletedAt": "2026-11-16T08:50:52.030Z",
-      "deletionReason": "Driver partner requested account erasure via app"
-    },
-    {
-      "id": "drv_test_2235",
-      "name": "Test Driver 2235",
-      "phone": "9876502235",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2235",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY",
-      "tokenRevocationTime": null
-    },
-    {
-      "id": "drv_test_2237",
-      "name": "Test Driver 2237",
-      "phone": "9876502237",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2237",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY",
-      "tokenRevocationTime": 1794819054337,
-      "pinUpdatedAt": 1794819053337,
-      "updatedAt": "2026-11-16T08:50:53.337Z"
-    },
-    {
-      "id": "drv_test_2242",
-      "name": "Test Driver 2242",
-      "phone": "9876502242",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2242",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY",
-      "tokenRevocationTime": null
-    },
-    {
-      "id": "drv_test_2244",
-      "name": "Test Driver 2244",
-      "phone": "9876502244",
-      "pin": "1234",
-      "vehicleNumber": "BR-01-AB-2244",
-      "vehicleModel": "Maruti Dzire",
-      "dutyStatus": "ON_DUTY",
-      "tokenRevocationTime": null,
-      "currentLat": 25.5941,
-      "currentLng": 85.1376,
-      "heading": 180,
-      "speed": 45,
-      "lastLocationUpdate": "2026-11-16T08:50:53.647Z",
-      "earningsToday": 1869,
-      "kmToday": 104,
-      "totalTrips": 1
+      "id": "drv_6206494214",
+      "name": "Verified Chauffeur",
+      "phone": "+91 6206494214",
+      "city": "Patna",
+      "vehicleNumber": "BR-01-TA-1234",
+      "vehicleModel": "Maruti Dzire Commercial",
+      "isVerified": true
     }
   ],
   "driver_applications": [],
@@ -5928,7 +6316,8 @@
       "email": "",
       "name": "SUV Test Passenger",
       "phone": "+91 9876543210",
-      "walletBalance": 100
+      "walletBalance": 100,
+      "isPhoneVerified": true
     },
     {
       "id": "usr_9777722222",
@@ -5978,160 +6367,6 @@
       "name": "yuyuy",
       "phone": "+91 6206494214",
       "walletBalance": 0
-    },
-    {
-      "id": "usr_9876501111",
-      "name": "User A",
-      "phone": "+91 9876501111",
-      "email": "passenger@example.com",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:51.061Z",
-      "emailVerificationToken": null,
-      "emailVerificationExpiresAt": "2026-11-17T08:50:51.901Z",
-      "emailVerified": true,
-      "isEmailVerified": true,
-      "emailVerifiedAt": "2026-11-16T08:50:51.916Z"
-    },
-    {
-      "id": "usr_9876501112",
-      "name": "Verified Passenger",
-      "phone": "+91 9876501112",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:51.081Z"
-    },
-    {
-      "id": "usr_9876503333",
-      "name": "Logout Passenger",
-      "phone": "+91 9876503333",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:51.504Z"
-    },
-    {
-      "id": "usr_9876503334",
-      "name": "Teardown Passenger",
-      "phone": "+91 9876503334",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:51.534Z"
-    },
-    {
-      "id": "usr_9876504444",
-      "name": "Deleted User",
-      "phone": "DELETED_987****444_1794819052002",
-      "email": null,
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:51.968Z",
-      "isDeleted": true,
-      "deletedAt": "2026-11-16T08:50:52.002Z",
-      "deletionReason": "Testing DPDP compliance"
-    },
-    {
-      "id": "usr_9876509999",
-      "name": "New Passenger",
-      "phone": "+91 9876509999",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:52.056Z"
-    },
-    {
-      "id": "usr_9876505555",
-      "name": "Rate Test",
-      "phone": "+91 9876505555",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:52.167Z"
-    },
-    {
-      "id": "usr_9876507777",
-      "name": "Valid Client",
-      "phone": "+91 9876507777",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:52.380Z"
-    },
-    {
-      "id": "usr_9876508888",
-      "name": "Threshold Test",
-      "phone": "+91 9876508888",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:52.673Z"
-    },
-    {
-      "id": "usr_9876500001",
-      "name": "Attacker",
-      "phone": "+91 9876500001",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:52.912Z"
-    },
-    {
-      "id": "usr_9876500002",
-      "name": "Legitimate User",
-      "phone": "+91 9876500002",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:53.153Z"
-    },
-    {
-      "id": "usr_9876508111",
-      "name": "Booking Passenger",
-      "phone": "+91 9876508111",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:53.170Z"
-    },
-    {
-      "id": "usr_9876508222",
-      "name": "Revoke Test",
-      "phone": "+91 9876508222",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:53.266Z"
-    },
-    {
-      "id": "usr_9876508333",
-      "name": "Deleted User",
-      "phone": "DELETED_987****333_1794819053425",
-      "email": null,
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:53.408Z",
-      "isDeleted": true,
-      "deletedAt": "2026-11-16T08:50:53.425Z",
-      "deletionReason": "User requested via DPDP self-service portal"
-    },
-    {
-      "id": "usr_9876509111",
-      "name": "Journey Passenger",
-      "phone": "+91 9876509111",
-      "email": "",
-      "walletBalance": 100,
-      "memberSince": "2026",
-      "createdAt": "2026-11-16T08:50:53.451Z"
-    },
-    {
-      "id": "usr_9876509988",
-      "name": "Anand Kumar",
-      "phone": "+91 9876509988",
-      "email": "",
-      "walletBalance": 100,
-      "createdAt": "2026-11-16T08:50:53.571Z"
     }
   ],
   "vehicles": [
@@ -6626,64 +6861,6 @@
     }
   ],
   "payments": [
-    {
-      "id": "TXN_1794819053571_1647",
-      "bookingId": "OTB-2026-8317",
-      "customerId": "usr_9876509988",
-      "passengerPhone": "+91 9876509988",
-      "amount": 2199,
-      "advancePaid": 0,
-      "balanceDue": 0,
-      "originalAmount": 2199,
-      "walletDeducted": 0,
-      "couponDiscount": 0,
-      "method": "Cash on Ride (Zero Advance)",
-      "status": "PAID",
-      "provider": "CASH",
-      "upiUtr": "",
-      "verifiedBy": null,
-      "verifiedAt": null,
-      "createdAt": "2026-11-16T08:50:53.571Z",
-      "settledAt": "2026-11-16T08:50:53.660Z"
-    },
-    {
-      "id": "TXN_1794819053466_3099",
-      "bookingId": "OTB-2026-3172",
-      "customerId": "usr_9876509111",
-      "passengerPhone": "+91 9876509111",
-      "amount": 2199,
-      "advancePaid": 0,
-      "balanceDue": 2199,
-      "originalAmount": 2199,
-      "walletDeducted": 0,
-      "couponDiscount": 0,
-      "method": "Cash on Ride (Zero Advance)",
-      "status": "PAYABLE TO DRIVER (Cash on Ride)",
-      "provider": "CASH",
-      "upiUtr": "",
-      "verifiedBy": null,
-      "verifiedAt": null,
-      "createdAt": "2026-11-16T08:50:53.466Z"
-    },
-    {
-      "id": "TXN_1794819053187_9831",
-      "bookingId": "OTB-2026-8025",
-      "customerId": "usr_9876508111",
-      "passengerPhone": "+91 9876508111",
-      "amount": 2199,
-      "advancePaid": 0,
-      "balanceDue": 2199,
-      "originalAmount": 2199,
-      "walletDeducted": 0,
-      "couponDiscount": 0,
-      "method": "Cash on Ride (Zero Advance)",
-      "status": "PAYABLE TO DRIVER (Cash on Ride)",
-      "provider": "CASH",
-      "upiUtr": "",
-      "verifiedBy": null,
-      "verifiedAt": null,
-      "createdAt": "2026-11-16T08:50:53.187Z"
-    },
     {
       "id": "TXN_1794778666310_6706",
       "advancePaid": 0,
@@ -7485,158 +7662,7 @@
       "walletDeducted": 0
     }
   ],
-  "wallet_ledger": [
-    {
-      "id": "WLT_1794819051062_865",
-      "userId": "usr_9876501111",
-      "phone": "+91 9876501111",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:51.062Z"
-    },
-    {
-      "id": "WLT_1794819051081_149",
-      "userId": "usr_9876501112",
-      "phone": "+91 9876501112",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:51.081Z"
-    },
-    {
-      "id": "WLT_1794819051504_96",
-      "userId": "usr_9876503333",
-      "phone": "+91 9876503333",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:51.504Z"
-    },
-    {
-      "id": "WLT_1794819051534_770",
-      "userId": "usr_9876503334",
-      "phone": "+91 9876503334",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:51.534Z"
-    },
-    {
-      "id": "WLT_1794819051968_290",
-      "userId": "usr_9876504444",
-      "phone": "+91 9876504444",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:51.968Z"
-    },
-    {
-      "id": "WLT_1794819052056_901",
-      "userId": "usr_9876509999",
-      "phone": "+91 9876509999",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:52.056Z"
-    },
-    {
-      "id": "WLT_1794819052167_999",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:52.167Z"
-    },
-    {
-      "id": "WLT_1794819052380_551",
-      "userId": "usr_9876507777",
-      "phone": "+91 9876507777",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:52.380Z"
-    },
-    {
-      "id": "WLT_1794819052673_147",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:52.673Z"
-    },
-    {
-      "id": "WLT_1794819052912_815",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:52.912Z"
-    },
-    {
-      "id": "WLT_1794819053153_149",
-      "userId": "usr_9876500002",
-      "phone": "+91 9876500002",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:53.153Z"
-    },
-    {
-      "id": "WLT_1794819053170_965",
-      "userId": "usr_9876508111",
-      "phone": "+91 9876508111",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:53.170Z"
-    },
-    {
-      "id": "WLT_1794819053266_29",
-      "userId": "usr_9876508222",
-      "phone": "+91 9876508222",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:53.266Z"
-    },
-    {
-      "id": "WLT_1794819053408_985",
-      "userId": "usr_9876508333",
-      "phone": "+91 9876508333",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:53.408Z"
-    },
-    {
-      "id": "WLT_1794819053451_658",
-      "userId": "usr_9876509111",
-      "phone": "+91 9876509111",
-      "type": "CREDIT",
-      "amount": 100,
-      "balanceAfter": 100,
-      "description": "Welcome Bonus Credit",
-      "createdAt": "2026-11-16T08:50:53.451Z"
-    }
-  ],
+  "wallet_ledger": [],
   "leads": [
     {
       "id": "LEAD_1794819053571",
@@ -7657,9 +7683,9 @@
       "totalFare": 2199,
       "estFareSedan": 2199,
       "status": "CONVERTED",
-      "bookingId": "OTB-2026-8317",
+      "bookingId": "OTB-2026-7734",
       "createdAt": "2026-11-16T08:50:53.571Z",
-      "updatedAt": "2026-11-16T08:50:53.571Z"
+      "updatedAt": "2026-11-16T09:58:05.355Z"
     },
     {
       "id": "LEAD_1794819053466",
@@ -7680,9 +7706,9 @@
       "totalFare": 2199,
       "estFareSedan": 2199,
       "status": "CONVERTED",
-      "bookingId": "OTB-2026-3172",
+      "bookingId": "OTB-2026-8762",
       "createdAt": "2026-11-16T08:50:53.466Z",
-      "updatedAt": "2026-11-16T08:50:53.466Z"
+      "updatedAt": "2026-11-16T09:58:05.248Z"
     },
     {
       "id": "LEAD_1794819053451_967",
@@ -7724,7 +7750,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:53.408Z",
-      "updatedAt": "2026-11-16T08:50:53.408Z"
+      "updatedAt": "2026-11-16T09:58:05.190Z"
     },
     {
       "id": "LEAD_1794819053266_688",
@@ -7745,7 +7771,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:53.266Z",
-      "updatedAt": "2026-11-16T08:50:53.266Z"
+      "updatedAt": "2026-11-16T09:58:05.042Z"
     },
     {
       "id": "LEAD_1794819053189",
@@ -7766,9 +7792,9 @@
       "totalFare": 2199,
       "estFareSedan": 2199,
       "status": "CONVERTED",
-      "bookingId": "OTB-2026-8025",
+      "bookingId": "OTB-2026-8222",
       "createdAt": "2026-11-16T08:50:53.189Z",
-      "updatedAt": "2026-11-16T08:50:53.189Z"
+      "updatedAt": "2026-11-16T09:58:04.966Z"
     },
     {
       "id": "LEAD_1794819053170_498",
@@ -7810,7 +7836,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:53.153Z",
-      "updatedAt": "2026-11-16T08:50:53.153Z"
+      "updatedAt": "2026-11-16T09:58:04.934Z"
     },
     {
       "id": "LEAD_1794819052912_382",
@@ -7831,7 +7857,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:52.912Z",
-      "updatedAt": "2026-11-16T08:50:53.076Z"
+      "updatedAt": "2026-11-16T09:58:04.863Z"
     },
     {
       "id": "LEAD_1794819052673_927",
@@ -7852,7 +7878,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:52.673Z",
-      "updatedAt": "2026-11-16T08:50:52.837Z"
+      "updatedAt": "2026-11-16T09:58:04.658Z"
     },
     {
       "id": "LEAD_1794819052380_328",
@@ -7873,7 +7899,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:52.380Z",
-      "updatedAt": "2026-11-16T08:50:52.380Z"
+      "updatedAt": "2026-11-16T09:58:04.222Z"
     },
     {
       "id": "lead_9876506666_2334",
@@ -7907,7 +7933,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:52.167Z",
-      "updatedAt": "2026-11-16T08:50:52.292Z"
+      "updatedAt": "2026-11-16T09:58:04.118Z"
     },
     {
       "id": "LEAD_1794819051968_110",
@@ -7928,7 +7954,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:51.968Z",
-      "updatedAt": "2026-11-16T08:50:51.988Z"
+      "updatedAt": "2026-11-16T09:58:03.791Z"
     },
     {
       "id": "LEAD_1794819051534_444",
@@ -7949,7 +7975,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:51.534Z",
-      "updatedAt": "2026-11-16T08:50:51.534Z"
+      "updatedAt": "2026-11-16T09:58:03.308Z"
     },
     {
       "id": "LEAD_1794819051504_60",
@@ -7970,7 +7996,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:51.504Z",
-      "updatedAt": "2026-11-16T08:50:51.504Z"
+      "updatedAt": "2026-11-16T09:58:03.277Z"
     },
     {
       "id": "LEAD_1794819051081_432",
@@ -7991,7 +8017,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:51.081Z",
-      "updatedAt": "2026-11-16T08:50:51.081Z"
+      "updatedAt": "2026-11-16T09:58:02.859Z"
     },
     {
       "id": "LEAD_1794819051062_207",
@@ -8012,7 +8038,7 @@
       "status": "NEW",
       "notes": "Customer signed in with mobile",
       "createdAt": "2026-11-16T08:50:51.062Z",
-      "updatedAt": "2026-11-16T08:50:52.873Z"
+      "updatedAt": "2026-11-16T09:58:04.686Z"
     },
     {
       "cleanPhone": "6767676767",
@@ -8083,7 +8109,7 @@
       "distanceKm": 104,
       "estFareSedan": 1999,
       "originCity": "Patna",
-      "passengerName": "Fare Check Visitor",
+      "passengerName": "Valued Passenger",
       "phone": "+91 9876543210",
       "pickupDate": "2026-11-16",
       "pickupTime": "10:00 AM",
@@ -8091,13 +8117,13 @@
       "status": "NEW",
       "totalFare": 1999,
       "tripType": "oneway",
-      "updatedAt": "2026-11-15T23:40:37.309Z",
+      "updatedAt": "2026-11-16T10:00:19.965Z",
       "duration": "2h 15m",
       "estFareHatch": 1799,
       "estFareSuv": 2399,
       "notes": "Inquiry for Patna ➔ Gaya",
       "rawPhone": "9876543210",
-      "source": "Check Fares & Availability Button"
+      "source": "Customer Verified Login"
     },
     {
       "id": "lead_9876543210_1271",
@@ -8439,7 +8465,7 @@
       "id": "lead_9876509999_6026",
       "notes": "Inquiry for Patna ➔ Gaya",
       "originCity": "Patna",
-      "passengerName": "New Passenger",
+      "passengerName": "Integration Chauffeur Test",
       "phone": "+91 9876509999",
       "pickupDate": "2026-10-25",
       "pickupTime": "Immediate",
@@ -8449,7 +8475,7 @@
       "status": "NEW",
       "totalFare": 2198,
       "tripType": "oneway",
-      "updatedAt": "2026-11-16T08:50:52.056Z"
+      "updatedAt": "2026-10-25T09:44:46.026Z"
     },
     {
       "id": "LEAD_DRV_1792921281310",
@@ -8791,420 +8817,12 @@
   ],
   "notifications": [
     {
-      "id": "NOTIF_ACCEPT_1794819053617",
-      "type": "TRIP_ACCEPTED_BY_DRIVER",
-      "title": "Trip OTB-2026-8317 Accepted",
-      "message": "Chauffeur Test Driver 2244 accepted Patna ➔ Gaya. Customer: +91 9876509988.",
-      "createdAt": "2026-11-16T08:50:53.617Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819053588",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2244",
-      "message": "Chauffeur Test Driver 2244 (9876502244) is active on duty. Direct Contact: 9876502244, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:53.588Z"
-    },
-    {
-      "id": "NOTIF_BOOK_1794819053571",
-      "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-8317",
-      "message": "Anand Kumar (+91 9876509988) requested Patna → Gaya (Prime Sedan). Total Fare: ₹2199.",
-      "bookingId": "OTB-2026-8317",
-      "createdAt": "2026-11-16T08:50:53.571Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819053490",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2242",
-      "message": "Chauffeur Test Driver 2242 (9876502242) is active on duty. Direct Contact: 9876502242, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:53.490Z"
-    },
-    {
-      "id": "NOTIF_BOOK_1794819053466",
-      "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-3172",
-      "message": "Journey Passenger (+91 9876509111) requested Patna → Gaya (Prime Sedan). Total Fare: ₹2199.",
-      "bookingId": "OTB-2026-3172",
-      "createdAt": "2026-11-16T08:50:53.466Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053452",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Journey Passenger",
-      "message": "Journey Passenger (+91 9876509111) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.452Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053408",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Erasure User",
-      "message": "Erasure User (+91 9876508333) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.408Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819053300",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2237",
-      "message": "Chauffeur Test Driver 2237 (9876502237) is active on duty. Direct Contact: 9876502237, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:53.300Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053266",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Revoke Test",
-      "message": "Revoke Test (+91 9876508222) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.266Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819053212",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2235",
-      "message": "Chauffeur Test Driver 2235 (9876502235) is active on duty. Direct Contact: 9876502235, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:53.212Z"
-    },
-    {
-      "id": "NOTIF_BOOK_1794819053189",
-      "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-8025",
-      "message": "Booking Passenger (+91 9876508111) requested Patna → Gaya (Prime Sedan). Total Fare: ₹2199.",
-      "bookingId": "OTB-2026-8025",
-      "createdAt": "2026-11-16T08:50:53.189Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053170",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Booking Passenger",
-      "message": "Booking Passenger (+91 9876508111) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.170Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053153",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Legitimate User",
-      "message": "Legitimate User (+91 9876500002) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.153Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053076",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.076Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053061",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.061Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053047",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.047Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053028",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.028Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819053010",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:53.010Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052992",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.992Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052973",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.973Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052954",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.954Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052935",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.935Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052912",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Attacker",
-      "message": "Attacker (+91 9876500001) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.912Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052873",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: User A",
-      "message": "User A (+91 9876501111) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.873Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052837",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.837Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052819",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.819Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052798",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.798Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052778",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.778Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052759",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.759Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052732",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.732Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052716",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.716Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052702",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.702Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052688",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.688Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052673",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Threshold Test",
-      "message": "Threshold Test (+91 9876508888) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.673Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052460",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Passenger A",
-      "message": "Passenger A (+91 9876501111) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.460Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052380",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Valid Client",
-      "message": "Valid Client (+91 9876507777) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.380Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052292",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.292Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052279",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.279Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052264",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.264Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052251",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.251Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052237",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.237Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052223",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.223Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052210",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.210Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052196",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.196Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052183",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.183Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052167",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Rate Test",
-      "message": "Rate Test (+91 9876505555) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.167Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819052056",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: New Passenger",
-      "message": "New Passenger (+91 9876509999) active on portal.",
-      "createdAt": "2026-11-16T08:50:52.056Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819052016",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2222",
-      "message": "Chauffeur Test Driver 2222 (9876502222) is active on duty. Direct Contact: 9876502222, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:52.016Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051988",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Delete Target",
-      "message": "Delete Target (+91 9876504444) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.988Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051968",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Delete Target",
-      "message": "Delete Target (+91 9876504444) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.968Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051930",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Test Passenger",
-      "message": "Test Passenger (+91 9876501111) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.930Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819051838",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2222",
-      "message": "Chauffeur Test Driver 2222 (9876502222) is active on duty. Direct Contact: 9876502222, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:51.838Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819051600",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2222",
-      "message": "Chauffeur Test Driver 2222 (9876502222) is active on duty. Direct Contact: 9876502222, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:51.600Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819051571",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2222",
-      "message": "Chauffeur Test Driver 2222 (9876502222) is active on duty. Direct Contact: 9876502222, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:51.571Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051534",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Teardown Passenger",
-      "message": "Teardown Passenger (+91 9876503334) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.534Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051504",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Logout Passenger",
-      "message": "Logout Passenger (+91 9876503333) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.504Z"
-    },
-    {
-      "id": "NOTIF_LOGIN_1794819051104",
-      "type": "DRIVER_LOGGED_IN",
-      "title": "Driver Online: Test Driver 2222",
-      "message": "Chauffeur Test Driver 2222 (9876502222) is active on duty. Direct Contact: 9876502222, Admin Support: 6206494214.",
-      "createdAt": "2026-11-16T08:50:51.104Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051081",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Verified Passenger",
-      "message": "Verified Passenger (+91 9876501112) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.081Z"
-    },
-    {
-      "id": "NOTIF_USER_1794819051062",
-      "type": "PASSENGER_LOGIN",
-      "title": "Passenger Signed In: Test Passenger",
-      "message": "Test Passenger (+91 9876501111) active on portal.",
-      "createdAt": "2026-11-16T08:50:51.062Z"
+      "id": "ntf_1794823219965",
+      "type": "CUSTOMER_LOGIN",
+      "title": "Customer Logged In",
+      "message": "Valued Passenger (+91 9876543210) signed in to OneWayTaxiBihar",
+      "timestamp": "2026-11-16T10:00:19.965Z",
+      "isRead": false
     },
     {
       "id": "NOTIF_1794795969974",
@@ -10755,84 +10373,6 @@
     }
   ],
   "audit_logs": [
-    {
-      "id": "audit_1794819053556_1939",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:53.556Z"
-    },
-    {
-      "id": "audit_1794819053532_5861",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:53.532Z"
-    },
-    {
-      "id": "audit_1794819053365_4007",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:53.365Z"
-    },
-    {
-      "id": "audit_1794819051663_6760",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGOUT",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged out",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:51.663Z"
-    },
-    {
-      "id": "audit_1794819051646_9864",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:51.646Z"
-    },
-    {
-      "id": "audit_1794819051131_6515",
-      "actor": "admin",
-      "role": "owner",
-      "action": "ADMIN_LOGIN_SUCCESS",
-      "entityType": "AUTH",
-      "entityId": "adm_admin",
-      "oldValue": null,
-      "newValue": null,
-      "note": "Operator logged in from IP 127.0.0.1",
-      "ip": "127.0.0.1",
-      "timestamp": "2026-11-16T08:50:51.131Z"
-    },
     {
       "id": "audit_1792227545868_2333",
       "actor": "test_manager_operator",
@@ -14732,129 +14272,6 @@
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-18T09:48:19.137Z"
-    },
-    {
-      "id": "AUD_RST_1794819051817",
-      "action": "CREDENTIAL_RESET_SUCCESS",
-      "entityId": "9876502222",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:51.817Z"
-    },
-    {
-      "id": "AUD_RST_1794819051876",
-      "action": "CREDENTIAL_RESET_SUCCESS",
-      "entityId": "9876502222",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:51.876Z"
-    },
-    {
-      "id": "AUD_DEL_1794819052002",
-      "entity": "USER",
-      "entityId": "9876504444",
-      "action": "DPDP_ACCOUNT_DELETION",
-      "receiptId": "DPDP-DEL-1794819052002-14004D",
-      "standard": "DPDP_ACT_2023",
-      "details": "Testing DPDP compliance",
-      "createdAt": "2026-11-16T08:50:52.002Z"
-    },
-    {
-      "id": "AUD_DEL_DRV_1794819052030",
-      "entity": "DRIVER",
-      "entityId": "9876502222",
-      "action": "DPDP_DRIVER_ACCOUNT_DELETION",
-      "receiptId": "DPDP-DEL-DRV-1794819052030-DEA19E",
-      "standard": "DPDP_ACT_2023",
-      "details": "Driver partner requested account erasure",
-      "createdAt": "2026-11-16T08:50:52.030Z"
-    },
-    {
-      "id": "LOG_1794819052631",
-      "entity": "CLIENT_ERROR",
-      "entityId": "frontend",
-      "action": "FRONTEND_ERROR",
-      "actor": "client",
-      "details": "Simulated client render failure at undefined:undefined",
-      "createdAt": "2026-11-16T08:50:52.631Z"
-    },
-    {
-      "id": "LOG_1794819052648",
-      "entity": "CLIENT_ERROR",
-      "entityId": "frontend",
-      "action": "FRONTEND_ERROR",
-      "actor": "client",
-      "details": "Auth fail with token otb_sess_secret_token_12345 at undefined:undefined",
-      "createdAt": "2026-11-16T08:50:52.648Z"
-    },
-    {
-      "id": "AUD_1794819053189",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-8025",
-      "action": "CREATE_REQUEST",
-      "actor": "+91 9876508111",
-      "details": "Patna → Gaya for ₹2199 (Cash on Ride (Zero Advance))",
-      "createdAt": "2026-11-16T08:50:53.189Z"
-    },
-    {
-      "id": "AUD_RST_1794819053337",
-      "action": "CREDENTIAL_RESET_SUCCESS",
-      "entityId": "9876502237",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:53.337Z"
-    },
-    {
-      "id": "LOG_1794819053379",
-      "entity": "CLIENT_ERROR",
-      "entityId": "frontend",
-      "action": "FRONTEND_ERROR",
-      "actor": "client",
-      "details": "Cross-feature test error e2e_err_1794819053374 at undefined:undefined",
-      "createdAt": "2026-11-16T08:50:53.379Z"
-    },
-    {
-      "id": "AUD_DEL_1794819053425",
-      "entity": "USER",
-      "entityId": "9876508333",
-      "action": "DPDP_ACCOUNT_DELETION",
-      "receiptId": "DPDP-DEL-1794819053425-07AAA8",
-      "standard": "DPDP_ACT_2023",
-      "details": "User requested account erasure via app",
-      "createdAt": "2026-11-16T08:50:53.425Z"
-    },
-    {
-      "id": "AUD_1794819053466",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-3172",
-      "action": "CREATE_REQUEST",
-      "actor": "+91 9876509111",
-      "details": "Patna → Gaya for ₹2199 (Cash on Ride (Zero Advance))",
-      "createdAt": "2026-11-16T08:50:53.466Z"
-    },
-    {
-      "id": "AUD_1794819053571",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-8317",
-      "action": "CREATE_REQUEST",
-      "actor": "+91 9876509988",
-      "details": "Patna → Gaya for ₹2199 (Cash on Ride (Zero Advance))",
-      "createdAt": "2026-11-16T08:50:53.571Z"
-    },
-    {
-      "id": "AUD_1794819053632",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-8317",
-      "action": "DRIVER_STATUS_UPDATE",
-      "actor": "driver_drv_test_2244",
-      "details": "Status set to TRIP STARTED",
-      "createdAt": "2026-11-16T08:50:53.632Z"
-    },
-    {
-      "id": "AUD_1794819053660",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-8317",
-      "action": "DRIVER_STATUS_UPDATE",
-      "actor": "driver_drv_test_2244",
-      "details": "Status set to COMPLETED",
-      "createdAt": "2026-11-16T08:50:53.660Z"
     }
   ],
   "sessions": [
@@ -15184,330 +14601,18 @@
       "userId": "usr_6206494214"
     },
     {
-      "token": "otb_sess_81a3f1c96de27ae4c3114f86c60cb38e0d85bb87204bc319",
-      "userId": "usr_9876501111",
-      "phone": "+91 9876501111",
+      "token": "otb_sess_3f8074ba9707487fc249491e35a6ed88",
+      "userId": "usr_9876543210",
+      "phone": "+91 9876543210",
       "role": "customer",
-      "createdAt": "2026-11-16T08:50:51.062Z"
+      "createdAt": "2026-11-16T10:00:19.965Z"
     },
     {
-      "token": "otb_sess_502a5cd4783241b3f38add41cdfab2ba125c00b38c107d08",
-      "userId": "usr_9876501112",
-      "phone": "+91 9876501112",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:51.081Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwZmU4OWZlZWRlZGIzYzIwOTIzMTlhOTY2NmVkOTI4ZiIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIyMiIsInBob25lIjoiOTg3NjUwMjIyMiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjIyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MSwiZXhwIjoxNzk0ODQ3ODUxfQ.idPFK_ghvP-uGDhV6i4ej3peMZ1vRQpPT_mSG0QdtUY",
-      "driverId": "drv_test_2222",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:51.104Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZWI4ZDQ2Y2JlMDA2MDNkZTlkMGFhZDZkNGFlOTIzMiIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgxOTA1MSwiZXhwIjoxNzk0ODQ3ODUxfQ.zc4PI334H9o86NDpanCT_XJtxCxx-hMxsxPav0Caco4",
-      "adminId": "adm_admin",
-      "username": "admin",
-      "role": "owner",
+      "token": "otb_drv_jwt_d8c974b1a942a296700913a05efd7b67",
+      "driverId": "drv_6206494214",
       "phone": "+91 6206494214",
-      "createdAt": "2026-11-16T08:50:51.131Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ODNiYjVlYWZmNzM1ZDI1MTVlMTFlMWQ0NTYzZmEwOCIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIyMiIsInBob25lIjoiOTg3NjUwMjIyMiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjIyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MSwiZXhwIjoxNzk0ODQ3ODUxfQ.NHjCH1IHbwqkbF2Fj5H-1mAqBbzq1SR19BTDdx4876o",
-      "driverId": "drv_test_2222",
       "role": "driver",
-      "createdAt": "2026-11-16T08:50:51.838Z"
-    },
-    {
-      "token": "otb_sess_c8d2380b8ed83598ef29079b6fdc50ac3a1724fee2731ba6",
-      "userId": "usr_9876501111",
-      "phone": "+91 9876501111",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:51.930Z"
-    },
-    {
-      "token": "otb_sess_b4c062b26a25b30b0b89c68bdb73b5e1aef9d8a196b3c102",
-      "userId": "usr_9876509999",
-      "phone": "+91 9876509999",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.056Z"
-    },
-    {
-      "token": "otb_sess_3e90a88ac35c6567a3f644b868bba26cba52acb427f3fb0a",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.167Z"
-    },
-    {
-      "token": "otb_sess_94f722a44a3246c117470033c1b001f665ef3e49d22caeb1",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.183Z"
-    },
-    {
-      "token": "otb_sess_6283ce98d4cbcccaad0ee59d4e703674e5d0ee574c82ce50",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.196Z"
-    },
-    {
-      "token": "otb_sess_7b10745e7f3a3150b95103f53437321fee5f01b11db018b8",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.210Z"
-    },
-    {
-      "token": "otb_sess_625de337ab7a886f4b1ab9e802fc541f1faf42c9dddd6de4",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.223Z"
-    },
-    {
-      "token": "otb_sess_29d41f74b431013179dcb8a882009db3cf1b1c894b945689",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.237Z"
-    },
-    {
-      "token": "otb_sess_d7498ade4b5e845ec8d993bef21475fbf82afe29aab9915a",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.251Z"
-    },
-    {
-      "token": "otb_sess_02cc135910ab5365ce07dfc43a2457a6a63f471fc713e8e2",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.264Z"
-    },
-    {
-      "token": "otb_sess_b6c455ced29a26e77a50cb18b3f3bda79e8555074f556e7c",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.279Z"
-    },
-    {
-      "token": "otb_sess_0bc9b424f1abeff6cd79521db11e0d22572d4d6910dc3213",
-      "userId": "usr_9876505555",
-      "phone": "+91 9876505555",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.292Z"
-    },
-    {
-      "token": "otb_sess_2f8626149eb830dbaa78e3adbcfa5eecd8cb9d0cfafaaa1f",
-      "userId": "usr_9876507777",
-      "phone": "+91 9876507777",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.380Z"
-    },
-    {
-      "token": "otb_sess_9d699de808180df75a04bff57dbf4f51629ee91430b93e65",
-      "userId": "usr_9876501111",
-      "phone": "+91 9876501111",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.460Z"
-    },
-    {
-      "token": "otb_sess_b2c1ad3a2845d7b73f75c4c8848fabf0abbfe3e2b3c4bf05",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.673Z"
-    },
-    {
-      "token": "otb_sess_5ec6f12b7ac384181cb4ab27abdd0bff4bfd087a7179bac1",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.688Z"
-    },
-    {
-      "token": "otb_sess_2a78306e402919172af7010f5deb399a99d95c4cfc1f559f",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.702Z"
-    },
-    {
-      "token": "otb_sess_cd3a607e325a599a4048d6a336a0e4f516664d66d3dc7df2",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.716Z"
-    },
-    {
-      "token": "otb_sess_6542cfdd0b3b4fdb31b0b86b264e1cb6e024c6fb5fb303b0",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.732Z"
-    },
-    {
-      "token": "otb_sess_58d336e3d06ff6afae473ca11d5780ca2ce0da020b14a755",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.759Z"
-    },
-    {
-      "token": "otb_sess_2e2244ad4ec5f2c19bbf22191292de10b05815567defec22",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.778Z"
-    },
-    {
-      "token": "otb_sess_683af61f9df50a0f3bed515167d4e7467f73def5d626db1f",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.798Z"
-    },
-    {
-      "token": "otb_sess_8c7e470223a3d80fe6bf75f8e8bfbf9493d98235ba2ac4d6",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.819Z"
-    },
-    {
-      "token": "otb_sess_120736b0130d795918aff4e5a78e3f7f2dcc8c6e4698cb6b",
-      "userId": "usr_9876508888",
-      "phone": "+91 9876508888",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.837Z"
-    },
-    {
-      "token": "otb_sess_4f7e23bfb3e42d5b33ef0626b041a64b1b106e6a3e939ce7",
-      "userId": "usr_9876501111",
-      "phone": "+91 9876501111",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.873Z"
-    },
-    {
-      "token": "otb_sess_6d94cadac0ced1a78f96c62ab0d979cf1e9a234ae900185c",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.912Z"
-    },
-    {
-      "token": "otb_sess_425f2d658eb5c4d83e999de9dcfb7d90625c99e140eb3202",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.935Z"
-    },
-    {
-      "token": "otb_sess_5bdc33c147d6276edc262a2a00b4f8ec3be84b65b61e035b",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.954Z"
-    },
-    {
-      "token": "otb_sess_951367efd96cd78cabc8f0d567acfb539cbe849e48a83b5e",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.973Z"
-    },
-    {
-      "token": "otb_sess_e06542f57dda39e66e59c5b81b6f9e25b9f517cf9c68d9e2",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:52.992Z"
-    },
-    {
-      "token": "otb_sess_1bf3522a351601d96e302477e84dda5bbd4f2ff74ca87ec0",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.010Z"
-    },
-    {
-      "token": "otb_sess_e484e44d09784ae23bc52ea57dcfeb1f3f9fa2af5fdffca8",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.028Z"
-    },
-    {
-      "token": "otb_sess_8b5f7547076dc7e079398efe4c65d737c82415b2d122d980",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.047Z"
-    },
-    {
-      "token": "otb_sess_f627ec40778184ecd24618591ea82e9ff254c94b7357e00c",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.061Z"
-    },
-    {
-      "token": "otb_sess_f9290cd5f9274193eb6c26f2ac03c4ecac24930f95cfcc18",
-      "userId": "usr_9876500001",
-      "phone": "+91 9876500001",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.076Z"
-    },
-    {
-      "token": "otb_sess_0756bf248fd534a60eea2294d38d4dde9bf54b1a9dc0d4d5",
-      "userId": "usr_9876500002",
-      "phone": "+91 9876500002",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.153Z"
-    },
-    {
-      "token": "otb_sess_4fa685247c016b7572a089c9e620fc9f0da7534bffcfb0a4",
-      "userId": "usr_9876508111",
-      "phone": "+91 9876508111",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.170Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MWE5NDM0MjEwOTg5ZTY0ODUyMTk0ZGEyODQyOWRmNSIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIzNyIsInBob25lIjoiOTg3NjUwMjIzNyIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjM3Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.M62-_h3DyRNmMgrIq82bU8FwaXX5t-15NaVYG4suPoE",
-      "driverId": "drv_test_2237",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:53.300Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1NGIzY2UzNjQ4MzVhZDIyY2Y2MjVhNzQxNDNlNDVhYiIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.JjW20v3r_vYRZ6Wmxl_ORK4nvNUxYsYan5mssfMK_1Y",
-      "adminId": "adm_admin",
-      "username": "admin",
-      "role": "owner",
-      "phone": "+91 6206494214",
-      "createdAt": "2026-11-16T08:50:53.365Z"
-    },
-    {
-      "token": "otb_sess_f17d51ca65b8479fe82e63ccb2c2b81987b3d8ab0a7fd3a0",
-      "userId": "usr_9876509111",
-      "phone": "+91 9876509111",
-      "role": "customer",
-      "createdAt": "2026-11-16T08:50:53.451Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhZWViYjdjMjQ0MzY2NGM5NTQ5Y2NkNWVkYThlNzRmZSIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjI0MiIsInBob25lIjoiOTg3NjUwMjI0MiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjQyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.n1uAPlKagtMhe5WgvyuEvfx7mzg3TyB70pBJxHorDzM",
-      "driverId": "drv_test_2242",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:53.490Z"
-    },
-    {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZDUzNDA0MzJjMTQyZGFlMzNiMzhjZDk4NDhlMTFiMCIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjI0NCIsInBob25lIjoiOTg3NjUwMjI0NCIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjQ0Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.-2m3iv68tp2Ul2unXRFWaHfPRs30zHtRUMLpbI3qp4I",
-      "driverId": "drv_test_2244",
-      "role": "driver",
-      "createdAt": "2026-11-16T08:50:53.588Z"
+      "createdAt": "2026-11-16T10:00:22.660Z"
     }
   ],
   "settings": {
@@ -15641,59 +14746,7 @@
     }
   },
   "support_tickets": [],
-  "error_logs": [
-    {
-      "id": "ERR_1794819053379_317",
-      "message": "Cross-feature test error e2e_err_1794819053374",
-      "stack": "",
-      "breadcrumbs": [
-        {
-          "category": "http",
-          "message": "GET /api/fares"
-        }
-      ],
-      "source": "frontend",
-      "lineno": 0,
-      "url": "",
-      "timestamp": "2026-11-16T08:50:53.379Z"
-    },
-    {
-      "id": "ERR_1794819052648_536",
-      "message": "Auth fail with token otb_sess_***",
-      "stack": "",
-      "breadcrumbs": [
-        {
-          "category": "auth",
-          "message": "Login attempt password=***"
-        }
-      ],
-      "source": "frontend",
-      "lineno": 0,
-      "url": "",
-      "timestamp": "2026-11-16T08:50:52.648Z"
-    },
-    {
-      "id": "ERR_1794819052631_749",
-      "message": "Simulated client render failure",
-      "stack": "Error: Simulated\n    at RenderView (HomeScreen.tsx:42)",
-      "breadcrumbs": [
-        {
-          "category": "navigation",
-          "message": "Navigated to Home",
-          "timestamp": "2026-11-16T08:50:52.624Z"
-        },
-        {
-          "category": "ui.click",
-          "message": "Tapped Book Cab",
-          "timestamp": "2026-11-16T08:50:52.624Z"
-        }
-      ],
-      "source": "frontend",
-      "lineno": 0,
-      "url": "",
-      "timestamp": "2026-11-16T08:50:52.631Z"
-    }
-  ],
+  "error_logs": [],
   "refunds": [
     {
       "id": "REF_1791872298014_9063",
@@ -19512,7 +18565,18 @@
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ZmNjYTViNjE0YzhkNjY3Mjg5YWIzMWZmZTA2ZjIzOCIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIzNSIsInBob25lIjoiOTg3NjUwMjIzNSIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjM1Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.p7pA8OToPBo6uNw_hYGhDqeGPb3voyINAS0uZToNK7o",
     "otb_sess_a4db8124a3a8fa4afeda2062017d96742559dd6b5a59ea93",
     "otb_sess_d8eea83e988758b15d76aeac3381b475006fa11dcbd3ae06",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5Y2FkODlhODZlNTRiMGFmYmNiYmQxYjdjODkzN2RlOCIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.vyHYugCz_QRx3qkCbAX1YE_nQZQUakkbIoYQHYdA4zI"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5Y2FkODlhODZlNTRiMGFmYmNiYmQxYjdjODkzN2RlOCIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgxOTA1MywiZXhwIjoxNzk0ODQ3ODUzfQ.vyHYugCz_QRx3qkCbAX1YE_nQZQUakkbIoYQHYdA4zI",
+    "otb_sess_4237f7041d5be64e185fe37e0f74394d729c6372cb5399f1",
+    "otb_sess_d92c80a206472513a0f4b6ee5aa0163aad729dcebc8861ec",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkNjhmMWRjYmY5MWVjNDRmNzc1ZmRiNjhiZWMzZDUyYSIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIyMiIsInBob25lIjoiOTg3NjUwMjIyMiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjIyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgyMzA4MywiZXhwIjoxNzk0ODUxODgzfQ.71Yz49XEdxjJJWYV5F_LLhH2B_5sUZ5ChoCwqqrsM6Y",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNjBiNTc1ZWMwOTQyMWQyMzYwZjE3M2NiNmQzZTJkMSIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIyMiIsInBob25lIjoiOTg3NjUwMjIyMiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjIyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgyMzA4MywiZXhwIjoxNzk0ODUxODgzfQ.ttv7M8Syo5CPU96hwkkOor5YbEUNpHLvEoo1aHFt2ww",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlMzc3MWMxYmZmYjI3MmVjZTViNWE0YTJjNDIyMTczZiIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgyMzA4MywiZXhwIjoxNzk0ODUxODgzfQ.Qhcj-vqZhvXIKXt_48Gk1j8qCsVR7mp179dqdngNoUs",
+    "otb_sess_3560e29b5c5da8e9c8390e7c9fd5fed2404020dc6ce41ada",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1YjFlNjk1NGVlZDY3YzRjNmI1OGRjZTcxZjYwOGJkMCIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIyMiIsInBob25lIjoiOTg3NjUwMjIyMiIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjIyIiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgyMzA4MywiZXhwIjoxNzk0ODUxODgzfQ.uqCw24a-bBeJv1kR1PG9yNMgTjbg-qSYSpTcn9MmXR4",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZjMyY2RkNjJhYzIwOWFhNDUzNTZiMDU4OWJkZGYwNCIsImRyaXZlcklkIjoiZHJ2X3Rlc3RfMjIzNSIsInBob25lIjoiOTg3NjUwMjIzNSIsIm5hbWUiOiJUZXN0IERyaXZlciAyMjM1Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDgyMzA4NCwiZXhwIjoxNzk0ODUxODg0fQ.fdcXhBETEkCxFdT2-G7b0ZLCCoQJ0wWUM6S6U8_r3wE",
+    "otb_sess_68a5530636cb218dadad91addc39ad86700aa5f4ef908cde",
+    "otb_sess_573a0985db6be55b15435c685b8aa58d6372fa4d7fc37184",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMjNhYjg3NDRlZjU5ZTcxMGRhY2RiZTlmMGEyYzkyYiIsImFkbWluSWQiOiJhZG1fYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNlbnRyYWwgRGlzcGF0Y2hlciAoQURNSU4pIiwicGhvbmUiOiIrOTEgNjIwNjQ5NDIxNCIsImlhdCI6MTc5NDgyMzA4NSwiZXhwIjoxNzk0ODUxODg1fQ.URGKfD7Qbnvvn4Vd6_mML3BX5D24usiPpI3j-ZtqdmY"
   ],
   "tourism_packages": [
     {
@@ -21789,6 +20853,61 @@
       "used": true,
       "createdAt": "2026-11-16T08:50:53.315Z",
       "usedAt": "2026-11-16T08:50:53.337Z"
+    },
+    {
+      "id": "rst_1794823083485_9876501111",
+      "resetToken": "rst_4305ce46eb2f1033b43aebbd8544e2625d7137aca9b982ba",
+      "phone": "9876501111",
+      "email": null,
+      "role": "passenger",
+      "otp": "425548",
+      "otpHash": "3830623d13137928fd1078ab354a2957e0abef495e4abc1e55b38d886ca990e8",
+      "expiresAt": 1794823683485,
+      "attempts": 0,
+      "used": false,
+      "createdAt": "2026-11-16T09:58:03.485Z"
+    },
+    {
+      "id": "rst_1794823083575_9876502222",
+      "resetToken": "rst_c2fb1218da80a7accab20f360470ad976d3e9ec89411320b",
+      "phone": "9876502222",
+      "email": null,
+      "role": "driver",
+      "otp": "111394",
+      "otpHash": "3a80730956f367147367a2a3376720a8b6630d95123d8184d651d719105d38ff",
+      "expiresAt": 1794823683575,
+      "attempts": 0,
+      "used": true,
+      "createdAt": "2026-11-16T09:58:03.575Z",
+      "usedAt": "2026-11-16T09:58:03.601Z"
+    },
+    {
+      "id": "rst_1794823083640_9876502222",
+      "resetToken": "rst_96bb927fe6a0dac0696cee0531a570910472c11a867f22e0",
+      "phone": "9876502222",
+      "email": null,
+      "role": "driver",
+      "otp": "227326",
+      "otpHash": "2f7304448a5adcd7cb577d31dbb47309f27e07824e1b0dbd3876e529e7721c6b",
+      "expiresAt": 1794823683640,
+      "attempts": 0,
+      "used": true,
+      "createdAt": "2026-11-16T09:58:03.640Z",
+      "usedAt": "2026-11-16T09:58:03.668Z"
+    },
+    {
+      "id": "rst_1794823085089_9876502237",
+      "resetToken": "rst_e7471ce7e9af361a09bb886b9c0cac8f69082f9f35009139",
+      "phone": "9876502237",
+      "email": null,
+      "role": "driver",
+      "otp": "217228",
+      "otpHash": "466a4a1901c0a3743c37b7e1e604b5492017d03e3e63fbbae900c901532c86b0",
+      "expiresAt": 1794823685090,
+      "attempts": 0,
+      "used": true,
+      "createdAt": "2026-11-16T09:58:05.090Z",
+      "usedAt": "2026-11-16T09:58:05.113Z"
     }
   ],
   "payout_requests": [
@@ -21809,6 +20928,18 @@
     }
   ],
   "telemetry_events": [
+    {
+      "id": "EVT_1794823084450",
+      "event": "custom_event",
+      "params": {},
+      "timestamp": "2026-11-16T09:58:04.450Z"
+    },
+    {
+      "id": "EVT_1794823084425",
+      "event": "auth_login",
+      "params": {},
+      "timestamp": "2026-11-16T09:58:04.425Z"
+    },
     {
       "id": "EVT_1794819052612",
       "event": "custom_event",

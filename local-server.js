@@ -259,8 +259,8 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Content-Type', contentType);
 
     // Static asset caching headers
-    if (safePath.includes('admin')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    if (safePath.includes('admin') || ext === '.html') {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     } else if (ext === '.css' || ext === '.js') {

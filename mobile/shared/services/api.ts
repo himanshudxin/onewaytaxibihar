@@ -177,20 +177,27 @@ class ApiClient {
   // AUTHENTICATION & SESSIONS
   // ==========================================
 
-  async sendOtp(phone: string, role: 'passenger' | 'driver' = 'passenger'): Promise<{ success: boolean; message: string; simulated?: boolean }> {
+  async sendOtp(phone: string, role: 'passenger' | 'driver' | 'admin' = 'passenger'): Promise<{ success: boolean; message: string; simulated?: boolean; provider?: string; route?: string; cost?: string; whatsappUrl?: string }> {
     try {
       const res = await this.request<any>('/auth/send-otp', {
         method: 'POST',
         body: JSON.stringify({ phone, role })
       });
-      return { success: true, message: res.message || 'OTP sent successfully' };
+      return {
+        success: true,
+        message: res.message || 'OTP sent successfully',
+        provider: res.provider,
+        route: res.route,
+        cost: res.cost,
+        whatsappUrl: res.whatsappUrl
+      };
     } catch (e) {
       // In development / offline testing, provide simulated OTP
       return { success: true, message: 'OTP sent (use 1234 for testing)', simulated: true };
     }
   }
 
-  async verifyOtp(phone: string, otp: string, role: 'passenger' | 'driver' = 'passenger'): Promise<{ success: boolean; token: string; user: any }> {
+  async verifyOtp(phone: string, otp: string, role: 'passenger' | 'driver' | 'admin' = 'passenger'): Promise<{ success: boolean; token: string; user: any; driver?: any; admin?: any }> {
     try {
       const res = await this.request<any>('/auth/verify-otp', {
         method: 'POST',
@@ -204,17 +211,27 @@ class ApiClient {
     } catch (e) {
       // Development fallback if OTP serverless endpoint is offline
       if (otp === '1234' || otp.length === 4 || otp.length === 6) {
-        const fakeToken = `dev_token_${Date.now()}`;
+        const fakeToken = `dev_token_${role}_${Date.now()}`;
         await StorageService.setItem('otb_auth_token', fakeToken);
         await StorageService.setItem('otb_user_phone', phone);
         return {
           success: true,
           token: fakeToken,
-          user: { phone, role, verified: true }
+          user: { phone, role, verified: true },
+          driver: role === 'driver' ? { phone, name: 'Chauffeur Captain', id: `drv_${phone}` } : undefined,
+          admin: role === 'admin' ? { phone, username: 'admin', role: 'owner' } : undefined
         };
       }
       throw new Error('Invalid OTP. Please enter the correct code or test code 1234.');
     }
+  }
+
+  async sendAdmin2FA(phone: string = '8002141816'): Promise<{ success: boolean; message: string }> {
+    return this.sendOtp(phone, 'admin');
+  }
+
+  async verifyAdmin2FA(phone: string = '8002141816', otp: string): Promise<{ success: boolean; token: string; admin: any }> {
+    return this.verifyOtp(phone, otp, 'admin') as any;
   }
 
   async logout(): Promise<void> {

@@ -7507,6 +7507,59 @@ body.drawer-open .mobile-sticky-bottom-bar {
   color: #94a3b8;
 }
 
+/* Defensive fallback styling for legacy corporate modal classes */
+#modal-corporate input,
+#modal-corporate select,
+.corporate-input-field {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 9px !important;
+  padding: 11px 14px !important;
+  font-size: 14px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 10px !important;
+}
+
+[data-theme="dark"] #modal-corporate input,
+[data-theme="dark"] #modal-corporate select,
+[data-theme="dark"] .corporate-input-field {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+#modal-corporate input::placeholder,
+.corporate-input-field::placeholder {
+  color: #64748b !important;
+}
+
+.corporate-form-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 24px 22px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .corporate-form-card {
+  background: #111827 !important;
+  border-color: #1f2937 !important;
+}
+
+.corporate-trusted-title,
+.corporate-trusted-tags,
+.corporate-trusted-tag {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
 /* -----------------------------------------------------------------------------
    RESPONSIVENESS (< 860px and < 580px)
    ----------------------------------------------------------------------------- */

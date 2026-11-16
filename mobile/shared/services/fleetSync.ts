@@ -107,6 +107,18 @@ class FleetSyncManager {
     return this.bookings.find(b => b.id === idOrRef || b.referenceNumber === idOrRef);
   }
 
+  async updateBooking(updated: Booking): Promise<boolean> {
+    const bIdx = this.bookings.findIndex(b => b.id === updated.id || b.referenceNumber === updated.referenceNumber);
+    if (bIdx === -1) {
+      this.bookings.unshift(updated);
+    } else {
+      this.bookings[bIdx] = { ...this.bookings[bIdx], ...updated, updatedAt: new Date().toISOString() };
+    }
+    await this.persist();
+    this.notify();
+    return true;
+  }
+
   async addBooking(booking: Booking): Promise<Booking> {
     await this.init();
 

@@ -9,8 +9,10 @@ import {
   TextInput,
   Linking,
   Alert,
-  Modal
+  Modal,
+  Image,
 } from 'react-native';
+import QRCode from 'qrcode';
 import { StatusBar } from 'expo-status-bar';
 import * as Location from 'expo-location';
 import { Colors } from '../../../../shared/theme/colors';
@@ -34,7 +36,10 @@ import {
   ShieldAlert,
   Check,
   ChevronRight,
-  Calendar
+  Calendar,
+  ShieldCheck,
+  QrCode,
+  Banknote,
 } from 'lucide-react-native';
 
 export const TripExecutionScreen = ({ navigation }: any) => {
@@ -94,6 +99,36 @@ export const TripExecutionScreen = ({ navigation }: any) => {
       </SafeAreaView>
     );
   }
+
+  const totalFare = activeTrip.fareBreakdown?.totalFare || (activeTrip as any).totalFare || 2199;
+  const is100PercentPaidOnline = 
+    activeTrip.paymentMethod === 'full_online_razorpay' || 
+    activeTrip.paymentMethod === 'full_prepaid' || 
+    activeTrip.paymentStatus === 'paid' || 
+    activeTrip.paymentStatus === 'completed';
+
+  const is15PercentAdvancePaid = 
+    activeTrip.paymentMethod === 'advance_15_razorpay' || 
+    activeTrip.paymentMethod === 'advance_token' || 
+    activeTrip.paymentStatus === 'partially_paid' ||
+    Boolean(activeTrip.advancePaid && activeTrip.advancePaid > 0);
+
+  const advancePaid = activeTrip.advancePaid || (is15PercentAdvancePaid ? Math.max(Math.round(totalFare * 0.15), 199) : 0);
+  const balanceToCollect = is100PercentPaidOnline ? 0 : (activeTrip.balanceDue !== undefined ? activeTrip.balanceDue : (totalFare - advancePaid));
+
+  const [collectMode, setCollectMode] = useState<'options' | 'qr_code'>('options');
+  const [qrBase64, setQrBase64] = useState<string>('');
+
+  useEffect(() => {
+    if (balanceToCollect > 0 && activeTrip) {
+      const upiUri = `upi://pay?pa=8002141816@ybl&pn=OneWayTaxiBihar&am=${balanceToCollect}&cu=INR&tn=Balance_${activeTrip.referenceNumber}`;
+      QRCode.toDataURL(upiUri, { width: 220, margin: 1 })
+        .then((url: string) => {
+          setQrBase64(url);
+        })
+        .catch(() => {});
+    }
+  }, [balanceToCollect, activeTrip?.referenceNumber]);
 
   const handleLaunchNavigation = async () => {
     try {
@@ -361,19 +396,35 @@ export const TripExecutionScreen = ({ navigation }: any) => {
 
         {/* Passenger Information Card */}
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.cardTitle, { color: colors.text }]}>Passenger Booking Details</Text>
+          <Text style={[styles.cardTitle, { color: colors.text }]}>Passenger Booking & Payment Ledger</Text>
           <View style={styles.detailRow}>
             <Text style={[styles.dLabel, { color: colors.textMuted }]}>Customer Name:</Text>
             <Text style={[styles.dVal, { color: colors.text }]}>{activeTrip.passengerName}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={[styles.dLabel, { color: colors.textMuted }]}>Payment Method:</Text>
-            <Text style={[styles.dVal, { color: colors.gold }]}>Cash / UPI to Chauffeur</Text>
+            <Text style={[styles.dVal, { color: is100PercentPaidOnline ? '#059669' : colors.gold, fontWeight: '800' }]}>
+              {is100PercentPaidOnline
+                ? '100% Paid Online (Razorpay)'
+                : is15PercentAdvancePaid
+                ? '15% Advance Paid Online'
+                : 'Cash / UPI to Chauffeur'}
+            </Text>
           </View>
+
+          {is15PercentAdvancePaid && !is100PercentPaidOnline && (
+            <View style={styles.detailRow}>
+              <Text style={[styles.dLabel, { color: colors.textMuted }]}>15% Advance Received:</Text>
+              <Text style={[styles.dVal, { color: '#059669', fontWeight: '800' }]}>
+                {formatCurrency(advancePaid)}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.detailRow}>
-            <Text style={[styles.dLabel, { color: colors.textMuted }]}>Total Fare to Collect:</Text>
-            <Text style={[styles.dVal, { color: colors.primary, fontWeight: '800' }]}>
-              {formatCurrency(activeTrip.fareBreakdown.totalFare)}
+            <Text style={[styles.dLabel, { color: colors.textMuted }]}>Balance to Collect at Drop:</Text>
+            <Text style={[styles.dVal, { color: is100PercentPaidOnline ? '#059669' : colors.primary, fontWeight: '900', fontSize: 15 }]}>
+              {is100PercentPaidOnline ? '₹0 (Fully Paid Online)' : formatCurrency(balanceToCollect)}
             </Text>
           </View>
         </View>
@@ -383,27 +434,110 @@ export const TripExecutionScreen = ({ navigation }: any) => {
       {/* Collect Fare Modal */}
       <Modal visible={showCollectModal} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <CheckCircle2 size={44} color={colors.primary} />
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Confirm Fare Collection</Text>
-            <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-              Please collect the final outstation fare from passenger {activeTrip.passengerName}.
-            </Text>
-
-            <View style={[styles.collectBox, { backgroundColor: 'rgba(5, 150, 105, 0.15)', borderColor: colors.primary }]}>
-              <Text style={[styles.collectLabel, { color: colors.primary }]}>TOTAL CASH / UPI TO COLLECT</Text>
-              <Text style={[styles.collectAmount, { color: colors.text }]}>
-                {formatCurrency(activeTrip.fareBreakdown.totalFare)}
+          {is100PercentPaidOnline ? (
+            /* 100% Paid Online Modal */
+            <View style={[styles.modalCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <View style={styles.onlinePaidIconCircle}>
+                <ShieldCheck size={48} color="#059669" />
+              </View>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Ride 100% Paid Online</Text>
+              <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+                Passenger {activeTrip.passengerName} has already paid the entire trip fare ({formatCurrency(totalFare)}) via Razorpay.
               </Text>
-            </View>
 
-            <TouchableOpacity
-              style={[styles.confirmCollectBtn, { backgroundColor: colors.primary }]}
-              onPress={handleConfirmCollectionAndFinish}
-            >
-              <Text style={styles.confirmCollectText}>Payment Collected • Settle Trip</Text>
-            </TouchableOpacity>
-          </View>
+              <View style={[styles.collectBoxZero, { backgroundColor: '#ECFDF5', borderColor: '#059669' }]}>
+                <Text style={styles.collectZeroLabel}>DO NOT COLLECT CASH</Text>
+                <Text style={styles.collectZeroAmount}>₹0 CASH TO COLLECT</Text>
+                <Text style={styles.collectZeroSub}>Full ride cashless transaction verified</Text>
+              </View>
+
+              {activeTrip.paymentTxnId && (
+                <View style={styles.driverTxnRefRow}>
+                  <Text style={[styles.driverTxnRefLabel, { color: colors.textMuted }]}>Txn ID:</Text>
+                  <Text style={[styles.driverTxnRefVal, { color: colors.text }]}>{activeTrip.paymentTxnId}</Text>
+                </View>
+              )}
+
+              <TouchableOpacity
+                style={[styles.confirmCollectBtn, { backgroundColor: colors.primary }]}
+                onPress={handleConfirmCollectionAndFinish}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.confirmCollectText}>Confirm & Finish Trip (₹0 Cash)</Text>
+              </TouchableOpacity>
+            </View>
+          ) : collectMode === 'qr_code' ? (
+            /* Dynamic Chauffeur UPI QR Modal */
+            <View style={[styles.modalCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Scan & Pay 85% Balance</Text>
+              <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+                Ask passenger to scan using PhonePe, Google Pay, or Paytm
+              </Text>
+
+              <View style={styles.qrWrapper}>
+                {qrBase64 ? (
+                  <Image source={{ uri: qrBase64 }} style={{ width: 200, height: 200, borderRadius: 12 }} />
+                ) : (
+                  <Text style={{ color: colors.textMuted }}>Generating UPI QR...</Text>
+                )}
+                <Text style={styles.qrAmountText}>{formatCurrency(balanceToCollect)}</Text>
+                <Text style={styles.qrUpiText}>UPI ID: 8002141816@ybl</Text>
+              </View>
+
+              <TouchableOpacity
+                style={[styles.confirmCollectBtn, { backgroundColor: colors.primary }]}
+                onPress={handleConfirmCollectionAndFinish}
+                activeOpacity={0.85}
+              >
+                <CheckCircle2 size={18} color="#FFFFFF" />
+                <Text style={styles.confirmCollectText}>Passenger Paid via UPI • Settle Trip</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.backToOptionsBtn}
+                onPress={() => setCollectMode('options')}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.backToOptionsText, { color: colors.textSecondary }]}>← Back to Cash Collection</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            /* Collect 85% Balance with Dual Option: Dynamic UPI QR or Cash */
+            <View style={[styles.modalCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <CheckCircle2 size={40} color={colors.primary} />
+              <Text style={[styles.modalTitle, { color: colors.text }]}>Collect Remaining 85% Balance</Text>
+              <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+                15% advance ({formatCurrency(advancePaid)}) was paid online. Please collect remaining balance from {activeTrip.passengerName}.
+              </Text>
+
+              <View style={[styles.collectBox, { backgroundColor: 'rgba(5, 150, 105, 0.15)', borderColor: colors.primary }]}>
+                <Text style={[styles.collectLabel, { color: colors.primary }]}>REMAINING BALANCE TO COLLECT</Text>
+                <Text style={[styles.collectAmount, { color: colors.text }]}>
+                  {formatCurrency(balanceToCollect)}
+                </Text>
+              </View>
+
+              <View style={{ gap: 10, width: '100%', marginTop: 8 }}>
+                <TouchableOpacity
+                  style={styles.qrOptionBtn}
+                  onPress={() => setCollectMode('qr_code')}
+                  activeOpacity={0.85}
+                >
+                  <QrCode size={18} color="#059669" />
+                  <Text style={styles.qrOptionText}>📱 Show Passenger Dynamic UPI QR ({formatCurrency(balanceToCollect)})</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.confirmCollectBtn, { backgroundColor: colors.primary }]}
+                  onPress={handleConfirmCollectionAndFinish}
+                  activeOpacity={0.85}
+                >
+                  <Banknote size={18} color="#FFFFFF" />
+                  <Text style={styles.confirmCollectText}>💵 Cash Received ({formatCurrency(balanceToCollect)}) • Settle</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </View>
       </Modal>
 
@@ -691,10 +825,107 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
   },
   confirmCollectText: {
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '800',
+  },
+  onlinePaidIconCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#ECFDF5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  collectBoxZero: {
+    width: '100%',
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  collectZeroLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#059669',
+    letterSpacing: 0.8,
+  },
+  collectZeroAmount: {
+    fontSize: 26,
+    fontWeight: '900',
+    color: '#065F46',
+    marginTop: 4,
+  },
+  collectZeroSub: {
+    fontSize: 11,
+    color: '#059669',
+    marginTop: 3,
+  },
+  driverTxnRefRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 4,
+  },
+  driverTxnRefLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  driverTxnRefVal: {
+    fontSize: 11,
+    fontWeight: '700',
+    fontFamily: 'monospace',
+  },
+  qrOptionBtn: {
+    width: '100%',
+    paddingVertical: 13,
+    borderRadius: 12,
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1.5,
+    borderColor: '#059669',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  qrOptionText: {
+    color: '#059669',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  qrWrapper: {
+    alignItems: 'center',
+    padding: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginVertical: 8,
+  },
+  qrAmountText: {
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#0F172A',
+    marginTop: 10,
+  },
+  qrUpiText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  backToOptionsBtn: {
+    paddingVertical: 8,
+  },
+  backToOptionsText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

@@ -9,6 +9,7 @@ import {
   Linking,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
@@ -38,7 +39,11 @@ import {
   Sparkles,
   KeyRound,
   Compass,
+  CreditCard,
+  Lock,
+  Banknote,
 } from 'lucide-react-native';
+import { RazorpayModal } from '../../../../shared/components/RazorpayModal';
 
 // 7 User-Mandated Status Stepper Stages
 const SEVEN_STAGES = [
@@ -149,6 +154,54 @@ export const BookingTimelineScreen = ({ route, navigation }: any) => {
   } : null);
 
   const isDriverAssigned = Boolean(activeDriver && currentStageIdx >= 2);
+
+  const [showRazorpayBalanceModal, setShowRazorpayBalanceModal] = useState(false);
+  const [razorpayKeyId, setRazorpayKeyId] = useState('rzp_test_placeholder');
+  const [payingBalance, setPayingBalance] = useState(false);
+
+  const totalFare = booking.fareBreakdown?.totalFare || (booking as any).totalFare || 2199;
+  const is100PercentPaidOnline = 
+    booking.paymentMethod === 'full_online_razorpay' || 
+    booking.paymentMethod === 'full_prepaid' || 
+    booking.paymentStatus === 'paid' || 
+    booking.paymentStatus === 'completed';
+
+  const is15PercentAdvancePaid = 
+    booking.paymentMethod === 'advance_15_razorpay' || 
+    booking.paymentMethod === 'advance_token' || 
+    booking.paymentStatus === 'partially_paid' ||
+    Boolean(booking.advancePaid && booking.advancePaid > 0);
+
+  const advancePaid = booking.advancePaid || (is15PercentAdvancePaid ? Math.max(Math.round(totalFare * 0.15), 199) : 0);
+  const balanceDue = is100PercentPaidOnline ? 0 : (booking.balanceDue !== undefined ? booking.balanceDue : (totalFare - advancePaid));
+
+  const handlePayBalanceOnline = async () => {
+    setPayingBalance(true);
+    try {
+      const cfg = await MobileApiClient.getPaymentConfig();
+      if (cfg?.razorpayKeyId) setRazorpayKeyId(cfg.razorpayKeyId);
+      setShowRazorpayBalanceModal(true);
+    } catch {
+      setShowRazorpayBalanceModal(true);
+    } finally {
+      setPayingBalance(false);
+    }
+  };
+
+  const handleBalancePaymentSuccess = async (data: { paymentId: string; orderId: string }) => {
+    setShowRazorpayBalanceModal(false);
+    const updated = {
+      ...booking,
+      paymentMethod: 'full_online_razorpay' as any,
+      paymentStatus: 'paid' as any,
+      advancePaid: totalFare,
+      balanceDue: 0,
+      paymentTxnId: data.paymentId
+    };
+    FleetSyncService.updateBooking(updated);
+    setBooking(updated);
+    Alert.alert('Payment Successful', `Remaining balance of ₹${balanceDue} paid online via Razorpay. ₹0 due to chauffeur.`);
+  };
 
   const callDriver = () => {
     if (activeDriver?.driverPhone) {
@@ -410,6 +463,85 @@ export const BookingTimelineScreen = ({ route, navigation }: any) => {
           </View>
         )}
 
+        {/* Payment & Fare Ledger Status Card */}
+        <View style={styles.card}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <CreditCard size={18} color="#059669" />
+              <Text style={styles.cardHeading}>Payment & Fare Status</Text>
+            </View>
+            <View style={[styles.paymentStatusPill, { backgroundColor: is100PercentPaidOnline ? '#ECFDF5' : '#FFFBEB' }]}>
+              <Text style={[styles.paymentStatusPillText, { color: is100PercentPaidOnline ? '#059669' : '#D97706' }]}>
+                {is100PercentPaidOnline ? '100% PAID ONLINE' : '15% ADVANCE PAID'}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.paymentSummaryBox}>
+            <View style={styles.paySummaryRow}>
+              <Text style={styles.paySummaryLabel}>Total Trip Fare:</Text>
+              <Text style={styles.paySummaryVal}>{formatCurrency(totalFare)}</Text>
+            </View>
+
+            {is100PercentPaidOnline ? (
+              <>
+                <View style={styles.paySummaryRow}>
+                  <Text style={styles.paySummaryLabel}>Paid via Razorpay (100%):</Text>
+                  <Text style={[styles.paySummaryVal, { color: '#059669', fontWeight: '800' }]}>
+                    {formatCurrency(totalFare)}
+                  </Text>
+                </View>
+                <View style={styles.fullPaidNotice}>
+                  <ShieldCheck size={16} color="#059669" />
+                  <Text style={styles.fullPaidNoticeText}>
+                    Ride 100% Paid Online • ₹0 Cash to pay to Chauffeur
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={styles.paySummaryRow}>
+                  <Text style={styles.paySummaryLabel}>Online Advance Paid (15%):</Text>
+                  <Text style={[styles.paySummaryVal, { color: '#059669', fontWeight: '800' }]}>
+                    {formatCurrency(advancePaid)}
+                  </Text>
+                </View>
+                <View style={styles.paySummaryRow}>
+                  <Text style={styles.paySummaryLabel}>Balance Due at Drop (85%):</Text>
+                  <Text style={[styles.paySummaryVal, { color: '#D97706', fontWeight: '800' }]}>
+                    {formatCurrency(balanceDue)}
+                  </Text>
+                </View>
+                <View style={styles.balanceDueNotice}>
+                  <Banknote size={16} color="#D97706" />
+                  <Text style={styles.balanceDueNoticeText}>
+                    Balance {formatCurrency(balanceDue)} payable to chauffeur at destination via Cash or Chauffeur UPI QR.
+                  </Text>
+                </View>
+
+                {currentStageIdx < 6 && balanceDue > 0 && (
+                  <TouchableOpacity
+                    style={styles.payBalanceBtn}
+                    onPress={handlePayBalanceOnline}
+                    disabled={payingBalance}
+                    activeOpacity={0.85}
+                  >
+                    <CreditCard size={15} color="#FFFFFF" />
+                    <Text style={styles.payBalanceBtnText}>Pay Remaining {formatCurrency(balanceDue)} Online Now</Text>
+                  </TouchableOpacity>
+                )}
+              </>
+            )}
+
+            {booking.paymentTxnId && (
+              <View style={styles.txnIdRow}>
+                <Text style={styles.txnIdLabel}>Transaction Ref:</Text>
+                <Text style={styles.txnIdVal}>{booking.paymentTxnId}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
         {/* Cancellation Option */}
         {currentStageIdx < 5 && (
           <TouchableOpacity style={styles.cancelBtn} onPress={handleCancel} activeOpacity={0.8}>
@@ -418,6 +550,23 @@ export const BookingTimelineScreen = ({ route, navigation }: any) => {
         )}
 
       </ScrollView>
+
+      {/* Razorpay Online Modal for Balance Settlement */}
+      <RazorpayModal
+        visible={showRazorpayBalanceModal}
+        onClose={() => setShowRazorpayBalanceModal(false)}
+        onSuccess={handleBalancePaymentSuccess}
+        onFailure={(err) => {
+          setShowRazorpayBalanceModal(false);
+          Alert.alert('Payment Incomplete', err || 'Balance payment could not be processed.');
+        }}
+        amount={balanceDue}
+        title={`Remaining 85% Balance - ${booking.referenceNumber}`}
+        bookingRef={booking.referenceNumber}
+        passengerName={booking.passengerName}
+        passengerPhone={booking.passengerPhone}
+        keyId={razorpayKeyId}
+      />
     </SafeAreaView>
   );
 };
@@ -903,6 +1052,110 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#64748B',
     marginTop: 1,
+  },
+  paymentStatusPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  paymentStatusPillText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+  },
+  paymentSummaryBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 8,
+  },
+  paySummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  paySummaryLabel: {
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  paySummaryVal: {
+    fontSize: 14,
+    color: '#0F172A',
+    fontWeight: '700',
+  },
+  fullPaidNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    marginTop: 4,
+  },
+  fullPaidNoticeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#059669',
+    flex: 1,
+  },
+  balanceDueNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FFFBEB',
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    marginTop: 4,
+  },
+  balanceDueNoticeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#B45309',
+    flex: 1,
+    lineHeight: 16,
+  },
+  payBalanceBtn: {
+    backgroundColor: '#059669',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 6,
+  },
+  payBalanceBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  txnIdRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    marginTop: 4,
+  },
+  txnIdLabel: {
+    fontSize: 10,
+    color: '#94A3B8',
+    fontWeight: '600',
+  },
+  txnIdVal: {
+    fontSize: 10,
+    color: '#64748B',
+    fontWeight: '700',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   cancelBtn: {
     paddingVertical: 12,

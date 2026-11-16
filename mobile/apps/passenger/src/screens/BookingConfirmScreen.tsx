@@ -104,9 +104,31 @@ export const BookingConfirmScreen = ({ route, navigation }: any) => {
           <View style={styles.itineraryRow}>
             <Text style={styles.itineraryLabel}>Payment Mode:</Text>
             <Text style={styles.itineraryPayment}>
-              {booking.paymentMethod === 'driver_cash' ? 'Cash / UPI to Chauffeur on Arrival' : 'Token Advance Paid'}
+              {booking.paymentMethod === 'full_online_razorpay'
+                ? `100% Paid Online • Cashless Ride (₹0 to driver)`
+                : booking.paymentMethod === 'advance_15_razorpay'
+                ? `15% Online Advance Paid (${formatCurrency(booking.advancePaid || Math.round((booking.fareBreakdown?.totalFare || 2199) * 0.15))})`
+                : 'Token Advance Paid'}
             </Text>
           </View>
+
+          {booking.paymentMethod === 'advance_15_razorpay' && (
+            <View style={styles.itineraryRow}>
+              <Text style={styles.itineraryLabel}>Balance at Drop:</Text>
+              <Text style={[styles.itineraryVal, { color: '#D97706', fontWeight: '800' }]}>
+                {formatCurrency(booking.balanceDue || Math.round((booking.fareBreakdown?.totalFare || 2199) * 0.85))}
+              </Text>
+            </View>
+          )}
+
+          {booking.paymentTxnId && (
+            <View style={styles.itineraryRow}>
+              <Text style={styles.itineraryLabel}>Razorpay Ref:</Text>
+              <Text style={[styles.itineraryValSecondary, { fontFamily: 'monospace' }]}>
+                {booking.paymentTxnId}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Action Buttons */}

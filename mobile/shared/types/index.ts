@@ -32,8 +32,8 @@ export type BookingStatus =
   | 'cancelled'
   | 'failed';
 
-export type PaymentMethod = 'driver_cash' | 'driver_upi' | 'advance_token' | 'full_prepaid';
-export type PaymentStatus = 'pending' | 'partially_paid' | 'completed' | 'refunded' | 'failed' | 'paid';
+export type PaymentMethod = 'driver_cash' | 'driver_upi' | 'advance_token' | 'full_prepaid' | 'advance_15_razorpay' | 'full_online_razorpay';
+export type PaymentStatus = 'pending' | 'partially_paid' | 'completed' | 'refunded' | 'failed' | 'paid' | string;
 
 export interface FareBreakdown {
   baseFare: number;
@@ -91,6 +91,9 @@ export interface Booking {
   fareBreakdown: FareBreakdown;
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
+  advancePaid?: number;
+  balanceDue?: number;
+  paymentTxnId?: string;
   status: BookingStatus;
   startOtp?: string; // 4-digit ride start OTP given to passenger
   driver?: DriverAssignment;

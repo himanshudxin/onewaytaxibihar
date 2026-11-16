@@ -37,17 +37,28 @@ import {
   Check,
   Car,
   Compass,
+  Lock,
+  Percent,
 } from 'lucide-react-native';
+import { RazorpayModal } from '../../../../shared/components/RazorpayModal';
 
 export const CheckoutScreen = ({ route, navigation }: any) => {
   const { fareBreakdown, cabName, price, distanceKm, cabTier = 'sedan' } = route.params;
   const { search, updateSearch, setActiveBooking, refreshTrips } = usePassenger();
 
+  const totalFare = fareBreakdown?.totalFare || price || 2199;
+  const advance15Amount = Math.max(Math.round(totalFare * 0.15), 199);
+  const balance85Amount = totalFare - advance15Amount;
+
   const [name, setName] = useState(search.passengerName || '');
   const [phone, setPhone] = useState(search.phone || '');
   const [pickupAddr, setPickupAddr] = useState(search.pickupAddress || `${search.origin} Doorstep`);
   const [dropAddr, setDropAddr] = useState(search.dropAddress || `${search.destination} City Center`);
-  const [paymentMethod, setPaymentMethod] = useState<'driver_cash' | 'advance_token'>('driver_cash');
+  const [paymentMode, setPaymentMode] = useState<'advance_15' | 'full_online'>('advance_15');
+  const [showRazorpayModal, setShowRazorpayModal] = useState(false);
+  const [razorpayOrderId, setRazorpayOrderId] = useState('');
+  const [razorpayKeyId, setRazorpayKeyId] = useState('rzp_test_placeholder');
+  const [pendingBookingRef, setPendingBookingRef] = useState('');
   const [loading, setLoading] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showUtrModal, setShowUtrModal] = useState(false);
@@ -139,8 +150,10 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
         cabTier: cabTier as any,
         cabName,
         fareBreakdown,
-        paymentMethod,
-        paymentStatus: initialPaymentStatus
+        paymentMethod: (paymentMode === 'full_online' ? 'full_online_razorpay' : 'advance_15_razorpay') as any,
+        paymentStatus: initialPaymentStatus,
+        advancePaid: paymentMode === 'full_online' ? totalFare : advance15Amount,
+        balanceDue: paymentMode === 'full_online' ? 0 : balance85Amount,
       });
 
       setActiveBooking(booking);
@@ -197,43 +210,94 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
       return;
     }
 
-    if (paymentMethod === 'advance_token') {
-      Alert.alert(
-        'Pay ₹500 Token Advance',
-        'Pay ₹500 token advance via PhonePe, GPay, or Paytm to lock in your cab. Remaining balance payable to chauffeur at destination.',
-        [
-          {
-            text: 'Launch UPI App & Enter UTR',
-            onPress: async () => {
-              await handleLaunchUpi();
-              const booking = await createBookingRecord('partially_paid');
-              if (booking) {
-                setCreatedBooking(booking);
-                setShowUtrModal(true);
-              }
-            }
-          },
-          {
-            text: 'Pay Cash to Driver (Zero Advance)',
-            style: 'default',
-            onPress: async () => {
-              setPaymentMethod('driver_cash');
-              const booking = await createBookingRecord('pending');
-              if (booking) {
-                navigation.replace('BookingConfirm', { booking });
-              }
-            }
-          },
-          { text: 'Cancel', style: 'cancel' }
-        ]
-      );
-      return;
-    }
+    const amountToPay = paymentMode === 'full_online' ? totalFare : advance15Amount;
+    const tempRef = `OTB-${Math.floor(100000 + Math.random() * 900000)}`;
+    setPendingBookingRef(tempRef);
 
-    const booking = await createBookingRecord('pending');
-    if (booking) {
-      navigation.replace('BookingConfirm', { booking });
+    setLoading(true);
+    try {
+      const orderRes = await MobileApiClient.createPaymentOrder({
+        amountInRupees: amountToPay,
+        passengerName: name.trim(),
+        passengerPhone: cleanPhone,
+        notes: {
+          bookingRef: tempRef,
+          cabTier,
+          cabName,
+          origin: search.origin,
+          destination: search.destination,
+          paymentMode
+        }
+      });
+
+      setRazorpayOrderId(orderRes.orderId || `order_${Date.now()}`);
+      setRazorpayKeyId(orderRes.keyId || 'rzp_test_placeholder');
+      setShowRazorpayModal(true);
+    } catch (e: any) {
+      setRazorpayOrderId(`order_${Date.now()}`);
+      setShowRazorpayModal(true);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handlePaymentSuccess = async (data: { paymentId: string; orderId: string; signature?: string }) => {
+    setShowRazorpayModal(false);
+    setLoading(true);
+    try {
+      const cleanPhone = sanitizePhoneNumber(phone);
+      updateSearch({ passengerName: name, phone: cleanPhone, pickupAddress: pickupAddr, dropAddress: dropAddr });
+
+      const isFull = paymentMode === 'full_online';
+      const advancePaid = isFull ? totalFare : advance15Amount;
+      const balanceDue = isFull ? 0 : balance85Amount;
+      const chosenPaymentMethod = isFull ? 'full_online_razorpay' : 'advance_15_razorpay';
+      const chosenPaymentStatus = isFull ? 'paid' : 'partially_paid';
+
+      // Verify payment with server
+      await MobileApiClient.verifyPayment({
+        orderId: data.orderId,
+        paymentId: data.paymentId,
+        signature: data.signature,
+        bookingId: pendingBookingRef
+      });
+
+      const booking = await MobileApiClient.createBooking({
+        passengerName: name.trim(),
+        passengerPhone: cleanPhone,
+        pickupCity: search.origin,
+        pickupAddress: pickupAddr,
+        dropCity: search.destination,
+        dropAddress: dropAddr,
+        tripType: search.tripType,
+        pickupDate: search.pickupDate,
+        pickupTime: search.pickupTime,
+        passengerCount: search.passengerCount,
+        cabTier: cabTier as any,
+        cabName,
+        fareBreakdown,
+        paymentMethod: chosenPaymentMethod,
+        paymentStatus: chosenPaymentStatus,
+        advancePaid,
+        balanceDue,
+        paymentTxnId: data.paymentId
+      });
+
+      setActiveBooking(booking);
+      refreshTrips().catch(() => {});
+      navigation.replace('BookingConfirm', { booking });
+    } catch (e: any) {
+      Alert.alert('Booking Notice', e.message || 'Payment received, finalizing reservation...');
+      refreshTrips().catch(() => {});
+      navigation.replace('MainTabs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaymentFailure = (error: string) => {
+    setShowRazorpayModal(false);
+    Alert.alert('Payment Incomplete', error || 'Transaction was not completed. You can retry when ready.');
   };
 
   return (
@@ -391,49 +455,112 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
             </View>
           </View>
 
-          {/* Payment Method Selector Card */}
-          <View style={styles.card}>
-            <Text style={styles.sectionHeading}>Select Payment Method</Text>
-
-            <TouchableOpacity
-              style={[
-                styles.paymentOption,
-                paymentMethod === 'driver_cash' && styles.paymentOptionActive
-              ]}
-              onPress={() => setPaymentMethod('driver_cash')}
-              activeOpacity={0.85}
-            >
-              <View style={styles.payIconCircleCash}>
-                <Banknote size={20} color="#059669" />
+          {/* Mandatory 15% Online Advance Policy Banner */}
+          <View style={styles.policyCard}>
+            <View style={styles.policyHeader}>
+              <View style={styles.policyIconWrap}>
+                <ShieldCheck size={18} color="#059669" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.payTitle}>Zero Advance • Pay Cash / UPI to Driver</Text>
-                <Text style={styles.paySubtitle}>
-                  Pay {formatCurrency(price)} directly to chauffeur upon reaching destination.
+                <Text style={styles.policyTitle}>Mandatory 15% Online Advance Policy</Text>
+                <Text style={styles.policyDesc}>
+                  To confirm driver allocation and prevent ghost cancellations, a minimum 15% online advance is mandatory. The remaining 85% is payable to your chauffeur upon reaching destination.
                 </Text>
               </View>
-              {paymentMethod === 'driver_cash' && <CheckCircle2 size={20} color="#059669" />}
-            </TouchableOpacity>
+            </View>
+          </View>
 
+          {/* Payment Method Selector Card */}
+          <View style={styles.card}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <Text style={styles.sectionHeading}>Select Payment Option</Text>
+              <View style={styles.razorpayPoweredBadge}>
+                <Lock size={11} color="#059669" />
+                <Text style={styles.razorpayPoweredText}>Razorpay 256-Bit SSL</Text>
+              </View>
+            </View>
+
+            {/* Option 1: 15% Mandatory Online Advance */}
             <TouchableOpacity
               style={[
                 styles.paymentOption,
-                paymentMethod === 'advance_token' && styles.paymentOptionActive
+                paymentMode === 'advance_15' && styles.paymentOptionActive
               ]}
-              onPress={() => setPaymentMethod('advance_token')}
+              onPress={() => setPaymentMode('advance_15')}
               activeOpacity={0.85}
             >
               <View style={styles.payIconCircleOnline}>
+                <Percent size={20} color="#059669" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <Text style={styles.payTitle}>15% Online Advance ({formatCurrency(advance15Amount)})</Text>
+                  <View style={styles.mandatoryPill}>
+                    <Text style={styles.mandatoryPillText}>MANDATORY</Text>
+                  </View>
+                </View>
+                <Text style={styles.paySubtitle}>
+                  Pay {formatCurrency(advance15Amount)} now via UPI/Razorpay. Remaining balance {formatCurrency(balance85Amount)} payable to driver at destination.
+                </Text>
+              </View>
+              {paymentMode === 'advance_15' ? (
+                <CheckCircle2 size={22} color="#059669" />
+              ) : (
+                <View style={styles.radioUnchecked} />
+              )}
+            </TouchableOpacity>
+
+            {/* Option 2: 100% Full Fare Online */}
+            <TouchableOpacity
+              style={[
+                styles.paymentOption,
+                paymentMode === 'full_online' && styles.paymentOptionActive
+              ]}
+              onPress={() => setPaymentMode('full_online')}
+              activeOpacity={0.85}
+            >
+              <View style={styles.payIconCircleFull}>
                 <CreditCard size={20} color="#2563EB" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.payTitle}>Pay ₹500 Token Advance</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  <Text style={styles.payTitle}>100% Full Fare Online ({formatCurrency(totalFare)})</Text>
+                  <View style={styles.cashlessPill}>
+                    <Text style={styles.cashlessPillText}>CASHLESS RIDE</Text>
+                  </View>
+                </View>
                 <Text style={styles.paySubtitle}>
-                  Lock in priority vehicle allocation. Balance {formatCurrency(price - 500)} payable at drop.
+                  Pay entire trip upfront. Seamless 100% cashless ride with ₹0 to pay to chauffeur at drop.
                 </Text>
               </View>
-              {paymentMethod === 'advance_token' && <CheckCircle2 size={20} color="#059669" />}
+              {paymentMode === 'full_online' ? (
+                <CheckCircle2 size={22} color="#059669" />
+              ) : (
+                <View style={styles.radioUnchecked} />
+              )}
             </TouchableOpacity>
+
+            {/* Live Price Split Summary */}
+            <View style={styles.splitBox}>
+              <View style={styles.splitRow}>
+                <Text style={styles.splitLabel}>Total Trip Fare:</Text>
+                <Text style={styles.splitVal}>{formatCurrency(totalFare)}</Text>
+              </View>
+              <View style={styles.splitRow}>
+                <Text style={styles.splitLabel}>
+                  {paymentMode === 'full_online' ? 'Online Payment (100%):' : 'Online Advance (15%):'}
+                </Text>
+                <Text style={[styles.splitVal, { color: '#059669', fontWeight: '800' }]}>
+                  {formatCurrency(paymentMode === 'full_online' ? totalFare : advance15Amount)}
+                </Text>
+              </View>
+              <View style={styles.splitRow}>
+                <Text style={styles.splitLabel}>Balance Due at Drop:</Text>
+                <Text style={[styles.splitVal, { color: paymentMode === 'full_online' ? '#059669' : '#D97706', fontWeight: '800' }]}>
+                  {paymentMode === 'full_online' ? '₹0 (Fully Paid)' : formatCurrency(balance85Amount)}
+                </Text>
+              </View>
+            </View>
           </View>
 
           {/* Cancellation Terms */}
@@ -449,8 +576,15 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
         {/* Sticky Confirm Bar */}
         <View style={styles.bottomBar}>
           <View>
-            <Text style={styles.bottomBarLabel}>NET PAYABLE TOTAL</Text>
-            <Text style={styles.bottomBarPrice}>{formatCurrency(price)}</Text>
+            <Text style={styles.bottomBarLabel}>
+              {paymentMode === 'full_online' ? 'PAY 100% UPFRONT' : '15% ADVANCE DUE NOW'}
+            </Text>
+            <Text style={styles.bottomBarPrice}>
+              {formatCurrency(paymentMode === 'full_online' ? totalFare : advance15Amount)}
+            </Text>
+            <Text style={styles.bottomBarSub}>
+              {paymentMode === 'full_online' ? '₹0 due to driver' : `Bal: ${formatCurrency(balance85Amount)} at drop`}
+            </Text>
           </View>
           <TouchableOpacity
             style={styles.confirmBtn}
@@ -462,12 +596,29 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
               <ActivityIndicator color="#0F172A" />
             ) : (
               <>
-                <Text style={styles.confirmBtnText}>Confirm Taxi Booking</Text>
+                <Text style={styles.confirmBtnText}>
+                  {paymentMode === 'full_online' ? 'Pay Full Fare' : 'Pay 15% Advance'}
+                </Text>
                 <ChevronRight size={18} color="#0F172A" strokeWidth={2.5} />
               </>
             )}
           </TouchableOpacity>
         </View>
+
+        {/* In-App Razorpay & UPI Payment Gateway Modal */}
+        <RazorpayModal
+          visible={showRazorpayModal}
+          onClose={() => setShowRazorpayModal(false)}
+          onSuccess={handlePaymentSuccess}
+          onFailure={handlePaymentFailure}
+          amount={paymentMode === 'full_online' ? totalFare : advance15Amount}
+          title={paymentMode === 'full_online' ? 'OneWayTaxiBihar Full Fare' : '15% Mandatory Advance'}
+          bookingRef={pendingBookingRef || 'OTB-TRIP'}
+          passengerName={name.trim() || 'Passenger'}
+          passengerPhone={phone.trim() || '9876543210'}
+          orderId={razorpayOrderId}
+          keyId={razorpayKeyId}
+        />
 
         {/* Schedule Date & Time Selection Modal */}
         <Modal
@@ -919,9 +1070,131 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 12,
+    backgroundColor: 'rgba(5, 150, 105, 0.12)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  payIconCircleFull: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     backgroundColor: 'rgba(37, 99, 235, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  mandatoryPill: {
+    backgroundColor: '#FEF3C7',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+  },
+  mandatoryPillText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#B45309',
+    letterSpacing: 0.5,
+  },
+  cashlessPill: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  cashlessPillText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#1D4ED8',
+    letterSpacing: 0.5,
+  },
+  radioUnchecked: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#CBD5E1',
+  },
+  splitBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 6,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  splitRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  splitLabel: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  splitVal: {
+    fontSize: 13,
+    color: '#0F172A',
+    fontWeight: '700',
+  },
+  policyCard: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#BBF7D0',
+    marginBottom: 4,
+  },
+  policyHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  policyIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#DCFCE7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 1,
+  },
+  policyTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#166534',
+    marginBottom: 3,
+  },
+  policyDesc: {
+    fontSize: 11,
+    color: '#15803D',
+    lineHeight: 16,
+  },
+  razorpayPoweredBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  razorpayPoweredText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#059669',
+  },
+  bottomBarSub: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#D97706',
+    marginTop: 1,
   },
   payTitle: {
     fontSize: 13,

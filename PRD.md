@@ -563,6 +563,13 @@
 - [x] 77.4 Fresh EAS Cloud Artifact Linking: Updated `vercel.json` 307 redirects to stream the newly completed EAS Cloud builds (`Passenger: 5kEdzYINjR`, `Driver: Hr4wsZUdif`, `Admin: JWZOxb5sb1`).
 - [x] 77.5 Live Production Deployment & Verification: Dispatched and verified Vercel production deployment `dpl_38uqFL8baTm9TfM3EDjnTY9idjQT`. Verified `hasExpoLink: false`, `hasLocalIp: false`, and `hasCleanNavbar: true` on live production domain.
 
+### Phase 78: Corporate & Government Desk Modal Mobile Responsiveness & Contrast Fix
+- [x] 78.1 Mobile Fluid Column Layout: Replaced rigid inline `grid-template-columns: 1.2fr 1fr` with responsive `.corporate-modal-layout` that smoothly stacks to a single full-width column (`1fr`) on mobile viewports (< 860px).
+- [x] 78.2 Input Contrast Inversion Fix: Introduced `.corporate-input-field` and universal `.promo-input` styling with dynamic `var(--owc-surface)` background and `var(--owc-border)`, eliminating dark charcoal inputs on light cards.
+- [x] 78.3 Form Touch Usability: Full-width responsive inputs with proper touch target padding (12px 14px), 14.5px font size (anti-iOS zoom), and clean focus outline glow.
+- [x] 78.4 Live Chrome CDP Multi-Device Inspection: Captured `live-corporate-modal-mobile.png` on 390x844 viewport verifying flawless layout with no squashed inputs and perfect contrast.
+- [x] 78.5 Live Production Deployment: Deployed release `dpl_6m5ctgYAqeRHSr7K4Qavuu8purz7` aliased to `https://onewaytaxibihar.com`. All 9 test suites PASS 100%.
+
 ## 3. Ralph Loop Acceptance Criteria
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.

@@ -1209,3 +1209,9 @@
 - Redesigned flagship 2-card layout for Passenger and Driver Partner with high-impact Voyago styling, verified badges, and direct APK download CTAs.
 - Linked freshly finished EAS Cloud APK artifacts in vercel.json 307 redirects (Passenger 5kEdzYINjR, Driver Hr4wsZUdif, Admin JWZOxb5sb1).
 - Dispatched and certified live production deployment dpl_38uqFL8baTm9TfM3EDjnTY9idjQT on https://onewaytaxibihar.com.
+
+2026-11-16: Phase 78 Complete - Corporate & Government Desk Modal Mobile Responsiveness & Contrast Fix
+- Resolved squashed 2-column mobile layout in openCorporateModal by introducing responsive .corporate-modal-layout (stacks cleanly to 1fr on mobile screens < 860px).
+- Fixed dark charcoal input contrast inversion in light mode with .corporate-input-field and universal .promo-input rules.
+- Captured live mobile screenshot live-corporate-modal-mobile.png via Chrome CDP.
+- Dispatched and certified live production deployment dpl_6m5ctgYAqeRHSr7K4Qavuu8purz7 on https://onewaytaxibihar.com.

@@ -5,12 +5,12 @@
       "advancePaid": 0,
       "balanceDue": 2499,
       "bookingSource": "Mobile App",
-      "bookingStatus": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
         "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_104",
       "broadcastStartedAt": "2026-11-16T03:24:13.100Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
@@ -27,9 +27,16 @@
       "customerName": "App Rider 3160",
       "customerPhone": "+91 9876543211",
       "destCity": "Muzaffarpur",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "distanceKm": 75,
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_104",
+        "name": "Sanjay Paswan",
+        "phone": "+91 82103 44556",
+        "vehicleNumber": "BR 01 PD 6024",
+        "vehicleModel": "Honda City (Brown)",
+        "rating": 5
+      },
       "dropAddress": "Bhagwanpur Chowk",
       "dropCity": "Muzaffarpur",
       "duration": "1h 43m",
@@ -109,14 +116,8 @@
         "drv_101"
       ],
       "source": "app",
-      "status": "SEARCHING_DRIVER",
+      "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-16T00:06:09.690Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-16T00:07:39.724Z",
@@ -260,6 +261,12 @@
           "timestamp": "2026-11-16T03:24:13.100Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:25:43.121Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2499,
@@ -268,13 +275,13 @@
       "verifiedAt": "2026-11-15T21:37:46.310Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": null,
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
+      "assignedDriverCarNo": "BR 01 PD 6024",
+      "assignedDriverId": "drv_104",
+      "assignedDriverName": "Sanjay Paswan",
+      "assignedDriverPhone": "+91 82103 44556",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
+      "autoDispatchedAt": "2026-11-16T03:25:43.121Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -455,11 +462,11 @@
       "advancePaid": 0,
       "balanceDue": 2199,
       "bookingSource": "website",
-      "bookingStatus": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
         "drv_102"
       ],
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_102",
       "broadcastStartedAt": "2026-11-16T03:24:13.101Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
@@ -476,9 +483,16 @@
       "customerName": "Web Rider 3075",
       "customerPhone": "+91 9876543210",
       "destCity": "Gaya",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
+        "rating": 4.9
+      },
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -559,14 +573,8 @@
         "drv_104"
       ],
       "source": "website",
-      "status": "SEARCHING_DRIVER",
+      "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-16T00:06:09.690Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-16T00:07:39.725Z",
@@ -710,6 +718,12 @@
           "timestamp": "2026-11-16T03:24:13.101Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:25:43.121Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -718,13 +732,13 @@
       "verifiedAt": "2026-11-15T21:34:13.232Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": null,
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
+      "autoDispatchedAt": "2026-11-16T03:25:43.121Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },

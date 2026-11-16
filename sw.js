@@ -1,10 +1,10 @@
 /**
  * OneWayTaxiBihar (onewaytaxibihar.com)
  * High-Performance Offline & PWA Service Worker
- * Version: 2026.11.16-v46
+ * Version: 2026.11.16-v50-clean-desk
  */
 
-const CACHE_NAME = 'onewaytaxibihar-v20261116-v46-desk-csrf';
+const CACHE_NAME = 'onewaytaxibihar-v20261116-v50-clean-desk';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -28,19 +28,19 @@ const CORE_ASSETS = [
   '/patna-to-bhagalpur-cab.html',
   '/404.html',
   '/500.html',
-  '/css/style.css?v=20261116_v46_desk_csrf',
-  '/css/components.css?v=20261116_v46_desk_csrf',
-  '/css/voyago-theme.css?v=20261116_v46_desk_csrf',
-  '/js/brand-logo.js?v=20261116_v46_desk_csrf',
-  '/js/data.js?v=20261116_v46_desk_csrf',
-  '/js/calculator.js?v=20261116_v46_desk_csrf',
-  '/js/map.js?v=20261116_v46_desk_csrf',
-  '/js/api.js?v=20261116_v46_desk_csrf',
-  '/js/datetime-picker.js?v=20261116_v46_desk_csrf',
-  '/js/firebase-otp.js?v=20261116_v46_desk_csrf',
-  '/js/booking.js?v=20261116_v46_desk_csrf',
-  '/js/app.js?v=20261116_v46_desk_csrf',
-  '/js/cookie-consent.js?v=20261116_v46_desk_csrf',
+  '/css/style.css?v=20261116_v50_clean_desk',
+  '/css/components.css?v=20261116_v50_clean_desk',
+  '/css/voyago-theme.css?v=20261116_v50_clean_desk',
+  '/js/brand-logo.js?v=20261116_v50_clean_desk',
+  '/js/data.js?v=20261116_v50_clean_desk',
+  '/js/calculator.js?v=20261116_v50_clean_desk',
+  '/js/map.js?v=20261116_v50_clean_desk',
+  '/js/api.js?v=20261116_v50_clean_desk',
+  '/js/datetime-picker.js?v=20261116_v50_clean_desk',
+  '/js/firebase-otp.js?v=20261116_v50_clean_desk',
+  '/js/booking.js?v=20261116_v50_clean_desk',
+  '/js/app.js?v=20261116_v50_clean_desk',
+  '/js/cookie-consent.js?v=20261116_v50_clean_desk',
   '/favicon.svg',
   '/img/logo-reframed.png',
   '/images/icon-192.png',

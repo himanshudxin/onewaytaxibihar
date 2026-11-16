@@ -7509,11 +7509,50 @@ body.drawer-open .mobile-sticky-bottom-bar {
 
 /* ==========================================================================
    ULTRA-PROFESSIONAL ENTERPRISE CORPORATE MODAL STYLES (LIGHT & DARK THEMES)
-   Guarantees crisp contrast, clean padding, emerald focus rings, and zero dark black bars
+   Guarantees crisp contrast, clean white inputs, emerald focus rings, and zero dark black bars
    ========================================================================== */
+#modal-corporate,
+#modal-corporate .modal-dialog-box,
+#modal-corporate .modal-body,
+#modal-corporate .corporate-modal-layout {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+#modal-corporate .corp-form-card,
+#modal-corporate .corporate-form-card,
+.corp-form-card,
+.corporate-form-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 24px 22px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] #modal-corporate,
+[data-theme="dark"] #modal-corporate .modal-dialog-box,
+[data-theme="dark"] #modal-corporate .modal-body,
+[data-theme="dark"] #modal-corporate .corp-form-card,
+[data-theme="dark"] #modal-corporate .corporate-form-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+#modal-corporate input,
+#modal-corporate select,
+#modal-corporate textarea,
 #modal-corporate .corp-input-control,
-#modal-corporate input.corp-input-control,
-#modal-corporate select.corp-input-control {
+#modal-corporate .promo-input,
+#modal-corporate .corporate-input,
+.corporate-input-field,
+[data-theme="dark"] #modal-corporate input,
+[data-theme="dark"] #modal-corporate select,
+[data-theme="dark"] #modal-corporate textarea,
+[data-theme="dark"] #modal-corporate .corp-input-control,
+[data-theme="dark"] #modal-corporate .promo-input,
+[data-theme="dark"] #modal-corporate .corporate-input {
   background: #ffffff !important;
   color: #0f172a !important;
   border: 1.5px solid #cbd5e1 !important;
@@ -7525,84 +7564,52 @@ body.drawer-open .mobile-sticky-bottom-bar {
   box-sizing: border-box !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   margin-bottom: 0 !important;
+  outline: none !important;
+  transition: all 0.2s ease !important;
 }
 
+#modal-corporate input::placeholder,
+#modal-corporate select::placeholder,
+#modal-corporate textarea::placeholder,
 #modal-corporate .corp-input-control::placeholder,
-#modal-corporate input.corp-input-control::placeholder {
+#modal-corporate .promo-input::placeholder,
+#modal-corporate .corporate-input::placeholder,
+[data-theme="dark"] #modal-corporate input::placeholder,
+[data-theme="dark"] #modal-corporate select::placeholder,
+[data-theme="dark"] #modal-corporate textarea::placeholder,
+[data-theme="dark"] #modal-corporate .corp-input-control::placeholder,
+[data-theme="dark"] #modal-corporate .promo-input::placeholder,
+[data-theme="dark"] #modal-corporate .corporate-input::placeholder {
   color: #64748b !important;
   font-weight: 400 !important;
   font-size: 13.5px !important;
 }
 
+#modal-corporate input:focus,
+#modal-corporate select:focus,
+#modal-corporate textarea:focus,
 #modal-corporate .corp-input-control:focus,
-#modal-corporate input.corp-input-control:focus,
-#modal-corporate select.corp-input-control:focus {
-  background: #ffffff !important;
-  border-color: #059669 !important;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18) !important;
-}
-
-[data-theme="dark"] #modal-corporate .corp-input-control,
-[data-theme="dark"] #modal-corporate input.corp-input-control,
-[data-theme="dark"] #modal-corporate select.corp-input-control {
-  background: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-}
-
-[data-theme="dark"] #modal-corporate .corp-input-control::placeholder,
-[data-theme="dark"] #modal-corporate input.corp-input-control::placeholder {
-  color: #94a3b8 !important;
-}
-
+#modal-corporate .promo-input:focus,
+#modal-corporate .corporate-input:focus,
+[data-theme="dark"] #modal-corporate input:focus,
+[data-theme="dark"] #modal-corporate select:focus,
+[data-theme="dark"] #modal-corporate textarea:focus,
 [data-theme="dark"] #modal-corporate .corp-input-control:focus,
-[data-theme="dark"] #modal-corporate input.corp-input-control:focus,
-[data-theme="dark"] #modal-corporate select.corp-input-control:focus {
-  background: #0f172a !important;
-  border-color: #10b981 !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
-}
-
-/* Defensive fallback styling for legacy corporate modal classes */
-#modal-corporate input:not(.corp-input-control),
-#modal-corporate select:not(.corp-input-control),
-.corporate-input-field {
+[data-theme="dark"] #modal-corporate .promo-input:focus,
+[data-theme="dark"] #modal-corporate .corporate-input:focus {
   background: #ffffff !important;
   color: #0f172a !important;
-  border: 1.5px solid #cbd5e1 !important;
-  border-radius: 9px !important;
-  padding: 11px 14px !important;
-  font-size: 14px !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  margin-bottom: 10px !important;
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3.5px rgba(5, 150, 105, 0.18) !important;
 }
 
-#modal-corporate input:not(.corp-input-control)::placeholder,
-.corporate-input-field::placeholder {
-  color: #64748b !important;
-}
-
-.corporate-form-card,
-.corp-form-card {
-  background: #ffffff !important;
-  border: 1.5px solid #e2e8f0 !important;
-  border-radius: 16px !important;
-  padding: 24px 22px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
-}
-
-[data-theme="dark"] .corporate-form-card,
-[data-theme="dark"] .corp-form-card {
-  background: #111827 !important;
-  border-color: #1f2937 !important;
-}
-
+/* Eradicate any legacy fake data tags, corporate trusted tags, or fake endorsements */
+.corporate-trusted-strip,
 .corporate-trusted-title,
 .corporate-trusted-tags,
-.corporate-trusted-tag {
+.corporate-trusted-tag,
+[class*="trusted-strip"],
+[class*="trusted-tag"] {
   display: none !important;
   visibility: hidden !important;
   height: 0 !important;

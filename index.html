@@ -5,6 +5,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>One-Way Taxi in Bihar | OneWayTaxiBihar</title>
+  <!-- Instant Cache Purge & Service Worker Self-Update Controller -->
+  <script>
+    (function () {
+      const APP_BUILD_VER = "20261116-v50-clean-desk";
+      if (localStorage.getItem("otb_build_version") !== APP_BUILD_VER) {
+        localStorage.setItem("otb_build_version", APP_BUILD_VER);
+        if ("caches" in window) {
+          caches.keys().then(function (names) {
+            for (let name of names) caches.delete(name);
+          });
+        }
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let reg of registrations) reg.unregister();
+          });
+        }
+      }
+    })();
+  </script>
   <meta name="description"
     content="Book one-way intercity cabs across all 38 Bihar districts. Transparent fares, no return fare on one-way trips, and 24/7 booking support.">
   <meta name="keywords"
@@ -212,9 +231,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.6.2/maplibre-gl.css" />
 
   <!-- Core Stylesheets -->
-  <link rel="stylesheet" href="/css/style.css?v=20261116_v46_desk_csrf">
-  <link rel="stylesheet" href="/css/components.css?v=20261116_v46_desk_csrf">
-  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261116_v46_desk_csrf">
+  <link rel="stylesheet" href="/css/style.css?v=20261116_v50_clean_desk">
+  <link rel="stylesheet" href="/css/components.css?v=20261116_v50_clean_desk">
+  <link rel="stylesheet" href="/css/voyago-theme.css?v=20261116_v50_clean_desk">
 
   <!-- Razorpay Checkout v1 Standard Library for Indian UPI, Cards & Netbanking -->
   <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -2880,22 +2899,22 @@
     })();
   </script>
   <!-- Map Configuration Gateway (Supports Google Maps Key + Free Edge CDN) -->
-  <script src="/js/map-config.js?v=20261116_v46_desk_csrf"></script>
+  <script src="/js/map-config.js?v=20261116_v50_clean_desk"></script>
   <!-- MapLibre GL JS for 3D Edge CDN Rendering (Sub-40ms India Edge CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/3.6.2/maplibre-gl.js" defer></script>
   <!-- Authentic Bihar Highway Corridors Database -->
   <script src="/js/bihar-road-corridors.js" defer></script>
 
   <!-- Application Scripts with Cache Buster -->
-  <script src="/js/brand-logo.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/data.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/calculator.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/map.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/api.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/datetime-picker.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/firebase-otp.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/booking.js?v=20261116_v46_desk_csrf"></script>
-  <script src="/js/app.js?v=20261116_v46_desk_csrf"></script>
+  <script src="/js/brand-logo.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/data.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/calculator.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/map.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/api.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/datetime-picker.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/firebase-otp.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/booking.js?v=20261116_v50_clean_desk"></script>
+  <script src="/js/app.js?v=20261116_v50_clean_desk"></script>
 
 
   <!-- Fail-safe Direct Check Fare Navigation Controller -->
@@ -3179,7 +3198,7 @@
     };
 </script>
 <script src="/js/analytics.js"></script>
-<script src="/js/cookie-consent.js?v=20261116_v46_desk_csrf"></script>
+<script src="/js/cookie-consent.js?v=20261116_v50_clean_desk"></script>
 
   <!-- Floating WhatsApp Quick Booking Desk (Safe Non-Intrusive Widget) -->
   <style>

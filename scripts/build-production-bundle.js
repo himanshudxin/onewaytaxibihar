@@ -33,7 +33,7 @@ try {
 
   // Ensure versionCode is set for Google Play Store
   targetConfig.expo.android = targetConfig.expo.android || {};
-  targetConfig.expo.android.versionCode = targetConfig.expo.android.versionCode || 1;
+  targetConfig.expo.android.versionCode = targetConfig.expo.android.versionCode || 3;
 
   fs.writeFileSync(rootAppJson, JSON.stringify(targetConfig, null, 2), 'utf8');
   console.log(`[EAS Production Build] Configured mobile/app.json for ${target.toUpperCase()}:`);

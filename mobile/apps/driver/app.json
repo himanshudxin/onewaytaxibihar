@@ -38,7 +38,7 @@
         "backgroundColor": "#070B13"
       },
       "package": "com.onewaytaxibihar.driver",
-      "versionCode": 1,
+      "versionCode": 3,
       "usesCleartextTraffic": false,
       "permissions": [
         "ACCESS_COARSE_LOCATION",

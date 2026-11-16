@@ -1236,3 +1236,33 @@
 - Prepared copy-paste store listing metadata (titles, short descriptions, and rich descriptions within character limits).
 - Formulated exact answers for Google Play Content declarations (Data Safety, Location permissions, IARC Content Rating, Target Audience 18+, Privacy Policy and User Data Deletion URLs).
 - Published comprehensive submission guide google-play-store-deployment-guide.md.
+
+2026-11-16: Phase 81 Complete - Mobile Razorpay Payment Gateway & Mandatory 15% Online Advance Integration
+- Domain Model Updates:
+  - Updated mobile/shared/types/index.ts with advance_15_razorpay and full_online_razorpay payment methods, plus advancePaid, balanceDue, and paymentTxnId fields.
+  - Added payment endpoints to MobileApiClient in mobile/shared/services/api.ts (getPaymentConfig, createPaymentOrder, verifyPayment, requestDriverPayout).
+  - Extended FleetSyncService with updateBooking for cross-app synchronization.
+- Created In-App Razorpay Checkout Modal (mobile/shared/components/RazorpayModal.tsx):
+  - Hosts Razorpay Checkout v1 standard library inside a responsive react-native-webview.
+  - Integrates direct 1-Tap UPI app intent (PhonePe, Google Pay, Paytm) with deep-linking support.
+  - Includes manual 12-digit UPI UTR verification fallback.
+- Passenger Checkout Screen Overhaul (mobile/apps/passenger/src/screens/CheckoutScreen.tsx):
+  - Enforced mandatory 15% online advance policy banner and live price breakdown.
+  - Option 1 (Default): 15% Mandatory Online Advance (Math.max(round(totalFare * 0.15), 199)) with remaining 85% balance due to driver at drop.
+  - Option 2: 100% Full Fare Online upfront for a seamless cashless ride.
+  - Seamless Razorpay order creation, payment verification, and automated booking creation.
+- Passenger Timeline Live Payment Status (mobile/apps/passenger/src/screens/BookingTimelineScreen.tsx):
+  - Real-time Fare & Payment Status Card showing total fare, 15% advance paid, transaction ID, and 85% balance due.
+  - 1-Tap "Pay Remaining 85% Balance Online Now" button for passengers wishing to settle balance upfront.
+- Driver Trip Execution Double-Charging Prevention (mobile/apps/driver/src/screens/TripExecutionScreen.tsx):
+  - Automated check for 100% online paid rides rendering a prominent green shield: "DO NOT COLLECT CASH • ₹0 TO COLLECT".
+  - If 15% advance was paid, clearly displays "15% ADVANCE PAID ONLINE" and "COLLECT REMAINING 85% BALANCE".
+  - Dynamic on-screen Chauffeur UPI QR code generator via qrcode library for seamless contactless balance collection.
+  - Cash received confirmation button for physical cash handovers.
+- Driver Daily Payout Ledger (mobile/apps/driver/src/screens/DriverEarningsScreen.tsx):
+  - Instant IMPS settlement requests with editable custom UPI ID handle.
+  - Transparent 85% driver take-home vs 15% platform commission policy card.
+- Quality Assurance & Build Verification:
+  - 100% TypeScript compilation clean (npx tsc --noEmit, 0 errors).
+  - 9/9 master test suites passing 100%.
+  - Pushed to main on GitHub (commit d778c57).

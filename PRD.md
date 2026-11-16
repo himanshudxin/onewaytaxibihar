@@ -585,6 +585,16 @@
 - [x] 80.5 Policy & Content Compliance Declarations: Prepared exact answers for Data Safety, Location Usage, IARC Content Rating, Target Audience (18+), Privacy Policy (`privacy-policy.html`), and User Data Deletion (`data-deletion.html`).
 - [x] 80.6 Master Deployment Documentation: Generated `google-play-store-deployment-guide.md` with complete step-by-step console instructions.
 
+### Phase 81: Mobile Razorpay Payment Gateway & Mandatory 15% Online Advance Integration
+- [x] 81.1 Domain Architecture & Payment Types: Updated `mobile/shared/types/index.ts` with `'advance_15_razorpay' | 'full_online_razorpay'`, `advancePaid`, `balanceDue`, and `paymentTxnId`.
+- [x] 81.2 Razorpay Standard Modal & Direct UPI Intent: Built `mobile/shared/components/RazorpayModal.tsx` hosting Razorpay Checkout v1 inside a resilient WebView with 1-Tap UPI app intent and 12-digit UTR fallback.
+- [x] 81.3 Passenger Checkout Mandatory 15% Policy: Replaced crude cash options in `CheckoutScreen.tsx` with mandatory 15% online advance (`advance_15_razorpay`) and 100% full cashless ride (`full_online_razorpay`), complete with live price split breakdown and SSL badge.
+- [x] 81.4 Passenger Timeline Fare & Balance Settlement Card: Added live payment status card in `BookingTimelineScreen.tsx` displaying verified 15% advance, transaction reference ID, and 1-tap "Pay Remaining 85% Balance Online" action.
+- [x] 81.5 Driver App Double-Charging Prevention: Updated `TripExecutionScreen.tsx` to detect 100% online paid rides, rendering a prominent green shield warning "DO NOT COLLECT CASH • ₹0 TO COLLECT", eliminating passenger double-charging.
+- [x] 81.6 Chauffeur Dynamic UPI QR Generator: Added dynamic on-screen UPI QR generator in `TripExecutionScreen.tsx` rendering high-resolution QR codes via `qrcode` for remaining 85% balance collection at destination doorstep.
+- [x] 81.7 Chauffeur Daily Payout Ledger & UPI Customization: Enhanced `DriverEarningsScreen.tsx` with instant IMPS settlement requests, customizable UPI ID handle, and transparent 85% driver take-home vs 15% platform desk fee breakdown.
+- [x] 81.8 Verification & Test Runner Compliance: Zero TypeScript errors across all mobile packages (`npx tsc --noEmit`), 9/9 master test suites passing 100%, and pushed to `main` on GitHub (`d778c57`).
+
 ## 3. Ralph Loop Acceptance Criteria
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.

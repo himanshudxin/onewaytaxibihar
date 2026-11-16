@@ -5,7 +5,7 @@ const os = require('os');
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const artifactDir = 'C:\\Users\\himan\\.gemini\\antigravity\\brain\\50053a82-c87a-4f88-9e54-1a8dff9c5c2f';
-const PORT = 9450;
+const PORT = 9560 + Math.floor(Math.random() * 100);
 const tmpDir = path.join(os.tmpdir(), 'chrome-corp-fix-' + Date.now());
 
 const chrome = spawn(CHROME_PATH, [
@@ -14,10 +14,10 @@ const chrome = spawn(CHROME_PATH, [
   '--disable-gpu',
   '--no-sandbox',
   `--user-data-dir=${tmpDir}`,
-  '--window-size=390,844'
+  '--window-size=1440,900'
 ]);
 
-async function waitForChrome(port, maxAttempts = 20) {
+async function waitForChrome(port, maxAttempts = 30) {
   for (let i = 0; i < maxAttempts; i++) {
     try {
       const res = await fetch(`http://127.0.0.1:${port}/json`);
@@ -26,7 +26,7 @@ async function waitForChrome(port, maxAttempts = 20) {
         if (tabs && tabs.length > 0) return tabs[0].webSocketDebuggerUrl;
       }
     } catch (e) {}
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 400));
   }
   throw new Error('Chrome failed to start on port ' + port);
 }
@@ -58,17 +58,17 @@ async function run() {
     await send('Page.enable');
     await send('Runtime.enable');
 
+    // Mobile 390px
     await send('Emulation.setDeviceMetricsOverride', {
       width: 390,
       height: 844,
-      deviceScaleFactor: 3,
+      deviceScaleFactor: 2,
       mobile: true
     });
 
-    const fileUrl = 'file:///' + path.resolve(__dirname, '../index.html').replace(/\\/g, '/');
-    console.log('Navigating to local index.html:', fileUrl);
+    const fileUrl = 'http://localhost:8080/index.html';
     await send('Page.navigate', { url: fileUrl });
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1800));
 
     // Open Corporate modal
     await send('Runtime.evaluate', {
@@ -76,33 +76,18 @@ async function run() {
     });
     await new Promise(r => setTimeout(r, 600));
 
-    // Capture mobile light theme screenshot
-    const shotLight = await send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync(path.join(artifactDir, 'preview-corporate-mobile-light.png'), Buffer.from(shotLight.data, 'base64'));
-    console.log('Saved preview-corporate-mobile-light.png');
-
-    // Toggle dark theme and capture dark screenshot
+    // Scroll form into view inside modal
     await send('Runtime.evaluate', {
-      expression: `document.documentElement.setAttribute('data-theme', 'dark');`
+      expression: `
+        const card = document.querySelector('.corp-form-card');
+        if (card) card.scrollIntoView({ behavior: 'instant', block: 'start' });
+      `
     });
     await new Promise(r => setTimeout(r, 400));
 
-    const shotDark = await send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync(path.join(artifactDir, 'preview-corporate-mobile-dark.png'), Buffer.from(shotDark.data, 'base64'));
-    console.log('Saved preview-corporate-mobile-dark.png');
-
-    // Desktop view at 1440px
-    await send('Emulation.setDeviceMetricsOverride', {
-      width: 1440,
-      height: 900,
-      deviceScaleFactor: 1,
-      mobile: false
-    });
-    await new Promise(r => setTimeout(r, 400));
-
-    const shotDesktop = await send('Page.captureScreenshot', { format: 'png' });
-    fs.writeFileSync(path.join(artifactDir, 'preview-corporate-desktop.png'), Buffer.from(shotDesktop.data, 'base64'));
-    console.log('Saved preview-corporate-desktop.png');
+    const shotForm = await send('Page.captureScreenshot', { format: 'png' });
+    fs.writeFileSync(path.join(artifactDir, 'preview-corporate-mobile-form.png'), Buffer.from(shotForm.data, 'base64'));
+    console.log('Saved preview-corporate-mobile-form.png');
 
     ws.close();
     chrome.kill('SIGINT');

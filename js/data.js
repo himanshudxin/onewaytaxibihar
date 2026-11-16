@@ -925,13 +925,26 @@ const OTB_FAQS = [
 const OTB_CORPORATE_DATA = {
   title: "OneWayTaxiBihar for Business & Corporate Travel",
   subtitle: "Streamline outstation employee and executive travel across all 38 districts of Bihar with centralized billing & GST compliance",
-  trustedBy: ["Bihar State Tourism Development", "AIIMS Patna", "L&T Construction (Bihar Projects)", "Bajaj Allianz", "HDFC Bank Bihar Hub", "NTPC Barh / Kahalgaon"],
+  coverageDistricts: 38,
+  verticals: [
+    "Corporate Staff Outstation Travel",
+    "Executive & Delegation Fleet",
+    "Patna Airport Transfers",
+    "Industrial Site Visits & Plants",
+    "Emergency Medical & Legal Dispatches"
+  ],
+  certifications: [
+    "100% Tax Invoiced with GST Input Credit",
+    "Commercial Yellow-Plate Vehicles Only",
+    "Police-Verified Highway Captains",
+    "Registered Bihar Mobility Enterprise"
+  ],
   features: [
-    { title: "Consolidated Monthly GST Invoicing", desc: "Monthly statement with automated GST tax credit pass-through for company expenses." },
-    { title: "Priority Dispatch in Patna & Districts", desc: "Guaranteed outstation cabs for urgent government, medical, and corporate delegations." },
-    { title: "Zero Cancellation Penalty Fees", desc: "Meeting rescheduled? Modify or cancel bookings with zero penalty." },
-    { title: "Dedicated Bihar Account Manager", desc: "Single point of contact for corporate rentals, event fleets, and airport transfers." },
-    { title: "Real-Time Travel Radar & SOS", desc: "Safety dashboard for company administration to monitor employee travel live." }
+    { title: "Consolidated Monthly GST Invoicing", desc: "Itemized monthly statement with automated GST tax credit pass-through for enterprise accounting." },
+    { title: "Priority Dispatch Across All 38 Districts", desc: "Guaranteed outstation cabs for urgent executive travel and airport arrivals." },
+    { title: "Zero Cancellation Penalty Fees", desc: "Meeting rescheduled? Modify or cancel corporate bookings with zero penalty fees." },
+    { title: "Dedicated Bihar Account Manager", desc: "Single point of contact in Patna for corporate invoicing, custom tariffs, and fleet coordination." },
+    { title: "Real-Time Travel Radar & SOS", desc: "Live vehicle GPS radar and 24×7 journey monitoring for passenger safety." }
   ]
 };
 

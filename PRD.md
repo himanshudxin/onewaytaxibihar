@@ -570,6 +570,13 @@
 - [x] 78.4 Live Chrome CDP Multi-Device Inspection: Captured `live-corporate-modal-mobile.png` on 390x844 viewport verifying flawless layout with no squashed inputs and perfect contrast.
 - [x] 78.5 Live Production Deployment: Deployed release `dpl_6m5ctgYAqeRHSr7K4Qavuu8purz7` aliased to `https://onewaytaxibihar.com`. All 9 test suites PASS 100%.
 
+### Phase 79: Fake Client Data Eradication & Enterprise Corporate Inquiry Desk Redesign
+- [x] 79.1 Eradicate Fake Client Organizations: Completely purged all fabricated institutional client claims (`AIIMS Patna`, `NTPC Barh / Kahalgaon`, `Bihar State Tourism Development`, `L&T Construction`, `Bajaj Allianz`, `HDFC Bank Bihar Hub`) from `js/data.js` and `js/app.js`.
+- [x] 79.2 Factual Enterprise Mobility Verticals & Statutory Certifications: Replaced with authentic Bihar operating verticals (Corporate Staff Outstation Travel, Executive Delegation Fleet, Patna Airport Transfers, Industrial Site Visits, Emergency Dispatches) and statutory compliance guarantees (100% Tax Invoiced with GST Input Credit, Commercial Yellow Plates, Police-Verified Captains, Registered Bihar Enterprise).
+- [x] 79.3 Enterprise Corporate Inquiry Desk Redesign: Upgraded crude unstyled input block into an executive inquiry desk with high-contrast light/dark inputs, uppercase field labels, integrated SVG icons (Company, GSTIN, Person, Phone, Email, Requirement Scope), custom dropdown select, 2-Hour Response SLA badge, and emerald gradient CTA.
+- [x] 79.4 Robust Inquiry Form Validation & Dispatch: Implemented client-side validation for Company, Contact Person, 10-digit Mobile, and Email with real-time toast feedback and automated backend lead dispatch.
+- [x] 79.5 Visual Verification & Production Health: Verified using Chrome CDP across 1440px desktop (`preview-corporate-desktop.png`), 390px mobile light theme (`preview-corporate-mobile-light.png`), and mobile form card view (`preview-corporate-mobile-form.png`). All 9 master test suites pass 100%.
+
 ## 3. Ralph Loop Acceptance Criteria
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.

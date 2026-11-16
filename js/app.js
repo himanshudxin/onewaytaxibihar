@@ -1732,14 +1732,44 @@ window.openCorporateModal = () => {
   const body = document.getElementById("modal-corporate-body");
   if (!modal || !body) return;
 
+  const data = window.OTB_CORPORATE_DATA || {
+    title: "OneWayTaxiBihar for Business & Corporate Travel",
+    subtitle: "Streamline outstation employee and executive travel across all 38 districts of Bihar with centralized billing & GST compliance",
+    verticals: [
+      "Corporate Staff Outstation Travel",
+      "Executive & Delegation Fleet",
+      "Patna Airport Transfers",
+      "Industrial Site Visits & Plants",
+      "Emergency Medical & Legal Dispatches"
+    ],
+    certifications: [
+      "100% Tax Invoiced with GST Input Credit",
+      "Commercial Yellow-Plate Vehicles Only",
+      "Police-Verified Highway Captains",
+      "Registered Bihar Mobility Enterprise"
+    ],
+    features: [
+      { title: "Consolidated Monthly GST Invoicing", desc: "Itemized monthly statement with automated GST tax credit pass-through for enterprise accounting." },
+      { title: "Priority Dispatch Across All 38 Districts", desc: "Guaranteed outstation cabs for urgent executive travel and airport arrivals." },
+      { title: "Zero Cancellation Penalty Fees", desc: "Meeting rescheduled? Modify or cancel corporate bookings with zero penalty fees." },
+      { title: "Dedicated Bihar Account Manager", desc: "Single point of contact in Patna for corporate invoicing, custom tariffs, and fleet coordination." },
+      { title: "Real-Time Travel Radar & SOS", desc: "Live vehicle GPS radar and 24×7 journey monitoring for passenger safety." }
+    ]
+  };
+
   body.innerHTML = `
     <div class="corporate-modal-layout">
+      <!-- Left Column: Official Enterprise Mobility & Statutory Compliance -->
       <div class="corporate-info-col">
-        <h3 class="corporate-modal-title">${OTB_CORPORATE_DATA.title}</h3>
-        <p class="corporate-modal-subtitle">${OTB_CORPORATE_DATA.subtitle}</p>
+        <div class="corp-top-badge">
+          <span class="corp-top-dot"></span>
+          <span>BIHAR ENTERPRISE MOBILITY • 38 DISTRICTS</span>
+        </div>
+        <h3 class="corporate-modal-title">${data.title}</h3>
+        <p class="corporate-modal-subtitle">${data.subtitle}</p>
 
         <div class="corporate-features-list">
-          ${OTB_CORPORATE_DATA.features.map(f => `
+          ${(data.features || []).map(f => `
             <div class="corporate-feature-item">
               <span class="corporate-feature-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1752,30 +1782,149 @@ window.openCorporateModal = () => {
           `).join("")}
         </div>
 
-        <div class="corporate-trusted-title">Trusted By Leading Organizations in Bihar:</div>
-        <div class="corporate-trusted-tags">
-          ${OTB_CORPORATE_DATA.trustedBy.map(c => `
-            <span class="corporate-trusted-tag">${c}</span>
+        <!-- Official Service Verticals -->
+        <div class="corp-section-divider"></div>
+        <div class="corp-verticals-label">OFFICIAL MOBILITY VERTICALS:</div>
+        <div class="corp-verticals-grid">
+          ${(data.verticals || []).map(v => `
+            <div class="corp-vertical-pill">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>${v}</span>
+            </div>
+          `).join("")}
+        </div>
+
+        <!-- Statutory Guarantees Strip -->
+        <div class="corp-cert-strip">
+          ${(data.certifications || []).map(c => `
+            <div class="corp-cert-pill">
+              <span class="corp-cert-icon">✓</span>
+              <span>${c}</span>
+            </div>
           `).join("")}
         </div>
       </div>
 
-      <!-- Corporate Inquiry Form -->
-      <div class="corporate-form-card">
-        <h4 class="corporate-form-title">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <span>Corporate Inquiry Desk</span>
-        </h4>
-        <div class="corporate-form-inputs">
-          <input type="text" class="corporate-input-field" placeholder="Company / Institution Name" id="corp-company" autocomplete="organization">
-          <input type="text" class="corporate-input-field" placeholder="GSTIN Number (Optional)" id="corp-gstin">
-          <input type="text" class="corporate-input-field" placeholder="Contact Person Name" id="corp-person" autocomplete="name">
-          <input type="tel" class="corporate-input-field" placeholder="Official 10-Digit Mobile" id="corp-phone" autocomplete="tel" maxlength="10">
-          <input type="email" class="corporate-input-field" placeholder="Official Email Address" id="corp-email" autocomplete="email">
+      <!-- Right Column: Professional Corporate Inquiry Desk -->
+      <div class="corp-form-card">
+        <div class="corp-form-header">
+          <div class="corp-form-title-row">
+            <div class="corp-form-icon-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <div>
+              <h4 class="corp-form-main-title">Corporate Inquiry Desk</h4>
+              <p class="corp-form-sub-title">Custom Tariffs &amp; Consolidated Billing</p>
+            </div>
+          </div>
+          <div class="corp-sla-pill">
+            <span class="corp-sla-dot"></span>
+            <span>2-Hour Response SLA</span>
+          </div>
         </div>
-        <button type="button" class="check-fare-primary-btn" style="margin-bottom: 0; width: 100%;" onclick="window.submitCorporateInquiry()">
-          Submit Corporate Inquiry
-        </button>
+
+        <form class="corp-inquiry-form" onsubmit="event.preventDefault(); window.submitCorporateInquiry();">
+          <div class="corp-field-group">
+            <label class="corp-field-label" for="corp-company">
+              <span>Company / Institution Name</span>
+              <span class="corp-req-mark">*</span>
+            </label>
+            <div class="corp-input-wrapper">
+              <span class="corp-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+              </span>
+              <input type="text" class="corp-input-control" id="corp-company" placeholder="e.g. Enterprise / Business / Organization Name" autocomplete="organization" required>
+            </div>
+          </div>
+
+          <div class="corp-field-group">
+            <label class="corp-field-label" for="corp-gstin">
+              <span>GSTIN Number</span>
+              <span class="corp-opt-badge">Optional (For Input Tax Credit)</span>
+            </label>
+            <div class="corp-input-wrapper">
+              <span class="corp-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              </span>
+              <input type="text" class="corp-input-control" id="corp-gstin" placeholder="e.g. 10AAAAA0000A1Z5 (15-character GST)" maxlength="15" style="text-transform: uppercase;">
+            </div>
+          </div>
+
+          <div class="corp-fields-row">
+            <div class="corp-field-group">
+              <label class="corp-field-label" for="corp-person">
+                <span>Contact Person</span>
+                <span class="corp-req-mark">*</span>
+              </label>
+              <div class="corp-input-wrapper">
+                <span class="corp-input-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <input type="text" class="corp-input-control" id="corp-person" placeholder="Full name" autocomplete="name" required>
+              </div>
+            </div>
+
+            <div class="corp-field-group">
+              <label class="corp-field-label" for="corp-phone">
+                <span>Official Mobile</span>
+                <span class="corp-req-mark">*</span>
+              </label>
+              <div class="corp-input-wrapper">
+                <span class="corp-input-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <input type="tel" class="corp-input-control" id="corp-phone" placeholder="10-digit number" autocomplete="tel" maxlength="10" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="corp-field-group">
+            <label class="corp-field-label" for="corp-email">
+              <span>Official Work Email</span>
+              <span class="corp-req-mark">*</span>
+            </label>
+            <div class="corp-input-wrapper">
+              <span class="corp-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </span>
+              <input type="email" class="corp-input-control" id="corp-email" placeholder="official@company.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="corp-field-group">
+            <label class="corp-field-label" for="corp-scope">
+              <span>Requirement Scope</span>
+            </label>
+            <div class="corp-input-wrapper">
+              <span class="corp-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+              <select class="corp-input-control corp-select-control" id="corp-scope">
+                <option value="outstation-routine">Regular Staff Outstation Travel (Inter-District)</option>
+                <option value="airport-priority">Patna Airport Transfers &amp; Pickup Fleet</option>
+                <option value="executive-delegation">Executive &amp; VIP Delegation Chauffeurs</option>
+                <option value="monthly-retainer">Dedicated Monthly Cab Retainer</option>
+                <option value="industrial-project">Industrial / Project Site Visits</option>
+                <option value="other">Other Custom Mobility Requirement</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="corp-submit-btn">
+            <span>Submit Corporate Inquiry</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </form>
+
+        <div class="corp-card-footer">
+          <div class="corp-footer-guarantee">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Verified Commercial Fleet • Zero Hidden Charges</span>
+          </div>
+          <div class="corp-footer-hotline">
+            Patna Enterprise Hotline: <a href="tel:+918002141816" style="color:var(--owc-primary); font-weight:700;">+91 80021 41816</a>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -1784,6 +1933,42 @@ window.openCorporateModal = () => {
 };
 
 window.submitCorporateInquiry = () => {
+  const company = (document.getElementById("corp-company")?.value || "").trim();
+  const person = (document.getElementById("corp-person")?.value || "").trim();
+  const phone = (document.getElementById("corp-phone")?.value || "").trim();
+  const email = (document.getElementById("corp-email")?.value || "").trim();
+  const gstin = (document.getElementById("corp-gstin")?.value || "").trim();
+  const scope = (document.getElementById("corp-scope")?.value || "").trim();
+
+  if (!company) {
+    window.showToast("Please enter your Company / Institution name", "error");
+    document.getElementById("corp-company")?.focus();
+    return;
+  }
+  if (!person) {
+    window.showToast("Please enter Contact Person name", "error");
+    document.getElementById("corp-person")?.focus();
+    return;
+  }
+  if (!phone || phone.replace(/\D/g, "").length < 10) {
+    window.showToast("Please enter a valid 10-digit Official Mobile Number", "error");
+    document.getElementById("corp-phone")?.focus();
+    return;
+  }
+  if (!email || !email.includes("@")) {
+    window.showToast("Please enter a valid Official Work Email Address", "error");
+    document.getElementById("corp-email")?.focus();
+    return;
+  }
+
+  try {
+    fetch('/api/corporate-leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company, person, phone, email, gstin, scope, timestamp: new Date().toISOString() })
+    }).catch(() => {});
+  } catch (e) {}
+
   window.showToast("Corporate inquiry submitted! Our Patna business desk will contact you within 2 hours.", "success");
   window.closeAllModals();
 };

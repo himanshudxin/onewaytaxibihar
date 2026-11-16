@@ -1215,3 +1215,16 @@
 - Fixed dark charcoal input contrast inversion in light mode with .corporate-input-field and universal .promo-input rules.
 - Captured live mobile screenshot live-corporate-modal-mobile.png via Chrome CDP.
 - Dispatched and certified live production deployment dpl_6m5ctgYAqeRHSr7K4Qavuu8purz7 on https://onewaytaxibihar.com.
+
+2026-11-16: Phase 79 Complete - Fake Client Data Eradication & Enterprise Corporate Inquiry Desk Redesign
+- Eradicated all fake client organizations (AIIMS Patna, NTPC Barh / Kahalgaon, Bihar State Tourism Development, L&T Construction, Bajaj Allianz, HDFC Bank Bihar Hub) from js/data.js and js/app.js.
+- Replaced with genuine Bihar mobility verticals (Staff Outstation Travel, Executive Delegation Fleet, Patna Airport Transfers, Industrial Site Visits, Emergency Dispatches) and statutory compliance guarantees (100% Tax Invoiced with GST Input Credit, Commercial Yellow Plates Only, Police-Verified Highway Captains, Registered Bihar Enterprise).
+- Transformed data entry section from crude, unlabelled charcoal inputs into an enterprise-grade Corporate Inquiry Desk:
+  - Header with icon badge, title, subtitle, and 2-Hour Response SLA pill.
+  - Distinct uppercase labels with required asterisk indicators for Company / Institution Name, GSTIN Number (Optional), Contact Person, Official Mobile, and Work Email.
+  - Integrated SVG icons within every input field.
+  - Structured Requirement Scope dropdown with custom chevron.
+  - High-contrast, clean light (#f8fafc with #cbd5e1 borders) and dark (#0b0f19 with #1e293b borders) styling.
+  - Emerald gradient submit button with arrow icon and hover transitions.
+  - Footer with verified commercial fleet assurance and direct phone hotline (+91 80021 41816).
+- Validated with 9/9 master test suites passing 100% and captured Chrome CDP visual proof (preview-corporate-desktop.png, preview-corporate-mobile-light.png, preview-corporate-mobile-dark.png, preview-corporate-mobile-form.png).

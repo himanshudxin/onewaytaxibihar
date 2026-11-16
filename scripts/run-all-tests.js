@@ -14,6 +14,7 @@ const testSuites = [
   { name: 'Hidden Autonomous Sentinel Engine', cmd: 'node tests/autonomous-engine.test.js' },
   { name: 'Autonomous 3-Way Booking Lifecycle Simulation', cmd: 'node scripts/verify-autonomous-flow.js' },
   { name: 'Cyber Defense, Anti-Hacking & Threat Jail Suite', cmd: 'node tests/security-fortress.test.js' },
+  { name: 'CSRF Defense & Broken Note Authentication', cmd: 'node scripts/test-csrf-and-broken-note.js' },
   { name: 'Full Production Readiness (19 Criteria, 4 Tiers)', cmd: 'node tests/e2e-readiness.test.js' }
 ];
 

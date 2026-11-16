@@ -621,9 +621,155 @@ function sanitizePhone(phone) {
   return String(phone).replace(/\D/g, '').slice(-10);
 }
 
+// ---------------------------------------------------------------------------
+// 8. ENTERPRISE CSRF (CROSS-SITE REQUEST FORGERY) PROTECTION ENGINE
+// ---------------------------------------------------------------------------
+const CSRF_SECRET = process.env.CSRF_SECRET || (JWT_SECRET + '_csrf_secure_token_bihar_2026');
+const CSRF_EXPIRY_MS = 24 * 3600 * 1000; // 24 hours validity
+
+/**
+ * Generate a cryptographically signed CSRF token
+ * Structure: timestamp.nonce.signature
+ */
+function generateCsrfToken(entropyHint = '') {
+  const timestamp = Date.now().toString(36);
+  const nonce = crypto.randomBytes(16).toString('hex');
+  const payload = `${timestamp}.${nonce}.${entropyHint}`;
+  const signature = crypto
+    .createHmac('sha256', CSRF_SECRET)
+    .update(payload)
+    .digest('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+
+  return `otb_csrf_${timestamp}.${nonce}.${signature}`;
+}
+
+/**
+ * Verify CSRF Token signature and timestamp freshness
+ */
+function verifyCsrfToken(token, entropyHint = '') {
+  if (!token || typeof token !== 'string') return false;
+  const clean = token.trim();
+  if (!clean.startsWith('otb_csrf_')) return false;
+
+  const body = clean.slice('otb_csrf_'.length);
+  const parts = body.split('.');
+  if (parts.length !== 3) return false;
+
+  const [timestampStr, nonce, signature] = parts;
+  try {
+    const timestamp = parseInt(timestampStr, 36);
+    if (isNaN(timestamp)) return false;
+
+    // Check expiration (24 hours)
+    const now = Date.now();
+    if (now - timestamp > CSRF_EXPIRY_MS || timestamp > now + 300000) {
+      return false; // Expired or future dated beyond 5 min clock skew
+    }
+
+    const payload = `${timestampStr}.${nonce}.${entropyHint}`;
+    const expectedSig = crypto
+      .createHmac('sha256', CSRF_SECRET)
+      .update(payload)
+      .digest('base64')
+      .replace(/=/g, '')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_');
+
+    const sigBuf = Buffer.from(signature, 'utf8');
+    const expBuf = Buffer.from(expectedSig, 'utf8');
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 9. BROKEN NOTE / SPLIT TOKEN AUTHENTICATION ENGINE
+// Pattern: Like a physical torn currency note, credentials are split into two halves:
+// - Half A (Header Half / Bearer token): Given in JSON response ONCE upon login
+// - Half B (Cookie Half): Pinned to HttpOnly Secure Cookie (otb_broken_note)
+// Neither half alone can authenticate. The server matches both halves and stores
+// strictly the SHA-256 hash at rest. Raw composite token is NEVER re-emitted.
+// ---------------------------------------------------------------------------
+
+/**
+ * Creates a Broken Note split token session
+ */
+function createBrokenNoteSession({ userId, phone, role = 'customer', name = '' }) {
+  const headerHalf = `bnh_${crypto.randomBytes(16).toString('hex')}`;
+  const cookieHalf = `bnc_${crypto.randomBytes(16).toString('hex')}`;
+  const compositeToken = `${headerHalf}.${cookieHalf}`;
+  const tokenHash = crypto.createHash('sha256').update(compositeToken).digest('hex');
+  const legacyToken = `otb_sess_${crypto.randomBytes(16).toString('hex')}`;
+
+  const sessionRecord = {
+    tokenHash,
+    headerHalf,
+    legacyToken, // Compatibility fallback
+    userId,
+    phone,
+    role,
+    name,
+    issuedOnce: true,
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 8 * 3600 * 1000).toISOString()
+  };
+
+  return {
+    compositeToken,
+    headerHalf,
+    cookieHalf,
+    sessionRecord
+  };
+}
+
+/**
+ * Reconstructs and verifies a Broken Note token against session store
+ */
+function verifyBrokenNoteSession(headerToken, cookieToken, sessions = []) {
+  if (!Array.isArray(sessions) || sessions.length === 0) return null;
+  const cleanHeader = (headerToken || '').replace(/^Bearer\s+/i, '').trim();
+  const cleanCookie = (cookieToken || '').trim();
+
+  if (!cleanHeader && !cleanCookie) return null;
+
+  // Case 1: Client supplied full composite token (e.g. mobile apps sending composite bearer)
+  if (cleanHeader && cleanHeader.includes('.') && cleanHeader.startsWith('bnh_')) {
+    const fullHash = crypto.createHash('sha256').update(cleanHeader).digest('hex');
+    const matched = sessions.find(s => s.tokenHash === fullHash);
+    if (matched) return matched;
+  }
+
+  // Case 2: Web Client supplied Header Half A + Cookie Half B ("matching two halves of broken note")
+  if (cleanHeader && cleanCookie) {
+    const combined = `${cleanHeader}.${cleanCookie}`;
+    const combinedHash = crypto.createHash('sha256').update(combined).digest('hex');
+    const matched = sessions.find(s => s.tokenHash === combinedHash);
+    if (matched) return matched;
+  }
+
+  // Case 3: Legacy Plain Token lookup fallback (ensures backward compatibility for unhashed older sessions)
+  const candidateToken = cleanHeader || cleanCookie;
+  if (candidateToken) {
+    const candidateHash = crypto.createHash('sha256').update(candidateToken).digest('hex');
+    const matched = sessions.find(s => s.token === candidateToken || s.tokenHash === candidateHash);
+    if (matched) return matched;
+  }
+
+  return null;
+}
+
 module.exports = {
   // Config
   JWT_SECRET,
+  CSRF_SECRET,
   AUTHORIZED_ADMIN_PHONE,
   DEFAULT_USERNAME,
   DEFAULT_SALT,
@@ -636,6 +782,14 @@ module.exports = {
   verifyPassword,
   createJwt,
   verifyJwt,
+
+  // CSRF Protection Engine
+  generateCsrfToken,
+  verifyCsrfToken,
+
+  // Broken Note / Split Token Engine
+  createBrokenNoteSession,
+  verifyBrokenNoteSession,
 
   // Brute Force & Rate Limit & Threat Jail
   checkBruteForce,

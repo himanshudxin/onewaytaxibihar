@@ -67,6 +67,7 @@ const API_BASE_URL = resolveApiBaseUrl();
 class ApiClient {
   private baseUrl: string = API_BASE_URL;
   private inFlightMap: Map<string, Promise<any>> = new Map();
+  private csrfToken: string | null = null;
 
   public getBaseUrl(): string {
     return this.baseUrl;
@@ -74,6 +75,31 @@ class ApiClient {
 
   public setBaseUrl(url: string): void {
     this.baseUrl = url.replace(/\/+$/, '');
+  }
+
+  public async getCsrfToken(): Promise<string> {
+    if (this.csrfToken) return this.csrfToken;
+    try {
+      const candidateBases = [
+        this.baseUrl,
+        'http://192.168.0.179:8080/api',
+        'http://localhost:8080/api',
+        'https://onewaytaxibihar.com/api'
+      ];
+      for (const base of candidateBases) {
+        try {
+          const res = await fetch(`${base}/csrf`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.csrfToken) {
+              this.csrfToken = data.csrfToken;
+              return data.csrfToken;
+            }
+          }
+        } catch (_) {}
+      }
+    } catch (_) {}
+    return '';
   }
 
   private async getAuthToken(): Promise<string | null> {
@@ -90,10 +116,17 @@ class ApiClient {
 
     const execPromise = (async (): Promise<T> => {
       const token = await this.getAuthToken();
+      const isMutating = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+      let activeCsrf = '';
+      if (isMutating) {
+        activeCsrf = await this.getCsrfToken();
+      }
+
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'User-Agent': 'OneWayTaxiBihar-MobileApp/2.0',
+        ...(activeCsrf ? { 'X-CSRF-Token': activeCsrf } : {}),
         ...(options.headers as Record<string, string> || {})
       };
 

@@ -258,13 +258,13 @@ const server = http.createServer(async (req, res) => {
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
     res.setHeader('Content-Type', contentType);
 
-    // Static asset caching headers
+    // Static asset caching headers: require must-revalidate with ETag for real-time asset updates
     if (safePath.includes('admin') || ext === '.html') {
       res.setHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
     } else if (ext === '.css' || ext === '.js') {
-      res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0');
     } else if (['.svg', '.png', '.jpg', '.webp', '.ico', '.woff2'].includes(ext)) {
       res.setHeader('Cache-Control', 'public, max-age=2592000, immutable');
     } else {

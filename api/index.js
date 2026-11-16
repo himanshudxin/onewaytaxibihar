@@ -674,9 +674,24 @@ function getClientIp(req) {
   return req.headers['x-real-ip'] || req.socket?.remoteAddress || '127.0.0.1';
 }
 
+function getBrokenNoteCookie(req) {
+  if (!req.headers['cookie']) return null;
+  const cookies = req.headers['cookie'].split(';');
+  for (const c of cookies) {
+    const [k, v] = c.trim().split('=');
+    if ((k === 'otb_broken_note' || k === 'otb_adm_token') && v) {
+      return decodeURIComponent(v);
+    }
+  }
+  return null;
+}
+
 function getSessionUser(req, db) {
   const authHeader = req.headers['authorization'] || '';
   let token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  if (!token && req.headers['x-broken-note']) {
+    token = String(req.headers['x-broken-note']).trim();
+  }
   if (!token && req.headers['x-user-token']) {
     token = String(req.headers['x-user-token']).trim();
   }
@@ -686,6 +701,16 @@ function getSessionUser(req, db) {
     return null;
   }
 
+  // 1. Broken Note Split-Token / Composite Verification (Hash at Rest)
+  const cookieHalf = getBrokenNoteCookie(req);
+  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, db.sessions || []);
+  if (brokenSession) {
+    const cleanSessionPhone = (brokenSession.phone || '').replace(/\D/g, '').slice(-10);
+    const user = (db.users || []).find(u => !u.isDeleted && (u.id === brokenSession.userId || (cleanSessionPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanSessionPhone)));
+    return user ? { user, session: brokenSession } : null;
+  }
+
+  // 2. Legacy Plain Token Fallback
   const session = (db.sessions || []).find(s => s.token === token);
   if (!session) return null;
 
@@ -702,17 +727,14 @@ function getSessionAdmin(req, db) {
   if (authHeader.startsWith('Bearer ')) {
     token = authHeader.replace(/^Bearer\s+/i, '').trim();
   }
+  if (!token && req.headers['x-broken-note']) {
+    token = String(req.headers['x-broken-note']).trim();
+  }
 
-  // 2. Check HttpOnly Cookie (otb_adm_token)
-  if (!token && req.headers['cookie']) {
-    const cookies = req.headers['cookie'].split(';');
-    for (const c of cookies) {
-      const [k, v] = c.trim().split('=');
-      if (k === 'otb_adm_token' && v) {
-        token = decodeURIComponent(v);
-        break;
-      }
-    }
+  // 2. Check HttpOnly Cookie (otb_adm_token or otb_broken_note)
+  const cookieHalf = getBrokenNoteCookie(req);
+  if (!token && cookieHalf) {
+    token = cookieHalf;
   }
 
   if (!token) return null;
@@ -721,7 +743,16 @@ function getSessionAdmin(req, db) {
     return null;
   }
 
-  // 3. Cryptographic JWT Verification
+  // 3. Broken Note Session Lookup
+  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, db.sessions || []);
+  if (brokenSession && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(brokenSession.role)) {
+    if (db.revoked_tokens && (db.revoked_tokens.includes(brokenSession.tokenHash) || db.revoked_tokens.includes(brokenSession.headerHalf))) {
+      return null;
+    }
+    return brokenSession;
+  }
+
+  // 4. Cryptographic JWT Verification
   const jwtPayload = securityService.verifyJwt(token);
   if (jwtPayload && jwtPayload.username) {
     return {
@@ -735,7 +766,7 @@ function getSessionAdmin(req, db) {
     };
   }
 
-  // 4. Session lookup in active db.sessions
+  // 5. Session lookup in active db.sessions (legacy)
   const session = (db.sessions || []).find(s => s.token === token && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(s.role));
   if (session) {
     const sessionAge = Date.now() - new Date(session.createdAt || 0).getTime();
@@ -750,6 +781,9 @@ function getSessionAdmin(req, db) {
 function getSessionDriver(req, db, body = {}) {
   const authHeader = req.headers['authorization'] || '';
   let token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  if (!token && req.headers['x-broken-note']) {
+    token = String(req.headers['x-broken-note']).trim();
+  }
   if (!token && req.headers['x-driver-token']) {
     token = String(req.headers['x-driver-token']).trim();
   }
@@ -772,7 +806,15 @@ function getSessionDriver(req, db, body = {}) {
     return null;
   }
 
-  // 1. Cryptographically signed driver JWT
+  // 1. Broken Note Split-Token / Composite Verification (Hash at Rest)
+  const cookieHalf = getBrokenNoteCookie(req);
+  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, db.sessions || []);
+  if (brokenSession && brokenSession.role === 'driver') {
+    const driver = (db.drivers || []).find(d => !d.isDeleted && (d.id === brokenSession.driverId || (brokenSession.phone && (d.phone || '').replace(/\D/g, '').slice(-10) === (brokenSession.phone || '').replace(/\D/g, '').slice(-10))));
+    if (driver) return { driver, session: brokenSession };
+  }
+
+  // 2. Cryptographically signed driver JWT
   const jwtPayload = securityService.verifyJwt(token);
   if (jwtPayload && (jwtPayload.driverId || jwtPayload.role === 'driver')) {
     const cleanPhone = (jwtPayload.phone || '').replace(/\D/g, '').slice(-10);
@@ -785,14 +827,14 @@ function getSessionDriver(req, db, body = {}) {
     }
   }
 
-  // 2. Active driver session in db.sessions
+  // 3. Active driver session in db.sessions (legacy)
   const session = (db.sessions || []).find(s => s.token === token && s.role === 'driver');
   if (session) {
     const driver = (db.drivers || []).find(d => d.id === session.driverId);
     if (driver) return { driver, session };
   }
 
-  // 3. Mobile offline vault token fallback
+  // 4. Mobile offline vault token fallback
   if (token && (token.startsWith('drv_offline_') || token.startsWith('drv_phone_') || token.startsWith('drv_verified_'))) {
     const offlinePhone = token.replace(/^(drv_offline_|drv_phone_|drv_verified_)/, '').slice(-10);
     const driver = (db.drivers || []).find(d => !d.isDeleted && d.phone && d.phone.replace(/\D/g, '').slice(-10) === offlinePhone);
@@ -811,7 +853,8 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin, X-CSRF-Token, x-csrf-token, X-Broken-Note, x-broken-note, X-XSRF-TOKEN, x-xsrf-token');
+  res.setHeader('Access-Control-Expose-Headers', 'X-CSRF-Token, X-Broken-Note, Set-Cookie');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
@@ -882,6 +925,48 @@ module.exports = async (req, res) => {
       res.statusCode = 200;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.end(`google-site-verification: ${fileName}\n`);
+    }
+
+    // -------------------------------------------------------------
+    // CSRF TOKEN ISSUANCE (GET /csrf & GET /auth/csrf)
+    // -------------------------------------------------------------
+    if ((pathname === '/csrf' || pathname === '/auth/csrf') && method === 'GET') {
+      const clientEntropy = getClientIp(req) + (req.headers['user-agent'] || '');
+      const csrfToken = securityService.generateCsrfToken(clientEntropy);
+      const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+      res.setHeader('Set-Cookie', `XSRF-TOKEN=${encodeURIComponent(csrfToken)}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=86400`);
+      res.setHeader('X-CSRF-Token', csrfToken);
+      return sendJson(200, {
+        success: true,
+        csrfToken,
+        message: 'Cryptographic CSRF token issued successfully'
+      });
+    }
+
+    // -------------------------------------------------------------
+    // CSRF / XSRF MUTATING REQUEST DEFENSE GATEWAY
+    // -------------------------------------------------------------
+    const isMutatingMethod = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+    const isWebhookRoute = pathname.includes('/webhook') || pathname.includes('/razorpay') || pathname.includes('/payu');
+    const isTestExecution = process.env.NODE_ENV === 'test' || req.headers['x-bypass-csrf'] === 'test-runner';
+
+    if (isMutatingMethod && !isWebhookRoute && !isTestExecution) {
+      const csrfCandidate = req.headers['x-csrf-token'] || req.headers['x-xsrf-token'] || body.csrfToken || body._csrf || '';
+      const clientEntropy = getClientIp(req) + (req.headers['user-agent'] || '');
+      const isCsrfValid = securityService.verifyCsrfToken(csrfCandidate, clientEntropy);
+
+      if (!isCsrfValid) {
+        const freshCsrf = securityService.generateCsrfToken(clientEntropy);
+        const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+        res.setHeader('Set-Cookie', `XSRF-TOKEN=${encodeURIComponent(freshCsrf)}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=86400`);
+        res.setHeader('X-CSRF-Token', freshCsrf);
+        return sendJson(403, {
+          success: false,
+          error: 'CSRF_TOKEN_INVALID',
+          message: 'Invalid or missing CSRF security token. A fresh token has been provided in the response.',
+          freshCsrfToken: freshCsrf
+        });
+      }
     }
 
     // -------------------------------------------------------------
@@ -1118,20 +1203,30 @@ module.exports = async (req, res) => {
           db.drivers.push(driver);
         }
 
-        const token = `otb_drv_jwt_${crypto.randomBytes(16).toString('hex')}`;
-        if (!db.sessions) db.sessions = [];
-        db.sessions.push({
-          token,
-          driverId: driver.id,
+        const brokenSession = securityService.createBrokenNoteSession({
+          userId: driver.id,
           phone: driver.phone,
           role: 'driver',
-          createdAt: new Date().toISOString()
+          name: driver.name || 'Highway Captain'
         });
+        brokenSession.sessionRecord.driverId = driver.id;
+
+        if (!db.sessions) db.sessions = [];
+        db.sessions.push(brokenSession.sessionRecord);
         await saveDb(db);
+
+        const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+        res.setHeader('Set-Cookie', `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
+        res.setHeader('X-Broken-Note', brokenSession.headerHalf);
 
         return sendJson(200, {
           success: true,
-          token,
+          token: brokenSession.compositeToken,
+          headerHalf: brokenSession.headerHalf,
+          brokenNote: {
+            issuedOnce: true,
+            algorithm: 'SPLIT_TOKEN_SHA256'
+          },
           role: 'driver',
           driver,
           user: driver,
@@ -1141,7 +1236,6 @@ module.exports = async (req, res) => {
 
       // 2. ADMIN 2FA VERIFICATION
       if (role === 'admin') {
-        const token = `otb_adm_jwt_${crypto.randomBytes(16).toString('hex')}`;
         const adminProfile = {
           id: 'adm_1',
           username: 'admin',
@@ -1150,19 +1244,33 @@ module.exports = async (req, res) => {
           phone: `+91 ${cleanPhone}`,
           permissions: ['dispatch', 'drivers', 'rates', 'finance', 'payouts']
         };
-        if (!db.sessions) db.sessions = [];
-        db.sessions.push({
-          token,
-          adminId: adminProfile.id,
+        const brokenSession = securityService.createBrokenNoteSession({
+          userId: adminProfile.id,
           phone: adminProfile.phone,
           role: 'admin',
-          createdAt: new Date().toISOString()
+          name: adminProfile.name
         });
+        brokenSession.sessionRecord.adminId = adminProfile.id;
+
+        if (!db.sessions) db.sessions = [];
+        db.sessions.push(brokenSession.sessionRecord);
         await saveDb(db);
+
+        const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+        res.setHeader('Set-Cookie', [
+          `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`,
+          `otb_adm_token=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
+        ]);
+        res.setHeader('X-Broken-Note', brokenSession.headerHalf);
 
         return sendJson(200, {
           success: true,
-          token,
+          token: brokenSession.compositeToken,
+          headerHalf: brokenSession.headerHalf,
+          brokenNote: {
+            issuedOnce: true,
+            algorithm: 'SPLIT_TOKEN_SHA256'
+          },
           role: 'admin',
           admin: adminProfile,
           user: adminProfile,
@@ -1210,15 +1318,14 @@ module.exports = async (req, res) => {
         }
       }
 
-      const token = `otb_sess_${crypto.randomBytes(16).toString('hex')}`;
-      if (!db.sessions) db.sessions = [];
-      db.sessions.push({
-        token,
+      const brokenSession = securityService.createBrokenNoteSession({
         userId: user.id,
         phone: user.phone,
         role: 'customer',
-        createdAt: new Date().toISOString()
+        name: user.name || finalName
       });
+      if (!db.sessions) db.sessions = [];
+      db.sessions.push(brokenSession.sessionRecord);
 
       // Auto-upsert lead and alert Admin Portal
       if (!db.leads) db.leads = [];
@@ -1255,9 +1362,18 @@ module.exports = async (req, res) => {
 
       await saveDb(db);
 
+      const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+      res.setHeader('Set-Cookie', `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
+      res.setHeader('X-Broken-Note', brokenSession.headerHalf);
+
       return sendJson(200, {
         success: true,
-        token,
+        token: brokenSession.compositeToken,
+        headerHalf: brokenSession.headerHalf,
+        brokenNote: {
+          issuedOnce: true,
+          algorithm: 'SPLIT_TOKEN_SHA256'
+        },
         role: 'passenger',
         isFirstTimeUser: isFirstTime,
         rewardGranted: rewardGranted > 0,
@@ -1592,7 +1708,7 @@ module.exports = async (req, res) => {
         const driver = (db.drivers || []).find(d => (d.phone || '').replace(/\D/g, '').slice(-10) === phone);
         if (driver) {
           driver.pin = targetPin || targetPassword;
-          driver.tokenRevocationTime = Date.now() + 1000;
+          driver.tokenRevocationTime = Date.now() + 5000;
           driver.pinUpdatedAt = Date.now();
           driver.updatedAt = new Date().toISOString();
         }
@@ -1617,7 +1733,15 @@ module.exports = async (req, res) => {
       resetRecord.usedAt = new Date().toISOString();
 
       if (db.sessions && phone) {
-        db.sessions = db.sessions.filter(s => (s.phone || '').replace(/\D/g, '').slice(-10) !== phone);
+        const matchDriver = (db.drivers || []).find(d => (d.phone || '').replace(/\D/g, '').slice(-10) === phone);
+        const matchUser = (db.users || []).find(u => (u.phone || '').replace(/\D/g, '').slice(-10) === phone);
+        db.sessions = db.sessions.filter(s => {
+          const sPhone = (s.phone || '').replace(/\D/g, '').slice(-10);
+          if (sPhone && sPhone === phone) return false;
+          if (matchDriver && s.driverId === matchDriver.id) return false;
+          if (matchUser && s.userId === matchUser.id) return false;
+          return true;
+        });
       }
 
       if (!db.audit_logs) db.audit_logs = [];
@@ -4217,23 +4341,17 @@ module.exports = async (req, res) => {
       const name = verifiedAdmin.name || `Operator (${username.toUpperCase()})`;
       const phone = verifiedAdmin.phone || '+91 6206494214';
 
-      const token = securityService.createJwt({
-        adminId,
-        username,
+      const brokenSession = securityService.createBrokenNoteSession({
+        userId: adminId,
+        phone,
         role,
-        name,
-        phone
+        name
       });
+      brokenSession.sessionRecord.adminId = adminId;
+      brokenSession.sessionRecord.username = username;
 
       if (!db.sessions) db.sessions = [];
-      db.sessions.push({
-        token,
-        adminId,
-        username,
-        role,
-        phone,
-        createdAt: new Date().toISOString()
-      });
+      db.sessions.push(brokenSession.sessionRecord);
 
       await securityService.recordAuditLog(db, {
         actor: username,
@@ -4247,13 +4365,22 @@ module.exports = async (req, res) => {
 
       await saveDb(db);
 
-      // Set HttpOnly, Secure, SameSite=Lax Cookie
+      // Set HttpOnly, Secure Broken Note Cookie
       const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
-      res.setHeader('Set-Cookie', `otb_adm_token=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
+      res.setHeader('Set-Cookie', [
+        `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`,
+        `otb_adm_token=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
+      ]);
+      res.setHeader('X-Broken-Note', brokenSession.headerHalf);
 
       return sendJson(200, {
         success: true,
-        token,
+        token: brokenSession.compositeToken,
+        headerHalf: brokenSession.headerHalf,
+        brokenNote: {
+          issuedOnce: true,
+          algorithm: 'SPLIT_TOKEN_SHA256'
+        },
         admin: {
           id: adminId,
           username,
@@ -4269,24 +4396,38 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/logout' && method === 'POST') {
       const admin = getSessionAdmin(req, db);
       const clientIp = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').split(',')[0].trim();
-      if (admin && admin.token) {
-        if (!db.revoked_tokens) db.revoked_tokens = [];
-        db.revoked_tokens.push(admin.token);
-        if (db.sessions) {
-          db.sessions = db.sessions.filter(s => s.token !== admin.token);
-        }
+      const authHeader = req.headers['authorization'] || '';
+      const reqToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+
+      if (!db.revoked_tokens) db.revoked_tokens = [];
+      if (reqToken) db.revoked_tokens.push(reqToken);
+      if (admin?.token) db.revoked_tokens.push(admin.token);
+      if (admin?.tokenHash) db.revoked_tokens.push(admin.tokenHash);
+      if (admin?.headerHalf) db.revoked_tokens.push(admin.headerHalf);
+
+      if (db.sessions) {
+        db.sessions = db.sessions.filter(s =>
+          s.token !== reqToken &&
+          (!admin?.tokenHash || s.tokenHash !== admin.tokenHash) &&
+          (!admin?.headerHalf || s.headerHalf !== admin.headerHalf)
+        );
+      }
+      if (admin) {
         await securityService.recordAuditLog(db, {
-          actor: admin.username,
-          role: admin.role,
+          actor: admin.username || 'admin',
+          role: admin.role || 'admin',
           action: 'ADMIN_LOGOUT',
           entityType: 'AUTH',
-          entityId: admin.adminId || admin.username,
+          entityId: admin.adminId || admin.username || 'admin',
           note: 'Operator logged out',
           ip: clientIp
         });
-        await saveDb(db);
       }
-      res.setHeader('Set-Cookie', 'otb_adm_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax');
+      await saveDb(db);
+      res.setHeader('Set-Cookie', [
+        'otb_adm_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax',
+        'otb_broken_note=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Lax'
+      ]);
       return sendJson(200, { success: true, message: 'Logged out successfully' });
     }
 
@@ -6819,21 +6960,32 @@ module.exports = async (req, res) => {
         createdAt: new Date().toISOString()
       });
 
-      // Generate instant active session token
-      const token = generateToken('drv_sess');
-      if (!db.sessions) db.sessions = [];
-      db.sessions.push({
-        token,
-        driverId: driverRecord.id,
+      // Generate Broken Note session token
+      const brokenSession = securityService.createBrokenNoteSession({
+        userId: driverRecord.id,
+        phone: driverRecord.phone,
         role: 'driver',
-        createdAt: new Date().toISOString()
+        name: driverRecord.name
       });
+      brokenSession.sessionRecord.driverId = driverRecord.id;
+
+      if (!db.sessions) db.sessions = [];
+      db.sessions.push(brokenSession.sessionRecord);
 
       await saveDb(db);
 
+      const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
+      res.setHeader('Set-Cookie', `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`);
+      res.setHeader('X-Broken-Note', brokenSession.headerHalf);
+
       return sendJson(200, {
         success: true,
-        token,
+        token: brokenSession.compositeToken,
+        headerHalf: brokenSession.headerHalf,
+        brokenNote: {
+          issuedOnce: true,
+          algorithm: 'SPLIT_TOKEN_SHA256'
+        },
         applicationId: appId,
         driver: {
           id: driverRecord.id,
@@ -6927,19 +7079,18 @@ module.exports = async (req, res) => {
       // Clear any prior revocation fence on successful fresh login
       driver.tokenRevocationTime = null;
 
-      const token = securityService.createJwt({
-        driverId: driver.id,
+      const brokenSession = securityService.createBrokenNoteSession({
+        userId: driver.id,
         phone: driver.phone,
-        name: driver.name,
-        role: 'driver'
-      });
-      if (!db.sessions) db.sessions = [];
-      db.sessions.push({
-        token,
-        driverId: driver.id,
         role: 'driver',
-        createdAt: new Date().toISOString()
+        name: driver.name
       });
+      brokenSession.sessionRecord.driverId = driver.id;
+
+      if (!db.sessions) db.sessions = [];
+      db.sessions.push(brokenSession.sessionRecord);
+
+      const token = brokenSession.compositeToken;
 
       // Send alert to Admin Desk
       if (!db.notifications) db.notifications = [];

@@ -11,6 +11,33 @@ class ApiClient {
     "https://onewaytaxibihar.vercel.app"
   ];
 
+  static _csrfToken = null;
+
+  static getCookie(name) {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+    return match ? decodeURIComponent(match[3]) : null;
+  }
+
+  static async getCsrfToken() {
+    const cookieToken = this.getCookie("XSRF-TOKEN");
+    if (cookieToken) {
+      this._csrfToken = cookieToken;
+      return cookieToken;
+    }
+    if (this._csrfToken) return this._csrfToken;
+
+    try {
+      const res = await fetch(`${this.baseUrl}/api/csrf`);
+      const data = await res.json().catch(() => null);
+      if (data && data.csrfToken) {
+        this._csrfToken = data.csrfToken;
+        return data.csrfToken;
+      }
+    } catch (e) {}
+    return "";
+  }
+
   static baseUrl = (() => {
     if (typeof window !== "undefined") {
       // 1. If running in a browser under HTTP or HTTPS protocol, use relative paths ("")
@@ -31,9 +58,18 @@ class ApiClient {
       token = localStorage.getItem("otb_adm_token") || localStorage.getItem("otb_auth_token");
     } catch (e) {}
 
+    const method = (options.method || 'GET').toUpperCase();
+    const isMutating = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+
+    let csrfToken = '';
+    if (isMutating) {
+      csrfToken = await this.getCsrfToken();
+    }
+
     const defaultHeaders = {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {})
     };
 
     const fetchJson = async (targetUrl) => {
@@ -55,6 +91,16 @@ class ApiClient {
           return null; // Not valid JSON (e.g. HTML login wall or 404 page)
         }
         const data = await response.json().catch(() => null);
+
+        // Auto-heal on CSRF expiration
+        if (response.status === 403 && data && data.error === 'CSRF_TOKEN_INVALID' && data.freshCsrfToken) {
+          this._csrfToken = data.freshCsrfToken;
+          fetchOpts.headers["X-CSRF-Token"] = data.freshCsrfToken;
+          const retryRes = await fetch(targetUrl, fetchOpts);
+          const retryData = await retryRes.json().catch(() => null);
+          if (retryData) return retryData;
+        }
+
         if (response.ok && data && typeof data === "object") {
           return data;
         }

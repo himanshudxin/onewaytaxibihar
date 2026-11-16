@@ -7,15 +7,12 @@
       "bookingSource": "Mobile App",
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_488",
-        "drv_359",
-        "drv_415",
         "drv_101",
         "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_488",
-      "broadcastStartedAt": "2026-11-16T02:18:11.997Z",
+      "broadcastClaimedBy": "drv_101",
+      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -34,11 +31,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 75,
       "driverDetails": {
-        "id": "drv_488",
-        "name": "RBAC Driver dispatcher",
-        "phone": "+91 9123455918",
-        "vehicleNumber": "BR 01 RB 5918",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_101",
+        "name": "Ramesh Kumar Sharma",
+        "phone": "+91 94310 12345",
+        "vehicleNumber": "BR 01 PA 4921",
+        "vehicleModel": "Swift Dzire (White)",
         "rating": 4.9
       },
       "dropAddress": "Bhagwanpur Chowk",
@@ -113,47 +110,14 @@
         "drv_961",
         "drv_722",
         "drv_285",
-        "drv_768"
+        "drv_768",
+        "drv_488",
+        "drv_359",
+        "drv_415"
       ],
       "source": "app",
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.671Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.893Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 17 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.933Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 16 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.170Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.435Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.450Z",
@@ -267,6 +231,42 @@
           "timestamp": "2026-11-16T02:19:42.014Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.289Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 5 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.319Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.592Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 4 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.617Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.843Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2499,
@@ -275,13 +275,13 @@
       "verifiedAt": "2026-11-15T21:37:46.310Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 5918",
-      "assignedDriverId": "drv_488",
-      "assignedDriverName": "RBAC Driver dispatcher",
-      "assignedDriverPhone": "+91 9123455918",
+      "assignedDriverCarNo": "BR 01 PA 4921",
+      "assignedDriverId": "drv_101",
+      "assignedDriverName": "Ramesh Kumar Sharma",
+      "assignedDriverPhone": "+91 94310 12345",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.014Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -464,14 +464,11 @@
       "bookingSource": "website",
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_359",
-        "drv_415",
-        "drv_101",
         "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_359",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_104",
+      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -490,12 +487,12 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_359",
-        "name": "RBAC Driver owner",
-        "phone": "+91 9123458352",
-        "vehicleNumber": "BR 01 RB 8352",
-        "vehicleModel": "Commercial Taxi",
-        "rating": 4.9
+        "id": "drv_104",
+        "name": "Sanjay Paswan",
+        "phone": "+91 82103 44556",
+        "vehicleNumber": "BR 01 PD 6024",
+        "vehicleModel": "Honda City (Brown)",
+        "rating": 5
       },
       "dropAddress": "Bodh Gaya Temple Road",
       "dropCity": "Gaya",
@@ -570,47 +567,14 @@
         "drv_722",
         "drv_285",
         "drv_768",
-        "drv_488"
+        "drv_488",
+        "drv_359",
+        "drv_415",
+        "drv_101"
       ],
       "source": "website",
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.671Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.894Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 16 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.933Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.170Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.450Z",
@@ -724,6 +688,42 @@
           "timestamp": "2026-11-16T02:19:42.014Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.289Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 4 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.319Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.593Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.843Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -732,13 +732,13 @@
       "verifiedAt": "2026-11-15T21:34:13.232Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 8352",
-      "assignedDriverId": "drv_359",
-      "assignedDriverName": "RBAC Driver owner",
-      "assignedDriverPhone": "+91 9123458352",
+      "assignedDriverCarNo": "BR 01 PD 6024",
+      "assignedDriverId": "drv_104",
+      "assignedDriverName": "Sanjay Paswan",
+      "assignedDriverPhone": "+91 82103 44556",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.014Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -895,13 +895,10 @@
       "bookingSource": "Website",
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_415",
-        "drv_101",
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_415",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_102",
+      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -920,11 +917,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_415",
-        "name": "RBAC Driver",
-        "phone": "+91 9123456789",
-        "vehicleNumber": "BR 01 RB 9999",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
         "rating": 4.9
       },
       "dropAddress": "Bodh Gaya Temple Road",
@@ -1001,47 +998,14 @@
         "drv_285",
         "drv_768",
         "drv_488",
-        "drv_359"
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104"
       ],
       "source": "Website",
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.671Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.894Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.933Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.170Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.451Z",
@@ -1155,6 +1119,42 @@
           "timestamp": "2026-11-16T02:19:42.015Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.289Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.320Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.593Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.843Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -1163,13 +1163,13 @@
       "verifiedAt": "2026-11-15T21:13:11.687Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 9999",
-      "assignedDriverId": "drv_415",
-      "assignedDriverName": "RBAC Driver",
-      "assignedDriverPhone": "+91 9123456789",
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.015Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -1326,13 +1326,10 @@
       "bookingSource": "Website",
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_415",
-        "drv_101",
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_415",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_102",
+      "broadcastStartedAt": "2026-11-16T03:07:42.843Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -1351,11 +1348,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_415",
-        "name": "RBAC Driver",
-        "phone": "+91 9123456789",
-        "vehicleNumber": "BR 01 RB 9999",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
         "rating": 4.9
       },
       "dropAddress": "Bodh Gaya Temple Road",
@@ -1432,47 +1429,14 @@
         "drv_285",
         "drv_768",
         "drv_488",
-        "drv_359"
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104"
       ],
       "source": "Website",
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.672Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.895Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.934Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.172Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.451Z",
@@ -1586,6 +1550,42 @@
           "timestamp": "2026-11-16T02:19:42.015Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.290Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.320Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.605Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.843Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -1594,13 +1594,13 @@
       "verifiedAt": "2026-11-15T21:10:40.454Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 9999",
-      "assignedDriverId": "drv_415",
-      "assignedDriverName": "RBAC Driver",
-      "assignedDriverPhone": "+91 9123456789",
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.015Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -1757,13 +1757,10 @@
       "bookingSource": "Website",
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_415",
-        "drv_101",
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_415",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_102",
+      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -1782,11 +1779,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_415",
-        "name": "RBAC Driver",
-        "phone": "+91 9123456789",
-        "vehicleNumber": "BR 01 RB 9999",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
         "rating": 4.9
       },
       "dropAddress": "Bodh Gaya Temple Road",
@@ -1863,47 +1860,14 @@
         "drv_285",
         "drv_768",
         "drv_488",
-        "drv_359"
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104"
       ],
       "source": "Website",
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.672Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.895Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.934Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.172Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.451Z",
@@ -2017,6 +1981,42 @@
           "timestamp": "2026-11-16T02:19:42.015Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.290Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.320Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.605Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.844Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -2025,13 +2025,13 @@
       "verifiedAt": "2026-11-15T21:09:28.384Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 9999",
-      "assignedDriverId": "drv_415",
-      "assignedDriverName": "RBAC Driver",
-      "assignedDriverPhone": "+91 9123456789",
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.015Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -2183,13 +2183,10 @@
       "balanceDue": 2199,
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_415",
-        "drv_101",
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_415",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_102",
+      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -2207,11 +2204,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_415",
-        "name": "RBAC Driver",
-        "phone": "+91 9123456789",
-        "vehicleNumber": "BR 01 RB 9999",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
         "rating": 4.9
       },
       "dropAddress": "Bodh Gaya Temple Road",
@@ -2287,46 +2284,13 @@
         "drv_285",
         "drv_768",
         "drv_488",
-        "drv_359"
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104"
       ],
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.672Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.895Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.934Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.172Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.452Z",
@@ -2440,6 +2404,42 @@
           "timestamp": "2026-11-16T02:19:42.015Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.290Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.320Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.605Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.844Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -2448,13 +2448,13 @@
       "verifiedAt": "2026-11-15T21:07:25.653Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 9999",
-      "assignedDriverId": "drv_415",
-      "assignedDriverName": "RBAC Driver",
-      "assignedDriverPhone": "+91 9123456789",
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.015Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.870Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -2606,13 +2606,10 @@
       "balanceDue": 2199,
       "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
-        "drv_415",
-        "drv_101",
-        "drv_104",
         "drv_102"
       ],
-      "broadcastClaimedBy": "drv_415",
-      "broadcastStartedAt": "2026-11-16T02:18:11.998Z",
+      "broadcastClaimedBy": "drv_102",
+      "broadcastStartedAt": "2026-11-16T03:07:42.844Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
       "cabName": "Prime Sedan",
@@ -2630,11 +2627,11 @@
       "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
       "driverDetails": {
-        "id": "drv_415",
-        "name": "RBAC Driver",
-        "phone": "+91 9123456789",
-        "vehicleNumber": "BR 01 RB 9999",
-        "vehicleModel": "Commercial Taxi",
+        "id": "drv_102",
+        "name": "Amit Kumar Singh",
+        "phone": "+91 98350 67890",
+        "vehicleNumber": "BR 01 PB 7712",
+        "vehicleModel": "Maruti Ertiga (Silver)",
         "rating": 4.9
       },
       "dropAddress": "Bodh Gaya Temple Road",
@@ -2710,46 +2707,13 @@
         "drv_285",
         "drv_768",
         "drv_488",
-        "drv_359"
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_104"
       ],
       "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:01:38.672Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:16:38.895Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver manager inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 15 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:18:08.934Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:33:09.143Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
-        },
-        {
-          "status": "DRIVER_ASSIGNED",
-          "timestamp": "2026-11-15T23:34:39.172Z",
-          "actor": "AutonomousMatchFallback",
-          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
-        },
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-15T23:49:39.436Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 13 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-15T23:51:09.452Z",
@@ -2863,6 +2827,42 @@
           "timestamp": "2026-11-16T02:19:42.015Z",
           "actor": "AutonomousMatchFallback",
           "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:34:42.290Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur RBAC Driver inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 3 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:36:12.320Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T02:51:12.605Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 2 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T02:52:42.618Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
+        },
+        {
+          "status": "DRIVER_GHOST_REASSIGNED",
+          "timestamp": "2026-11-16T03:07:42.844Z",
+          "actor": "AutonomousGhostSentinel",
+          "note": "Chauffeur Sanjay Paswan inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 1 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-16T03:09:12.871Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -2871,13 +2871,13 @@
       "verifiedAt": "2026-11-15T21:05:42.707Z",
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "walletUsed": 0,
-      "assignedDriverCarNo": "BR 01 RB 9999",
-      "assignedDriverId": "drv_415",
-      "assignedDriverName": "RBAC Driver",
-      "assignedDriverPhone": "+91 9123456789",
+      "assignedDriverCarNo": "BR 01 PB 7712",
+      "assignedDriverId": "drv_102",
+      "assignedDriverName": "Amit Kumar Singh",
+      "assignedDriverPhone": "+91 98350 67890",
       "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-16T02:19:42.015Z",
+      "autoDispatchedAt": "2026-11-16T03:09:12.871Z",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -5225,7 +5225,7 @@
       "vehicleModel": "Commercial Taxi",
       "vehicleNumber": "BR 01 RB 5918",
       "dutyStatus": "OFFLINE",
-      "lastGhostTimeoutAt": "2026-11-16T02:18:11.998Z"
+      "lastGhostTimeoutAt": "2026-11-16T02:34:42.289Z"
     },
     {
       "id": "drv_359",
@@ -5243,7 +5243,7 @@
       "vehicleModel": "Commercial Taxi",
       "vehicleNumber": "BR 01 RB 8352",
       "dutyStatus": "OFFLINE",
-      "lastGhostTimeoutAt": "2026-11-16T02:18:11.998Z"
+      "lastGhostTimeoutAt": "2026-11-16T02:51:12.592Z"
     },
     {
       "id": "drv_415",
@@ -5261,7 +5261,7 @@
       "vehicleModel": "Commercial Taxi",
       "vehicleNumber": "BR 01 RB 9999",
       "dutyStatus": "OFFLINE",
-      "lastGhostTimeoutAt": "2026-11-15T03:44:28.490Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:07:42.843Z"
     },
     {
       "id": "drv_101",
@@ -5287,7 +5287,7 @@
       "ratingsCount": 15,
       "dutyStatus": "OFFLINE",
       "isAvailable": false,
-      "lastGhostTimeoutAt": "2026-11-15T04:00:58.713Z",
+      "lastGhostTimeoutAt": "2026-11-16T03:07:42.843Z",
       "tokenRevocationTime": null
     },
     {
@@ -5309,7 +5309,7 @@
       "ratingsCount": 13,
       "dutyStatus": "OFFLINE",
       "isAvailable": false,
-      "lastGhostTimeoutAt": "2026-11-15T04:22:07.057Z"
+      "lastGhostTimeoutAt": "2026-11-16T03:07:42.844Z"
     },
     {
       "id": "drv_103",
@@ -6777,6 +6777,62 @@
   "wallet_ledger": [],
   "leads": [
     {
+      "cleanPhone": "6767676767",
+      "cabName": "Prime Sedan",
+      "cabPrice": 1800,
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "createdAt": "2026-11-16T02:26:09.855Z",
+      "destCity": "Bhojpur",
+      "distanceKm": 60,
+      "duration": "2h 15m",
+      "estFareHatch": 1698,
+      "estFareSedan": 1800,
+      "estFareSuv": 3398,
+      "id": "lead_6767676767_9855",
+      "notes": "Inquiry for Patna ➔ Bhojpur",
+      "originCity": "Patna",
+      "passengerName": "Passenger (Prime Sedan)",
+      "phone": "+91 6767676767",
+      "pickupDate": "2026-11-16",
+      "pickupTime": "10:00 AM",
+      "rawPhone": "6767676767",
+      "selectedCab": "sedan",
+      "source": "Cab Selected: Prime Sedan",
+      "status": "NEW",
+      "totalFare": 1800,
+      "tripType": "oneway",
+      "updatedAt": "2026-11-16T02:26:09.855Z"
+    },
+    {
+      "id": "lead_6767676767_3884",
+      "cabName": "Prime Sedan",
+      "cabPrice": 1800,
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "cleanPhone": "6767676767",
+      "createdAt": "2026-11-16T02:26:03.884Z",
+      "destCity": "Bhojpur (Ara)",
+      "distanceKm": 55,
+      "duration": "1h 15m",
+      "estFareHatch": 1600,
+      "estFareSedan": 1800,
+      "estFareSuv": 2200,
+      "notes": "Inquiry for Patna ➔ Bhojpur (Ara)",
+      "originCity": "Patna",
+      "passengerName": "aman kumar",
+      "phone": "+91 6767676767",
+      "pickupDate": "2026-11-16",
+      "pickupTime": "10:00 AM",
+      "rawPhone": "6767676767",
+      "selectedCab": "sedan",
+      "source": "Check Fares & Availability Button",
+      "status": "NEW",
+      "totalFare": 1800,
+      "tripType": "oneway",
+      "updatedAt": "2026-11-16T02:26:03.884Z"
+    },
+    {
       "id": "lead_9876543210_7309",
       "bookingId": "OTB-2026-2958",
       "cabName": "Prime Sedan",
@@ -7496,6 +7552,51 @@
     }
   ],
   "notifications": [
+    {
+      "id": "NOTIF_1794795969974",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Bhojpur",
+      "message": "Passenger (Prime Sedan) (+91 6767676767) checked fare for Patna ➔ Bhojpur (60 KM). Rate: ₹2198.",
+      "leadId": "lead_6767676767_9855",
+      "isRead": false,
+      "createdAt": "2026-11-16T02:26:09.855Z"
+    },
+    {
+      "id": "NOTIF_1794795963983",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Bhojpur (Ara)",
+      "message": "aman kumar (+91 6767676767) checked fare for Patna ➔ Bhojpur (Ara) (55 KM). Rate: ₹1800.",
+      "leadId": "lead_6767676767_3884",
+      "isRead": false,
+      "createdAt": "2026-11-16T02:26:03.884Z"
+    },
+    {
+      "id": "NOTIF_1794795963789",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Bhojpur (Ara)",
+      "message": "aman kumar (+91 6767676767) checked fare for Patna ➔ Bhojpur (Ara) (104 KM). Rate: ₹1800.",
+      "leadId": "lead_6767676767_3683",
+      "isRead": false,
+      "createdAt": "2026-11-16T02:26:03.683Z"
+    },
+    {
+      "id": "NOTIF_1794795963778",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna (पटना), Bihar ➔ Bhojpur (Ara), Bhojpur (भोजपुर (आरा)), Bihar",
+      "message": "Homepage Check Fare Visitor (+91 6767676767) checked fare for Patna (पटना), Bihar ➔ Bhojpur (Ara), Bhojpur (भोजपुर (आरा)), Bihar (104 KM). Rate: ₹2198.",
+      "leadId": "lead_6767676767_3680",
+      "isRead": false,
+      "createdAt": "2026-11-16T02:26:03.680Z"
+    },
+    {
+      "id": "NOTIF_1794795962010",
+      "type": "NEW_LEAD",
+      "title": "New Fare Inquiry: Patna ➔ Bhojpur (Ara)",
+      "message": "aman kumar (+91 6767676767) checked fare for Patna ➔ Bhojpur (Ara) (104 KM). Rate: ₹1800.",
+      "leadId": "lead_6767676767_1886",
+      "isRead": false,
+      "createdAt": "2026-11-16T02:26:01.886Z"
+    },
     {
       "id": "NOTIF_LOGIN_1794786043278",
       "createdAt": "2026-11-15T23:40:43.278Z",
@@ -8731,7 +8832,7 @@
       "createdAt": "2026-10-18T00:31:39.533Z"
     },
     {
-      "id": "NOTIF_1792236524344",
+      "id": "NOTIF_1792236524296",
       "type": "NEW_LEAD",
       "title": "New Fare Inquiry: Patna ➔ Nalanda (Bihar Sharif)",
       "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (Bihar Sharif) (100 KM). Rate: ₹2500.",
@@ -8740,7 +8841,7 @@
       "createdAt": "2026-10-17T11:28:42.541Z"
     },
     {
-      "id": "NOTIF_1792236524296",
+      "id": "NOTIF_1792236524344",
       "type": "NEW_LEAD",
       "title": "New Fare Inquiry: Patna ➔ Nalanda (Bihar Sharif)",
       "message": "Fare Check Visitor (+91 8355254486) checked fare for Patna ➔ Nalanda (Bihar Sharif) (100 KM). Rate: ₹2500.",

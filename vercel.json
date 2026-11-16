@@ -2,9 +2,9 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/downloads/passenger-latest.apk", "destination": "https://expo.dev/artifacts/eas/Lnnd_N2T4W1VuOjZ9yFx24Lwtxf0iuSIZYuEwVuOPv4.apk", "permanent": false },
-    { "source": "/downloads/driver-latest.apk", "destination": "https://expo.dev/artifacts/eas/GtqubPesGSgc3-BWHt83MzSHCu_aczTpPnqwfOwChzM.apk", "permanent": false },
-    { "source": "/downloads/admin-latest.apk", "destination": "https://expo.dev/artifacts/eas/OXIWi5EoGWOgI-yM3gVIKUFZ8eUGGYOt2qfu9GfmNuI.apk", "permanent": false }
+    { "source": "/downloads/passenger-latest.apk", "destination": "https://expo.dev/artifacts/eas/5kEdzYINjR4QdAiAJ4B8qSiZ4gzB6JblWZxcdbQEBQg.apk", "permanent": false },
+    { "source": "/downloads/driver-latest.apk", "destination": "https://expo.dev/artifacts/eas/Hr4wsZUdif9a_q9kEXk0NtggGPAn7BtcdDNyae0Hlkc.apk", "permanent": false },
+    { "source": "/downloads/admin-latest.apk", "destination": "https://expo.dev/artifacts/eas/JWZOxb5sb1ZpHUJ2AOC-WTJvFwrQlqrq_dSBLG5ZfEk.apk", "permanent": false }
   ],
   "rewrites": [
     { "source": "/api/admin/leads/:path*", "destination": "/api/leads" },

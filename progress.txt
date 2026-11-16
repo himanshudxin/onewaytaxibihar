@@ -1290,3 +1290,31 @@
   - Master Production Test Runner (`scripts/run-all-tests.js`): 9/9 suites passing 100%.
   - In-memory production OTP test (`scripts/test-otp-flow.js`): All 6 OTP tests passed 100%.
   - Git commit `e13014c` pushed to `origin main`.
+
+---
+
+[2026-11-16] Phase 83: Cross-Site Request Forgery (CSRF) & Broken Note (Split Token) Authentication Architecture:
+- 1. Cryptographic CSRF Defense:
+  - Implemented `generateCsrfToken(entropyHint)` and `verifyCsrfToken(token, entropyHint)` in `services/security.js` with HMAC-SHA256 signatures and 24-hour expiration window.
+  - Added `GET /api/csrf` and `GET /auth/csrf` endpoints setting `XSRF-TOKEN` cookie and returning JSON token payload.
+  - Enforced CSRF defense middleware on all mutating methods (`POST`, `PUT`, `DELETE`, `PATCH`), rejecting missing or tampered tokens with HTTP 403 `CSRF_TOKEN_INVALID` while issuing fresh tokens for client auto-heal.
+- 2. Broken Note (Split Token) Session Pattern:
+  - Replaced raw plaintext session tokens with physical banknote-inspired split tokens:
+    - Header Half (Part A: `bnh_...`): Stored in client application memory / Authorization header.
+    - Cookie Half (Part B: `bnc_...`): Set strictly by server as HttpOnly Secure cookie `otb_broken_note`.
+    - Zero Plaintext Tokens at Rest: Server stores ONLY `tokenHash = sha256(compositeToken)` in `db.sessions`.
+    - Token Issued Strictly Once: The full composite token is returned only upon initial login or OTP verification, and never re-emitted in subsequent profile or status queries.
+  - Updated `getSessionUser`, `getSessionDriver`, and `getSessionAdmin` in `api/index.js` to match split halves against stored SHA-256 hashes, supporting both Web split-cookie auth and Mobile composite Bearer tokens.
+- 3. Corporate Desk UI & Service Worker Cache Remediation:
+  - Diagnosed that stale Service Worker cache (`CACHE_NAME` in `sw.js`) and conflicting CSS rule `[data-theme="dark"] #modal-corporate input` caused input elements to display as black charcoal rectangles on the user's desktop browser.
+  - Redesigned `#modal-corporate .corp-input-control` in `css/components.css` with clean `#ffffff` background, `#0f172a` text, `#cbd5e1` borders, and `#059669` focus rings.
+  - Pre-rendered the entire professional Corporate Inquiry Desk form directly into `index.html` inside `#modal-corporate-body`, eradicating any possibility of stale JS displaying legacy fake organization names.
+  - Bumped `CACHE_NAME` in `sw.js` to `onewaytaxibihar-v20261116-v46-desk-csrf` and updated asset version strings to `?v=20261116_v46_desk_csrf`.
+- 4. Web & Mobile API Clients:
+  - Updated `ApiClient` in `js/api.js` to read `XSRF-TOKEN` cookie, attach `X-CSRF-Token` on mutations, and auto-heal on 403 challenges.
+  - Updated `ApiClient` in `mobile/shared/services/api.ts` to manage `csrfToken` and automatically attach `X-CSRF-Token` headers.
+- 5. Verification & Deployment:
+  - Mobile TypeScript: 0 errors (`npx tsc --noEmit`).
+  - Automated CSRF & Broken Note test suite (`scripts/test-csrf-and-broken-note.js`): All 8 test phases passed 100%.
+  - Master Production Test Runner (`scripts/run-all-tests.js`): All 10 suites passed 100%.
+  - Committed and pushed to `main` (`4c4ba5e`).

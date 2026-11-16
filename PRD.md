@@ -595,6 +595,15 @@
 - [x] 81.7 Chauffeur Daily Payout Ledger & UPI Customization: Enhanced `DriverEarningsScreen.tsx` with instant IMPS settlement requests, customizable UPI ID handle, and transparent 85% driver take-home vs 15% platform desk fee breakdown.
 - [x] 81.8 Verification & Test Runner Compliance: Zero TypeScript errors across all mobile packages (`npx tsc --noEmit`), 9/9 master test suites passing 100%, and pushed to `main` on GitHub (`d778c57`).
 
+### Phase 83: Cross-Site Request Forgery (CSRF) & Broken Note (Split Token) Session Architecture
+- [x] 83.1 Cryptographic CSRF Defense: Implemented HMAC-SHA256 timestamped and signed CSRF tokens via `services/security.js` with `GET /api/csrf` endpoint, `XSRF-TOKEN` cookie, and mutating request middleware (`POST`, `PUT`, `DELETE`, `PATCH`) with auto-heal response.
+- [x] 83.2 Broken Note (Split Token) Session Pattern: Replaced raw plaintext session tokens with the Split Token pattern where token is split into Header Half A (`bnh_...`) and HttpOnly Cookie Half B (`bnc_...`), stored strictly as `sha256(compositeToken)` at rest, and returned *strictly once* on login/OTP verification.
+- [x] 83.3 Dual-Platform Session Verification: Updated `getSessionUser`, `getSessionDriver`, and `getSessionAdmin` in `api/index.js` to verify Web split-cookie sessions (`otb_broken_note` + Bearer) and Mobile composite Bearer sessions against SHA-256 session hashes.
+- [x] 83.4 Web Client CSRF Auto-Heal: Enhanced `js/api.js` `ApiClient` with cookie reading, automatic `X-CSRF-Token` injection on mutations, and transparent 1-tap auto-retry on 403 `CSRF_TOKEN_INVALID`.
+- [x] 83.5 Mobile Client Integration: Added `getCsrfToken()` and automatic `X-CSRF-Token` attachment on mutations in `mobile/shared/services/api.ts` across Passenger, Driver, and Admin mobile apps.
+- [x] 83.6 Corporate Desk UI & Service Worker Cache Remediation: Overhauled `#modal-corporate input` in `css/components.css` to eliminate black box styling, pre-rendered the professional form layout directly into `index.html` (zero fake client data), and bumped `sw.js` cache to `onewaytaxibihar-v20261116-v46-desk-csrf`.
+- [x] 83.7 Comprehensive Verification: 10/10 test suites passing 100% in master test runner (`scripts/run-all-tests.js`), 0 mobile TypeScript errors, and deployed to `main` on GitHub (`4c4ba5e`).
+
 ## 3. Ralph Loop Acceptance Criteria
 - Code must pass validation tests without syntax errors.
 - Commits must be atomic and verified.

@@ -4422,6 +4422,7 @@
      * Production Architecture: Stateful Reactive Workspace
      */
     let _adminToken = sessionStorage.getItem("otb_adm_token") || localStorage.getItem("otb_adm_token") || "";
+    let _loginTimestamp = 0;
     let _currentAdmin = null;
     let _allBookings = [];
     let _allLeads = [];
@@ -4567,13 +4568,16 @@
 
         // Automatic session invalidation on 401 Unauthorized
         if (res.status === 401 && !endpoint.includes("/login")) {
-          _adminToken = "";
-          sessionStorage.removeItem("otb_adm_token");
-          localStorage.removeItem("otb_adm_token");
-          _currentAdmin = null;
-          if (_pollTimer) clearInterval(_pollTimer);
-          showLoginScreen();
-          showToast("Session expired or unauthorized. Please log in again.", "warning");
+          const isFreshLogin = (Date.now() - _loginTimestamp) < 10000;
+          if (!isFreshLogin) {
+            _adminToken = "";
+            sessionStorage.removeItem("otb_adm_token");
+            localStorage.removeItem("otb_adm_token");
+            _currentAdmin = null;
+            if (_pollTimer) clearInterval(_pollTimer);
+            showLoginScreen();
+            showToast("Session expired or unauthorized. Please log in again.", "warning");
+          }
         }
 
         return res;
@@ -4822,6 +4826,7 @@
 
         if (res.ok && data.success) {
           _adminToken = data.token || "";
+          _loginTimestamp = Date.now();
           if (_adminToken) {
             sessionStorage.setItem("otb_adm_token", _adminToken);
             localStorage.setItem("otb_adm_token", _adminToken);
@@ -4963,6 +4968,7 @@
         const data = await res.json();
         if (res.ok && data.success) {
           _adminToken = data.token || "";
+          _loginTimestamp = Date.now();
           sessionStorage.setItem("otb_adm_token", _adminToken);
           localStorage.setItem("otb_adm_token", _adminToken);
           _currentAdmin = data.admin || { role: "dispatcher", username: "phone_admin" };

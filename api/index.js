@@ -679,7 +679,19 @@ function getBrokenNoteCookie(req) {
   const cookies = req.headers['cookie'].split(';');
   for (const c of cookies) {
     const [k, v] = c.trim().split('=');
-    if ((k === 'otb_broken_note' || k === 'otb_adm_token') && v) {
+    if (k === 'otb_broken_note' && v) {
+      return decodeURIComponent(v);
+    }
+  }
+  return null;
+}
+
+function getAdminCookie(req) {
+  if (!req.headers['cookie']) return null;
+  const cookies = req.headers['cookie'].split(';');
+  for (const c of cookies) {
+    const [k, v] = c.trim().split('=');
+    if ((k === 'otb_adm_token' || k === 'otb_admin_token') && v) {
       return decodeURIComponent(v);
     }
   }
@@ -697,25 +709,36 @@ function getSessionUser(req, db) {
   }
   if (!token) return null;
 
-  if (db.revoked_tokens && db.revoked_tokens.includes(token)) {
+  if (db && db.revoked_tokens && db.revoked_tokens.includes(token)) {
     return null;
   }
 
   // 1. Broken Note Split-Token / Composite Verification (Hash at Rest)
   const cookieHalf = getBrokenNoteCookie(req);
-  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, db.sessions || []);
+  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, (db && db.sessions) || []);
   if (brokenSession) {
     const cleanSessionPhone = (brokenSession.phone || '').replace(/\D/g, '').slice(-10);
-    const user = (db.users || []).find(u => !u.isDeleted && (u.id === brokenSession.userId || (cleanSessionPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanSessionPhone)));
+    const user = ((db && db.users) || []).find(u => !u.isDeleted && (u.id === brokenSession.userId || (cleanSessionPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanSessionPhone)));
     return user ? { user, session: brokenSession } : null;
   }
 
-  // 2. Legacy Plain Token Fallback
-  const session = (db.sessions || []).find(s => s.token === token);
+  // 2. Cryptographic JWT Verification (Stateless)
+  const jwtPayload = securityService.verifyJwt(token);
+  if (jwtPayload && (jwtPayload.userId || jwtPayload.phone)) {
+    const cleanPhone = (jwtPayload.phone || '').replace(/\D/g, '').slice(-10);
+    let user = ((db && db.users) || []).find(u => !u.isDeleted && (u.id === jwtPayload.userId || (cleanPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanPhone)));
+    if (!user && cleanPhone) {
+      user = { id: jwtPayload.userId || `usr_${cleanPhone}`, phone: jwtPayload.phone, name: jwtPayload.name || 'Valued Passenger' };
+    }
+    return user ? { user, session: jwtPayload } : null;
+  }
+
+  // 3. Legacy Plain Token Fallback
+  const session = ((db && db.sessions) || []).find(s => s.token === token);
   if (!session) return null;
 
   const cleanSessionPhone = (session.phone || '').replace(/\D/g, '').slice(-10);
-  const user = (db.users || []).find(u => !u.isDeleted && (u.id === session.userId || (cleanSessionPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanSessionPhone)));
+  const user = ((db && db.users) || []).find(u => !u.isDeleted && (u.id === session.userId || (cleanSessionPhone && (u.phone || '').replace(/\D/g, '').slice(-10) === cleanSessionPhone)));
   return user ? { user, session } : null;
 }
 
@@ -727,11 +750,19 @@ function getSessionAdmin(req, db) {
   if (authHeader.startsWith('Bearer ')) {
     token = authHeader.replace(/^Bearer\s+/i, '').trim();
   }
+  if (!token && req.headers['x-admin-token']) {
+    token = String(req.headers['x-admin-token']).trim();
+  }
   if (!token && req.headers['x-broken-note']) {
     token = String(req.headers['x-broken-note']).trim();
   }
 
-  // 2. Check HttpOnly Cookie (otb_adm_token or otb_broken_note)
+  // 2. Check HttpOnly Cookie (otb_adm_token)
+  const adminCookie = getAdminCookie(req);
+  if (!token && adminCookie) {
+    token = adminCookie;
+  }
+
   const cookieHalf = getBrokenNoteCookie(req);
   if (!token && cookieHalf) {
     token = cookieHalf;
@@ -739,35 +770,35 @@ function getSessionAdmin(req, db) {
 
   if (!token) return null;
 
-  if (db.revoked_tokens && db.revoked_tokens.includes(token)) {
+  if (db && db.revoked_tokens && db.revoked_tokens.includes(token)) {
     return null;
   }
 
-  // 3. Broken Note Session Lookup
-  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, db.sessions || []);
+  // 3. Cryptographic JWT Verification (Stateless, Fast & Serverless-Resilient)
+  const jwtPayload = securityService.verifyJwt(token);
+  if (jwtPayload && (jwtPayload.username || jwtPayload.role)) {
+    return {
+      adminId: jwtPayload.adminId || `adm_${jwtPayload.username || 'admin'}`,
+      username: jwtPayload.username || 'admin',
+      role: jwtPayload.role || 'owner',
+      name: jwtPayload.name || jwtPayload.username || 'Operations Controller',
+      phone: jwtPayload.phone || '+91 6206494214',
+      token: token,
+      createdAt: new Date((jwtPayload.iat || Math.floor(Date.now() / 1000)) * 1000).toISOString()
+    };
+  }
+
+  // 4. Broken Note Session Lookup (Stateful)
+  const brokenSession = securityService.verifyBrokenNoteSession(token, cookieHalf, (db && db.sessions) || []);
   if (brokenSession && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(brokenSession.role)) {
-    if (db.revoked_tokens && (db.revoked_tokens.includes(brokenSession.tokenHash) || db.revoked_tokens.includes(brokenSession.headerHalf))) {
+    if (db && db.revoked_tokens && (db.revoked_tokens.includes(brokenSession.tokenHash) || db.revoked_tokens.includes(brokenSession.headerHalf))) {
       return null;
     }
     return brokenSession;
   }
 
-  // 4. Cryptographic JWT Verification
-  const jwtPayload = securityService.verifyJwt(token);
-  if (jwtPayload && jwtPayload.username) {
-    return {
-      adminId: jwtPayload.adminId || `adm_${jwtPayload.username}`,
-      username: jwtPayload.username,
-      role: jwtPayload.role || 'dispatcher',
-      name: jwtPayload.name || jwtPayload.username,
-      phone: jwtPayload.phone || '+91 6206494214',
-      token: token,
-      createdAt: new Date(jwtPayload.iat * 1000).toISOString()
-    };
-  }
-
-  // 5. Session lookup in active db.sessions (legacy)
-  const session = (db.sessions || []).find(s => s.token === token && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(s.role));
+  // 5. Session lookup in active db.sessions (legacy fallback)
+  const session = ((db && db.sessions) || []).find(s => s.token === token && ['owner', 'manager', 'dispatcher', 'accounts', 'support', 'admin', 'super_admin'].includes(s.role));
   if (session) {
     const sessionAge = Date.now() - new Date(session.createdAt || 0).getTime();
     if (sessionAge < 12 * 60 * 60 * 1000) {
@@ -1279,6 +1310,17 @@ module.exports = async (req, res) => {
         });
         brokenSession.sessionRecord.adminId = adminProfile.id;
 
+        // Stateless Cryptographic JWT for Multi-Edge Permanence
+        const jwtToken = securityService.createJwt({
+          adminId: adminProfile.id,
+          username: adminProfile.username,
+          role: adminProfile.role,
+          name: adminProfile.name,
+          phone: adminProfile.phone,
+          tokenHash: brokenSession.sessionRecord.tokenHash
+        });
+        brokenSession.sessionRecord.token = jwtToken;
+
         if (!db.sessions) db.sessions = [];
         db.sessions.push(brokenSession.sessionRecord);
         await saveDb(db);
@@ -1286,13 +1328,14 @@ module.exports = async (req, res) => {
         const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
         res.setHeader('Set-Cookie', [
           `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`,
-          `otb_adm_token=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
+          `otb_adm_token=${encodeURIComponent(jwtToken)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
         ]);
         res.setHeader('X-Broken-Note', brokenSession.headerHalf);
 
         return sendJson(200, {
           success: true,
-          token: brokenSession.compositeToken,
+          token: jwtToken,
+          compositeToken: brokenSession.compositeToken,
           headerHalf: brokenSession.headerHalf,
           brokenNote: {
             issuedOnce: true,
@@ -4395,6 +4438,17 @@ module.exports = async (req, res) => {
       brokenSession.sessionRecord.adminId = adminId;
       brokenSession.sessionRecord.username = username;
 
+      // Stateless Cryptographic JWT for Serverless Multi-Instance Permanence
+      const jwtToken = securityService.createJwt({
+        adminId,
+        username,
+        role,
+        name,
+        phone,
+        tokenHash: brokenSession.sessionRecord.tokenHash
+      });
+      brokenSession.sessionRecord.token = jwtToken;
+
       if (!db.sessions) db.sessions = [];
       db.sessions.push(brokenSession.sessionRecord);
 
@@ -4410,17 +4464,18 @@ module.exports = async (req, res) => {
 
       await saveDb(db);
 
-      // Set HttpOnly, Secure Broken Note Cookie
+      // Set HttpOnly, Secure Cookies
       const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
       res.setHeader('Set-Cookie', [
         `otb_broken_note=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`,
-        `otb_adm_token=${encodeURIComponent(brokenSession.cookieHalf)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
+        `otb_adm_token=${encodeURIComponent(jwtToken)}; Path=/; HttpOnly; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=28800`
       ]);
       res.setHeader('X-Broken-Note', brokenSession.headerHalf);
 
       return sendJson(200, {
         success: true,
-        token: brokenSession.compositeToken,
+        token: jwtToken,
+        compositeToken: brokenSession.compositeToken,
         headerHalf: brokenSession.headerHalf,
         brokenNote: {
           issuedOnce: true,

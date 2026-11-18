@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Download Oneway Taxi Mobile Apps | Passenger &amp; Driver APK</title>
+  <title>Download Oneway Taxi Mobile Apps | Passenger, Driver &amp; Admin APK</title>
   <meta name="description"
-    content="Download official OneWayTaxiBihar Android applications. Passenger App for transparent outstation cab booking and Driver Partner App for Bihar highway chauffeurs. Fast, verified direct APK downloads.">
+    content="Download official OneWayTaxiBihar Android applications: Passenger App for transparent outstation cab booking, Driver Partner App for Bihar highway chauffeurs, and Admin &amp; Fleet Operations App for central dispatch. Fast, verified direct APK downloads.">
   <meta name="keywords"
-    content="download oneway taxi app, oneway cab bihar apk, driver partner app bihar, patna cab app download, onewaytaxibihar android app, bihar taxi apk">
+    content="download oneway taxi app, oneway cab bihar apk, driver partner app bihar, admin taxi apk, fleet dispatch app bihar, patna cab app download, onewaytaxibihar android app, bihar taxi apk">
   <link rel="canonical" href="https://onewaytaxibihar.com/app-download.html">
 
   <link rel="manifest" href="/manifest.json">
@@ -133,7 +133,8 @@
       z-index: 2;
     }
 
-    .apps-two-col-grid {
+    .apps-two-col-grid,
+    .apps-three-col-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 28px;
@@ -172,6 +173,11 @@
       box-shadow: 0 20px 45px rgba(217, 119, 6, 0.15);
     }
 
+    .app-executive-card.admin-card:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 20px 45px rgba(59, 130, 246, 0.15);
+    }
+
     .card-top-header {
       display: flex;
       align-items: flex-start;
@@ -197,6 +203,10 @@
       box-shadow: 0 8px 24px rgba(217, 119, 6, 0.35);
     }
 
+    .admin-card .app-icon-box {
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+    }
+
     .app-edition-tag {
       font-size: 0.72rem;
       font-weight: 800;
@@ -216,6 +226,12 @@
       background: rgba(217, 119, 6, 0.12);
       border: 1px solid rgba(217, 119, 6, 0.4);
       color: #f59e0b;
+    }
+
+    .admin-card .app-edition-tag {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
     }
 
     .app-title-group h2 {
@@ -330,6 +346,16 @@
       background: linear-gradient(135deg, #b45309 0%, #d97706 100%);
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(217, 119, 6, 0.45);
+    }
+
+    .btn-download-admin {
+      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    }
+
+    .btn-download-admin:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.45);
     }
 
     .download-subtext {
@@ -813,7 +839,7 @@
        FLAGSHIP MOBILE APPS GRID
        ============================================================ -->
   <main class="apps-container">
-    <div class="apps-two-col-grid">
+    <div class="apps-three-col-grid">
 
       <!-- 1. PASSENGER APP CARD -->
       <article class="app-executive-card passenger-card">
@@ -953,25 +979,94 @@
         </div>
       </article>
 
+      <!-- 3. FLEET & ADMIN CONSOLE APP CARD -->
+      <article class="app-executive-card admin-card">
+        <div class="card-top-header">
+          <div class="app-icon-box" style="background:#0b1329;">
+            <img src="img/admin-icon.png" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWay Taxi Admin & Fleet Operations App" width="76" height="76" style="width:76px; height:76px; object-fit:contain; border-radius:20px; display:block;">
+          </div>
+          <span class="app-edition-tag">Admin &amp; Operations</span>
+        </div>
+
+        <div class="app-title-group">
+          <h2>OneWay Taxi • Fleet Admin</h2>
+          <div class="app-version-meta">
+            <span>Version 1.0.0</span>
+            <span>•</span>
+            <span>87.2 MB</span>
+            <span>•</span>
+            <span>Android 8.0+</span>
+            <span>•</span>
+            <span style="color:#60a5fa;">🛡️ Enterprise RBAC</span>
+          </div>
+        </div>
+
+        <div class="app-tagline">
+          Central command for Bihar intercity dispatch, live GPS corridor radar, chauffeur KYC approvals, and automated settlements.
+        </div>
+
+        <ul class="app-features-list">
+          <li>
+            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Live GPS Fleet Radar &amp; Dispatch Desk</strong> — Monitor active cabs on Bihar corridors with 15-second broadcast matching.</span>
+          </li>
+          <li>
+            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Chauffeur KYC &amp; Onboarding Approvals</strong> — 1-tap review and activation of Driving Licences, commercial RCs, and permits.</span>
+          </li>
+          <li>
+            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Real-Time Leads &amp; Booking Management</strong> — Instant notification for passenger inquiries and priority VIP assignment.</span>
+          </li>
+          <li>
+            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Chauffeur Instant Payouts &amp; Ledger Audit</strong> — Approve daily IMPS/UPI earnings settlements with immutable SHA-256 logs.</span>
+          </li>
+          <li>
+            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Emergency Booking Pause &amp; Tariff Matrix</strong> — Complete operational authority over 226 Bihar route fares and rate rules.</span>
+          </li>
+        </ul>
+
+        <div class="download-cta-block">
+          <a href="/downloads/admin-latest.apk" class="btn-download-primary btn-download-admin" download title="Download Admin APK">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Download Admin Console APK</span>
+          </a>
+          <div class="download-subtext">Direct High-Speed Cloud CDN • Enterprise Operations Edition</div>
+
+          <div class="app-secondary-actions">
+            <a href="/admin.html" class="btn-secondary-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Web Console</span>
+            </a>
+            <a href="/three-apps-preview.html" class="btn-secondary-link" style="color: #60a5fa; border-color: rgba(96, 165, 250, 0.3);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Simulator</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
     </div>
 
-    <!-- ENTERPRISE ADMIN FLEET STRIP -->
+    <!-- INTERACTIVE 3-APP SIMULATOR & WEB CONSOLE STRIP -->
     <div class="enterprise-admin-strip">
       <div class="admin-strip-info">
         <div class="admin-strip-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         </div>
         <div class="admin-strip-text">
-          <h3>Fleet Administrators &amp; Operations Desk</h3>
-          <p>For corporate dispatchers, corridor managers, and Bihar fleet coordinators.</p>
+          <h3>Interactive 3-App Simulator &amp; Expo Go Hub</h3>
+          <p>Preview Passenger, Driver Partner, and Admin apps running live in browser or scan QR codes via Expo Go.</p>
         </div>
       </div>
       <div class="admin-strip-actions">
-        <a href="/admin.html" class="btn-admin-pill btn-admin-console">
-          <span>🖥️ Web Admin Console</span>
+        <a href="/three-apps-preview.html" class="btn-admin-pill btn-admin-console">
+          <span>📱 Open 3-App Simulator</span>
         </a>
-        <a href="/downloads/admin-latest.apk" class="btn-admin-pill btn-admin-apk" download>
-          <span>⬇️ Admin APK</span>
+        <a href="/admin.html" class="btn-admin-pill btn-admin-apk">
+          <span>🖥️ Open Web Admin Portal</span>
         </a>
       </div>
     </div>

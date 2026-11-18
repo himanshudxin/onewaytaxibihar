@@ -3410,6 +3410,45 @@
                     <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAppReleaseSingle('driver')">Save Driver Release</button>
                   </div>
 
+                  <!-- Admin Operations Console APK Config -->
+                  <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                      <h4 style="font-size:15px; font-weight:800; color:var(--navy-900); display:flex; align-items:center; gap:8px;">
+                        <span>📱 Admin Operations Console App</span>
+                      </h4>
+                      <span class="pill" style="background:rgba(37, 99, 235, 0.12); color:#2563eb; border:1px solid rgba(37,99,235,0.3);" id="badge-admin-release">Active v1.2.0</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Latest Version String</label>
+                      <input type="text" class="form-control" id="set-admin-latest-ver" value="1.2.0" placeholder="e.g. 1.2.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Min Supported Version (Hard Wall)</label>
+                      <input type="text" class="form-control" id="set-admin-min-ver" value="1.0.0" placeholder="e.g. 1.0.0">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label class="form-label" style="font-size:12px;">Direct APK Download Link</label>
+                      <input type="text" class="form-control" id="set-admin-download-url" value="https://onewaytaxibihar.com/downloads/admin-latest.apk">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:12px;">
+                      <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+                        <input type="checkbox" id="set-admin-force-update">
+                        <span>Force Immediate Update (Mandatory Modal)</span>
+                      </label>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                      <label class="form-label" style="font-size:12px;">Changelog / Release Notes</label>
+                      <textarea class="form-control" id="set-admin-notes" rows="3" style="font-size:12px;">Real-time GPS dispatch radar, 1-tap chauffeur KYC approvals, and automated trip settlements.</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-sm" style="width:100%;" onclick="saveAppReleaseSingle('admin')">Save Admin Release</button>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -9441,6 +9480,15 @@
             setValue("set-driver-notes", rels.driver.releaseNotes || "");
             setText("badge-driver-release", "Active v" + (rels.driver.latestVersion || "1.2.0"));
           }
+          if (rels.admin) {
+            setValue("set-admin-latest-ver", rels.admin.latestVersion || "1.2.0");
+            setValue("set-admin-min-ver", rels.admin.minSupportedVersion || "1.0.0");
+            setValue("set-admin-download-url", rels.admin.downloadUrl || "https://onewaytaxibihar.com/downloads/admin-latest.apk");
+            const chk = document.getElementById("set-admin-force-update");
+            if (chk) chk.checked = Boolean(rels.admin.forceUpdate);
+            setValue("set-admin-notes", rels.admin.releaseNotes || "");
+            setText("badge-admin-release", "Active v" + (rels.admin.latestVersion || "1.2.0"));
+          }
         }
       } catch (e) {
         showToast("Error loading app releases: " + e.message, "error");
@@ -9448,8 +9496,7 @@
     }
 
     async function saveAppReleaseSingle(app) {
-      const isPass = app === 'passenger';
-      const prefix = isPass ? 'set-passenger-' : 'set-driver-';
+      const prefix = 'set-' + app + '-';
       const latestVer = getValue(prefix + "latest-ver").trim();
       const minVer = getValue(prefix + "min-ver").trim();
       const downloadUrl = getValue(prefix + "download-url").trim();
@@ -9476,8 +9523,9 @@
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast((isPass ? 'Passenger' : 'Driver Partner') + " APK Release Config v" + latestVer + " saved!", "success");
-          setText(isPass ? "badge-passenger-release" : "badge-driver-release", "Active v" + latestVer);
+          const appLabel = app === 'passenger' ? 'Passenger' : (app === 'driver' ? 'Driver Partner' : 'Admin Operations');
+          showToast(appLabel + " APK Release Config v" + latestVer + " saved!", "success");
+          setText("badge-" + app + "-release", "Active v" + latestVer);
         } else {
           showToast(data.message || "Failed to update release config", "error");
         }

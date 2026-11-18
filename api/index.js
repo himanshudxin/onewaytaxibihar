@@ -7701,16 +7701,23 @@ module.exports = async (req, res) => {
         passenger: {
           latestVersion: '1.0.0',
           minSupportedVersion: '1.0.0',
-          downloadUrl: 'https://onewaytaxibihar.com/downloads/onewaytaxi-passenger.apk',
+          downloadUrl: 'https://onewaytaxibihar.com/downloads/passenger-latest.apk',
           forceUpdate: false,
           releaseNotes: 'Production Release v1.0.0: Doorstep outstation cabs, GPS tracking, and instant OTP verification.'
         },
         driver: {
           latestVersion: '1.0.0',
           minSupportedVersion: '1.0.0',
-          downloadUrl: 'https://onewaytaxibihar.com/downloads/onewaytaxi-driver.apk',
+          downloadUrl: 'https://onewaytaxibihar.com/downloads/driver-latest.apk',
           forceUpdate: false,
           releaseNotes: 'Production Release v1.0.0: Real-time broadcast queue, 85% revenue earnings, and offline telemetry.'
+        },
+        admin: {
+          latestVersion: '1.0.0',
+          minSupportedVersion: '1.0.0',
+          downloadUrl: 'https://onewaytaxibihar.com/downloads/admin-latest.apk',
+          forceUpdate: false,
+          releaseNotes: 'Production Release v1.0.0: Real-time GPS dispatch radar, 1-tap chauffeur KYC approvals, and automated trip settlements.'
         }
       };
 
@@ -7762,6 +7769,13 @@ module.exports = async (req, res) => {
             downloadUrl: 'https://onewaytaxibihar.com/downloads/driver-latest.apk',
             forceUpdate: false,
             releaseNotes: 'Background location heartbeat reliability and 30s audio trip dispatch offers.'
+          },
+          admin: {
+            latestVersion: '1.2.0',
+            minSupportedVersion: '1.0.0',
+            downloadUrl: 'https://onewaytaxibihar.com/downloads/admin-latest.apk',
+            forceUpdate: false,
+            releaseNotes: 'Real-time GPS dispatch radar, 1-tap chauffeur KYC approvals, and automated trip settlements.'
           }
         };
         await saveDb(db);

@@ -186,7 +186,7 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
               <Text style={styles.commissionPolicyTitle}>85% Chauffeur Earnings Policy</Text>
             </View>
             <Text style={styles.commissionPolicyDesc}>
-              You keep 85% of total ride fares. 15% is the platform fee for 24x7 partner and customer support.
+              You keep 85% of total ride fares. 15% is the platform fee for 24x7 customer support.
             </Text>
           </View>
 

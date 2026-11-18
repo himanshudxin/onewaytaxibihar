@@ -4502,7 +4502,7 @@
       let token = getCsrfCookie();
       if (token) return token;
       try {
-        const res = await fetch(getApiUrl("/csrf"));
+        const res = await fetch(getApiUrl("/api/csrf"));
         if (res.ok) {
           const data = await res.json();
           if (data && data.csrfToken) {

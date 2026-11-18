@@ -251,20 +251,21 @@
       "balanceDue": 2199,
       "paymentMethod": "Cash on Ride (Zero Advance)",
       "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
-      "bookingStatus": "SEARCHING_DRIVER",
-      "status": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
+      "status": "DRIVER ASSIGNED",
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "verifiedAt": "2026-11-17T21:49:07.661Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_768",
+        "name": "RBAC Driver manager",
+        "phone": "+91 9123452055",
+        "vehicleNumber": "BR 01 RB 2055",
+        "vehicleModel": "Commercial Taxi",
+        "rating": 4.9
+      },
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-17T22:38:48.679Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 26 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-17T22:40:18.714Z",
@@ -408,10 +409,16 @@
           "timestamp": "2026-11-18T01:57:58.844Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-18T01:59:58.865Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%."
         }
       ],
       "createdAt": "2026-11-17T21:49:07.661Z",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "broadcastCandidates": [
         "drv_768",
         "drv_488",
@@ -430,7 +437,7 @@
       ],
       "broadcastStartedAt": "2026-11-18T01:57:58.844Z",
       "broadcastTimeoutSec": 120,
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_768",
       "rejectedDrivers": [
         "drv_9934188888",
         "drv_814",
@@ -448,13 +455,13 @@
         "drv_722",
         "drv_285"
       ],
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
-      "assignedDriverCarNo": null,
+      "assignedDriverId": "drv_768",
+      "assignedDriverName": "RBAC Driver manager",
+      "assignedDriverPhone": "+91 9123452055",
+      "assignedDriverCarNo": "BR 01 RB 2055",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-18T01:42:58.495Z",
-      "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
+      "autoDispatchedAt": "2026-11-18T01:59:58.865Z",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%.",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -536,20 +543,21 @@
       "balanceDue": 2199,
       "paymentMethod": "Cash on Ride (Zero Advance)",
       "paymentStatus": "PAYABLE TO DRIVER (Cash on Ride)",
-      "bookingStatus": "SEARCHING_DRIVER",
-      "status": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
+      "status": "DRIVER ASSIGNED",
       "phoneVerified": true,
       "verifiedMethod": "Telecom SMS OTP (Verified)",
       "verifiedAt": "2026-11-17T21:49:07.339Z",
       "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_768",
+        "name": "RBAC Driver manager",
+        "phone": "+91 9123452055",
+        "vehicleNumber": "BR 01 RB 2055",
+        "vehicleModel": "Commercial Taxi",
+        "rating": 4.9
+      },
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-17T22:38:48.679Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 26 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-17T22:40:18.720Z",
@@ -693,10 +701,16 @@
           "timestamp": "2026-11-18T01:57:58.865Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur RBAC Driver owner inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 14 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-18T01:59:58.868Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%."
         }
       ],
       "createdAt": "2026-11-17T21:49:07.339Z",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "broadcastCandidates": [
         "drv_768",
         "drv_488",
@@ -715,7 +729,7 @@
       ],
       "broadcastStartedAt": "2026-11-18T01:57:58.865Z",
       "broadcastTimeoutSec": 120,
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_768",
       "rejectedDrivers": [
         "drv_9934188888",
         "drv_814",
@@ -733,13 +747,13 @@
         "drv_722",
         "drv_285"
       ],
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
-      "assignedDriverCarNo": null,
+      "assignedDriverId": "drv_768",
+      "assignedDriverName": "RBAC Driver manager",
+      "assignedDriverPhone": "+91 9123452055",
+      "assignedDriverCarNo": "BR 01 RB 2055",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-18T01:42:58.497Z",
-      "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
+      "autoDispatchedAt": "2026-11-18T01:59:58.868Z",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%.",
       "priority": "HIGH_URGENT_REASSIGNMENT",
       "radiusExpanded": false
     },
@@ -919,16 +933,16 @@
     {
       "bookingId": "OTB-2026-6206",
       "advancePaid": 0,
-      "assignedDriverCarNo": null,
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
-      "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
+      "assignedDriverCarNo": "BR 01 PD 6024",
+      "assignedDriverId": "drv_104",
+      "assignedDriverName": "Sanjay Paswan",
+      "assignedDriverPhone": "+91 82103 44556",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-18T01:42:58.499Z",
+      "autoDispatchedAt": "2026-11-18T01:59:58.869Z",
       "balanceDue": 2199,
       "bookingSource": "Website",
-      "bookingStatus": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
         "drv_104",
         "drv_102",
@@ -940,7 +954,7 @@
         "drv_test_2242",
         "drv_test_2244"
       ],
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_104",
       "broadcastStartedAt": "2026-11-18T01:57:58.866Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
@@ -957,9 +971,16 @@
       "customerName": "Journey Passenger",
       "customerPhone": "+91 9876509111",
       "destCity": "Gaya",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_104",
+        "name": "Sanjay Paswan",
+        "phone": "+91 82103 44556",
+        "vehicleNumber": "BR 01 PD 6024",
+        "vehicleModel": "Honda City (Brown)",
+        "rating": 5
+      },
       "dropAddress": "Gaya City",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1039,14 +1060,8 @@
         "drv_101"
       ],
       "source": "Website",
-      "status": "SEARCHING_DRIVER",
+      "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-17T22:36:48.648Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 21 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-17T22:38:18.669Z",
@@ -1190,6 +1205,12 @@
           "timestamp": "2026-11-18T01:57:58.866Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 9 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-18T01:59:58.869Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,
@@ -1204,16 +1225,16 @@
     {
       "bookingId": "OTB-2026-4778",
       "advancePaid": 0,
-      "assignedDriverCarNo": null,
-      "assignedDriverId": null,
-      "assignedDriverName": null,
-      "assignedDriverPhone": null,
-      "autoDispatchReason": "Autonomous direct match fallback triggered after 90s broadcast timeout. Best score: 99%.",
+      "assignedDriverCarNo": "BR 01 PD 6024",
+      "assignedDriverId": "drv_104",
+      "assignedDriverName": "Sanjay Paswan",
+      "assignedDriverPhone": "+91 82103 44556",
+      "autoDispatchReason": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%.",
       "autoDispatched": true,
-      "autoDispatchedAt": "2026-11-18T01:42:58.501Z",
+      "autoDispatchedAt": "2026-11-18T01:59:58.870Z",
       "balanceDue": 2199,
       "bookingSource": "Website",
-      "bookingStatus": "SEARCHING_DRIVER",
+      "bookingStatus": "DRIVER ASSIGNED",
       "broadcastCandidates": [
         "drv_104",
         "drv_102",
@@ -1225,7 +1246,7 @@
         "drv_test_2242",
         "drv_test_2244"
       ],
-      "broadcastClaimedBy": null,
+      "broadcastClaimedBy": "drv_104",
       "broadcastStartedAt": "2026-11-18T01:57:58.866Z",
       "broadcastTimeoutSec": 120,
       "cabModel": "Dzire, Etios, Amaze",
@@ -1242,9 +1263,16 @@
       "customerName": "Booking Passenger",
       "customerPhone": "+91 9876508111",
       "destCity": "Gaya",
-      "dispatchStatus": "BROADCASTING",
+      "dispatchStatus": "ASSIGNED",
       "distanceKm": 104,
-      "driverDetails": null,
+      "driverDetails": {
+        "id": "drv_104",
+        "name": "Sanjay Paswan",
+        "phone": "+91 82103 44556",
+        "vehicleNumber": "BR 01 PD 6024",
+        "vehicleModel": "Honda City (Brown)",
+        "rating": 5
+      },
       "dropAddress": "Gaya City",
       "dropCity": "Gaya",
       "duration": "3h 15m",
@@ -1324,14 +1352,8 @@
         "drv_101"
       ],
       "source": "Website",
-      "status": "SEARCHING_DRIVER",
+      "status": "DRIVER ASSIGNED",
       "statusHistory": [
-        {
-          "status": "DRIVER_GHOST_REASSIGNED",
-          "timestamp": "2026-11-17T22:37:18.656Z",
-          "actor": "AutonomousGhostSentinel",
-          "note": "Chauffeur RBAC Driver dispatcher inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 21 chauffeur(s)."
-        },
         {
           "status": "DRIVER_ASSIGNED",
           "timestamp": "2026-11-17T22:38:48.679Z",
@@ -1475,6 +1497,12 @@
           "timestamp": "2026-11-18T01:57:58.866Z",
           "actor": "AutonomousGhostSentinel",
           "note": "Chauffeur Ramesh Kumar Sharma inactive for 15m. Driver set offline and ride autonomously re-broadcasted to 9 chauffeur(s)."
+        },
+        {
+          "status": "DRIVER_ASSIGNED",
+          "timestamp": "2026-11-18T01:59:58.870Z",
+          "actor": "AutonomousMatchFallback",
+          "note": "Autonomous direct match fallback triggered after 120s broadcast timeout. Best score: 99%."
         }
       ],
       "totalFare": 2199,

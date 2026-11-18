@@ -19,6 +19,7 @@
     { "source": "/api/enquiries", "destination": "/api/leads" },
     { "source": "/api/health", "destination": "/api/health" },
     { "source": "/api/:path*", "destination": "/api" },
+    { "source": "/csrf", "destination": "/api" },
 
     { "source": "/cabs", "destination": "/cabs.html" },
     { "source": "/booking", "destination": "/booking.html" },

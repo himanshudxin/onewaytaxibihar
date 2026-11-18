@@ -262,10 +262,11 @@ const QUICK_HUBS = [
 ];
 
 function simulateSearchFilter(query) {
-  const isExactMatch = BIHAR_CITIES.some(c => c.toLowerCase() === query.trim().toLowerCase());
-  const filteredCities = BIHAR_CITIES.filter(c =>
-    c.toLowerCase().includes(query.toLowerCase())
-  );
+  const cleanQuery = (query || '').trim().toLowerCase();
+  const isExactMatch = BIHAR_CITIES.some(c => c.toLowerCase() === cleanQuery);
+  const filteredCities = cleanQuery
+    ? BIHAR_CITIES.filter(c => c.toLowerCase().includes(cleanQuery))
+    : BIHAR_CITIES;
   return [
     ...(query.trim() && !isExactMatch ? [query.trim()] : []),
     ...filteredCities

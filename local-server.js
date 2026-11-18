@@ -154,7 +154,8 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Idempotency-Key, Accept, Origin, X-CSRF-Token, X-XSRF-Token, X-Bypass-CSRF, X-Client-Platform');
+  res.setHeader('Access-Control-Expose-Headers', 'X-CSRF-Token, Content-Range');
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -208,6 +209,8 @@ const server = http.createServer(async (req, res) => {
   // 1. API Route Handler (High Performance Serverless Handler)
   const isApiRoute = pathname === '/api' || 
     pathname.startsWith('/api/') || 
+    pathname === '/csrf' ||
+    pathname.startsWith('/auth') ||
     pathname.startsWith('/fares') || 
     pathname.startsWith('/fare/') || 
     pathname.startsWith('/dispatch/') || 
@@ -218,17 +221,14 @@ const server = http.createServer(async (req, res) => {
     pathname.startsWith('/payment') || 
     pathname.startsWith('/payments') || 
     pathname.startsWith('/notifications') || 
-    pathname === '/admin/login' || 
-    pathname.startsWith('/admin/cancel-booking') ||
-    pathname.startsWith('/admin/bookings') ||
-    pathname.startsWith('/admin/assign-driver');
+    (pathname.startsWith('/admin/') && !pathname.endsWith('.html') && !pathname.endsWith('.js') && !pathname.endsWith('.css') && !pathname.endsWith('.png') && !pathname.endsWith('.jpg') && !pathname.endsWith('.svg'));
 
   if (isApiRoute) {
     return apiHandler(req, res);
   }
 
   // 2. Static File Serving with In-Memory Caching & Pre-Gzip Compression
-  let filePath = pathname === '/' ? '/index.html' : pathname;
+  let filePath = (pathname === '/' || pathname === '') ? '/index.html' : ((pathname === '/admin' || pathname === '/admin/') ? '/admin.html' : pathname);
   let safePath = path.normalize(path.join(WORKSPACE_DIR, filePath));
 
   // Download URL Aliases (Eliminates redundant 87MB file duplication on disk)
@@ -353,8 +353,20 @@ process.on('unhandledRejection', (reason, promise) => {
 
 function gracefulShutdown(signal) {
   console.log(`[OneWayTaxiBihar] Received ${signal}. Gracefully stopping server...`);
-  server.close(() => {
-    console.log('[OneWayTaxiBihar] HTTP connections closed. Process terminating safely.');
+  server.close(async () => {
+    try {
+      const dbService = require('./services/db.js');
+      if (typeof dbService.closeDatabaseConnections === 'function') {
+        await dbService.closeDatabaseConnections();
+      }
+    } catch (_) {}
+    try {
+      if (global._mongoClient) {
+        await global._mongoClient.close();
+        global._mongoClient = null;
+      }
+    } catch (_) {}
+    console.log('[OneWayTaxiBihar] HTTP connections and database pools closed. Process terminating safely.');
     process.exit(0);
   });
   setTimeout(() => {

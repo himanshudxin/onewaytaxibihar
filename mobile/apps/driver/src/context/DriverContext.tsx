@@ -78,19 +78,19 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             cabTier: (activeServerTrip.cabTier || 'sedan').toLowerCase() as any,
             cabName: activeServerTrip.cabName || 'Prime Sedan',
             fareBreakdown: activeServerTrip.fareBreakdown || {
-              baseFare: activeServerTrip.totalFare || 2198,
-              distanceKm: activeServerTrip.distanceKm || 104,
-              durationHours: 3,
+              baseFare: activeServerTrip.totalFare || 0,
+              distanceKm: activeServerTrip.distanceKm || 0,
+              durationHours: 1,
               perKmRate: 16,
-              driverAllowance: 300,
-              tollCharges: 150,
+              driverAllowance: 0,
+              tollCharges: 0,
               stateTaxPermit: 0,
-              gstAmount: 105,
+              gstAmount: 0,
               nightCharge: 0,
               waitingChargePerMin: 2,
-              totalFare: activeServerTrip.totalFare || 2198,
+              totalFare: activeServerTrip.totalFare || 0,
               advancePayable: 0,
-              balancePayableToDriver: activeServerTrip.totalFare || 2198,
+              balancePayableToDriver: activeServerTrip.totalFare || 0,
               currency: 'INR'
             },
             paymentMethod: activeServerTrip.paymentMethod || 'driver_cash',
@@ -111,41 +111,69 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const explicitLogout = await StorageService.getItem('otb_driver_explicit_logout');
       if (explicitLogout === 'true') {
         setIsLoggedIn(false);
+        setDriver(null);
         setIsRestoringSession(false);
         return;
       }
 
-      let savedPhone = (await StorageService.getItem('otb_driver_phone')) || '6206494214';
-      await StorageService.setItem('otb_driver_phone', savedPhone);
+      const savedPhone = await StorageService.getItem('otb_driver_phone');
+      const authToken = await StorageService.getItem('otb_auth_token');
 
-      let authToken = await StorageService.getItem('otb_auth_token');
-      if (!authToken) {
-        try {
-          const authRes = await MobileApiClient.driverLogin(savedPhone, '4214');
-          if (authRes && authRes.token) {
-            authToken = authRes.token;
-            await StorageService.setItem('otb_auth_token', authToken);
-          }
-        } catch (e) {
-          authToken = `drv_verified_${savedPhone}`;
-          await StorageService.setItem('otb_auth_token', authToken);
-        }
+      // If user has not verified or logged in yet, start clean on DriverAuthScreen
+      if (!savedPhone || !authToken) {
+        setIsLoggedIn(false);
+        setDriver(null);
+        setIsRestoringSession(false);
+        return;
       }
 
-      const prof = await MobileApiClient.getDriverProfile(savedPhone);
+      const cleanPhone = savedPhone.replace(/\D/g, '').slice(-10);
+      const prof = await MobileApiClient.getDriverProfile(cleanPhone);
       if (prof) {
         setDriver(prof);
         const savedDuty = await StorageService.getItem('otb_driver_duty_status');
-        const effectiveDuty = savedDuty !== null ? savedDuty === 'ONLINE' : prof.isDutyOnline;
+        const effectiveDuty = savedDuty !== null ? savedDuty === 'ONLINE' : Boolean(prof.isDutyOnline);
         setIsDutyOnline(effectiveDuty);
         setIsLoggedIn(true);
-        await checkDriverDispatches(savedPhone);
+        await checkDriverDispatches(cleanPhone);
       } else {
+        // Fallback to local profile when token is already authenticated
+        const localDocs = await StorageService.getJson<any>('otb_driver_application', {});
+        const cachedOfflineProfile: DriverProfile = {
+          id: `drv_${cleanPhone}`,
+          fullName: localDocs.fullName || `Chauffeur ${cleanPhone.slice(-4)}`,
+          phone: `+91 ${cleanPhone}`,
+          verificationStatus: (await StorageService.getItem('otb_driver_status') as any) || 'pending',
+          documents: {
+            drivingLicenceNumber: localDocs.drivingLicenceNumber || '',
+            drivingLicenceExpiry: localDocs.drivingLicenceExpiry || '',
+            aadhaarNumber: localDocs.aadhaarNumber || '',
+            vehicleMake: localDocs.vehicleMake || '',
+            vehicleModel: localDocs.vehicleModel || '',
+            vehicleYear: localDocs.vehicleYear || '',
+            vehiclePlateNumber: localDocs.vehiclePlateNumber || '',
+            bankAccountNumber: localDocs.bankAccountNumber || '',
+            upiId: localDocs.upiId || ''
+          },
+          rating: 5.0,
+          totalTrips: 0,
+          isDutyOnline: false,
+          lastActive: new Date().toISOString(),
+          walletBalance: 0
+        };
+        setDriver(cachedOfflineProfile);
         setIsLoggedIn(true);
       }
     } catch (e) {
-      // Offline fallback: keep chauffeur authenticated with local profile
-      setIsLoggedIn(true);
+      // Offline fallback: only preserve login if authenticated credentials exist
+      const authToken = await StorageService.getItem('otb_auth_token');
+      const savedPhone = await StorageService.getItem('otb_driver_phone');
+      if (authToken && savedPhone) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        setDriver(null);
+      }
     } finally {
       setIsRestoringSession(false);
     }
@@ -153,7 +181,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const refreshEarnings = async () => {
     try {
-      const phone = driver?.phone || (await StorageService.getItem('otb_driver_phone')) || '9876508888';
+      const phone = driver?.phone || (await StorageService.getItem('otb_driver_phone'));
       if (phone) {
         const data = await MobileApiClient.getDriverEarnings(phone);
         if (data) setEarnings(data);
@@ -171,8 +199,8 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // React to cross-app dispatches from Admin
   useEffect(() => {
     const unsub = FleetSyncService.subscribe(() => {
-      const phone = driver?.phone || '9876508888';
-      checkDriverDispatches(phone);
+      const phone = driver?.phone;
+      if (phone) checkDriverDispatches(phone);
     });
     return unsub;
   }, [driver?.phone, activeTrip]);
@@ -182,7 +210,8 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!isLoggedIn || !isDutyOnline) return;
 
     let interval: any = null;
-    const phone = driver?.phone || '9876508888';
+    const phone = driver?.phone;
+    if (!phone) return;
 
     const startPolling = () => {
       if (interval) clearInterval(interval);
@@ -219,7 +248,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Real-time GPS location streaming when Driver is On Duty
   useEffect(() => {
-    if (!isDutyOnline) return;
+    if (!isDutyOnline || !driver?.phone) return;
 
     let isMounted = true;
     let locationWatcher: any = null;
@@ -235,7 +264,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           const lng = initialLoc.coords.longitude;
           setDriverCoords({ lat, lng });
 
-          const phone = driver?.phone || '9876508888';
+          const phone = driver.phone;
           const coords = {
             lat,
             lng,
@@ -259,7 +288,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const lng = loc.coords.longitude;
             setDriverCoords({ lat, lng });
 
-            const phone = driver?.phone || '9876508888';
+            const phone = driver.phone;
             const coords = {
               lat,
               lng,
@@ -299,14 +328,16 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const toggleDuty = async (online: boolean) => {
     setIsDutyOnline(online);
     await StorageService.setItem('otb_driver_duty_status', online ? 'ONLINE' : 'OFFLINE');
-    const phone = driver?.phone || '9876501234';
-    await FleetSyncService.toggleDriverDuty(phone, online);
+    const phone = driver?.phone;
+    if (phone) {
+      await FleetSyncService.toggleDriverDuty(phone, online);
+      await MobileApiClient.toggleDriverDuty(phone, online);
+    }
     if (driver) {
-      await MobileApiClient.toggleDriverDuty(driver.phone, online);
       setDriver(prev => prev ? { ...prev, isDutyOnline: online } : null);
     }
 
-    if (online) {
+    if (online && phone) {
       ForegroundTrackingService.startTracking(phone, activeTrip?.referenceNumber || activeTrip?.id);
     } else {
       ForegroundTrackingService.stopTracking();

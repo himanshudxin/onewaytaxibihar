@@ -57,7 +57,7 @@ export const DriverProfileScreen = ({ navigation }: any) => {
           text: 'Proceed with Erasure',
           style: 'destructive',
           onPress: async () => {
-            const res = await MobileApiClient.requestAccountDeletion(driver?.phone || '9876501234', 'Driver requested account closure');
+            const res = await MobileApiClient.requestAccountDeletion(driver?.phone || '', 'Driver requested account closure');
             Alert.alert('Account Closed', res.message);
             await logout();
             navigation.replace('DriverAuth');
@@ -79,15 +79,15 @@ export const DriverProfileScreen = ({ navigation }: any) => {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={[styles.driverName, { color: colors.text }]}>
-              {driver?.fullName || 'Ramesh Kumar Singh'}
+              {driver?.fullName || 'Driver Partner'}
             </Text>
             <Text style={[styles.driverPhone, { color: colors.textSecondary }]}>
-              +91 {driver?.phone || '9876501234'}
+              {driver?.phone ? (driver.phone.startsWith('+91') ? driver.phone : '+91 ' + driver.phone) : 'Unregistered'}
             </Text>
             <View style={styles.ratingRow}>
               <Star size={14} color={colors.gold} fill={colors.gold} />
-              <Text style={[styles.ratingVal, { color: colors.gold }]}>4.88 Rating</Text>
-              <Text style={[styles.tripsCount, { color: colors.textMuted }]}>• 342 Trips Completed</Text>
+              <Text style={[styles.ratingVal, { color: colors.gold }]}>{(driver?.rating || 5.0).toFixed(1)} Rating</Text>
+              <Text style={[styles.tripsCount, { color: colors.textMuted }]}>• {driver?.totalTrips || 0} Trips Completed</Text>
             </View>
           </View>
         </View>
@@ -176,13 +176,13 @@ export const DriverProfileScreen = ({ navigation }: any) => {
               <View style={{ flex: 1 }}>
                 <Text style={[styles.docLabel, { color: colors.textMuted }]}>COMMERCIAL TAXI</Text>
                 <Text style={[styles.docVal, { color: colors.text }]}>
-                  {driver?.documents.vehicleMake || 'Maruti'} {driver?.documents.vehicleModel || 'Dzire Prime'}
+                  {driver?.documents?.vehicleMake || ''} {driver?.documents?.vehicleModel || 'No Vehicle Registered'}
                 </Text>
                 <Text style={[styles.docPlate, { color: colors.gold }]}>
-                  {driver?.documents.vehiclePlateNumber || 'BR 01 PB 8291'}
+                  {driver?.documents?.vehiclePlateNumber || 'Plate Number Pending'}
                 </Text>
               </View>
-              <CheckCircle2 size={18} color={colors.primary} />
+              <CheckCircle2 size={18} color={driver?.documents?.vehiclePlateNumber ? colors.primary : colors.textMuted} />
             </View>
 
             <View style={[styles.divider, { backgroundColor: colors.border }]} />
@@ -192,13 +192,13 @@ export const DriverProfileScreen = ({ navigation }: any) => {
               <View style={{ flex: 1 }}>
                 <Text style={[styles.docLabel, { color: colors.textMuted }]}>DRIVING LICENCE (COMMERCIAL)</Text>
                 <Text style={[styles.docVal, { color: colors.text }]}>
-                  {driver?.documents.drivingLicenceNumber || 'BR-01-2018-0049281'}
+                  {driver?.documents?.drivingLicenceNumber || 'Not Submitted'}
                 </Text>
                 <Text style={[styles.docExpiry, { color: colors.textMuted }]}>
-                  Valid till: {driver?.documents.drivingLicenceExpiry || '2032-11-15'}
+                  Valid till: {driver?.documents?.drivingLicenceExpiry || 'Pending'}
                 </Text>
               </View>
-              <CheckCircle2 size={18} color={colors.primary} />
+              <CheckCircle2 size={18} color={driver?.documents?.drivingLicenceNumber ? colors.primary : colors.textMuted} />
             </View>
           </View>
         </View>

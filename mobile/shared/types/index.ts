@@ -5,7 +5,7 @@
 
 export type TripType = 'one-way' | 'round-trip';
 
-export type CabTierId = 'hatchback' | 'sedan' | 'suv';
+export type CabTierId = 'hatchback' | 'sedan' | 'suv' | 'sedan_prime' | 'innova_crysta';
 
 export interface CabTier {
   id: CabTierId;

@@ -8,5 +8,14 @@
       "@shared/*": ["../../shared/*"],
       "@/*": ["src/*"]
     }
-  }
+  },
+  "include": [
+    "src",
+    "../../declarations.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/dist"
+  ]
 }

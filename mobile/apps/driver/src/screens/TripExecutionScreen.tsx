@@ -174,14 +174,14 @@ export const TripExecutionScreen = ({ navigation }: any) => {
   };
 
   const handleStartTripWithOtp = () => {
-    const validOtps = [activeTrip.startOtp, '4921', '1234', '8172', '6319'].filter(Boolean);
+    const validOtps = [activeTrip.startOtp].filter(Boolean);
     if (!enteredOtp.trim()) {
-      Alert.alert('OTP Required', `Please enter the 4-digit Ride Start OTP (Customer Code: ${activeTrip.startOtp || '4921'} or test code 1234).`);
+      Alert.alert('OTP Required', 'Please enter the 4-digit Ride Start OTP provided by the passenger.');
       return;
     }
 
     if (!validOtps.includes(enteredOtp.trim())) {
-      Alert.alert('Invalid OTP', `The OTP entered does not match customer booking security code. (Use code: ${activeTrip.startOtp || '4921'} or test code 1234)`);
+      Alert.alert('Invalid OTP', 'The OTP entered does not match the passenger ride security code.');
       return;
     }
 
@@ -326,7 +326,7 @@ export const TripExecutionScreen = ({ navigation }: any) => {
             <View style={styles.stageBody}>
               <Text style={[styles.stagePrompt, { color: colors.text }]}>Enter Passenger 4-Digit Ride Start OTP</Text>
               <Text style={[styles.stagePromptSub, { color: colors.textSecondary }]}>
-                Ask rider {activeTrip.passengerName} for code: <Text style={{ color: colors.gold, fontWeight: '700' }}>{activeTrip.startOtp || '4921'}</Text> (or test code 1234)
+                Ask rider {activeTrip.passengerName} for their 4-digit ride start security code.
               </Text>
 
               <View style={[styles.otpBox, { backgroundColor: colors.surfaceElevated, borderColor: colors.border }]}>

@@ -14,7 +14,7 @@ import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { usePassenger } from '../context/PassengerContext';
 import { UberMapView } from '../components/UberMapView';
 import { MobileApiClient } from '../../../../shared/services/api';
-import { findMatchingFare } from '../../../../shared/data/patnaFares';
+import { computeRouteQuote, type RouteQuoteResult, type VehicleQuote } from '../../../../shared/utils/fareEngine';
 import { formatCurrency, formatDistance } from '../../../../shared/utils/formatters';
 import {
   Car,
@@ -44,93 +44,21 @@ export const CabSelectScreen = ({ navigation }: any) => {
   const { search, selectedTier, setSelectedTier, fares } = usePassenger();
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  // Match destination from live backend fares database or authoritative master dataset
-  const matchedFare = findMatchingFare(search.origin || 'Patna', search.destination || 'Gaya', fares);
+  // Compute authentic route quote and distance across all 38 Bihar districts using dynamic fare engine
+  const routeQuote = computeRouteQuote(
+    search.origin || 'Patna',
+    search.destination || 'Gaya',
+    search.tripType === 'round-trip' ? 'round-trip' : 'one-way'
+  );
 
   const isRoundTrip = search.tripType === 'round-trip';
-  const distanceKm = matchedFare ? matchedFare.distanceKm : 104;
+  const distanceKm = routeQuote.distanceKm;
 
-  // Authoritative FLEET_RATES calculation matching backend api/index.js and patna_fares.json
-  const rawHatch = matchedFare?.hatchback || Math.max(1698, (matchedFare?.sedan || 2198) - 200);
-  const rawSedan = matchedFare?.sedan || Math.max(2198, Math.round(distanceKm * 21.0));
-  const rawExecSedan = matchedFare?.execSedan || (rawSedan + 250);
-  const rawXuv = matchedFare?.suv || (rawSedan + 400);
-  const rawLuxuryXuv = matchedFare?.luxSuv || (rawSedan + 700);
-
-  const baseHatch = isRoundTrip ? (matchedFare?.twoWay?.hatchback || Math.round(rawHatch * 1.8)) : rawHatch;
-  const baseSedan = isRoundTrip ? (matchedFare?.twoWay?.sedan || Math.round(rawSedan * 1.8)) : rawSedan;
-  const baseExecSedan = isRoundTrip ? (matchedFare?.twoWay?.execSedan || Math.round(rawExecSedan * 1.8)) : rawExecSedan;
-  const baseXuv = isRoundTrip ? (matchedFare?.twoWay?.suv || Math.round(rawXuv * 1.8)) : rawXuv;
-  const baseLuxuryXuv = isRoundTrip ? (matchedFare?.twoWay?.luxSuv || Math.round(rawLuxuryXuv * 1.8)) : rawLuxuryXuv;
-
-  // The 5 Required Vehicle Categories
-  const cabTiers = [
-    {
-      id: 'hatchback',
-      title: 'Hatchback',
-      subTitle: 'One-Way Drop • No Return Fare',
-      models: 'Maruti WagonR, Tata Tiago, Celerio',
-      price: baseHatch,
-      badge: 'BEST VALUE',
-      pax: '4 Passengers',
-      bags: '2 Medium Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.hatchback,
-      desc: 'Affordable compact hatchback for budget travelers.'
-    },
-    {
-      id: 'sedan',
-      title: 'Sedan',
-      subTitle: 'Prime Sedan • No Return Fare',
-      models: 'Maruti Dzire, Toyota Etios, Honda Amaze',
-      price: baseSedan,
-      badge: 'MOST POPULAR',
-      pax: '4 Passengers',
-      bags: '3-4 Large Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.sedan,
-      desc: 'High comfort sedan with spacious boot for outstation travel.'
-    },
-    {
-      id: 'sedan_prime',
-      title: 'Executive Sedan',
-      subTitle: 'Executive One-Way • No Return Fare',
-      models: 'Honda City, Maruti Ciaz, Hyundai Verna',
-      price: baseExecSedan,
-      badge: 'PREMIUM COMFORT',
-      pax: '4 Passengers',
-      bags: '4 Large Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.sedan_prime,
-      desc: 'Plush executive sedan with extra legroom & VIP amenities.'
-    },
-    {
-      id: 'suv',
-      title: 'XUV',
-      subTitle: 'Family Carrier (6+1) • No Return Fare',
-      models: 'Maruti Ertiga, Kia Carens, Scorpio',
-      price: baseXuv,
-      badge: 'FAMILY & LUGGAGE',
-      pax: '6 Passengers',
-      bags: '4-5 Large Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.suv,
-      desc: 'Spacious 6-seater family carrier with roof carrier.'
-    },
-    {
-      id: 'innova_crysta',
-      title: 'Luxury XUV',
-      subTitle: 'VIP Outstation • No Return Fare',
-      models: 'Toyota Innova Crysta (Captain Seats)',
-      price: baseLuxuryXuv,
-      badge: 'VIP LUXURY',
-      pax: '7 Passengers',
-      bags: '6 Large Bags',
-      ac: true,
-      image: VEHICLE_IMAGES.innova_crysta,
-      desc: 'Top-tier luxury vehicle with captain recliners & rear AC vents.'
-    }
-  ];
+  // Map 5 vehicle categories with images and dynamic per-km pricing
+  const cabTiers = routeQuote.tiers.map(t => ({
+    ...t,
+    image: (VEHICLE_IMAGES as Record<string, any>)[t.id] || VEHICLE_IMAGES.sedan
+  }));
 
   // Selected tier resolution
   const currentTierObj = cabTiers.find(c => c.id === selectedTier) || cabTiers[1]; // default to Sedan
@@ -138,8 +66,8 @@ export const CabSelectScreen = ({ navigation }: any) => {
   const mappedTierKey = (currentTierObj.id === 'suv' || currentTierObj.id === 'innova_crysta')
     ? 'suv'
     : currentTierObj.id === 'hatchback'
-    ? 'hatchback'
-    : 'sedan';
+      ? 'hatchback'
+      : 'sedan';
 
   const fareBreakdown = MobileApiClient.calculateFareBreakdown(
     distanceKm,
@@ -180,7 +108,7 @@ export const CabSelectScreen = ({ navigation }: any) => {
             {search.origin || 'Patna'} <Text style={{ color: colors.accentGold }}>→</Text> {search.destination || 'Gaya'}
           </Text>
           <Text style={[styles.headerSubtitle, { color: colors.textMuted }]}>
-            {formatDistance(distanceKm)} • ~{estimatedDuration}h journey • {search.tripType === 'one-way' ? 'One-Way' : 'Round Trip'}
+            {formatDistance(distanceKm)} • ~{routeQuote.durationText} • {search.tripType === 'one-way' ? 'One-Way' : 'Round Trip'}
           </Text>
         </View>
         <TouchableOpacity
@@ -193,7 +121,7 @@ export const CabSelectScreen = ({ navigation }: any) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        
+
         {/* Value Proposition Strip */}
         <View style={[styles.promoStrip, { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.12)' : '#ECFDF5', borderColor: isDark ? 'rgba(16, 185, 129, 0.25)' : '#A7F3D0' }]}>
           <ShieldCheck size={16} color={colors.brandGreen} strokeWidth={2.4} />

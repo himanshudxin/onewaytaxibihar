@@ -134,7 +134,7 @@ export const SupportScreen = ({ navigation }: any) => {
 
           <TouchableOpacity
             style={styles.menuRow}
-            onPress={() => navigation.navigate('MyTrips')}
+            onPress={() => navigation.navigate('MyBookings')}
             activeOpacity={0.7}
           >
             <Clock size={18} color="#059669" />

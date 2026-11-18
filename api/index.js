@@ -788,17 +788,7 @@ function getSessionDriver(req, db, body = {}) {
     token = String(req.headers['x-driver-token']).trim();
   }
 
-  // Fallback for mobile app, offline vault, and verified chauffeur query parameters
   if (!token) {
-    const rawUrl = req.url || '';
-    const match = rawUrl.match(/[?&]phone=([0-9]{10})/);
-    const qPhone = match ? match[1] : (req.headers['x-driver-phone'] ? String(req.headers['x-driver-phone']).replace(/\D/g, '').slice(-10) : null);
-    if (qPhone) {
-      const driver = (db.drivers || []).find(d => !d.isDeleted && d.phone && d.phone.replace(/\D/g, '').slice(-10) === qPhone);
-      if (driver) {
-        return { driver, session: { role: 'driver', driverId: driver.id, token: `drv_phone_${qPhone}` } };
-      }
-    }
     return null;
   }
 
@@ -912,7 +902,8 @@ module.exports = async (req, res) => {
     // Await Database Ready State & Multi-Tier Sync
     let db;
     try {
-      db = await dbService.getDbAsync();
+      const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/dispatch');
+      db = await dbService.getDbAsync(isAdminRoute);
     } catch (dbErr) {
       console.warn('[API Layer] getDbAsync fallback notice:', dbErr.message);
       db = dbService.getDb();
@@ -949,13 +940,49 @@ module.exports = async (req, res) => {
     const isMutatingMethod = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
     const isWebhookRoute = pathname.includes('/webhook') || pathname.includes('/razorpay') || pathname.includes('/payu');
     const isTestExecution = process.env.NODE_ENV === 'test' || req.headers['x-bypass-csrf'] === 'test-runner';
+    const isMobileNative = 
+      req.headers['x-client-platform'] === 'mobile-native' ||
+      (req.headers['user-agent'] || '').includes('MobileApp') ||
+      (req.headers['user-agent'] || '').includes('Expo') ||
+      (req.headers['user-agent'] || '').includes('okhttp') ||
+      (req.headers['user-agent'] || '').includes('CFNetwork');
 
-    if (isMutatingMethod && !isWebhookRoute && !isTestExecution) {
+    // Authentication and verification routes where client does not yet possess a session/bearer token
+    const isAuthRoute = 
+      pathname === '/admin/login' || 
+      pathname === '/api/admin/login' || 
+      pathname === '/auth/login' || 
+      pathname === '/api/auth/login' || 
+      pathname === '/auth/send-otp' || 
+      pathname === '/api/auth/send-otp' || 
+      pathname === '/auth/verify-otp' || 
+      pathname === '/api/auth/verify-otp' || 
+      pathname === '/admin/send-whatsapp-otp' || 
+      pathname === '/api/admin/send-whatsapp-otp' || 
+      pathname === '/admin/verify-whatsapp-otp' || 
+      pathname === '/api/admin/verify-whatsapp-otp' || 
+      pathname === '/admin/send-2fa-otp' || 
+      pathname === '/api/admin/send-2fa-otp' || 
+      pathname === '/admin/verify-2fa-otp' || 
+      pathname === '/api/admin/verify-2fa-otp' ||
+      pathname === '/driver/login' ||
+      pathname === '/api/driver/login' ||
+      pathname === '/driver/register' ||
+      pathname === '/api/driver/register' ||
+      pathname === '/driver/apply' ||
+      pathname === '/api/driver/apply' ||
+      pathname.startsWith('/auth') ||
+      pathname.startsWith('/api/auth');
+
+    if (isMutatingMethod && !isWebhookRoute && !isTestExecution && !isAuthRoute) {
       const csrfCandidate = req.headers['x-csrf-token'] || req.headers['x-xsrf-token'] || body.csrfToken || body._csrf || '';
       const clientEntropy = getClientIp(req) + (req.headers['user-agent'] || '');
       const isCsrfValid = securityService.verifyCsrfToken(csrfCandidate, clientEntropy);
 
-      if (!isCsrfValid) {
+      // Exempt native mobile apps and explicit Bearer authorization from browser-cookie CSRF blockades
+      const isBearerAuth = Boolean(req.headers['authorization'] && req.headers['authorization'].startsWith('Bearer '));
+
+      if (!isCsrfValid && !isMobileNative && !isBearerAuth) {
         const freshCsrf = securityService.generateCsrfToken(clientEntropy);
         const isSecure = (process.env.NODE_ENV === 'production' || !!process.env.VERCEL) && (req.headers['x-forwarded-proto'] === 'https' || Boolean(req.socket?.encrypted));
         res.setHeader('Set-Cookie', `XSRF-TOKEN=${encodeURIComponent(freshCsrf)}; Path=/; SameSite=Lax${isSecure ? '; Secure' : ''}; Max-Age=86400`);
@@ -1134,7 +1161,7 @@ module.exports = async (req, res) => {
       }
 
       const clientIp = getClientIp(req);
-      const rateCheck = securityService.checkRateLimit(`verify_otp_${cleanPhone || clientIp}`, 15, 60000);
+      const rateCheck = securityService.checkRateLimit(`verify_otp_${cleanPhone || clientIp}`, 10, 60000);
       if (!rateCheck.allowed) {
         res.setHeader('Retry-After', String(rateCheck.retryAfter));
         return sendJson(429, {
@@ -1181,22 +1208,22 @@ module.exports = async (req, res) => {
           if (app) {
             driver = {
               id: app.id || `drv_${cleanPhone}`,
-              name: app.name || 'Verified Chauffeur',
+              name: app.name || app.fullName || 'Verified Chauffeur',
               phone: app.phone || `+91 ${cleanPhone}`,
               city: app.city || 'Patna',
-              vehicleNumber: app.vehicleNumber || 'BR-01-XX-0000',
-              vehicleModel: app.vehicleModel || 'Commercial Sedan',
-              isVerified: true
+              vehicleNumber: app.vehicleNumber || app.vehiclePlateNumber || '',
+              vehicleModel: app.vehicleModel || '',
+              isVerified: app.status === 'approved' || Boolean(app.isVerified)
             };
           } else {
             driver = {
               id: `drv_${cleanPhone}`,
-              name: name || 'Verified Chauffeur',
+              name: name || `Chauffeur ${cleanPhone.slice(-4)}`,
               phone: `+91 ${cleanPhone}`,
               city: 'Patna',
-              vehicleNumber: 'BR-01-TA-1234',
-              vehicleModel: 'Maruti Dzire Commercial',
-              isVerified: true
+              vehicleNumber: '',
+              vehicleModel: '',
+              isVerified: false
             };
           }
           if (!db.drivers) db.drivers = [];
@@ -1396,7 +1423,7 @@ module.exports = async (req, res) => {
     // Dedicated Admin 2FA Endpoints
     // -------------------------------------------------------------
     if (pathname === '/admin/send-2fa-otp' && method === 'POST') {
-      const targetPhone = (body.phone || process.env.ADMIN_PHONE || '8002141816').replace(/\D/g, '').slice(-10);
+      const targetPhone = (body.phone || process.env.ADMIN_AUTHORIZED_PHONE || process.env.ADMIN_PHONE || '6206494214').replace(/\D/g, '').slice(-10);
       const code = crypto.randomInt(100000, 999999).toString();
       activeAdminOtps.set(targetPhone, {
         code,
@@ -1417,11 +1444,29 @@ module.exports = async (req, res) => {
     }
 
     if (pathname === '/admin/verify-2fa-otp' && method === 'POST') {
-      const targetPhone = (body.phone || process.env.ADMIN_PHONE || '8002141816').replace(/\D/g, '').slice(-10);
+      const targetPhone = (body.phone || process.env.ADMIN_AUTHORIZED_PHONE || process.env.ADMIN_PHONE || '6206494214').replace(/\D/g, '').slice(-10);
       const inputCode = (body.otp || '').toString().trim();
       if (inputCode === '1234' || (activeAdminOtps.has(targetPhone) && activeAdminOtps.get(targetPhone).code === inputCode)) {
         activeAdminOtps.delete(targetPhone);
-        const token = `otb_adm_jwt_${crypto.randomBytes(16).toString('hex')}`;
+        const token = securityService.createJwt({
+          adminId: 'adm_1',
+          username: 'admin',
+          role: 'owner',
+          name: 'Central Dispatch Controller',
+          phone: `+91 ${targetPhone}`
+        });
+
+        if (!db.sessions) db.sessions = [];
+        db.sessions.push({
+          token,
+          adminId: 'adm_1',
+          role: 'owner',
+          phone: `+91 ${targetPhone}`,
+          authMethod: '2FA_OTP',
+          createdAt: new Date().toISOString()
+        });
+        await saveDb(db);
+
         return sendJson(200, {
           success: true,
           token,
@@ -3925,10 +3970,10 @@ module.exports = async (req, res) => {
     }
 
     if (['/payments/create-order', '/payment/create-order', '/api/payments/create-order', '/api/payment/create-order'].includes(pathname) && method === 'POST') {
-      const { amount, bookingId, passengerName, passengerPhone, notes } = body;
+      const { amount, amountInRupees, bookingId, passengerName, passengerPhone, notes } = body;
       const paymentSettings = db.settings?.payment || null;
       const defaultAmt = paymentSettings?.defaultAdvanceAmount || 299;
-      const orderAmount = Number(amount) || defaultAmt;
+      const orderAmount = Number(amount || amountInRupees) || defaultAmt;
       
       try {
         const orderResult = await paymentService.createRazorpayOrder({
@@ -7132,11 +7177,17 @@ module.exports = async (req, res) => {
       const authHeader = req.headers['authorization'] || '';
       const token = authHeader.replace(/^Bearer\s+/i, '').trim() || (body && body.token);
       if (!db.revoked_tokens) db.revoked_tokens = [];
-      if (token && !db.revoked_tokens.includes(token)) {
-        db.revoked_tokens.push(token);
-      }
-      if (db.sessions && token) {
-        db.sessions = db.sessions.filter(s => s.token !== token);
+      if (token) {
+        if (!db.revoked_tokens.includes(token)) {
+          db.revoked_tokens.push(token);
+        }
+        const tokenSha = crypto.createHash('sha256').update(token).digest('hex');
+        if (!db.revoked_tokens.includes(tokenSha)) {
+          db.revoked_tokens.push(tokenSha);
+        }
+        if (db.sessions) {
+          db.sessions = db.sessions.filter(s => s.token !== token && s.tokenHash !== tokenSha && s.headerHalf !== token);
+        }
       }
       await saveDb(db);
       return sendJson(200, {
@@ -7465,18 +7516,30 @@ module.exports = async (req, res) => {
         (b.bookingStatus === 'COMPLETED' || b.status === 'COMPLETED')
       );
 
-      const todayEarnings = driver ? (driver.earningsToday || 2198) : 2198;
-      const totalEarnings = completedTrips.reduce((acc, t) => acc + (Number(t.totalFare) || 2000) * 0.85, 0) || 82400;
+      const todayEarnings = driver ? (Number(driver.earningsToday) || 0) : 0;
+      const totalEarnings = completedTrips.reduce((acc, t) => acc + (Number(t.totalFare || t.fare) || 0) * 0.85, 0);
+
+      const history = completedTrips.map((ct, idx) => ({
+        id: `pay_${ct.id || idx}`,
+        bookingReference: ct.bookingId || ct.referenceNumber || `OTB-${ct.id}`,
+        date: ct.completedAt || ct.updatedAt || 'Recent',
+        amount: Number(ct.totalFare || ct.fare) || 0,
+        platformFee: Math.round((Number(ct.totalFare || ct.fare) || 0) * 0.15),
+        netEarnings: Math.round((Number(ct.totalFare || ct.fare) || 0) * 0.85),
+        paymentMode: (ct.paymentMethod || 'cash').toLowerCase().includes('upi') ? 'upi' : 'cash',
+        status: 'settled'
+      }));
 
       return sendJson(200, {
         success: true,
         earnings: {
           todayEarnings,
-          weekEarnings: Math.round(todayEarnings * 5.2),
+          weekEarnings: todayEarnings,
           totalEarnings: Math.round(totalEarnings),
-          completedTripsCount: completedTrips.length || 38,
+          completedTripsCount: completedTrips.length,
           payoutsPending: 0,
-          currency: 'INR'
+          currency: 'INR',
+          history
         }
       });
     }

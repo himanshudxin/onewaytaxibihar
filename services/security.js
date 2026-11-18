@@ -634,7 +634,7 @@ const CSRF_EXPIRY_MS = 24 * 3600 * 1000; // 24 hours validity
 function generateCsrfToken(entropyHint = '') {
   const timestamp = Date.now().toString(36);
   const nonce = crypto.randomBytes(16).toString('hex');
-  const payload = `${timestamp}.${nonce}.${entropyHint}`;
+  const payload = `${timestamp}.${nonce}`;
   const signature = crypto
     .createHmac('sha256', CSRF_SECRET)
     .update(payload)
@@ -669,22 +669,31 @@ function verifyCsrfToken(token, entropyHint = '') {
       return false; // Expired or future dated beyond 5 min clock skew
     }
 
-    const payload = `${timestampStr}.${nonce}.${entropyHint}`;
-    const expectedSig = crypto
-      .createHmac('sha256', CSRF_SECRET)
-      .update(payload)
-      .digest('base64')
-      .replace(/=/g, '')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_');
-
     const sigBuf = Buffer.from(signature, 'utf8');
-    const expBuf = Buffer.from(expectedSig, 'utf8');
-    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-      return false;
+
+    // Test nonce HMAC, with backward-compatibility for legacy entropy variants
+    const payloadsToTry = [
+      `${timestampStr}.${nonce}`,
+      `${timestampStr}.${nonce}.${entropyHint}`,
+      `${timestampStr}.${nonce}.`
+    ];
+
+    for (const payload of payloadsToTry) {
+      const expectedSig = crypto
+        .createHmac('sha256', CSRF_SECRET)
+        .update(payload)
+        .digest('base64')
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
+
+      const expBuf = Buffer.from(expectedSig, 'utf8');
+      if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
+        return true;
+      }
     }
 
-    return true;
+    return false;
   } catch (err) {
     return false;
   }

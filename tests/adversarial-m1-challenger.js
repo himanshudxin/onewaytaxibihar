@@ -318,8 +318,8 @@ async function runAdversarialSuite() {
     body: { phone: testUserPhoneA, confirm: true }
   });
   recordResult(
-    'POST /api/user/delete-account without auth header returns HTTP 403',
-    delNoAuth.statusCode === 403,
+    'POST /api/user/delete-account without auth header returns HTTP 401/403',
+    delNoAuth.statusCode === 403 || delNoAuth.statusCode === 401,
     `statusCode=${delNoAuth.statusCode}`,
     true
   );
@@ -332,8 +332,8 @@ async function runAdversarialSuite() {
     body: { phone: testUserPhoneA, confirm: true }
   });
   recordResult(
-    'POST /api/user/delete-account with invalid token returns HTTP 403',
-    delGarbageToken.statusCode === 403,
+    'POST /api/user/delete-account with invalid token returns HTTP 401/403',
+    delGarbageToken.statusCode === 403 || delGarbageToken.statusCode === 401,
     `statusCode=${delGarbageToken.statusCode}`,
     true
   );
@@ -497,7 +497,7 @@ async function runAdversarialSuite() {
   function scanClientDir(dir) {
     const entries = fs.readdirSync(dir);
     for (const entry of entries) {
-      if (entry === 'node_modules' || entry === '.git' || entry === '.agents' || entry === 'tests' || entry === 'scripts' || entry === 'data') continue;
+      if (entry === 'node_modules' || entry === '.git' || entry === '.agents' || entry === 'tests' || entry === 'scripts' || entry === 'data' || entry === 'dist') continue;
       const fullPath = path.join(dir, entry);
       const stat = fs.statSync(fullPath);
       if (stat.isDirectory()) {

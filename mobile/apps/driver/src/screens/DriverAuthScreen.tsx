@@ -52,26 +52,9 @@ export const DriverAuthScreen = ({ navigation }: any) => {
       const res = await OtpService.sendOtp(clean, 'driver');
       setStep('otp');
       setResendTimer(res.resendAfterSec || 30);
-      setSmsStatus(res.channel === 'dev_simulation' ? 'Dev Mode (Code: 1234)' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
+      setSmsStatus(res.channel === 'dev_simulation' ? 'Verification Code Dispatched' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Failed to dispatch OTP SMS.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickDemoLogin = async () => {
-    setLoading(true);
-    try {
-      const demoPhone = '6206494214';
-      await OtpService.verifyOtp(demoPhone, '1234', 'driver');
-      await refreshProfile();
-      navigation.replace('DriverTabs');
-    } catch (e: any) {
-      await StorageService.removeItem('otb_driver_explicit_logout');
-      await StorageService.setItem('otb_driver_phone', '6206494214');
-      await refreshProfile();
-      navigation.replace('DriverTabs');
     } finally {
       setLoading(false);
     }
@@ -80,7 +63,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const handleVerifyOtp = async () => {
     const clean = sanitizePhoneNumber(phone);
     if (!otp.trim()) {
-      Alert.alert('OTP Required', 'Please enter the 6-digit OTP sent to your phone (or test code 1234).');
+      Alert.alert('OTP Required', 'Please enter the 6-digit verification code sent to your mobile.');
       return;
     }
 
@@ -130,7 +113,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {step === 'phone'
               ? 'Enter your registered mobile number to receive a secure SMS verification code.'
-              : `Dispatched SMS code to +91 ${sanitizePhoneNumber(phone)}. Valid for 10 minutes. (Test Code: 1234)`}
+              : `Dispatched SMS code to +91 ${sanitizePhoneNumber(phone)}. Valid for 10 minutes.`}
           </Text>
 
           {step === 'phone' ? (
@@ -188,18 +171,6 @@ export const DriverAuthScreen = ({ navigation }: any) => {
             )}
           </TouchableOpacity>
 
-          {step === 'phone' && (
-            <TouchableOpacity
-              style={[styles.demoLoginBtn, { borderColor: colors.primary }]}
-              onPress={handleQuickDemoLogin}
-              disabled={loading}
-              activeOpacity={0.8}
-            >
-              <Text style={[styles.demoLoginText, { color: colors.primary }]}>
-                Quick Demo Chauffeur Login (6206494214)
-              </Text>
-            </TouchableOpacity>
-          )}
 
           {step === 'otp' && (
             <View style={styles.otpActions}>

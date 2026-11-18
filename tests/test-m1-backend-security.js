@@ -111,7 +111,7 @@ async function runAllTests() {
   const otpPhone = '9811122233';
   let otp429Hit = false;
   let otpRetryAfter = 0;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     const res = await mockRequest({
       method: 'POST',
       url: '/api/auth/send-otp',

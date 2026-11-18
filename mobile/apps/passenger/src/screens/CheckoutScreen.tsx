@@ -43,7 +43,7 @@ import {
 import { RazorpayModal } from '../../../../shared/components/RazorpayModal';
 
 export const CheckoutScreen = ({ route, navigation }: any) => {
-  const { fareBreakdown, cabName, price, distanceKm, cabTier = 'sedan' } = route.params;
+  const { fareBreakdown, cabName, price, distanceKm, cabTier = 'sedan' } = route.params || {};
   const { search, updateSearch, setActiveBooking, refreshTrips } = usePassenger();
 
   const totalFare = fareBreakdown?.totalFare || price || 2199;

@@ -154,7 +154,7 @@ class FleetSyncManager {
     const driverId = drv.id || `drv_${drv.phone}`;
     const driverName = drv.name || drv.fullName || 'Chauffeur';
     const driverPhone = drv.phone;
-    const vehiclePlateNumber = drv.vehicleNumber || drv.documents?.vehiclePlateNumber || 'BR 01 PB 8291';
+    const vehiclePlateNumber = drv.vehicleNumber || drv.documents?.vehiclePlateNumber || '';
     const vehicleModel = drv.vehicleModel || drv.documents?.vehicleModel || 'Dzire Tour';
 
     const updatedBooking: Booking = {
@@ -378,7 +378,7 @@ class FleetSyncManager {
           totalTripsCompleted: 45,
           vehicleMake: 'Maruti',
           vehicleModel: driver ? driver.vehicleModel : 'Prime Sedan',
-          vehiclePlateNumber: driver ? driver.vehicleNumber : 'BR 01 PB 8291',
+          vehiclePlateNumber: driver ? (driver.vehicleNumber || driver.vehiclePlateNumber || '') : '',
           vehicleColor: 'White',
           assignedAt: new Date().toISOString(),
           currentLat: coords.lat,

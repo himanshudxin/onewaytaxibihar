@@ -25,14 +25,14 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
   const { colors, isDark } = useTheme();
 
   const [step, setStep] = useState<'credentials' | '2fa'>('credentials');
-  const [username, setUsername] = useState('admin');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
 
-  const ADMIN_AUTHORIZED_PHONE = '8002141816';
+  const ADMIN_AUTHORIZED_PHONE = '6206494214';
 
   useEffect(() => {
     let interval: any = null;
@@ -53,16 +53,15 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
 
     setIsSubmitting(true);
     try {
-      // Step 1: Dispatch 2FA OTP code to registered admin phone
+      // Step 1: Dispatch 2FA OTP code to registered admin phone (6206494214)
       const res = await OtpService.sendAdmin2FA(ADMIN_AUTHORIZED_PHONE);
       setStep('2fa');
       setResendTimer(res.resendAfterSec || 30);
-      setSmsStatus(res.channel === 'dev_simulation' ? 'Dev Mode (Code: 1234)' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
+      setSmsStatus(res.channel === 'dev_simulation' ? 'Verification Code Dispatched' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
     } catch (err: any) {
-      // In development fallback, proceed to 2FA step
       setStep('2fa');
       setResendTimer(30);
-      setSmsStatus('Dev Mode (Code: 1234)');
+      setSmsStatus('Verification Code Dispatched');
     } finally {
       setIsSubmitting(false);
     }
@@ -70,29 +69,20 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
 
   const handleStep2Verify2FA = async () => {
     if (!otp.trim()) {
-      Alert.alert('2FA Code Required', 'Please enter the 6-digit verification code sent to the registered admin device (or test code 1234).');
+      Alert.alert('2FA Code Required', 'Please enter the 6-digit verification code sent to the registered admin device.');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await OtpService.verifyAdmin2FA(otp.trim(), ADMIN_AUTHORIZED_PHONE);
+      const verifyRes = await OtpService.verifyAdmin2FA(otp.trim(), ADMIN_AUTHORIZED_PHONE);
+      if (!verifyRes.success) {
+        throw new Error(verifyRes.message || 'Invalid 2FA verification code.');
+      }
       // Complete login in context
-      await login(username.trim() || 'admin', password.trim() || 'admin123');
+      await login(username.trim(), password.trim());
     } catch (err: any) {
-      Alert.alert('2FA Verification Failed', err.message || 'Invalid 2FA code.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleQuickDemoLogin = async () => {
-    setIsSubmitting(true);
-    try {
-      await OtpService.verifyAdmin2FA('1234', ADMIN_AUTHORIZED_PHONE);
-      await login('admin', password.trim() || 'admin123');
-    } catch (e: any) {
-      await login('admin', 'admin123');
+      Alert.alert('Authentication Failed', err.message || 'Invalid credentials or 2FA code.');
     } finally {
       setIsSubmitting(false);
     }
@@ -177,15 +167,6 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
                     </>
                   )}
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.quickDemoBtn, { borderColor: colors.primary }]}
-                  onPress={handleQuickDemoLogin}
-                  disabled={isSubmitting || isLoading}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.quickDemoText, { color: colors.primary }]}>1-Tap Demo Operator Bypass (admin / 1234)</Text>
-                </TouchableOpacity>
               </>
             ) : (
               <>
@@ -251,15 +232,6 @@ export const AdminLoginScreen: React.FC<{ navigation?: any }> = () => {
                     <Text style={styles.waText}>WhatsApp OTP Backup</Text>
                   </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity
-                  style={[styles.quickDemoBtn, { borderColor: colors.primary, marginTop: 14 }]}
-                  onPress={handleQuickDemoLogin}
-                  disabled={isSubmitting || isLoading}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.quickDemoText, { color: colors.primary }]}>Use Demo Code (1234)</Text>
-                </TouchableOpacity>
               </>
             )}
           </View>

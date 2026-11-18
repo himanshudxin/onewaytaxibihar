@@ -30,6 +30,7 @@ const ALL_COLLECTIONS = [
   'settings',
   'admins',
   'fares',
+  'payout_requests',
   'tourism_packages',
   'tourism_bookings'
 ];
@@ -135,19 +136,25 @@ async function initMongo() {
       isDbConnected = true;
       return true;
     } catch (pingErr) {
+      try { await global._mongoClient.close(); } catch (_) {}
       global._mongoClient = null;
       global._mongoDbInstance = null;
     }
   }
 
+  if (mongoClient) {
+    try { await mongoClient.close(); } catch (_) {}
+    mongoClient = null;
+  }
+
   try {
     const { MongoClient } = require('mongodb');
     
-    // Enterprise pool configuration for zero lag & maximum concurrency
+    // Enterprise pool configuration for zero lag & maximum concurrency with resilient Atlas DNS SRV resolution
     const clientOptions = {
-      serverSelectionTimeoutMS: 2000,
-      connectTimeoutMS: 2500,
-      socketTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
       maxPoolSize: 50,
       minPoolSize: 5,
       maxIdleTimeMS: 60000,
@@ -156,9 +163,21 @@ async function initMongo() {
     };
 
     mongoClient = new MongoClient(mongoUri, clientOptions);
+    mongoClient.on('close', () => { isDbConnected = false; });
+    mongoClient.on('error', () => { isDbConnected = false; });
+    mongoClient.on('timeout', () => { isDbConnected = false; });
     await mongoClient.connect();
 
-    const dbName = process.env.MONGODB_DB_NAME || 'onewaytaxibihar';
+    let uriDbName = null;
+    try {
+      const parsedUrl = new URL(mongoUri.replace('mongodb+srv://', 'http://').replace('mongodb://', 'http://'));
+      const pathname = (parsedUrl.pathname || '').replace(/^\//, '');
+      if (pathname && !pathname.includes('?')) {
+        uriDbName = pathname;
+      }
+    } catch (_) {}
+
+    const dbName = process.env.MONGODB_DB_NAME || uriDbName || 'onewaytaxibihar';
     mongoDbInstance = mongoClient.db(dbName);
     await mongoDbInstance.command({ ping: 1 });
 
@@ -194,7 +213,23 @@ async function initMongo() {
           mongoDbInstance.collection('sessions').createIndex({ createdAt: 1 }, { expireAfterSeconds: 28800 }),
           mongoDbInstance.collection('support_tickets').createIndex({ id: 1 }, { unique: true, sparse: true }),
           mongoDbInstance.collection('support_tickets').createIndex({ bookingId: 1 }),
-          mongoDbInstance.collection('support_tickets').createIndex({ createdAt: -1 })
+          mongoDbInstance.collection('support_tickets').createIndex({ createdAt: -1 }),
+          mongoDbInstance.collection('payments').createIndex({ id: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('payments').createIndex({ orderId: 1 }),
+          mongoDbInstance.collection('payments').createIndex({ paymentId: 1 }),
+          mongoDbInstance.collection('payments').createIndex({ bookingId: 1 }),
+          mongoDbInstance.collection('payments').createIndex({ status: 1, createdAt: -1 }),
+          mongoDbInstance.collection('wallet_ledger').createIndex({ id: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('wallet_ledger').createIndex({ driverId: 1, createdAt: -1 }),
+          mongoDbInstance.collection('wallet_ledger').createIndex({ userId: 1, createdAt: -1 }),
+          mongoDbInstance.collection('driver_applications').createIndex({ id: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('driver_applications').createIndex({ phone: 1 }),
+          mongoDbInstance.collection('driver_applications').createIndex({ status: 1, createdAt: -1 }),
+          mongoDbInstance.collection('payout_requests').createIndex({ id: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('payout_requests').createIndex({ driverId: 1, status: 1 }),
+          mongoDbInstance.collection('payout_requests').createIndex({ createdAt: -1 }),
+          mongoDbInstance.collection('admins').createIndex({ username: 1 }, { unique: true, sparse: true }),
+          mongoDbInstance.collection('admins').createIndex({ phone: 1 })
         ]);
         console.log('[Database Service] ⚡ Database Indexes verified (Compound, Unique & TTL)');
       } catch (idxErr) {}
@@ -204,8 +239,13 @@ async function initMongo() {
   } catch (err) {
     lastMongoFailTime = Date.now();
     console.warn('[Database Service] MongoDB Atlas connection notice:', err.message);
+    if (mongoClient) {
+      try { await mongoClient.close(); } catch (_) {}
+    }
     mongoClient = null;
     mongoDbInstance = null;
+    global._mongoClient = null;
+    global._mongoDbInstance = null;
     isDbConnected = false;
     return false;
   }
@@ -312,7 +352,7 @@ async function pullFromRemoteCloud(targetCollection = null) {
                 sanitized = sanitized.filter(b => !deletedBookingIds.has(b.bookingId) && !deletedBookingIds.has(b.id));
                 const remoteIds = new Set(sanitized.map(b => b.bookingId || b.id));
                 const localPending = (memoryDb.bookings || []).filter(b => !remoteIds.has(b.bookingId || b.id) && !deletedBookingIds.has(b.bookingId) && !deletedBookingIds.has(b.id));
-                const combined = [...localPending, ...sanitized];
+                const combined = [...sanitized, ...localPending];
                 combined.forEach(b => {
                   if (Array.isArray(b.statusHistory) && b.statusHistory.length > 25) {
                     b.statusHistory = b.statusHistory.slice(-25);
@@ -364,8 +404,20 @@ async function pullFromRemoteCloud(targetCollection = null) {
                   const localPending = (memoryDb.tourism_bookings || []).filter(b => !remoteBookingIds.has(b.bookingId || b.id));
                   memoryDb.tourism_bookings = [...localPending, ...sanitized].slice(0, 200);
                 }
+              } else if (colName === 'drivers' || colName === 'driver_applications') {
+                if (sanitized.length > 0) {
+                  const remoteDriverKeys = new Set(sanitized.map(d => d.phone || d.id));
+                  const localPending = (memoryDb[colName] || []).filter(d => !remoteDriverKeys.has(d.phone || d.id));
+                  memoryDb[colName] = [...sanitized, ...localPending].slice(0, 300);
+                } else if (Array.isArray(memoryDb[colName]) && memoryDb[colName].length > 0) {
+                  syncCollectionToCloud(colName, memoryDb[colName]).catch(() => {});
+                }
               } else if (colName !== 'bookings' && colName !== 'leads') {
-                memoryDb[colName] = sanitized.slice(0, 300);
+                if (sanitized.length === 0 && Array.isArray(memoryDb[colName]) && memoryDb[colName].length > 0) {
+                  syncCollectionToCloud(colName, memoryDb[colName]).catch(() => {});
+                } else {
+                  memoryDb[colName] = sanitized.slice(0, 300);
+                }
               }
             }
           }
@@ -410,18 +462,21 @@ async function syncCollectionToCloud(colName, items) {
     else if (colName === 'fares') idField = 'id';
     else if (colName === 'tourism_bookings') idField = 'bookingId';
     else if (colName === 'tourism_packages') idField = 'id';
+    else if (colName === 'drivers' || colName === 'driver_applications') idField = 'phone';
 
     const bulkOps = items.slice(0, 500).map(item => {
-      const keyVal = item[idField] || item.id || item.phone || item.bookingId;
+      const keyVal = item[idField] || item.phone || item.id || item.driverId || item.bookingId;
+      if (!keyVal) return null;
       const { _id, ...cleanItem } = item;
+      const filterKey = (idField === 'phone' && item.phone) ? 'phone' : (item[idField] ? idField : (item.id ? 'id' : 'phone'));
       return {
         updateOne: {
-          filter: { [idField]: keyVal },
+          filter: { [filterKey]: keyVal },
           update: { $set: cleanItem },
           upsert: true
         }
       };
-    });
+    }).filter(Boolean);
 
     if (bulkOps.length > 0) {
       await col.bulkWrite(bulkOps, { ordered: false });
@@ -460,6 +515,11 @@ async function syncToRemoteCloud(db) {
         syncCollectionToCloud('admins', db.admins),
         syncCollectionToCloud('notifications', db.notifications),
         syncCollectionToCloud('fares', db.fares),
+        syncCollectionToCloud('driver_applications', db.driver_applications),
+        syncCollectionToCloud('wallet_ledger', db.wallet_ledger),
+        syncCollectionToCloud('support_tickets', db.support_tickets),
+        syncCollectionToCloud('payout_requests', db.payout_requests),
+        syncCollectionToCloud('sessions', db.sessions),
         syncCollectionToCloud('tourism_packages', db.tourism_packages),
         syncCollectionToCloud('tourism_bookings', db.tourism_bookings)
       ];
@@ -498,7 +558,11 @@ async function getDbAsync(forceRefresh = false) {
     await initDatabase();
   } else if (forceRefresh || (now - lastHydrationTime > CACHE_TTL_MS)) {
     if (activeEngine === 'mongodb' || activeEngine === 'postgres') {
-      pullFromRemoteCloud().catch(() => {});
+      if (forceRefresh) {
+        await pullFromRemoteCloud();
+      } else {
+        pullFromRemoteCloud().catch(() => {});
+      }
     }
   }
   return memoryDb || getDb();
@@ -511,7 +575,9 @@ function saveDb(data) {
     const targetPath = getLocalDbPath();
     const dir = path.dirname(targetPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(targetPath, JSON.stringify(data, null, 2), 'utf8');
+    const tmpPath = `${targetPath}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tmpPath, targetPath);
   } catch (e) {}
 
   if (data.fares && Array.isArray(data.fares) && data.fares.length > 0) {
@@ -528,7 +594,9 @@ async function saveDbAsync(data) {
     const targetPath = getLocalDbPath();
     const dir = path.dirname(targetPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(targetPath, JSON.stringify(data, null, 2), 'utf8');
+    const tmpPath = `${targetPath}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tmpPath, targetPath);
   } catch (e) {}
 
   if (data.fares && Array.isArray(data.fares) && data.fares.length > 0) {
@@ -695,7 +763,7 @@ function getDatabaseStatus() {
   return {
     engine: activeEngine,
     connected: isDbConnected,
-    hasMongoUri: !!(process.env.MONGODB_URI || DEFAULT_MONGODB_URI),
+    hasMongoUri: Boolean(process.env.MONGODB_URI),
     hasPostgresUri: !!(process.env.DATABASE_URL || process.env.POSTGRES_URL),
     totalBookings: (memoryDb?.bookings || []).length,
     totalDrivers: (memoryDb?.drivers || []).length,
@@ -997,6 +1065,24 @@ async function cleanTestData(options = {}) {
   return true;
 }
 
+async function closeDatabaseConnections() {
+  if (mongoClient) {
+    try { await mongoClient.close(); } catch (_) {}
+    mongoClient = null;
+    mongoDbInstance = null;
+  }
+  if (global._mongoClient) {
+    try { await global._mongoClient.close(); } catch (_) {}
+    global._mongoClient = null;
+    global._mongoDbInstance = null;
+  }
+  if (pgPool) {
+    try { await pgPool.end(); } catch (_) {}
+    pgPool = null;
+  }
+  isDbConnected = false;
+}
+
 module.exports = {
   initDatabase,
   getDb,
@@ -1016,6 +1102,7 @@ module.exports = {
   recordPayment,
   addAuditLog,
   getDatabaseStatus,
-  savePatnaFaresJson
+  savePatnaFaresJson,
+  closeDatabaseConnections
 };
 

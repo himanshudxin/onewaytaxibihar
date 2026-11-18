@@ -1,7 +1,7 @@
 /**
  * scripts/capture-previews.js
  * Multi-portal CDP screenshot capture utility for OneWayTaxiBihar.
- * Captures high-res screenshots of Preview Hub, Production Website, Driver Cockpit, and Admin Desk.
+ * Captures high-res screenshots of Preview Hub, Phone Simulators, Driver Cockpit, Passenger Phone, and App Download Hub.
  */
 
 const { spawn } = require('child_process');
@@ -10,7 +10,7 @@ const path = require('path');
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const artifactDir = 'C:\\Users\\himan\\.gemini\\antigravity\\brain\\50053a82-c87a-4f88-9e54-1a8dff9c5c2f';
-const PORT = 9422;
+const PORT = 9440;
 const tempProfile = path.join(process.env.TEMP || 'C:\\Users\\himan\\AppData\\Local\\Temp', 'chrome_cdp_preview_' + Date.now());
 
 console.log('[Preview] Launching headless Chrome on port ' + PORT + '...');
@@ -24,11 +24,11 @@ const chrome = spawn(CHROME_PATH, [
 ]);
 
 const targets = [
-  { name: 'Triple Apps Preview Hub', url: 'http://localhost:8080/three-apps-preview.html', file: 'preview-three-apps.png', width: 1440, height: 950, delay: 2000 },
-  { name: 'Mobile Simulators Section', url: 'http://localhost:8080/three-apps-preview.html', file: 'preview-mobile-simulators.png', width: 1440, height: 1100, delay: 2000, script: 'window.scrollTo(0, 520);' },
-  { name: 'Passenger App Phone View', url: 'http://localhost:8080/passenger.html', file: 'preview-passenger-phone.png', width: 412, height: 915, delay: 2000 },
-  { name: 'Driver Partner Cockpit', url: 'http://localhost:8080/driver.html', file: 'preview-driver-phone.png', width: 412, height: 915, delay: 2000 },
-  { name: 'Production Corporate Desk', url: 'http://localhost:8080/index.html', file: 'preview-corporate-desk-live.png', width: 1440, height: 900, delay: 2500, script: 'if (window.openCorporateModal) window.openCorporateModal();' }
+  { name: 'Triple Apps Preview Hub (Expo QR & Headers)', url: 'http://localhost:8080/three-apps-preview.html', file: 'preview-three-apps.png', width: 1440, height: 950, delay: 2000 },
+  { name: 'Triple Mobile Simulators Live Showcase', url: 'http://localhost:8080/three-apps-preview.html', file: 'preview-mobile-simulators.png', width: 1440, height: 1100, delay: 2000, script: 'window.scrollTo(0, 520);' },
+  { name: 'Passenger App Phone Simulator', url: 'http://localhost:8080/passenger.html', file: 'preview-passenger-phone.png', width: 412, height: 915, delay: 2000 },
+  { name: 'Driver Partner Cockpit Phone View', url: 'http://localhost:8080/driver.html', file: 'preview-driver-phone.png', width: 412, height: 915, delay: 2000 },
+  { name: 'App Download & Direct APK Hub', url: 'http://localhost:8080/app-download.html', file: 'preview-app-download.png', width: 1440, height: 900, delay: 2000 }
 ];
 
 async function pollChrome() {
@@ -38,7 +38,7 @@ async function pollChrome() {
       if (res.ok) {
         return await res.json();
       }
-    } catch (_) {}
+    } catch (_) { }
     await new Promise(r => setTimeout(r, 200));
   }
   throw new Error('Chrome remote debugging did not respond on port ' + PORT);
@@ -98,13 +98,13 @@ setTimeout(async () => {
       console.log('\n[Preview] All previews successfully captured!');
       ws.close();
       chrome.kill('SIGINT');
-      try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch (_) {}
+      try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch (_) { }
       process.exit(0);
     };
   } catch (err) {
     console.error('[Preview] Error:', err.message);
     chrome.kill('SIGINT');
-    try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch (_) {}
+    try { fs.rmSync(tempProfile, { recursive: true, force: true }); } catch (_) { }
     process.exit(1);
   }
 }, 500);

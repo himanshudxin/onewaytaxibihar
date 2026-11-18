@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Platform,
+  TextInput,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
@@ -19,6 +20,7 @@ import { BrandLogo } from '../../../../shared/components/BrandLogo';
 import { UberMapView } from '../components/UberMapView';
 import { usePassenger } from '../context/PassengerContext';
 import { getCurrentDeviceLocation, watchLiveLocation, LiveGpsUpdate } from '../services/locationService';
+import { parseNaturalLanguageTrip } from '../../../../shared/utils/fareEngine';
 import {
   Menu,
   ArrowUpDown,
@@ -37,6 +39,9 @@ import {
   MessageCircle,
   Sun,
   Moon,
+  Sparkles,
+  Wand2,
+  Zap,
 } from 'lucide-react-native';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -93,6 +98,14 @@ const TIME_OPTIONS = [
   '11:45 PM (Late Night)'
 ];
 
+const AI_QUICK_CHIPS = [
+  { label: 'Patna to Gaya tomorrow 8am sedan', display: 'Patna → Gaya (Tmrw 8 AM)' },
+  { label: 'Muzaffarpur to Patna Airport today', display: 'Muzaffarpur → Patna (Today)' },
+  { label: 'Darbhanga to Patna evening prime sedan', display: 'Darbhanga → Patna (Evening)' },
+  { label: 'Round trip to Rajgir weekend', display: 'Round Trip Rajgir (Weekend)' },
+  { label: 'Bhagalpur to Patna Innova Crysta', display: 'Bhagalpur → Patna (Innova)' },
+];
+
 export const HomeScreen = ({ navigation }: any) => {
   const { search, updateSearch, isLoggedIn, userPhone } = usePassenger();
   const { colors, isDark, setThemeMode } = useTheme();
@@ -103,6 +116,41 @@ export const HomeScreen = ({ navigation }: any) => {
   const [showAccountDrawer, setShowAccountDrawer] = useState(false);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [liveGps, setLiveGps] = useState<LiveGpsUpdate | null>(null);
+
+  // Optional Enclosed AI Smart Trip Assistant state (Down Screen)
+  const [showAiAssistant, setShowAiAssistant] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiFeedback, setAiFeedback] = useState<{
+    origin: string;
+    destination: string;
+    tripType: string;
+    date: string;
+    time: string;
+    tier: string;
+  } | null>(null);
+
+  const handleApplyAiTrip = (promptText: string) => {
+    if (!promptText || !promptText.trim()) return;
+    const parsed = parseNaturalLanguageTrip(promptText, search.origin || 'Patna');
+    if (parsed && parsed.destination) {
+      updateSearch({
+        origin: parsed.origin,
+        destination: parsed.destination,
+        tripType: parsed.tripType,
+        departureDate: parsed.pickupDate,
+        departureTime: parsed.pickupTime,
+      });
+      setAiFeedback({
+        origin: parsed.origin,
+        destination: parsed.destination,
+        tripType: parsed.tripType === 'round-trip' ? 'Round Trip' : 'One-Way',
+        date: parsed.pickupDate,
+        time: parsed.pickupTime,
+        tier: parsed.recommendedTier
+      });
+      setAiPrompt('');
+    }
+  };
 
   const dateOptions = getDynamicDateOptions();
 
@@ -200,10 +248,10 @@ export const HomeScreen = ({ navigation }: any) => {
 
   // Dynamic Uber Map & Bottom Sheet split
   const mapHeight = isMapExpanded
-    ? Math.round(SCREEN_HEIGHT * 0.74)
-    : Math.max(280, Math.round(SCREEN_HEIGHT * 0.44));
+    ? Math.round(SCREEN_HEIGHT * 0.72)
+    : Math.max(200, Math.round(SCREEN_HEIGHT * 0.44));
 
-  const sheetHeight = isMapExpanded ? '28%' : '58%';
+  const sheetHeight = isMapExpanded ? '30%' : '58%';
 
   return (
     <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
@@ -230,7 +278,7 @@ export const HomeScreen = ({ navigation }: any) => {
         />
       </View>
 
-      {/* Layer 2: Floating 3-Line Menu Button on Top Left (Uber / inDrive Minimalist Header) */}
+      {/* Layer 2: Clean Floating Header with Menu Only (No Text / Logo / AI on Map) */}
       <SafeAreaView edges={['top']} pointerEvents="box-none" style={styles.floatingTopBar}>
         <TouchableOpacity
           style={[
@@ -558,6 +606,145 @@ export const HomeScreen = ({ navigation }: any) => {
                 <MessageCircle size={15} color={colors.brandGreen} />
               </TouchableOpacity>
             </View>
+          </View>
+
+          {/* Optional Enclosed AI Smart Trip Assistant (Down Screen) */}
+          <View style={[styles.aiEnclosedCard, { backgroundColor: colors.inputBg, borderColor: colors.cardBorder }]}>
+            <TouchableOpacity
+              style={styles.aiAccordionHeader}
+              onPress={() => setShowAiAssistant(!showAiAssistant)}
+              activeOpacity={0.7}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                <Sparkles size={16} color={colors.accentGold} />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.aiAccordionTitle, { color: colors.textPrimary }]}>
+                    AI Smart Trip Assistant (Optional)
+                  </Text>
+                  <Text style={[styles.aiAccordionSub, { color: colors.textMuted }]}>
+                    Tap to quick-fill by typing in plain words
+                  </Text>
+                </View>
+              </View>
+              <View style={[styles.aiTogglePill, { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }]}>
+                <Text style={[styles.aiToggleText, { color: colors.accentGold }]}>
+                  {showAiAssistant ? 'Close ▲' : 'Open ▾'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            {showAiAssistant && (
+              <View style={styles.aiExpandedContent}>
+                {/* AI Text Input Bar */}
+                <View
+                  style={[
+                    styles.aiInputRow,
+                    {
+                      backgroundColor: colors.cardSurface,
+                      borderColor: colors.cardBorder,
+                    }
+                  ]}
+                >
+                  <Wand2 size={15} color={colors.accentGold} style={{ marginLeft: 10, marginRight: 6 }} />
+                  <TextInput
+                    style={[styles.aiTextInput, { color: colors.textPrimary }]}
+                    value={aiPrompt}
+                    onChangeText={setAiPrompt}
+                    placeholder="e.g. 'Patna to Gaya tomorrow 8am sedan'"
+                    placeholderTextColor={colors.textMuted}
+                    returnKeyType="go"
+                    onSubmitEditing={() => handleApplyAiTrip(aiPrompt)}
+                  />
+                  {aiPrompt.length > 0 ? (
+                    <TouchableOpacity
+                      style={styles.aiClearBtn}
+                      onPress={() => setAiPrompt('')}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <X size={14} color={colors.textMuted} />
+                    </TouchableOpacity>
+                  ) : null}
+                  <TouchableOpacity
+                    style={[
+                      styles.aiFillBtn,
+                      {
+                        backgroundColor: aiPrompt.trim().length > 0 ? colors.accentGold : (isDark ? '#334155' : '#E2E8F0'),
+                      }
+                    ]}
+                    onPress={() => handleApplyAiTrip(aiPrompt)}
+                    activeOpacity={0.8}
+                  >
+                    <Zap size={12} color={aiPrompt.trim().length > 0 ? '#000000' : colors.textMuted} strokeWidth={2.8} />
+                    <Text
+                      style={[
+                        styles.aiFillBtnText,
+                        { color: aiPrompt.trim().length > 0 ? '#000000' : colors.textMuted }
+                      ]}
+                    >
+                      Fill
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* AI 1-Tap Quick Chips Carousel */}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.aiChipsScroll}
+                >
+                  {AI_QUICK_CHIPS.map((chip, idx) => (
+                    <TouchableOpacity
+                      key={idx}
+                      style={[
+                        styles.aiChipItem,
+                        {
+                          backgroundColor: colors.cardSurface,
+                          borderColor: colors.cardBorder,
+                        }
+                      ]}
+                      onPress={() => handleApplyAiTrip(chip.label)}
+                      activeOpacity={0.7}
+                    >
+                      <Zap size={10} color={colors.accentGold} />
+                      <Text style={[styles.aiChipText, { color: colors.textPrimary }]}>
+                        {chip.display}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                {/* Active AI Confirmation Banner */}
+                {aiFeedback && (
+                  <View
+                    style={[
+                      styles.aiFeedbackPill,
+                      {
+                        backgroundColor: isDark ? 'rgba(16, 185, 129, 0.12)' : 'rgba(5, 150, 105, 0.08)',
+                        borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(5, 150, 105, 0.25)',
+                      }
+                    ]}
+                  >
+                    <Check size={14} color={colors.brandGreen} strokeWidth={2.6} />
+                    <View style={{ flex: 1, marginLeft: 6 }}>
+                      <Text style={[styles.aiFeedbackTitle, { color: colors.brandGreen }]}>
+                        Filled: {aiFeedback.origin} ➔ {aiFeedback.destination} ({aiFeedback.tripType})
+                      </Text>
+                      <Text style={[styles.aiFeedbackSub, { color: colors.textSecondary }]}>
+                        {aiFeedback.date} • {aiFeedback.time} • {aiFeedback.tier.toUpperCase()}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.aiFeedbackActionBtn, { backgroundColor: colors.brandGreen }]}
+                      onPress={() => navigation.navigate('CabSelect')}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.aiFeedbackActionText}>View Cabs</Text>
+                      <ArrowRight size={12} color="#FFFFFF" strokeWidth={2.8} />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -1028,6 +1215,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'android' ? 36 : 8,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'flex-start',
   },
   floatingMenuBtn: {
@@ -1123,6 +1311,122 @@ const styles = StyleSheet.create({
   sheetScrollContent: {
     paddingHorizontal: 18,
     paddingBottom: 40,
+  },
+  aiEnclosedCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    marginTop: 14,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
+  aiAccordionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  aiAccordionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  aiAccordionSub: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  aiTogglePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+  aiToggleText: {
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  aiExpandedContent: {
+    paddingHorizontal: 14,
+    paddingBottom: 14,
+    paddingTop: 4,
+  },
+  aiInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    height: 42,
+    paddingRight: 4,
+    marginBottom: 8,
+  },
+  aiTextInput: {
+    flex: 1,
+    fontSize: 12.5,
+    fontWeight: '600',
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+  },
+  aiClearBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+  },
+  aiFillBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  aiFillBtnText: {
+    fontSize: 11.5,
+    fontWeight: '800',
+  },
+  aiChipsScroll: {
+    gap: 6,
+    paddingVertical: 2,
+  },
+  aiChipItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5.5,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  aiChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  aiFeedbackPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  aiFeedbackTitle: {
+    fontSize: 11.5,
+    fontWeight: '800',
+  },
+  aiFeedbackSub: {
+    fontSize: 10,
+    fontWeight: '600',
+    marginTop: 1,
+  },
+  aiFeedbackActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 7,
+  },
+  aiFeedbackActionText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '800',
   },
   segmentContainer: {
     flexDirection: 'row',

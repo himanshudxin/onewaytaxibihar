@@ -34,8 +34,9 @@ node_modules/
 # Backups
 data/backups/
 
-# Vercel
-.vercel/
+# Expo
+.expo/
+.expo-shared/
 
 
 .vercel

@@ -5,8 +5,11 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert,
+  Platform
 } from 'react-native';
+import Constants from 'expo-constants';
 import { checkAppVersion, launchApkDownload, VersionCheckResult } from '../services/updater';
 import { resolveApiBaseUrl } from '../services/api';
 
@@ -18,14 +21,22 @@ export interface AppUpdaterModalProps {
 
 export const AppUpdaterModal: React.FC<AppUpdaterModalProps> = ({
   app,
-  currentVersion = '1.0.0',
+  currentVersion = '1.2.0',
   baseUrl
 }) => {
   const [updateInfo, setUpdateInfo] = useState<VersionCheckResult | null>(null);
   const [dismissed, setDismissed] = useState<boolean>(false);
   const [downloading, setDownloading] = useState<boolean>(false);
 
+  // In Expo Go, web, or development mode, suppress standalone APK updater modal
+  const isExpoGo = Constants.appOwnership === 'expo' || (Constants as any)?.executionEnvironment === 'storeClient';
+  const isDev = typeof __DEV__ !== 'undefined' && Boolean(__DEV__);
+
   useEffect(() => {
+    if (isExpoGo || isDev || Platform.OS === 'web') {
+      return;
+    }
+
     let isMounted = true;
     (async () => {
       try {
@@ -41,7 +52,11 @@ export const AppUpdaterModal: React.FC<AppUpdaterModalProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [app, currentVersion, baseUrl]);
+  }, [app, currentVersion, baseUrl, isExpoGo, isDev]);
+
+  if (isExpoGo || isDev || Platform.OS === 'web') {
+    return null;
+  }
 
   if (!updateInfo || !updateInfo.updateAvailable || (dismissed && !updateInfo.forceUpdate)) {
     return null;
@@ -49,8 +64,24 @@ export const AppUpdaterModal: React.FC<AppUpdaterModalProps> = ({
 
   const handleDownload = async () => {
     setDownloading(true);
-    await launchApkDownload(updateInfo.downloadUrl);
-    setDownloading(false);
+    try {
+      const ok = await launchApkDownload(updateInfo.downloadUrl);
+      if (!ok) {
+        Alert.alert(
+          'Update Download',
+          `Please visit https://onewaytaxibihar.com/downloads to download the latest ${app} APK package.`
+        );
+      } else {
+        Alert.alert(
+          'Update Started',
+          'The updated APK package is downloading. Tap the download in your phone notification bar to complete installation.'
+        );
+      }
+    } catch (e: any) {
+      Alert.alert('Download Error', e.message || 'Unable to launch APK download.');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   // Mandatory / Force Update: Undismissible full-screen blocking overlay

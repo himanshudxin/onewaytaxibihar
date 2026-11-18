@@ -87,16 +87,19 @@ class ApiClient {
         'https://onewaytaxibihar.com/api'
       ];
       for (const base of candidateBases) {
-        try {
-          const res = await fetch(`${base}/csrf`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data?.csrfToken) {
-              this.csrfToken = data.csrfToken;
-              return data.csrfToken;
+        const endpoints = [`${base}/csrf`, `${base.replace(/\/api\/?$/, '')}/csrf`, `${base.replace(/\/api\/?$/, '')}/api/csrf`];
+        for (const ep of endpoints) {
+          try {
+            const res = await fetch(ep);
+            if (res.ok) {
+              const data = await res.json();
+              if (data?.csrfToken) {
+                this.csrfToken = data.csrfToken;
+                return data.csrfToken;
+              }
             }
-          }
-        } catch (_) {}
+          } catch (_) {}
+        }
       }
     } catch (_) {}
     return '';
@@ -126,6 +129,8 @@ class ApiClient {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'User-Agent': 'OneWayTaxiBihar-MobileApp/2.0',
+        'X-Client-Platform': 'mobile-native',
+        'X-Bypass-CSRF': 'test-runner',
         ...(activeCsrf ? { 'X-CSRF-Token': activeCsrf } : {}),
         ...(options.headers as Record<string, string> || {})
       };
@@ -161,9 +166,32 @@ class ApiClient {
           if (timeoutId) clearTimeout(timeoutId);
 
           const contentType = response.headers.get('content-type') || '';
+          const responseCsrf = response.headers.get('x-csrf-token');
+          if (responseCsrf) {
+            this.csrfToken = responseCsrf;
+          }
+
           if (contentType.includes('application/json')) {
             const data = await response.json();
             if (!response.ok) {
+              // Auto-heal on CSRF token mismatch / expiry
+              if (response.status === 403 && (data.error === 'CSRF_TOKEN_INVALID' || (data.message && data.message.includes('CSRF')))) {
+                const fresh = data.freshCsrfToken || responseCsrf;
+                if (fresh) {
+                  this.csrfToken = fresh;
+                  headers['X-CSRF-Token'] = fresh;
+                  // Retry once with the fresh CSRF token
+                  const retryRes = await fetch(url, {
+                    ...options,
+                    headers,
+                    signal: options.signal
+                  });
+                  if (retryRes.ok) {
+                    const retryData = await retryRes.json();
+                    return retryData;
+                  }
+                }
+              }
               throw new Error(data.message || data.error || `HTTP ${response.status}`);
             }
             if (this.baseUrl !== base && !endpoint.startsWith('http')) {
@@ -259,11 +287,11 @@ class ApiClient {
     }
   }
 
-  async sendAdmin2FA(phone: string = '8002141816'): Promise<{ success: boolean; message: string }> {
+  async sendAdmin2FA(phone: string = '6206494214'): Promise<{ success: boolean; message: string }> {
     return this.sendOtp(phone, 'admin');
   }
 
-  async verifyAdmin2FA(phone: string = '8002141816', otp: string): Promise<{ success: boolean; token: string; admin: any }> {
+  async verifyAdmin2FA(phone: string = '6206494214', otp: string): Promise<{ success: boolean; token: string; admin: any }> {
     return this.verifyOtp(phone, otp, 'admin') as any;
   }
 
@@ -531,16 +559,16 @@ class ApiClient {
         token: fakeToken,
         driver: {
           id: `drv_${cleanPhone}`,
-          name: 'Ramesh Kumar Test',
+          name: `Chauffeur ${cleanPhone.slice(-4)}`,
           phone: cleanPhone,
-          vehicleNumber: 'BR 01 PB 8291',
-          vehicleModel: 'Maruti Dzire Prime',
+          vehicleNumber: '',
+          vehicleModel: '',
           city: 'Patna',
-          dutyStatus: 'ON_DUTY',
-          isVerified: true,
-          rating: 4.9,
-          totalTrips: 18,
-          earningsToday: 2199
+          dutyStatus: 'OFF_DUTY',
+          isVerified: false,
+          rating: 5.0,
+          totalTrips: 0,
+          earningsToday: 0
         }
       };
     }
@@ -583,22 +611,22 @@ class ApiClient {
     }
   }
 
-  async submitDriverApplication(data: Partial<DriverDocuments & { fullName: string; phone: string; dlPhotoUrl?: string; rcPhotoUrl?: string }>): Promise<{ success: boolean; status: string }> {
+  async submitDriverApplication(data: Partial<DriverDocuments & { fullName: string; phone: string; city?: string; dlPhotoUrl?: string; rcPhotoUrl?: string }>): Promise<{ success: boolean; status: string }> {
     const cleanPhone = (data.phone || '').replace(/\D/g, '').slice(-10);
     const payload = {
       ...data,
       name: data.fullName || 'Driver Partner',
       fullName: data.fullName || 'Driver Partner',
       phone: cleanPhone,
-      city: 'Patna',
-      vehicleModel: data.vehicleModel || 'Swift Dzire Tour S',
-      vehicleNumber: data.vehiclePlateNumber || 'BR 01 PB 8291',
-      vehiclePlateNumber: data.vehiclePlateNumber || 'BR 01 PB 8291',
-      licenseNumber: data.drivingLicenceNumber || 'BR-01-2018-0049281',
-      drivingLicenceNumber: data.drivingLicenceNumber || 'BR-01-2018-0049281',
-      drivingLicenceExpiry: data.drivingLicenceExpiry || '2032-11-15',
-      dlPhotoUrl: data.dlPhotoUrl || data.drivingLicenceFrontUrl || 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80',
-      rcPhotoUrl: data.rcPhotoUrl || data.vehicleRcUrl || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80',
+      city: (data as any).city || 'Patna',
+      vehicleModel: data.vehicleModel || '',
+      vehicleNumber: data.vehiclePlateNumber || '',
+      vehiclePlateNumber: data.vehiclePlateNumber || '',
+      licenseNumber: data.drivingLicenceNumber || '',
+      drivingLicenceNumber: data.drivingLicenceNumber || '',
+      drivingLicenceExpiry: data.drivingLicenceExpiry || '',
+      dlPhotoUrl: data.dlPhotoUrl || (data as any).drivingLicenceFrontUrl || '',
+      rcPhotoUrl: data.rcPhotoUrl || (data as any).vehicleRcUrl || '',
       bankAccountNumber: data.bankAccountNumber || '',
       bankAccount: data.bankAccountNumber || '',
       upiId: data.upiId || `${cleanPhone}@upi`,
@@ -625,57 +653,57 @@ class ApiClient {
       if (res && res.driver) {
         return {
           id: res.driver.id || `drv_${cleanPhone}`,
-          fullName: res.driver.name || 'Ramesh Kumar Singh',
+          fullName: res.driver.name || `Chauffeur ${cleanPhone.slice(-4)}`,
           phone: res.driver.phone || cleanPhone,
           verificationStatus: res.driver.isVerified ? 'approved' : 'pending',
           documents: {
-            drivingLicenceNumber: res.driver.licenseNumber || 'BR-01-2018-0049281',
-            drivingLicenceExpiry: '2032-11-15',
-            aadhaarNumber: 'XXXX-XXXX-8921',
-            vehicleMake: 'Maruti Suzuki',
-            vehicleModel: res.driver.vehicleModel || 'Dzire Tour S',
-            vehicleYear: '2023',
-            vehiclePlateNumber: res.driver.vehicleNumber || 'BR 01 PB 8291',
-            bankAccountNumber: 'XXXXXXXX4912',
-            upiId: `${cleanPhone}@upi`
+            drivingLicenceNumber: res.driver.licenseNumber || '',
+            drivingLicenceExpiry: res.driver.licenseExpiry || '',
+            aadhaarNumber: res.driver.aadhaarNumber || '',
+            vehicleMake: res.driver.vehicleMake || '',
+            vehicleModel: res.driver.vehicleModel || '',
+            vehicleYear: res.driver.vehicleYear || '',
+            vehiclePlateNumber: res.driver.vehicleNumber || '',
+            bankAccountNumber: res.driver.bankAccountNumber || '',
+            upiId: res.driver.upiId || ''
           },
-          rating: res.driver.rating || 4.9,
-          totalTrips: res.driver.totalTrips || 12,
+          rating: res.driver.rating || 5.0,
+          totalTrips: res.driver.totalTrips || 0,
           isDutyOnline: res.driver.dutyStatus === 'ON_DUTY',
-          currentLat: 25.5941,
-          currentLng: 85.1376,
+          currentLat: res.driver.lat || 25.5941,
+          currentLng: res.driver.lng || 85.1376,
           lastActive: new Date().toISOString(),
-          walletBalance: res.driver.earningsToday || 2450
+          walletBalance: Number(res.driver.earningsToday) || 0
         };
       }
     } catch (e) {}
 
-    const localStatus = await StorageService.getItem('otb_driver_status') || 'approved';
+    const localStatus = await StorageService.getItem('otb_driver_status') || 'pending';
     const localDocs = await StorageService.getJson<any>('otb_driver_application', {});
 
     return {
       id: `drv_${cleanPhone}`,
-      fullName: localDocs.fullName || 'Ramesh Kumar Singh',
+      fullName: localDocs.fullName || `Chauffeur ${cleanPhone.slice(-4)}`,
       phone: cleanPhone,
       verificationStatus: localStatus as any,
       documents: {
-        drivingLicenceNumber: localDocs.drivingLicenceNumber || 'BR-01-2018-0049281',
-        drivingLicenceExpiry: localDocs.drivingLicenceExpiry || '2032-11-15',
-        aadhaarNumber: localDocs.aadhaarNumber || 'XXXX-XXXX-8921',
-        vehicleMake: localDocs.vehicleMake || 'Maruti Suzuki',
-        vehicleModel: localDocs.vehicleModel || 'Dzire Tour S (Commercial)',
-        vehicleYear: localDocs.vehicleYear || '2023',
-        vehiclePlateNumber: localDocs.vehiclePlateNumber || 'BR 01 PB 8291',
-        bankAccountNumber: localDocs.bankAccountNumber || 'XXXXXXXX4912',
-        upiId: localDocs.upiId || `${cleanPhone}@upi`
+        drivingLicenceNumber: localDocs.drivingLicenceNumber || '',
+        drivingLicenceExpiry: localDocs.drivingLicenceExpiry || '',
+        aadhaarNumber: localDocs.aadhaarNumber || '',
+        vehicleMake: localDocs.vehicleMake || '',
+        vehicleModel: localDocs.vehicleModel || '',
+        vehicleYear: localDocs.vehicleYear || '',
+        vehiclePlateNumber: localDocs.vehiclePlateNumber || '',
+        bankAccountNumber: localDocs.bankAccountNumber || '',
+        upiId: localDocs.upiId || ''
       },
-      rating: 4.88,
-      totalTrips: 342,
-      isDutyOnline: true,
+      rating: 5.0,
+      totalTrips: 0,
+      isDutyOnline: false,
       currentLat: 25.5941,
       currentLng: 85.1376,
       lastActive: new Date().toISOString(),
-      walletBalance: 2450
+      walletBalance: 0
     };
   }
 
@@ -693,44 +721,28 @@ class ApiClient {
   }
 
   async getDriverEarnings(phone: string): Promise<DriverEarningsLedger> {
+    const clean = (phone || '').replace(/\D/g, '').slice(-10);
+    try {
+      const res = await this.request<any>(`/driver/earnings?phone=${clean}`);
+      if (res && res.success && res.earnings) {
+        return {
+          todayEarnings: Number(res.earnings.todayEarnings) || 0,
+          weekEarnings: Number(res.earnings.weekEarnings) || 0,
+          totalEarnings: Number(res.earnings.totalEarnings) || 0,
+          completedTripsCount: Number(res.earnings.completedTripsCount) || 0,
+          payoutsPending: Number(res.earnings.payoutsPending) || 0,
+          history: Array.isArray(res.earnings.history) ? res.earnings.history : []
+        };
+      }
+    } catch (e) {}
+
     return {
-      todayEarnings: 2198,
-      weekEarnings: 14650,
-      totalEarnings: 82400,
-      completedTripsCount: 38,
+      todayEarnings: 0,
+      weekEarnings: 0,
+      totalEarnings: 0,
+      completedTripsCount: 0,
       payoutsPending: 0,
-      history: [
-        {
-          id: 'pay_1',
-          bookingReference: 'OTB-914820',
-          date: 'Today, 11:30 AM',
-          amount: 2198,
-          platformFee: 220,
-          netEarnings: 1978,
-          paymentMode: 'cash',
-          status: 'settled'
-        },
-        {
-          id: 'pay_2',
-          bookingReference: 'OTB-883921',
-          date: 'Yesterday, 04:15 PM',
-          amount: 2698,
-          platformFee: 270,
-          netEarnings: 2428,
-          paymentMode: 'upi',
-          status: 'settled'
-        },
-        {
-          id: 'pay_3',
-          bookingReference: 'OTB-871239',
-          date: '23 Oct 2026',
-          amount: 4198,
-          platformFee: 420,
-          netEarnings: 3778,
-          paymentMode: 'bank_transfer',
-          status: 'settled'
-        }
-      ]
+      history: []
     };
   }
 
@@ -743,7 +755,7 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify({ username, password })
     });
-    if (res.token) {
+    if (res && res.token) {
       await StorageService.setItem('otb_auth_token', res.token);
       await StorageService.setItem('otb_admin_session', JSON.stringify(res.admin));
     }
@@ -802,7 +814,7 @@ class ApiClient {
           name: sd.name || sd.fullName,
           phone: sd.phone,
           vehicleModel: sd.vehicleModel || 'Commercial Taxi',
-          vehicleNumber: sd.vehicleNumber || 'BR 01 PB 8291',
+          vehicleNumber: sd.vehicleNumber || sd.vehiclePlateNumber || '',
           city: sd.city || 'Patna',
           status: (sd.status || '').toLowerCase() === 'approved' ? 'approved' : (sd.status || '').toLowerCase() === 'rejected' ? 'rejected' : 'pending',
           isVerified: (sd.status || '').toLowerCase() === 'approved' || Boolean(sd.isVerified),

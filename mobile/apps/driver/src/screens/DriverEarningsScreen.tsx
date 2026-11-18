@@ -36,13 +36,20 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
   const { colors, isDark } = useTheme();
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [showUpiModal, setShowUpiModal] = useState(false);
-  const [activeUpi, setActiveUpi] = useState(driver?.documents.upiId || '8002141816@ybl');
-  const [upiInput, setUpiInput] = useState(driver?.documents.upiId || '8002141816@ybl');
+  const [activeUpi, setActiveUpi] = useState(driver?.documents?.upiId || '');
+  const [upiInput, setUpiInput] = useState(driver?.documents?.upiId || '');
 
-  const handleSaveUpi = () => {
+  React.useEffect(() => {
+    if (driver?.documents?.upiId) {
+      setActiveUpi(driver.documents.upiId);
+      setUpiInput(driver.documents.upiId);
+    }
+  }, [driver?.documents?.upiId]);
+
+  const handleSaveUpi = async () => {
     const clean = upiInput.trim();
     if (!clean || !clean.includes('@')) {
-      Alert.alert('Invalid UPI ID', 'Please enter a valid UPI VPA handle (e.g. 8002141816@ybl, name@okhdfcbank).');
+      Alert.alert('Invalid UPI ID', 'Please enter a valid UPI VPA handle (e.g. yourname@okhdfcbank, 9876543210@upi).');
       return;
     }
     setActiveUpi(clean);
@@ -51,9 +58,15 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
   };
 
   const handleRequestPayout = async () => {
-    const todayAmount = earnings?.todayEarnings || 2198;
+    const todayAmount = earnings?.todayEarnings || 0;
     const upi = activeUpi;
-    const phone = driver?.phone || '8002141816';
+    const phone = driver?.phone || '';
+
+    if (!upi) {
+      Alert.alert('UPI ID Required', 'Please link your active settlement UPI ID first by tapping Edit.');
+      setShowUpiModal(true);
+      return;
+    }
 
     if (todayAmount <= 0) {
       Alert.alert('No Available Balance', 'You currently do not have unsettled trip earnings today.');
@@ -101,7 +114,7 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
         <View style={[styles.balanceBanner, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <Text style={[styles.bannerLabel, { color: colors.textMuted }]}>TODAY'S NET EARNINGS</Text>
           <Text style={[styles.bannerAmount, { color: colors.primary }]}>
-            {formatCurrency(earnings?.todayEarnings || 2198)}
+            {formatCurrency(earnings?.todayEarnings || 0)}
           </Text>
           <Text style={[styles.bannerSub, { color: colors.textSecondary }]}>
             Settlement scheduled for 10:00 PM to linked UPI account
@@ -113,19 +126,19 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
             <View style={styles.kpiItem}>
               <Text style={[styles.kpiItemLabel, { color: colors.textMuted }]}>THIS WEEK</Text>
               <Text style={[styles.kpiItemVal, { color: colors.text }]}>
-                {formatCurrency(earnings?.weekEarnings || 14650)}
+                {formatCurrency(earnings?.weekEarnings || 0)}
               </Text>
             </View>
             <View style={styles.kpiItem}>
               <Text style={[styles.kpiItemLabel, { color: colors.textMuted }]}>TOTAL LIFETIME</Text>
               <Text style={[styles.kpiItemVal, { color: colors.gold }]}>
-                {formatCurrency(earnings?.totalEarnings || 82400)}
+                {formatCurrency(earnings?.totalEarnings || 0)}
               </Text>
             </View>
             <View style={styles.kpiItem}>
               <Text style={[styles.kpiItemLabel, { color: colors.textMuted }]}>TRIPS</Text>
               <Text style={[styles.kpiItemVal, { color: colors.text }]}>
-                {earnings?.completedTripsCount || 38}
+                {earnings?.completedTripsCount || 0}
               </Text>
             </View>
           </View>
@@ -138,18 +151,22 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
               <CreditCard size={20} color={colors.primary} />
               <Text style={[styles.accountTitle, { color: colors.text }]}>Active Payout Account</Text>
             </View>
-            <View style={[styles.activeBadge, { backgroundColor: 'rgba(5, 150, 105, 0.15)' }]}>
-              <Text style={[styles.activeBadgeText, { color: colors.primary }]}>VERIFIED</Text>
+            <View style={[styles.activeBadge, { backgroundColor: activeUpi ? 'rgba(5, 150, 105, 0.15)' : 'rgba(100, 116, 139, 0.15)' }]}>
+              <Text style={[styles.activeBadgeText, { color: activeUpi ? colors.primary : colors.textMuted }]}>
+                {activeUpi ? 'VERIFIED' : 'PENDING'}
+              </Text>
             </View>
           </View>
 
           <View style={styles.payoutAccountRow}>
             <View style={{ flex: 1 }}>
               <Text style={[styles.accountUpi, { color: colors.textSecondary }]}>
-                Linked UPI: <Text style={{ fontWeight: '800', color: colors.text }}>{activeUpi}</Text>
+                Linked UPI: <Text style={{ fontWeight: '800', color: activeUpi ? colors.text : colors.gold }}>
+                  {activeUpi || 'No UPI Linked (Tap Edit to Add)'}
+                </Text>
               </Text>
               <Text style={[styles.accountBank, { color: colors.textMuted }]}>
-                Bank A/C: {driver?.documents.bankAccountNumber || '••••••••4912'} (IMPS Ready)
+                Bank A/C: {driver?.documents?.bankAccountNumber ? '••••••••' + driver.documents.bankAccountNumber.slice(-4) : 'Not Linked'} {driver?.documents?.bankAccountNumber ? '(IMPS Ready)' : ''}
               </Text>
             </View>
             <TouchableOpacity
@@ -169,7 +186,7 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
               <Text style={styles.commissionPolicyTitle}>85% Chauffeur Earnings Policy</Text>
             </View>
             <Text style={styles.commissionPolicyDesc}>
-              You keep 85% of total ride fares. 15% is the platform fee covering FASTag tolls handling, rider insurance, and 24x7 customer support.
+              You keep 85% of total ride fares. 15% is the platform fee for 24x7 partner and customer support.
             </Text>
           </View>
 
@@ -256,7 +273,7 @@ export const DriverEarningsScreen = ({ navigation }: any) => {
             <View style={styles.upiInputBox}>
               <TextInput
                 style={[styles.upiInput, { color: colors.text, borderColor: colors.primary, backgroundColor: isDark ? '#1E293B' : '#F8FAFC' }]}
-                placeholder="e.g. 8002141816@ybl"
+                placeholder="e.g. mobile@upi or name@bank"
                 placeholderTextColor={colors.textMuted}
                 value={upiInput}
                 onChangeText={setUpiInput}

@@ -38,7 +38,7 @@ export interface OtpVerificationResult {
 
 export class OtpService {
   private static DEFAULT_RESEND_SEC = 30;
-  private static ADMIN_PHONE = '8002141816';
+  private static ADMIN_PHONE = '6206494214';
 
   /**
    * Dispatch 6-digit cryptographic SMS OTP to user's phone

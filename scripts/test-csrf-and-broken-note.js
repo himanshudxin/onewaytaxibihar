@@ -173,6 +173,19 @@ async function runTests() {
   assert.strictEqual(forgedAuth, null, 'Forged cookie half must be rejected');
   console.log(' [PASS] Forged broken note correctly rejected.');
 
+  // Test 9: Admin Login and Auth Endpoints are Exempted from Mutating CSRF Gate
+  console.log('\nTest 9: Admin login /auth endpoints without CSRF token must not be blocked by CSRF gate...');
+  const adminLoginAttempt = await invokeApi('POST', '/api/admin/login', {
+    'content-type': 'application/json'
+    // Notice: NO X-CSRF-Token provided
+  }, {
+    username: 'admin',
+    password: 'wrongpassword'
+  });
+  assert.notStrictEqual(adminLoginAttempt.status, 403, 'Admin login must NOT be blocked with HTTP 403 CSRF');
+  assert.notStrictEqual(adminLoginAttempt.data.error, 'CSRF_TOKEN_INVALID', 'Must not return CSRF_TOKEN_INVALID');
+  console.log(' [PASS] Admin login without CSRF header bypassed CSRF gate (Status: ' + adminLoginAttempt.status + ').');
+
   console.log('\n================================================================');
   console.log('   ALL CSRF & BROKEN NOTE SECURITY TESTS PASSED 100%!');
   console.log('================================================================\n');

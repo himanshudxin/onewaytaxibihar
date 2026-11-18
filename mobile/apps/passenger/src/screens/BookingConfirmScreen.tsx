@@ -26,7 +26,7 @@ import {
 } from 'lucide-react-native';
 
 export const BookingConfirmScreen = ({ route, navigation }: any) => {
-  const { booking } = route.params as { booking: Booking };
+  const { booking = {} as Booking } = (route.params || {}) as { booking?: Booking };
 
   return (
     <SafeAreaView style={styles.safeArea}>

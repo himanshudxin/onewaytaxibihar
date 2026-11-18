@@ -38,14 +38,14 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
   const [step, setStep] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
-  // Form State
+  // Form State - Clean initial state with zero fake autofill
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('Patna');
+  const [city, setCity] = useState('');
   const [dlNumber, setDlNumber] = useState('');
-  const [dlExpiry, setDlExpiry] = useState('2032-11-15');
-  const [vehicleMake, setVehicleMake] = useState('Maruti Suzuki');
-  const [vehicleModel, setVehicleModel] = useState('Dzire Tour Prime (Sedan)');
+  const [dlExpiry, setDlExpiry] = useState('');
+  const [vehicleMake, setVehicleMake] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
   const [vehiclePlate, setVehiclePlate] = useState('');
   const [permitNumber, setPermitNumber] = useState('');
   const [bankAccount, setBankAccount] = useState('');
@@ -53,25 +53,10 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
   const [dlPhotoAttached, setDlPhotoAttached] = useState(false);
   const [rcPhotoAttached, setRcPhotoAttached] = useState(false);
 
-  const handleAutofillDemo = () => {
-    setFullName('Ramesh Kumar Singh');
-    setPhone('9876501234');
-    setCity('Patna');
-    setDlNumber('BR-01-2018-0049281');
-    setDlPhotoAttached(true);
-    setVehicleMake('Maruti Suzuki');
-    setVehicleModel('Dzire Tour S (Commercial)');
-    setVehiclePlate('BR 01 PB 8291');
-    setRcPhotoAttached(true);
-    setPermitNumber('BR-PERMIT-2026');
-    setBankAccount('10982340912');
-    setUpiId('9876501234@upi');
-  };
-
   const handleNext = () => {
     if (step === 1) {
       if (!fullName.trim()) {
-        Alert.alert('Required', 'Please enter your full name as shown on your Driving Licence.');
+        Alert.alert('Required', 'Please enter your full legal name as shown on your Driving Licence.');
         return;
       }
       const clean = sanitizePhoneNumber(phone);
@@ -79,20 +64,48 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
         Alert.alert('Invalid Phone', 'Please enter a valid 10-digit mobile number.');
         return;
       }
+      if (!city.trim()) {
+        Alert.alert('Required', 'Please enter your primary operating city (e.g. Patna, Gaya, Muzaffarpur, Darbhanga).');
+        return;
+      }
       setStep(2);
     } else if (step === 2) {
       if (!dlNumber.trim() || dlNumber.trim().length < 8) {
-        Alert.alert('Required', 'Please enter a valid Driving Licence number (e.g. BR-01-2018-0049281).');
+        Alert.alert('Required', 'Please enter your Driving Licence number (e.g. BR-01-2022-0012345).');
+        return;
+      }
+      if (!dlExpiry.trim()) {
+        Alert.alert('Required', 'Please enter your Driving Licence validity date (e.g. 2030-12-31).');
+        return;
+      }
+      if (!dlPhotoAttached) {
+        Alert.alert('Photo Required', 'Please upload or attach a clear photo of your Driving Licence before proceeding to the next step.');
         return;
       }
       setStep(3);
     } else if (step === 3) {
+      if (!vehicleModel.trim()) {
+        Alert.alert('Required', 'Please enter your commercial vehicle model (e.g. Maruti Dzire, Ertiga, Innova).');
+        return;
+      }
       if (!vehiclePlate.trim()) {
-        Alert.alert('Required', 'Please enter your commercial vehicle registration plate number (e.g. BR 01 PB 8291).');
+        Alert.alert('Required', 'Please enter your commercial vehicle registration plate number (e.g. BR 01 XX 0000).');
+        return;
+      }
+      if (!rcPhotoAttached) {
+        Alert.alert('Photo Required', 'Please upload or attach your Commercial Vehicle RC Certificate photo before proceeding to the next step.');
         return;
       }
       setStep(4);
     } else if (step === 4) {
+      if (!bankAccount.trim()) {
+        Alert.alert('Required', 'Please enter your bank account number and IFSC for daily earnings payout.');
+        return;
+      }
+      if (!upiId.trim() || !upiId.includes('@')) {
+        Alert.alert('Required', 'Please enter a valid UPI ID (e.g. 9876543210@upi or yourname@okhdfcbank) for instant trip settlements.');
+        return;
+      }
       handleSubmitApplication();
     }
   };
@@ -104,21 +117,33 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
       await MobileApiClient.submitDriverApplication({
         fullName: fullName.trim(),
         phone: clean,
+        city: city.trim(),
         drivingLicenceNumber: dlNumber.trim(),
-        drivingLicenceExpiry: dlExpiry,
+        drivingLicenceExpiry: dlExpiry.trim(),
         dlPhotoUrl: dlPhotoAttached ? 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80' : undefined,
-        vehicleMake,
-        vehicleModel,
+        vehicleMake: vehicleMake.trim() || 'Commercial',
+        vehicleModel: vehicleModel.trim(),
         vehiclePlateNumber: vehiclePlate.trim().toUpperCase(),
         rcPhotoUrl: rcPhotoAttached ? 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=600&auto=format&fit=crop&q=80' : undefined,
-        vehicleYear: '2023',
-        permitNumber: permitNumber.trim() || 'BR-PERMIT-COMMERCIAL',
+        permitNumber: permitNumber.trim(),
         bankAccountNumber: bankAccount.trim(),
-        upiId: upiId.trim() || `${clean}@upi`
+        upiId: upiId.trim()
       });
 
       await StorageService.setItem('otb_driver_phone', clean);
       await StorageService.setItem('otb_driver_status', 'pending');
+      await StorageService.setJson('otb_driver_application', {
+        fullName: fullName.trim(),
+        phone: clean,
+        city: city.trim(),
+        drivingLicenceNumber: dlNumber.trim(),
+        drivingLicenceExpiry: dlExpiry.trim(),
+        vehicleModel: vehicleModel.trim(),
+        vehiclePlateNumber: vehiclePlate.trim().toUpperCase(),
+        bankAccountNumber: bankAccount.trim(),
+        upiId: upiId.trim(),
+        status: 'pending'
+      });
       await refreshProfile();
 
       navigation.replace('VerificationStatus', { phone: clean });
@@ -175,21 +200,11 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 Enter your details to register as an authorized outstation driver partner.
               </Text>
 
-              <TouchableOpacity
-                style={[styles.autofillAppBtn, { borderColor: colors.primary }]}
-                onPress={handleAutofillDemo}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.autofillAppText, { color: colors.primary }]}>
-                  Autofill Demo Application Details
-                </Text>
-              </TouchableOpacity>
-
               <View style={styles.formGroup}>
-                <Text style={[styles.label, { color: colors.textMuted }]}>FULL LEGAL NAME</Text>
+                <Text style={[styles.label, { color: colors.textMuted }]}>FULL LEGAL NAME (AS PER DL)</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
-                  placeholder="e.g. Ramesh Kumar Singh"
+                  placeholder="Enter your full name"
                   placeholderTextColor={colors.textMuted}
                   value={fullName}
                   onChangeText={setFullName}
@@ -236,7 +251,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 <Text style={[styles.label, { color: colors.textMuted }]}>DRIVING LICENCE (DL) NUMBER</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
-                  placeholder="e.g. BR-01-2018-0049281"
+                  placeholder="e.g. BR-01-2022-0012345"
                   placeholderTextColor={colors.textMuted}
                   autoCapitalize="characters"
                   value={dlNumber}
@@ -255,7 +270,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 />
               </View>
 
-              {/* Upload Simulation Card */}
+              {/* Upload Driving Licence Photo Card */}
               <TouchableOpacity
                 style={[
                   styles.uploadBox,
@@ -268,9 +283,9 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   const nextState = !dlPhotoAttached;
                   setDlPhotoAttached(nextState);
                   Alert.alert(
-                    nextState ? 'DL Photo Attached' : 'Photo Removed',
+                    nextState ? 'Driving Licence Attached' : 'Photo Removed',
                     nextState
-                      ? 'Driving Licence photo (dl_bihar_commercial_front.jpg • 2.4 MB) attached for verification.'
+                      ? 'Driving Licence photo attached successfully.'
                       : 'Driving Licence photo removed.'
                   );
                 }}
@@ -279,13 +294,13 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   <>
                     <CheckCircle2 size={24} color={colors.primary} />
                     <Text style={[styles.uploadText, { color: colors.primary }]}>Driving Licence Photo Attached</Text>
-                    <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>dl_bihar_commercial_front.jpg • 2.4 MB (Tap to change)</Text>
+                    <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>driving_licence_front.jpg • Ready for upload (Tap to remove)</Text>
                   </>
                 ) : (
                   <>
                     <Upload size={22} color={colors.primary} />
-                    <Text style={[styles.uploadText, { color: colors.text }]}>Upload Photo of Driving Licence</Text>
-                    <Text style={[styles.uploadSub, { color: colors.textMuted }]}>Front & Back side clear photo (Max 10MB)</Text>
+                    <Text style={[styles.uploadText, { color: colors.text }]}>Upload Photo of Driving Licence *</Text>
+                    <Text style={[styles.uploadSub, { color: colors.textMuted }]}>Front side clear photo (Required to proceed)</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -308,7 +323,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
                   value={vehicleModel}
                   onChangeText={setVehicleModel}
-                  placeholder="e.g. Maruti Dzire (Prime Sedan)"
+                  placeholder="e.g. Maruti Dzire, Ertiga, Innova Crysta"
                   placeholderTextColor={colors.textMuted}
                 />
               </View>
@@ -317,7 +332,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                 <Text style={[styles.label, { color: colors.textMuted }]}>REGISTRATION NUMBER (YELLOW PLATE)</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text }]}
-                  placeholder="e.g. BR 01 PB 8291"
+                  placeholder="e.g. BR 01 XX 0000"
                   placeholderTextColor={colors.textMuted}
                   autoCapitalize="characters"
                   value={vehiclePlate}
@@ -339,7 +354,7 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   Alert.alert(
                     nextState ? 'Vehicle RC Attached' : 'RC Removed',
                     nextState
-                      ? 'Commercial RC certificate (rc_commercial_8291.jpg • 1.9 MB) attached for verification.'
+                      ? 'Commercial RC certificate attached successfully.'
                       : 'Vehicle RC certificate removed.'
                   );
                 }}
@@ -348,13 +363,13 @@ export const DriverApplicationScreen = ({ navigation }: any) => {
                   <>
                     <CheckCircle2 size={24} color={colors.info} />
                     <Text style={[styles.uploadText, { color: colors.info }]}>Commercial RC Certificate Attached</Text>
-                    <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>rc_commercial_8291.jpg • 1.9 MB (Tap to change)</Text>
+                    <Text style={[styles.uploadSub, { color: colors.textSecondary }]}>vehicle_rc_certificate.jpg • Ready for upload (Tap to remove)</Text>
                   </>
                 ) : (
                   <>
                     <Upload size={22} color={colors.info} />
-                    <Text style={[styles.uploadText, { color: colors.text }]}>Upload Vehicle RC Certificate</Text>
-                    <Text style={[styles.uploadSub, { color: colors.textMuted }]}>Commercial permit & fitness certificate</Text>
+                    <Text style={[styles.uploadText, { color: colors.text }]}>Upload Vehicle RC Certificate *</Text>
+                    <Text style={[styles.uploadSub, { color: colors.textMuted }]}>Commercial permit / RC photo (Required to proceed)</Text>
                   </>
                 )}
               </TouchableOpacity>

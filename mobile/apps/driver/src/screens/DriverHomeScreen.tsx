@@ -140,7 +140,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
     );
 
     if (pendingBooking) {
-      const fare = Number(pendingBooking.fareBreakdown?.totalFare || 2198);
+      const fare = Number(pendingBooking.fareBreakdown?.totalFare || (pendingBooking as any).totalFare || 0);
       const estEarnings = Math.round(fare * 0.85);
       setActiveOffer({
         id: `offer_${pendingBooking.id || pendingBooking.referenceNumber}`,
@@ -149,13 +149,13 @@ export const DriverHomeScreen = ({ navigation }: any) => {
         pickupAddress: pendingBooking.pickupAddress || `${pendingBooking.pickupCity} Doorstep`,
         dropCity: pendingBooking.dropCity,
         dropAddress: pendingBooking.dropAddress || `${pendingBooking.dropCity} Main Chowk`,
-        distanceKm: pendingBooking.fareBreakdown?.distanceKm || 104,
+        distanceKm: pendingBooking.fareBreakdown?.distanceKm || 0,
         pickupDate: pendingBooking.pickupDate || 'Today',
         pickupTime: pendingBooking.pickupTime || 'Immediate',
         cabTier: pendingBooking.cabTier || 'sedan',
         cabName: pendingBooking.cabName || 'Prime Sedan',
         passengerName: pendingBooking.passengerName || 'Passenger',
-        passengerPhone: pendingBooking.passengerPhone || '8002141816',
+        passengerPhone: pendingBooking.passengerPhone || '',
         estimatedEarnings: estEarnings,
         totalFare: fare,
         collectFromPassenger: fare,
@@ -341,7 +341,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
           <View style={[styles.kpiCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Text style={[styles.kpiLabel, { color: colors.textMuted }]}>TODAY'S NET EARNINGS</Text>
             <Text style={[styles.kpiVal, { color: colors.primary }]}>
-              {formatCurrency(earnings?.todayEarnings || 2198)}
+              {formatCurrency(earnings?.todayEarnings || 0)}
             </Text>
             <Text style={[styles.kpiSub, { color: colors.textSecondary }]}>85% Net Payout</Text>
           </View>
@@ -349,11 +349,11 @@ export const DriverHomeScreen = ({ navigation }: any) => {
           <View style={[styles.kpiCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Text style={[styles.kpiLabel, { color: colors.textMuted }]}>TRIPS COMPLETED</Text>
             <Text style={[styles.kpiVal, { color: colors.gold }]}>
-              {driver?.totalTrips || 38}
+              {driver?.totalTrips || 0}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <Star size={12} color={colors.gold} fill={colors.gold} />
-              <Text style={[styles.kpiSub, { color: colors.textSecondary }]}>4.88 Rating</Text>
+              <Text style={[styles.kpiSub, { color: colors.textSecondary }]}>{(driver?.rating || 5.0).toFixed(1)} Rating</Text>
             </View>
           </View>
         </View>
@@ -495,7 +495,7 @@ export const DriverHomeScreen = ({ navigation }: any) => {
       </Modal>
 
       {/* Self-Hosted APK In-App Updater (Play Store Independent) */}
-      <AppUpdaterModal app="driver" currentVersion="1.0.0" />
+      <AppUpdaterModal app="driver" currentVersion="1.2.0" />
     </SafeAreaView>
   );
 };

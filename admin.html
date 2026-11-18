@@ -4493,6 +4493,27 @@
       return endpoint;
     }
 
+    function getCsrfCookie() {
+      const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+      return match ? decodeURIComponent(match[1]) : (sessionStorage.getItem("otb_csrf_token") || "");
+    }
+
+    async function ensureCsrfToken() {
+      let token = getCsrfCookie();
+      if (token) return token;
+      try {
+        const res = await fetch(getApiUrl("/csrf"));
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.csrfToken) {
+            sessionStorage.setItem("otb_csrf_token", data.csrfToken);
+            return data.csrfToken;
+          }
+        }
+      } catch (_) {}
+      return "";
+    }
+
     async function adminFetch(endpoint, options = {}) {
       const url = getApiUrl(endpoint);
       const isCrossOrigin = url.startsWith("http://") || url.startsWith("https://");
@@ -4500,9 +4521,16 @@
       const token = _adminToken || sessionStorage.getItem("otb_adm_token") || localStorage.getItem("otb_adm_token") || "";
       if (token && !_adminToken) _adminToken = token;
 
+      const isMutating = ["POST", "PUT", "DELETE", "PATCH"].includes((options.method || "GET").toUpperCase());
+      let csrf = getCsrfCookie();
+      if (isMutating && !csrf) {
+        csrf = await ensureCsrfToken();
+      }
+
       const headers = {
         "Content-Type": "application/json",
         ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        ...(csrf && isMutating ? { "X-CSRF-Token": csrf } : {}),
         ...(options.headers || {})
       };
       const fetchOpts = {
@@ -4522,6 +4550,19 @@
           if (!url.startsWith("https://onewaytaxibihar.com")) {
             return await fetch(`https://onewaytaxibihar.com${endpoint}`, fetchOpts);
           }
+        }
+
+        // Auto-heal on 403 CSRF token renewal
+        if (res.status === 403) {
+          try {
+            const clone = res.clone();
+            const errData = await clone.json();
+            if (errData && errData.freshCsrfToken) {
+              sessionStorage.setItem("otb_csrf_token", errData.freshCsrfToken);
+              headers["X-CSRF-Token"] = errData.freshCsrfToken;
+              return await fetch(url, { ...fetchOpts, headers });
+            }
+          } catch (_) {}
         }
 
         // Automatic session invalidation on 401 Unauthorized

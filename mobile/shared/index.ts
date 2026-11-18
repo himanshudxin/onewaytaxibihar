@@ -14,3 +14,4 @@ export * from './services/notifications';
 export * from './services/gmapTollService';
 export * from './components/ErrorBoundary';
 export * from './data/patnaFares';
+export * from './utils/fareEngine';

@@ -97,10 +97,11 @@ export const AddressSelectScreen = ({ route, navigation }: any) => {
   );
   const [detectingGps, setDetectingGps] = useState(false);
 
-  const isExactMatch = BIHAR_CITIES.some(c => c.toLowerCase() === query.trim().toLowerCase());
-  const filteredCities = BIHAR_CITIES.filter(c =>
-    c.toLowerCase().includes(query.toLowerCase())
-  );
+  const cleanQuery = query.trim().toLowerCase();
+  const isExactMatch = BIHAR_CITIES.some(c => c.toLowerCase() === cleanQuery);
+  const filteredCities = cleanQuery
+    ? BIHAR_CITIES.filter(c => c.toLowerCase().includes(cleanQuery))
+    : BIHAR_CITIES;
   const displayCities = [
     ...(query.trim() && !isExactMatch ? [query.trim()] : []),
     ...filteredCities

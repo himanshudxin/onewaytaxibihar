@@ -239,6 +239,17 @@ function generateWhatsAppDeepLink(phone, message) {
   return `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
+// 24x7 Official WhatsApp Verification & Support Link Generator
+function generateWhatsAppSupportLink(phone, role = 'passenger', otp = '') {
+  const cleanPhone = cleanIndianPhone(phone);
+  const supportNumber = (process.env.WHATSAPP_SUPPORT || '+91 77394 06400').replace(/\D/g, '') || '917739406400';
+  const roleName = role === 'driver' ? 'Chauffeur' : (role === 'admin' ? 'Admin' : 'Passenger');
+  const msg = otp 
+    ? `Namaste OneWayTaxiBihar! Please verify my ${roleName} mobile number: +91 ${cleanPhone}. My OTP verification code is: ${otp}`
+    : `Namaste OneWayTaxiBihar! Please assist with ${roleName} OTP verification for mobile number: +91 ${cleanPhone}.`;
+  return `https://wa.me/${supportNumber}?text=${encodeURIComponent(msg)}`;
+}
+
 async function sendBookingConfirmationNotifications(booking) {
   const cleanPhone = cleanIndianPhone(booking.passengerPhone);
   const fromCity = booking.originCity || booking.pickupCity || booking.origin || 'Patna';
@@ -432,6 +443,7 @@ module.exports = {
   sendViaTwilio,
   sendViaWhatsAppCloud,
   generateWhatsAppDeepLink,
+  generateWhatsAppSupportLink,
   sendBookingConfirmationNotifications,
   sendDriverAssignmentNotifications,
   getNotificationConfig,

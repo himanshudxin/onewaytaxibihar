@@ -4650,6 +4650,7 @@ module.exports = async (req, res) => {
       return sendJson(200, {
         success: true,
         token,
+        role: 'owner',
         admin: {
           id: 'adm_owner',
           username: 'owner',

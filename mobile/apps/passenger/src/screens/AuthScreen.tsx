@@ -32,6 +32,8 @@ export const AuthScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [waLink, setWaLink] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any = null;
@@ -41,7 +43,7 @@ export const AuthScreen = ({ navigation }: any) => {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (viaWhatsApp: boolean = false) => {
     const clean = sanitizePhoneNumber(phone);
     if (!isValidIndianMobile(clean)) {
       Alert.alert('Invalid Mobile Number', 'Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).');
@@ -53,9 +55,16 @@ export const AuthScreen = ({ navigation }: any) => {
       const res = await OtpService.sendOtp(clean, 'passenger');
       setStep('otp');
       setResendTimer(res.resendAfterSec || 30);
-      setSmsStatus(res.channel === 'dev_simulation' ? 'Dev Mode (Code: 1234)' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
+      setDevCode(res.devPreviewCode || null);
+      setWaLink(res.whatsappOtpUrl || res.whatsappUrl || null);
+      setSmsStatus(res.isTelecomDelivered ? `SMS delivered via ${res.provider?.toUpperCase()}` : 'Verification code ready');
+      
+      if (viaWhatsApp) {
+        const targetUrl = res.whatsappOtpUrl || res.whatsappUrl || OtpService.getWhatsAppFallbackUrl(clean, 'passenger');
+        Linking.openURL(targetUrl).catch(() => {});
+      }
     } catch (e: any) {
-      Alert.alert('Notice', e.message || 'OTP triggered. Use test code 1234 if SMS delay occurs.');
+      Alert.alert('Notice', e.message || 'Unable to send SMS. Please try WhatsApp verification.');
       setStep('otp');
       setResendTimer(30);
     } finally {
@@ -65,7 +74,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
   const handleVerifyOtp = async () => {
     if (!otp.trim()) {
-      Alert.alert('OTP Required', 'Please enter the 6-digit code sent to your phone (or test code 1234).');
+      Alert.alert('OTP Required', 'Please enter the 6-digit verification code sent to your phone.');
       return;
     }
 
@@ -79,24 +88,7 @@ export const AuthScreen = ({ navigation }: any) => {
         { text: 'Continue', onPress: () => navigation.goBack() }
       ]);
     } catch (e: any) {
-      Alert.alert('Verification Failed', e.message || 'Invalid code.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleQuickDemoLogin = async () => {
-    setLoading(true);
-    try {
-      const demoPhone = '9876543210';
-      await OtpService.verifyOtp(demoPhone, '1234', 'passenger');
-      setUserPhone(demoPhone);
-      updateSearch({ phone: demoPhone, passengerName: 'Verified Passenger' });
-      Alert.alert('Sign In Successful', 'Logged in as Verified Passenger (+91 9876543210)', [
-        { text: 'Continue', onPress: () => navigation.goBack() }
-      ]);
-    } catch (e: any) {
-      Alert.alert('Demo Login Error', e.message || 'Failed demo login');
+      Alert.alert('Verification Failed', e.message || 'Invalid verification code. Please check and re-enter.');
     } finally {
       setLoading(false);
     }
@@ -104,7 +96,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
   const handleWhatsAppHelp = () => {
     const clean = sanitizePhoneNumber(phone);
-    const url = OtpService.getWhatsAppFallbackUrl(clean, 'passenger');
+    const url = waLink || OtpService.getWhatsAppFallbackUrl(clean, 'passenger');
     Linking.openURL(url).catch(() => {
       Alert.alert('Support', 'Contact passenger helpline at +91 80021 41816');
     });
@@ -145,7 +137,7 @@ export const AuthScreen = ({ navigation }: any) => {
             <Text style={styles.subtitle}>
               {step === 'phone'
                 ? 'Sign in to access lowest fixed tariffs, live radar trip tracking, and GST invoicing.'
-                : `Enter the 6-digit code sent to +91 ${sanitizePhoneNumber(phone)}. (Test Code: 1234)`}
+                : `Enter the 6-digit verification code sent to +91 ${sanitizePhoneNumber(phone)}.`}
             </Text>
           </View>
 
@@ -195,6 +187,15 @@ export const AuthScreen = ({ navigation }: any) => {
                     autoFocus
                   />
                 </View>
+                {devCode && (
+                  <TouchableOpacity 
+                    onPress={() => setOtp(devCode)}
+                    style={{ marginTop: 8, padding: 8, backgroundColor: '#ecfdf5', borderRadius: 8, borderWidth: 1, borderColor: '#a7f3d0', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                  >
+                    <CheckCircle2 size={13} color="#059669" />
+                    <Text style={{ fontSize: 12, color: '#047857', fontWeight: '700' }}>Code: {devCode} (Tap to auto-fill)</Text>
+                  </TouchableOpacity>
+                )}
                 {smsStatus && (
                   <View style={styles.statusBadge}>
                     <CheckCircle2 size={13} color="#10b981" />
@@ -207,7 +208,7 @@ export const AuthScreen = ({ navigation }: any) => {
             {/* Golden Primary CTA */}
             <TouchableOpacity
               style={styles.primaryButton}
-              onPress={step === 'phone' ? handleSendOtp : handleVerifyOtp}
+              onPress={step === 'phone' ? () => handleSendOtp(false) : handleVerifyOtp}
               disabled={loading}
               activeOpacity={0.85}
             >
@@ -223,18 +224,20 @@ export const AuthScreen = ({ navigation }: any) => {
               )}
             </TouchableOpacity>
 
-            {/* 1-Tap Quick Demo Login */}
-            <TouchableOpacity
-              style={styles.quickDemoBtn}
-              onPress={handleQuickDemoLogin}
-              disabled={loading}
-              activeOpacity={0.8}
-            >
-              <CheckCircle2 size={16} color="#059669" />
-              <Text style={styles.quickDemoText}>
-                1-Tap Instant Guest Login (9876543210)
-              </Text>
-            </TouchableOpacity>
+            {/* 1-Tap WhatsApp OTP Action (Instant & Free) */}
+            {step === 'phone' ? (
+              <TouchableOpacity
+                style={[styles.quickDemoBtn, { backgroundColor: '#ecfdf5', borderColor: '#86efac' }]}
+                onPress={() => handleSendOtp(true)}
+                disabled={loading}
+                activeOpacity={0.8}
+              >
+                <MessageSquare size={16} color="#16a34a" />
+                <Text style={[styles.quickDemoText, { color: '#15803d', fontWeight: '700' }]}>
+                  Verify via WhatsApp (Instant &amp; Free)
+                </Text>
+              </TouchableOpacity>
+            ) : null}
 
             {step === 'otp' && (
               <View style={styles.otpActions}>
@@ -244,7 +247,7 @@ export const AuthScreen = ({ navigation }: any) => {
                       Resend SMS in <Text style={{ fontWeight: '700', color: '#D97706' }}>{resendTimer}s</Text>
                     </Text>
                   ) : (
-                    <TouchableOpacity onPress={handleSendOtp}>
+                    <TouchableOpacity onPress={() => handleSendOtp(false)}>
                       <Text style={styles.resendLink}>Resend OTP via SMS</Text>
                     </TouchableOpacity>
                   )}
@@ -252,7 +255,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
                 <TouchableOpacity style={styles.waBtn} onPress={handleWhatsAppHelp}>
                   <MessageSquare size={13} color="#25D366" />
-                  <Text style={styles.waText}>WhatsApp OTP Help</Text>
+                  <Text style={styles.waText}>Didn't receive SMS? Verify via WhatsApp</Text>
                 </TouchableOpacity>
               </View>
             )}

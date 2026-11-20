@@ -44,7 +44,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
       try {
         const otpRes = await fetch('https://www.fast2sms.com/dev/bulkV2', {
           method: 'POST',
-          signal: AbortSignal.timeout(1200),
+          signal: AbortSignal.timeout(8000),
           headers: {
             'authorization': apiKey,
             'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
             response: otpData
           };
         } else {
-          console.log(`[Fast2SMS Route OTP KYC Note] ${otpData?.message || 'KYC required for ₹0.20 route'}. Falling back to Quick SMS.`);
+          console.log(`[Fast2SMS Route OTP Status ${otpData?.status_code || ''}] ${otpData?.message || 'KYC required for ₹0.20 route'}. Trying Route Q.`);
         }
       } catch (otpErr) {
         console.warn('Fast2SMS Route OTP attempt note:', otpErr.message);
@@ -78,7 +78,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
     const textMessage = message || (otp ? `Your OneWayTaxiBihar OTP code is ${otp}. Valid for 10 minutes. Do not share with anyone.` : 'Welcome to OneWayTaxiBihar.');
     const response = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
-      signal: AbortSignal.timeout(1200),
+      signal: AbortSignal.timeout(8000),
       headers: {
         'authorization': apiKey,
         'Content-Type': 'application/json'
@@ -94,7 +94,7 @@ async function sendViaFast2SMS({ phone, message, otp = null }) {
 
     const data = await response.json();
     const isSuccess = Boolean(data && data.return === true);
-    console.log(`[Fast2SMS Route Q] +91 ${cleanPhone} | Cost: ₹5.00 | Return: ${isSuccess} | Message: ${data?.message || 'OK'}`);
+    console.log(`[Fast2SMS Route Q] +91 ${cleanPhone} | Return: ${isSuccess} | Status: ${data?.status_code || '200'} | Message: ${data?.message || 'OK'}`);
 
     return {
       success: isSuccess,
@@ -239,15 +239,12 @@ function generateWhatsAppDeepLink(phone, message) {
   return `https://wa.me/91${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
-// 24x7 Official WhatsApp Verification & Support Link Generator
-function generateWhatsAppSupportLink(phone, role = 'passenger', otp = '') {
+// Dedicated 1-Tap WhatsApp OTP Generator (Direct Helpline Dispatch & Self-Verification)
+function generateWhatsAppOtpUrl({ phone, otp, role = 'passenger' }) {
   const cleanPhone = cleanIndianPhone(phone);
-  const supportNumber = (process.env.WHATSAPP_SUPPORT || '+91 77394 06400').replace(/\D/g, '') || '917739406400';
-  const roleName = role === 'driver' ? 'Chauffeur' : (role === 'admin' ? 'Admin' : 'Passenger');
-  const msg = otp 
-    ? `Namaste OneWayTaxiBihar! Please verify my ${roleName} mobile number: +91 ${cleanPhone}. My OTP verification code is: ${otp}`
-    : `Namaste OneWayTaxiBihar! Please assist with ${roleName} OTP verification for mobile number: +91 ${cleanPhone}.`;
-  return `https://wa.me/${supportNumber}?text=${encodeURIComponent(msg)}`;
+  const roleName = role === 'driver' ? 'Chauffeur Captain' : (role === 'admin' ? 'Fleet Operations Controller' : 'Passenger');
+  const message = `Namaste! OneWayTaxiBihar Security Verification:\n\n🔑 Your 6-Digit Verification OTP is: *${otp}*\n\n📱 Registered Phone: +91 ${cleanPhone}\n👤 Profile: ${roleName}\n⏳ Valid for 10 minutes.\n⚠️ Do not share this code with anyone.`;
+  return `https://wa.me/918002141816?text=${encodeURIComponent(message)}`;
 }
 
 async function sendBookingConfirmationNotifications(booking) {
@@ -443,7 +440,7 @@ module.exports = {
   sendViaTwilio,
   sendViaWhatsAppCloud,
   generateWhatsAppDeepLink,
-  generateWhatsAppSupportLink,
+  generateWhatsAppOtpUrl,
   sendBookingConfirmationNotifications,
   sendDriverAssignmentNotifications,
   getNotificationConfig,

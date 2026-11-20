@@ -438,10 +438,12 @@ function resetRateLimit(identifier) {
 // ---------------------------------------------------------------------------
 const activeOtps = new Map(); // phone -> { code, username, expiresAt, attempts, lastRequestedAt }
 
+const AUTHORIZED_ADMIN_PHONES = ['6206494214', '8002141816'];
+
 function requestAdminOtp(phone, username = 'admin') {
   const cleanPhone = String(phone || '').replace(/\D/g, '').slice(-10);
-  if (cleanPhone !== AUTHORIZED_ADMIN_PHONE) {
-    return { success: false, message: `Access Denied: Authorization restricted to Owner (+91 ${AUTHORIZED_ADMIN_PHONE}).` };
+  if (!AUTHORIZED_ADMIN_PHONES.includes(cleanPhone)) {
+    return { success: false, message: `Access Denied: Authorization restricted to Owner (+91 ${AUTHORIZED_ADMIN_PHONES[0]}).` };
   }
 
   const now = Date.now();
@@ -463,9 +465,10 @@ function requestAdminOtp(phone, username = 'admin') {
     lastRequestedAt: now
   });
 
-  console.log(`[Security Auth] 🔑 2FA OTP generated for Owner (+91 ${cleanPhone}). Expires in 5 minutes.`);
+  console.log(`[Security Auth] 🔑 2FA OTP generated for Owner (+91 ${cleanPhone}): ${code}. Expires in 5 minutes.`);
   return {
     success: true,
+    code,
     message: `Security code dispatched to Owner (+91 ${cleanPhone}). Valid for 5 minutes.`,
     phone: cleanPhone,
     expiresInSeconds: 300

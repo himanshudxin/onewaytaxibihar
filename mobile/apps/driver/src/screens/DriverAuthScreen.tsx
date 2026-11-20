@@ -31,6 +31,8 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [waLink, setWaLink] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any = null;
@@ -40,7 +42,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (viaWhatsApp: boolean = false) => {
     const clean = sanitizePhoneNumber(phone);
     if (!isValidIndianMobile(clean)) {
       Alert.alert('Invalid Mobile Number', 'Please enter a valid 10-digit registered chauffeur mobile number.');
@@ -52,9 +54,18 @@ export const DriverAuthScreen = ({ navigation }: any) => {
       const res = await OtpService.sendOtp(clean, 'driver');
       setStep('otp');
       setResendTimer(res.resendAfterSec || 30);
-      setSmsStatus(res.channel === 'dev_simulation' ? 'Verification Code Dispatched' : `SMS via ${res.provider?.toUpperCase() || 'Fast2SMS'}`);
+      setDevCode(res.devPreviewCode || null);
+      setWaLink(res.whatsappOtpUrl || res.whatsappUrl || null);
+      setSmsStatus(res.isTelecomDelivered ? `SMS delivered via ${res.provider?.toUpperCase()}` : 'Verification code ready');
+      
+      if (viaWhatsApp) {
+        const targetUrl = res.whatsappOtpUrl || res.whatsappUrl || OtpService.getWhatsAppFallbackUrl(clean, 'driver');
+        Linking.openURL(targetUrl).catch(() => {});
+      }
     } catch (e: any) {
-      Alert.alert('Error', e.message || 'Failed to dispatch OTP SMS.');
+      Alert.alert('Notice', e.message || 'Unable to send SMS. Please try WhatsApp verification.');
+      setStep('otp');
+      setResendTimer(30);
     } finally {
       setLoading(false);
     }
@@ -145,6 +156,15 @@ export const DriverAuthScreen = ({ navigation }: any) => {
                 />
               </View>
 
+              {devCode && (
+                <TouchableOpacity 
+                  onPress={() => setOtp(devCode)}
+                  style={{ marginTop: 8, padding: 8, backgroundColor: '#ecfdf5', borderRadius: 8, borderWidth: 1, borderColor: '#a7f3d0', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                >
+                  <CheckCircle2 size={13} color="#059669" />
+                  <Text style={{ fontSize: 12, color: '#047857', fontWeight: '700' }}>Code: {devCode} (Tap to auto-fill)</Text>
+                </TouchableOpacity>
+              )}
               {smsStatus && (
                 <View style={styles.statusBadge}>
                   <CheckCircle2 size={13} color="#10b981" />
@@ -156,7 +176,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
 
           <TouchableOpacity
             style={[styles.primaryButton, { backgroundColor: colors.primary }]}
-            onPress={step === 'phone' ? handleSendOtp : handleVerifyOtp}
+            onPress={step === 'phone' ? () => handleSendOtp(false) : handleVerifyOtp}
             disabled={loading}
           >
             {loading ? (
@@ -171,6 +191,19 @@ export const DriverAuthScreen = ({ navigation }: any) => {
             )}
           </TouchableOpacity>
 
+          {step === 'phone' && (
+            <TouchableOpacity
+              style={{ backgroundColor: '#ecfdf5', borderWidth: 1, borderColor: '#86efac', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16, marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              onPress={() => handleSendOtp(true)}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <MessageSquare size={16} color="#16a34a" />
+              <Text style={{ color: '#15803d', fontWeight: '700', fontSize: 14 }}>
+                Verify via WhatsApp (Instant &amp; Free)
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {step === 'otp' && (
             <View style={styles.otpActions}>
@@ -180,7 +213,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
                     Resend SMS code in {resendTimer}s
                   </Text>
                 ) : (
-                  <TouchableOpacity onPress={handleSendOtp}>
+                  <TouchableOpacity onPress={() => handleSendOtp(false)}>
                     <Text style={[styles.resendLink, { color: colors.primary }]}>Resend OTP via SMS</Text>
                   </TouchableOpacity>
                 )}
@@ -188,7 +221,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
 
               <TouchableOpacity style={styles.waFallbackBtn} onPress={handleWhatsAppFallback}>
                 <MessageSquare size={14} color="#25D366" />
-                <Text style={styles.waFallbackText}>Get Code via WhatsApp</Text>
+                <Text style={styles.waFallbackText}>Didn't receive SMS? Verify via WhatsApp</Text>
               </TouchableOpacity>
             </View>
           )}

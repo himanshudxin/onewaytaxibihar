@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Confirm Your Booking &amp; OTP Verification | OneWayTaxiBihar</title>
-  <meta name="description" content="Verify mobile number via OTP and confirm outstation cab booking with OneWayTaxiBihar. Zero advance required.">
+  <meta name="description"
+    content="Verify mobile number via OTP and confirm outstation cab booking with OneWayTaxiBihar. Zero advance required.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
   <script>
@@ -24,25 +25,33 @@
   <!-- Google Fonts: Inter & Mukta -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Mukta:wght@700;800;900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Mukta:wght@700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="/css/style.css?v=20261022_v25_colors">
   <link rel="stylesheet" href="/css/components.css?v=20261022_v25_colors">
   <link rel="stylesheet" href="/css/voyago-theme.css?v=20261022_v25_colors">
   <style>
-    html, body {
+    html,
+    body {
       overflow-x: hidden !important;
       width: 100%;
       box-sizing: border-box;
     }
-    *, *:before, *:after {
+
+    *,
+    *:before,
+    *:after {
       box-sizing: border-box;
     }
+
     .page-step-header {
       padding: 22px 0 14px 0;
       text-align: center;
     }
+
     .page-step-indicator {
       display: inline-flex;
       align-items: center;
@@ -58,6 +67,7 @@
       padding: 3px 12px;
       border-radius: 9999px;
     }
+
     .page-step-header .section-title {
       font-size: clamp(20px, 5vw, 26px);
       font-weight: 900;
@@ -66,6 +76,7 @@
       margin: 4px 0 6px 0;
       line-height: 1.25;
     }
+
     .page-step-header .section-subtitle {
       font-size: clamp(12px, 3.2vw, 13.5px);
       color: var(--owc-text-muted);
@@ -73,6 +84,7 @@
       max-width: 520px;
       margin: 0 auto;
     }
+
     .booking-grid-layout {
       display: grid;
       grid-template-columns: 360px 1fr;
@@ -80,6 +92,7 @@
       align-items: start;
       margin-bottom: 50px;
     }
+
     .summary-card {
       background: var(--owc-card-bg);
       border: 1.5px solid var(--owc-border);
@@ -89,6 +102,7 @@
       position: sticky;
       top: 90px;
     }
+
     .form-card {
       background: var(--owc-card-bg);
       border: 1.5px solid var(--owc-border);
@@ -96,6 +110,7 @@
       padding: 28px;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     }
+
     .form-section-title {
       font-size: 16px;
       font-weight: 800;
@@ -106,6 +121,7 @@
       margin-bottom: 16px;
       letter-spacing: -0.2px;
     }
+
     .form-section-title .step-num {
       width: 24px;
       height: 24px;
@@ -118,18 +134,21 @@
       justify-content: center;
       font-weight: 800;
     }
+
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-bottom: 16px;
     }
+
     .input-box-wrap {
       display: flex;
       flex-direction: column;
       gap: 7px;
       margin-bottom: 16px;
     }
+
     .input-box-wrap label {
       font-size: 11px;
       font-weight: 800;
@@ -140,6 +159,7 @@
       align-items: center;
       gap: 4px;
     }
+
     .input-box-wrap label .req-star {
       color: #ef4444;
       font-size: 13px;
@@ -161,19 +181,23 @@
       box-sizing: border-box;
       position: relative;
     }
+
     [data-theme="dark"] .pro-input-wrap {
       background: #182234;
       border-color: rgba(255, 255, 255, 0.14);
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
+
     .pro-input-wrap:hover {
       border-color: rgba(16, 185, 129, 0.5);
     }
+
     .pro-input-wrap:focus-within {
       border-color: var(--owc-primary, #059669) !important;
       box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.18), 0 4px 12px rgba(16, 185, 129, 0.08) !important;
       background: #ffffff !important;
     }
+
     [data-theme="dark"] .pro-input-wrap:focus-within {
       background: #1c273c !important;
       border-color: var(--owc-primary, #10b981) !important;
@@ -188,6 +212,7 @@
       flex-shrink: 0;
       transition: color 0.2s ease, transform 0.2s ease;
     }
+
     .pro-input-wrap:focus-within .pro-input-icon {
       color: var(--owc-primary, #059669);
       transform: scale(1.06);
@@ -207,15 +232,18 @@
       min-width: 0;
       box-shadow: none !important;
     }
+
     [data-theme="dark"] .pro-input-field {
       color: #f8fafc;
     }
+
     .pro-input-field::placeholder {
       color: #94a3b8;
       opacity: 0.85;
       font-weight: 450;
       letter-spacing: normal;
     }
+
     [data-theme="dark"] .pro-input-field::placeholder {
       color: #64748b;
     }
@@ -231,12 +259,15 @@
       user-select: none;
       transition: border-color 0.2s ease;
     }
+
     [data-theme="dark"] .pro-phone-pill {
       border-right-color: rgba(255, 255, 255, 0.14);
     }
+
     .pro-input-wrap:focus-within .pro-phone-pill {
       border-right-color: rgba(16, 185, 129, 0.45);
     }
+
     .pro-phone-flag {
       border-radius: 2px;
       overflow: hidden;
@@ -245,12 +276,14 @@
       box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
       flex-shrink: 0;
     }
+
     .pro-phone-code {
       font-size: 14px;
       font-weight: 750;
       color: var(--owc-text, #0f172a);
       letter-spacing: 0.2px;
     }
+
     [data-theme="dark"] .pro-phone-code {
       color: #f8fafc;
     }
@@ -275,13 +308,22 @@
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
     }
+
     .pro-valid-indicator.active {
       display: inline-flex;
       animation: proPopIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+
     @keyframes proPopIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .input-control {
@@ -298,23 +340,28 @@
       box-sizing: border-box;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
+
     [data-theme="dark"] .input-control {
       background: #182234;
       border-color: rgba(255, 255, 255, 0.14);
       color: #f8fafc;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
+
     .input-control:hover {
       border-color: rgba(16, 185, 129, 0.5);
     }
+
     .input-control:focus {
       border-color: var(--owc-primary, #059669) !important;
       box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.18), 0 4px 12px rgba(16, 185, 129, 0.08) !important;
       background: #ffffff !important;
     }
+
     [data-theme="dark"] .input-control:focus {
       background: #1c273c !important;
     }
+
     /* OTP Verification Box */
     .otp-block {
       background: rgba(16, 185, 129, 0.04);
@@ -323,6 +370,7 @@
       padding: 20px;
       margin: 20px 0;
     }
+
     .otp-request-row {
       display: flex;
       justify-content: space-between;
@@ -330,6 +378,7 @@
       flex-wrap: wrap;
       gap: 10px;
     }
+
     .otp-inputs-row {
       display: grid;
       grid-template-columns: repeat(6, 44px);
@@ -337,6 +386,7 @@
       margin: 14px 0;
       justify-content: flex-start;
     }
+
     .otp-box-digit {
       width: 100%;
       height: 48px;
@@ -351,10 +401,12 @@
       transition: all 0.18s ease;
       box-sizing: border-box;
     }
+
     .otp-box-digit:focus {
       border-color: var(--owc-primary);
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
     }
+
     .btn-send-otp {
       padding: 9px 18px;
       border-radius: 8px;
@@ -370,9 +422,11 @@
       transition: all 0.2s ease;
       white-space: nowrap;
     }
+
     .btn-send-otp:hover {
       filter: brightness(1.1);
     }
+
     .btn-verify-otp-block {
       width: 100%;
       max-width: 320px;
@@ -383,6 +437,7 @@
       border-radius: 10px;
       background: #10b981;
     }
+
     .verified-pill {
       display: none;
       align-items: center;
@@ -395,9 +450,11 @@
       font-size: 13px;
       font-weight: 750;
     }
+
     .verified-pill.active {
       display: inline-flex;
     }
+
     /* Payment Option Card */
     .payment-option-card {
       border: 1.5px solid var(--owc-border);
@@ -411,16 +468,19 @@
       background: var(--owc-slate-50);
       transition: all 0.2s ease;
     }
+
     .payment-option-card.selected {
       border-color: #10b981;
       background: rgba(16, 185, 129, 0.05);
     }
+
     .payment-option-card input[type="radio"] {
       width: 18px;
       height: 18px;
       accent-color: #10b981;
       flex-shrink: 0;
     }
+
     .btn-confirm-booking {
       width: 100%;
       height: 54px;
@@ -441,15 +501,18 @@
       transition: all 0.2s ease;
       box-sizing: border-box;
     }
+
     .btn-confirm-booking:hover:not(:disabled) {
       filter: brightness(1.08);
       transform: translateY(-1px);
     }
+
     .btn-confirm-booking:disabled {
       opacity: 0.55;
       cursor: not-allowed;
       box-shadow: none;
     }
+
     /* Confirmation Success Box */
     .success-booking-box {
       display: none;
@@ -462,6 +525,7 @@
       max-width: 680px;
       margin: 0 auto 50px auto;
     }
+
     .success-icon-badge {
       width: 68px;
       height: 68px;
@@ -474,6 +538,7 @@
       justify-content: center;
       margin-bottom: 20px;
     }
+
     .booking-id-tag {
       display: inline-block;
       background: var(--owc-slate-50);
@@ -494,6 +559,7 @@
         gap: 16px;
         margin-bottom: 30px;
       }
+
       .summary-card {
         position: static !important;
         top: auto !important;
@@ -501,40 +567,50 @@
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
     }
+
     @media (max-width: 600px) {
       .page-step-header {
         padding: 16px 0 10px 0;
       }
+
       .page-step-header .section-title {
         font-size: 20px !important;
       }
+
       .page-step-header .section-subtitle {
         font-size: 12.5px !important;
       }
+
       .form-card {
         padding: 16px 14px !important;
         border-radius: 14px;
       }
+
       .form-section-title {
         font-size: 15px !important;
       }
+
       .form-row {
         grid-template-columns: 1fr;
         gap: 10px;
       }
+
       .otp-block {
         padding: 14px 12px !important;
         margin: 16px 0 !important;
       }
+
       .otp-request-row {
         flex-direction: column;
         align-items: stretch;
       }
+
       .otp-request-row .btn-send-otp {
         width: 100%;
         justify-content: center;
         height: 42px;
       }
+
       .otp-inputs-row {
         grid-template-columns: repeat(6, 1fr) !important;
         gap: 6px !important;
@@ -542,6 +618,7 @@
         margin: 12px auto !important;
         width: 100% !important;
       }
+
       .otp-box-digit {
         width: 100% !important;
         min-width: 0 !important;
@@ -550,30 +627,37 @@
         padding: 0 !important;
         box-sizing: border-box !important;
       }
+
       .btn-verify-otp-block {
         max-width: 280px !important;
         margin: 10px auto 0 auto !important;
       }
+
       .btn-confirm-booking {
         height: 48px !important;
         font-size: 15px !important;
         border-radius: 10px !important;
       }
+
       .payment-option-card {
         padding: 12px 14px !important;
       }
+
       .nav-actions .btn-modify-route {
         padding: 6px 10px !important;
         font-size: 11.5px !important;
         white-space: nowrap;
       }
+
       .success-booking-box {
         padding: 24px 14px !important;
         border-radius: 16px !important;
       }
+
       .success-booking-box h2 {
         font-size: 20px !important;
       }
+
       .booking-id-tag {
         font-size: 15px !important;
         padding: 4px 12px !important;
@@ -587,12 +671,13 @@
 
   <!-- Sticky Navbar Header -->
   <header class="navbar">
-    
+
 
     <div class="container nav-content">
       <a href="index.html" class="brand-wrapper" title="OneWayTaxiBihar - Dedicated Intercity Taxi Service">
         <div class="brand-badge-icon">
-          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
+          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'"
+            alt="OneWayTaxiBihar" width="40" height="40" class="brand-logo-img">
         </div>
         <div class="brand-text-group">
           <div class="brand-text-logo">OneWay<span class="brand-highlight">TaxiBihar</span></div>
@@ -600,11 +685,13 @@
       </a>
 
       <div class="nav-actions">
-                
-<a href="cabs.html" class="btn-modify-route" style="border: 1px solid var(--owc-border); padding: 7px 14px; border-radius: 9999px; text-decoration: none; color: var(--owc-text); font-size: 13px; font-weight: 700;">
+
+        <a href="cabs.html" class="btn-modify-route"
+          style="border: 1px solid var(--owc-border); padding: 7px 14px; border-radius: 9999px; text-decoration: none; color: var(--owc-text); font-size: 13px; font-weight: 700;">
           <span>← Change Cab</span>
         </a>
-        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" title="Toggle Light / Dark Mode">
+        <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme"
+          title="Toggle Light / Dark Mode">
           <span class="theme-switch-track">
             <span class="theme-switch-thumb">
               <span class="theme-switch-icon" id="theme-switch-icon">☀</span>
@@ -622,7 +709,8 @@
       <div class="page-step-header" id="page-header-wrap">
         <span class="page-step-indicator">Step 3 of 4 • Passenger Verification &amp; OTP</span>
         <h1 class="section-title" style="font-size: 28px; margin-bottom: 8px;">Passenger Details &amp; Mobile OTP</h1>
-        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Instant OTP verification • Dedicated driver dispatch across Bihar</p>
+        <p class="section-subtitle" style="font-size: 14px; margin-bottom: 0;">Instant OTP verification • Dedicated
+          driver dispatch across Bihar</p>
       </div>
 
       <!-- Main Booking Layout -->
@@ -630,63 +718,83 @@
 
         <!-- Left: Trip & Fare Summary Card -->
         <div class="summary-card">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid var(--owc-border); padding-bottom: 14px;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid var(--owc-border); padding-bottom: 14px;">
             <div>
-              <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--owc-text-muted); letter-spacing: 0.6px;">SELECTED CAB</span>
-              <h3 id="txt-cab-category" style="font-size: 18px; font-weight: 800; color: var(--owc-text); margin-top: 2px;">Prime Sedan</h3>
-              <div id="txt-cab-models" style="font-size: 12px; color: var(--owc-text-muted);">Dzire, Etios or similar</div>
+              <span
+                style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--owc-text-muted); letter-spacing: 0.6px;">SELECTED
+                CAB</span>
+              <h3 id="txt-cab-category"
+                style="font-size: 18px; font-weight: 800; color: var(--owc-text); margin-top: 2px;">Prime Sedan</h3>
+              <div id="txt-cab-models" style="font-size: 12px; color: var(--owc-text-muted);">Dzire, Etios or similar
+              </div>
             </div>
-            <a href="cabs.html" style="font-size: 12px; color: var(--owc-primary); font-weight: 750; text-decoration: none;">Change</a>
+            <a href="cabs.html"
+              style="font-size: 12px; color: var(--owc-primary); font-weight: 750; text-decoration: none;">Change</a>
           </div>
 
           <div style="margin-bottom: 18px;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">ROUTE</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">ROUTE
+            </div>
             <div style="font-size: 16px; font-weight: 800; color: var(--owc-text);">
               <span id="txt-origin">Patna</span> ➔ <span id="txt-dest">Gaya</span>
             </div>
-            <div id="txt-route-sub" style="font-size: 12px; color: var(--owc-text-muted); margin-top: 3px;">104 KM • ~2h 15m</div>
+            <div id="txt-route-sub" style="font-size: 12px; color: var(--owc-text-muted); margin-top: 3px;">104 KM • ~2h
+              15m</div>
           </div>
 
           <div style="margin-bottom: 18px; border-bottom: 1px solid var(--owc-border); padding-bottom: 14px;">
-            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">DEPARTURE SCHEDULE</div>
-            <div id="txt-schedule" style="font-size: 14px; font-weight: 750; color: var(--owc-text);">Today at 10:00 AM</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); margin-bottom: 4px;">DEPARTURE
+              SCHEDULE</div>
+            <div id="txt-schedule" style="font-size: 14px; font-weight: 750; color: var(--owc-text);">Today at 10:00 AM
+            </div>
           </div>
 
           <!-- Fare Breakdown -->
           <div style="margin-bottom: 18px;">
-            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+            <div
+              style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
               <span>Base Cab Fare</span>
               <span id="txt-base-fare">₹2,848</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+            <div
+              style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
               <span>Toll &amp; Fastag</span>
               <span style="color: #10b981; font-weight: 700;">Included (₹0 Extra)</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
+            <div
+              style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 6px;">
               <span>GST (5%)</span>
               <span style="color: #10b981; font-weight: 700;">Included</span>
             </div>
-            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 10px;">
+            <div
+              style="display: flex; justify-content: space-between; font-size: 13px; color: var(--owc-text-muted); margin-bottom: 10px;">
               <span>Return Fare / Dead Mileage</span>
               <span style="color: #10b981; font-weight: 700;">₹0 (Zero)</span>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1.5px dashed var(--owc-border); padding-top: 12px;">
+            <div
+              style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1.5px dashed var(--owc-border); padding-top: 12px;">
               <span style="font-size: 14px; font-weight: 800; color: var(--owc-text);">Total Fare</span>
-              <span id="txt-total-fare" style="font-size: 24px; font-weight: 900; color: var(--owc-primary);">₹2,998</span>
+              <span id="txt-total-fare"
+                style="font-size: 24px; font-weight: 900; color: var(--owc-primary);">₹2,998</span>
             </div>
-            <div style="font-size: 11px; color: var(--owc-text-muted); text-align: right; margin-top: 2px;">Fixed Price Guarantee</div>
+            <div style="font-size: 11px; color: var(--owc-text-muted); text-align: right; margin-top: 2px;">Fixed Price
+              Guarantee</div>
           </div>
 
-          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #10b981; font-weight: 650; display: flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <div
+            style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #10b981; font-weight: 650; display: flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             <span>Free Cancellation up to 2 hours before pickup</span>
           </div>
         </div>
 
         <!-- Right: Passenger Details & OTP Form -->
         <div class="form-card" id="rider-form-box">
-          
+
           <!-- Step 1: Passenger Information -->
           <div class="form-section-title">
             <span class="step-num">1</span>
@@ -698,12 +806,14 @@
               <label for="input-rider-name">PASSENGER FULL NAME <span class="req-star">*</span></label>
               <div class="pro-input-wrap">
                 <span class="pro-input-icon" title="Passenger Name">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
                   </svg>
                 </span>
-                <input type="text" id="input-rider-name" class="pro-input-field" placeholder="Enter your name" autocomplete="name" required>
+                <input type="text" id="input-rider-name" class="pro-input-field" placeholder="Enter your name"
+                  autocomplete="name" required>
               </div>
             </div>
             <div class="input-box-wrap">
@@ -711,17 +821,20 @@
               <div class="pro-input-wrap" id="rider-phone-wrap">
                 <div class="pro-phone-pill" title="India (+91)">
                   <svg class="pro-phone-flag" width="18" height="13" viewBox="0 0 30 20">
-                    <rect width="30" height="6.67" fill="#FF9933"/>
-                    <rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/>
-                    <rect y="13.33" width="30" height="6.67" fill="#138808"/>
-                    <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7"/>
-                    <circle cx="15" cy="10" r="0.6" fill="#000080"/>
+                    <rect width="30" height="6.67" fill="#FF9933" />
+                    <rect y="6.67" width="30" height="6.67" fill="#FFFFFF" />
+                    <rect y="13.33" width="30" height="6.67" fill="#138808" />
+                    <circle cx="15" cy="10" r="2.6" fill="none" stroke="#000080" stroke-width="0.7" />
+                    <circle cx="15" cy="10" r="0.6" fill="#000080" />
                   </svg>
                   <span class="pro-phone-code">+91</span>
                 </div>
-                <input type="tel" id="input-rider-phone" class="pro-input-field pro-phone-input" maxlength="10" placeholder="Enter 10-digit mobile number" autocomplete="tel" inputmode="numeric" spellcheck="false" required>
+                <input type="tel" id="input-rider-phone" class="pro-input-field pro-phone-input" maxlength="10"
+                  placeholder="Enter 10-digit mobile number" autocomplete="tel" inputmode="numeric" spellcheck="false"
+                  required>
                 <span class="pro-valid-indicator" id="rider-phone-valid-indicator" title="Valid 10-digit mobile number">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </span>
@@ -730,16 +843,19 @@
           </div>
 
           <!-- Date & Time Selection: When do you require the cab? -->
-          <div class="form-row" style="background: rgba(16, 185, 129, 0.05); border: 1.5px solid rgba(16, 185, 129, 0.2); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+          <div class="form-row"
+            style="background: rgba(16, 185, 129, 0.05); border: 1.5px solid rgba(16, 185, 129, 0.2); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
             <div class="input-box-wrap" style="margin-bottom: 0;">
-              <label for="input-pickup-date">WHEN DO YOU REQUIRE CAB? (PICKUP DATE) <span class="req-star">*</span></label>
+              <label for="input-pickup-date">WHEN DO YOU REQUIRE CAB? (PICKUP DATE) <span
+                  class="req-star">*</span></label>
               <div class="pro-input-wrap">
                 <span class="pro-input-icon" title="Required Date">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
                   </svg>
                 </span>
                 <input type="date" id="input-pickup-date" class="pro-input-field" required>
@@ -749,12 +865,14 @@
               <label for="select-pickup-time">REQUIRED PICKUP TIME <span class="req-star">*</span></label>
               <div class="pro-input-wrap">
                 <span class="pro-input-icon" title="Required Time">
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
                   </svg>
                 </span>
-                <select id="select-pickup-time" class="pro-input-field" style="cursor: pointer; background: transparent;">
+                <select id="select-pickup-time" class="pro-input-field"
+                  style="cursor: pointer; background: transparent;">
                   <option value="Immediate (Next 15-30m)">⚡ Immediate (Next 15-30m)</option>
                   <option value="05:00 AM">05:00 AM (Early Dawn Flight/Train)</option>
                   <option value="06:30 AM">06:30 AM (Morning Departure)</option>
@@ -776,12 +894,14 @@
             <label for="input-pickup-addr">EXACT PICKUP ADDRESS / LANDMARK <span class="req-star">*</span></label>
             <div class="pro-input-wrap">
               <span class="pro-input-icon" title="Pickup Location">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
               </span>
-              <input type="text" id="input-pickup-addr" class="pro-input-field" placeholder="House no, Street, Landmark, Colony, or Airport Gate" required>
+              <input type="text" id="input-pickup-addr" class="pro-input-field"
+                placeholder="House no, Street, Landmark, Colony, or Airport Gate" required>
             </div>
           </div>
 
@@ -789,12 +909,14 @@
             <label for="input-drop-addr">DROP DESTINATION LANDMARK / ADDRESS (OPTIONAL)</label>
             <div class="pro-input-wrap">
               <span class="pro-input-icon" title="Drop Location">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                  <circle cx="12" cy="9" r="2.5"/>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                  <circle cx="12" cy="9" r="2.5" />
                 </svg>
               </span>
-              <input type="text" id="input-drop-addr" class="pro-input-field" placeholder="Destination town, landmark or railway station">
+              <input type="text" id="input-drop-addr" class="pro-input-field"
+                placeholder="Destination town, landmark or railway station">
             </div>
           </div>
 
@@ -803,24 +925,32 @@
             <span class="step-num">2</span>
             <span>Mobile OTP Verification</span>
             <span class="verified-pill" id="badge-phone-verified">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
               <span>Verified</span>
             </span>
           </div>
 
           <div class="otp-block" id="otp-container">
-            <div class="otp-request-row">
-              <div>
-                <div style="font-size: 13.5px; font-weight: 750; color: var(--owc-text);" id="txt-otp-prompt">Verify Mobile for Driver Dispatch</div>
-                <div style="font-size: 12px; color: var(--owc-text-muted);" id="txt-otp-note">We send an instant 6-digit SMS code to confirm your ride.</div>
+            <div class="otp-request-row" style="flex-wrap: wrap; gap: 10px;">
+              <div style="flex: 1; min-width: 200px;">
+                <div style="font-size: 13.5px; font-weight: 750; color: var(--owc-text);" id="txt-otp-prompt">Verify
+                  Mobile for Driver Dispatch</div>
+                <div style="font-size: 12px; color: var(--owc-text-muted);" id="txt-otp-note">Get an instant 6-digit code on WhatsApp or SMS.</div>
               </div>
-              <button type="button" class="btn-send-otp" id="btn-trigger-otp" onclick="requestOtpCode()">
-                Send 6-Digit OTP
-              </button>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-send-otp" id="btn-trigger-otp" onclick="requestOtpCode(true)" style="background: #16a34a; border-color: #16a34a; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>💬 Get OTP on WhatsApp</span>
+                </button>
+                <button type="button" class="btn-send-otp" id="btn-trigger-sms" onclick="requestOtpCode(false)" style="background: #f8fafc; color: #334155; border: 1px solid #cbd5e1;">
+                  <span>Via SMS</span>
+                </button>
+              </div>
             </div>
 
             <div id="otp-boxes-wrapper" style="display: none; margin-top: 14px;">
-              <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); text-align: center;">ENTER 6-DIGIT OTP:</div>
+              <div style="font-size: 12px; font-weight: 700; color: var(--owc-text-muted); text-align: center;">ENTER 6-DIGIT VERIFICATION CODE:</div>
               <div class="otp-inputs-row">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-1" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-2" inputmode="numeric">
@@ -829,25 +959,38 @@
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-5" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-6" inputmode="numeric">
               </div>
-              <button type="button" class="btn-send-otp btn-verify-otp-block" id="btn-verify-otp" onclick="verifyOtpCode()">
+              <div style="text-align: center; margin: 8px 0;">
+                <a href="https://wa.me" target="_blank" id="link-open-whatsapp" style="font-size: 11.5px; color: #16a34a; font-weight: 700; text-decoration: underline;">
+                  Open WhatsApp App / Web to Check Code ➔
+                </a>
+              </div>
+              <button type="button" class="btn-send-otp btn-verify-otp-block" id="btn-verify-otp"
+                onclick="verifyOtpCode()">
                 Verify OTP
               </button>
-              <div style="font-size: 11.5px; color: var(--owc-text-muted); text-align: center; margin-top: 8px;">
-                Test Code: <strong style="color: var(--owc-primary);">969696</strong> or SMS code sent to your mobile.
+              <div style="font-size: 11.5px; color: var(--owc-text-muted); text-align: center; margin-top: 8px;" id="txt-otp-help-note">
+                Please check WhatsApp or SMS notification for the 6-digit code.
               </div>
             </div>
           </div>
 
           <!-- Submit Button to Proceed to Dedicated Payment Page (Step 4) -->
           <!-- Statutory Consent & Age Declaration -->
-          <div style="display: flex; align-items: flex-start; gap: 8px; margin: 18px 0 14px; font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.4;">
+          <div
+            style="display: flex; align-items: flex-start; gap: 8px; margin: 18px 0 14px; font-size: 12.5px; color: var(--owc-text-muted); line-height: 1.4;">
             <input type="checkbox" id="booking-consent-cb" checked required style="margin-top: 2px;">
             <label for="booking-consent-cb">
-              I agree to the <a href="/terms-of-service" target="_blank" style="color: var(--owc-primary); font-weight: 700; text-decoration: underline;">Terms &amp; Conditions</a> and <a href="/privacy-policy" target="_blank" style="color: var(--owc-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>, confirm I am 18+ years of age, and consent to receive transactional booking updates via SMS &amp; WhatsApp.
+              I agree to the <a href="/terms-of-service" target="_blank"
+                style="color: var(--owc-primary); font-weight: 700; text-decoration: underline;">Terms &amp;
+                Conditions</a> and <a href="/privacy-policy" target="_blank"
+                style="color: var(--owc-primary); font-weight: 700; text-decoration: underline;">Privacy Policy</a>,
+              confirm I am 18+ years of age, and consent to receive transactional booking updates via SMS &amp;
+              WhatsApp.
             </label>
           </div>
 
-          <button type="button" class="btn-confirm-booking" id="btn-submit-booking" onclick="proceedToPayment()" disabled>
+          <button type="button" class="btn-confirm-booking" id="btn-submit-booking" onclick="proceedToPayment()"
+            disabled>
             <span>Verify Mobile OTP to Continue to Payment</span>
           </button>
           <div style="text-align: center; font-size: 11.5px; color: var(--owc-text-muted); margin-top: 10px;">
@@ -861,21 +1004,27 @@
       <!-- Confirmation Success Card -->
       <div class="success-booking-box" id="success-card">
         <div class="success-icon-badge">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         </div>
-        <h2 style="font-size: 26px; font-weight: 900; color: var(--owc-text); margin-bottom: 6px;">Booking Confirmed!</h2>
+        <h2 style="font-size: 26px; font-weight: 900; color: var(--owc-text); margin-bottom: 6px;">Booking Confirmed!
+        </h2>
         <p style="font-size: 14px; color: var(--owc-text-muted); max-width: 480px; margin: 0 auto 12px;">
-          Your outstation cab has been reserved with Central Dispatch. Chauffeur details and car number will be sent via SMS &amp; WhatsApp.
+          Your outstation cab has been reserved with Central Dispatch. Chauffeur details and car number will be sent via
+          SMS &amp; WhatsApp.
         </p>
 
         <div>
-          <span style="font-size: 12px; color: var(--owc-text-muted); font-weight: 700; text-transform: uppercase;">BOOKING ID</span><br>
+          <span
+            style="font-size: 12px; color: var(--owc-text-muted); font-weight: 700; text-transform: uppercase;">BOOKING
+            ID</span><br>
           <span class="booking-id-tag" id="succ-booking-id">OTB-2026-XXXX</span>
         </div>
 
-        <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px; max-width: 480px; margin: 0 auto 24px; text-align: left; font-size: 13.5px;">
+        <div
+          style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 16px; max-width: 480px; margin: 0 auto 24px; text-align: left; font-size: 13.5px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
             <span style="color: var(--owc-text-muted);">Route:</span>
             <strong id="succ-route" style="color: var(--owc-text);">Patna ➔ Gaya</strong>
@@ -888,21 +1037,28 @@
             <span style="color: var(--owc-text-muted);">Pickup Time:</span>
             <strong id="succ-time" style="color: var(--owc-text);">Today at 10:00 AM</strong>
           </div>
-          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--owc-border); padding-top: 8px; margin-top: 8px;">
+          <div
+            style="display: flex; justify-content: space-between; border-top: 1px solid var(--owc-border); padding-top: 8px; margin-top: 8px;">
             <span style="color: var(--owc-text); font-weight: 700;">Total Fare (Cash on Ride):</span>
             <strong id="succ-fare" style="color: var(--owc-primary); font-size: 16px;">₹2,998</strong>
           </div>
         </div>
 
         <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <a id="btn-wa-dispatch" href="https://wa.me/917739406400" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z"/></svg>
+          <a id="btn-wa-dispatch" href="https://wa.me/917739406400" target="_blank" rel="noopener noreferrer"
+            style="display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.541 1.944.827 2.801.827 3.18 0 5.767-2.586 5.768-5.766 0-3.18-2.587-5.814-5.773-5.814zm0-2.172c4.418 0 8 3.582 8 8 0 4.418-3.582 8-8 8-1.397 0-2.716-.364-3.869-1.002l-4.162 1.09 1.109-4.053c-.707-1.196-1.078-2.573-1.078-4.035 0-4.418 3.582-8 8-8z" />
+            </svg>
             <span>Chat on WhatsApp</span>
           </a>
-          <a href="tel:+918002141816" style="display: inline-flex; align-items: center; gap: 8px; background: var(--owc-primary); color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
+          <a href="tel:+918002141816"
+            style="display: inline-flex; align-items: center; gap: 8px; background: var(--owc-primary); color: #ffffff; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none;">
             <span>Call 24x7 Helpdesk</span>
           </a>
-          <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1.5px solid var(--owc-border); color: var(--owc-text); padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none;">
+          <a href="index.html"
+            style="display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1.5px solid var(--owc-border); color: var(--owc-text); padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 14px; text-decoration: none;">
             <span>Book Another Ride</span>
           </a>
         </div>
@@ -921,12 +1077,14 @@
         <div style="display: flex; gap: 14px; align-items: center; font-size: 12px; flex-wrap: wrap; margin-top: 6px;">
           <a href="/" style="color: var(--owc-primary); text-decoration: none;">Home</a> •
           <a href="/privacy-policy" style="color: var(--owc-text-muted); text-decoration: none;">Privacy Policy</a> •
-          <a href="/terms-of-service" style="color: var(--owc-text-muted); text-decoration: none;">Terms of Service</a> •
+          <a href="/terms-of-service" style="color: var(--owc-text-muted); text-decoration: none;">Terms of Service</a>
+          •
           <a href="/refund-policy" style="color: var(--owc-text-muted); text-decoration: none;">Refund Policy</a> •
           <a href="/cookie-policy" style="color: var(--owc-text-muted); text-decoration: none;">Cookie Policy</a> •
           <a href="/contact" style="color: var(--owc-text-muted); text-decoration: none;">Contact &amp; Grievances</a> •
           <a href="/data-deletion" style="color: var(--owc-text-muted); text-decoration: none;">Data Deletion</a> •
-          <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">📞 80021 41816</a>
+          <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">📞
+            80021 41816</a>
         </div>
       </div>
     </div>
@@ -957,7 +1115,7 @@
         if (storedTrip) trip = JSON.parse(storedTrip);
         const storedCab = sessionStorage.getItem('otb_selected_cab');
         if (storedCab) cab = JSON.parse(storedCab);
-      } catch (e) {}
+      } catch (e) { }
 
       const sessionTime = sessionStorage.getItem('otb_pickup_time');
 
@@ -1001,7 +1159,7 @@
       const todayYmd = new Date().toISOString().split('T')[0];
       const dateInput = document.getElementById('input-pickup-date');
       const timeSelect = document.getElementById('select-pickup-time');
-      
+
       if (dateInput) {
         dateInput.min = todayYmd;
         dateInput.value = trip.pickupDate || todayYmd;
@@ -1144,7 +1302,7 @@
       let isOtpVerified = false;
       let generatedOtp = '969696';
 
-      window.requestOtpCode = async function (viaWhatsApp = false) {
+      window.requestOtpCode = async function (viaWhatsApp = true) {
         const phone = document.getElementById('input-rider-phone').value.trim().replace(/\D/g, '').slice(-10);
         if (!phone || phone.length !== 10 || !/^[6-9]\d{9}$/.test(phone)) {
           alert('Please enter a valid 10-digit mobile number first.');
@@ -1157,19 +1315,22 @@
 
         document.getElementById('otp-boxes-wrapper').style.display = 'block';
         document.getElementById('txt-otp-prompt').textContent = `OTP Dispatched to +91 ${phone}`;
-        document.getElementById('txt-otp-note').textContent = 'Please enter the 6-digit code received via SMS or WhatsApp.';
-        document.getElementById('btn-trigger-otp').textContent = 'Resend OTP';
+        document.getElementById('txt-otp-note').textContent = viaWhatsApp 
+          ? '6-Digit code sent directly to your WhatsApp. Please check WhatsApp and enter below.' 
+          : '6-Digit SMS code sent. Please enter below.';
+        document.getElementById('btn-trigger-otp').textContent = 'Resend on WhatsApp';
         document.getElementById('otp-1').focus();
 
         try {
           if (window.ApiClient && ApiClient.request) {
             const res = await ApiClient.request('/api/auth/send-otp', {
               method: 'POST',
-              body: JSON.stringify({ phone, name: document.getElementById('input-rider-name').value || 'Passenger' })
+              body: JSON.stringify({ 
+                phone, 
+                name: document.getElementById('input-rider-name').value || 'Passenger',
+                channel: viaWhatsApp ? 'whatsapp' : 'sms'
+              })
             });
-            if (res && res.whatsappOtpUrl && viaWhatsApp) {
-              window.open(res.whatsappOtpUrl, '_blank');
-            }
             if (res && res.devPreviewCode) {
               generatedOtp = res.devPreviewCode;
             }
@@ -1245,7 +1406,7 @@
             submitBtn.innerHTML = '<span>Proceed to Payment &amp; Review ➔</span>';
           }
         }
-      } catch (e) {}
+      } catch (e) { }
 
       window.proceedToPayment = function () {
         const name = document.getElementById('input-rider-name').value.trim();

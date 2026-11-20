@@ -4,7 +4,7 @@
  * OneWayTaxiBihar Mobility Pvt Ltd
  */
 
-try { require('dotenv').config(); } catch (e) {}
+try { require('dotenv').config(); } catch (e) { }
 
 const fs = require('fs');
 const path = require('path');
@@ -57,7 +57,7 @@ function loadCities() {
       memoryCities = directCities;
       return memoryCities;
     }
-  } catch (e) {}
+  } catch (e) { }
   const candidatePaths = [
     path.join(process.cwd(), 'data', 'cities.json'),
     path.join(__dirname, '..', 'data', 'cities.json'),
@@ -69,7 +69,7 @@ function loadCities() {
         memoryCities = JSON.parse(fs.readFileSync(cPath, 'utf8').replace(/^\uFEFF/, ''));
         return memoryCities;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   return [];
 }
@@ -83,7 +83,7 @@ function loadLocations() {
       memoryLocations = directLocs;
       return memoryLocations;
     }
-  } catch (e) {}
+  } catch (e) { }
   const candidatePaths = [
     path.join(process.cwd(), 'data', 'locations.json'),
     path.join(__dirname, '..', 'data', 'locations.json'),
@@ -95,7 +95,7 @@ function loadLocations() {
         memoryLocations = JSON.parse(fs.readFileSync(lPath, 'utf8').replace(/^\uFEFF/, ''));
         return memoryLocations;
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   return [];
 }
@@ -192,8 +192,8 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c * 1.28); // 1.28x road tortuosity factor for Bihar highway network
 }
@@ -971,7 +971,7 @@ module.exports = async (req, res) => {
     const isMutatingMethod = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
     const isWebhookRoute = pathname.includes('/webhook') || pathname.includes('/razorpay') || pathname.includes('/payu');
     const isTestExecution = process.env.NODE_ENV === 'test' || req.headers['x-bypass-csrf'] === 'test-runner';
-    const isMobileNative = 
+    const isMobileNative =
       req.headers['x-client-platform'] === 'mobile-native' ||
       (req.headers['user-agent'] || '').includes('MobileApp') ||
       (req.headers['user-agent'] || '').includes('Expo') ||
@@ -979,22 +979,22 @@ module.exports = async (req, res) => {
       (req.headers['user-agent'] || '').includes('CFNetwork');
 
     // Authentication and verification routes where client does not yet possess a session/bearer token
-    const isAuthRoute = 
-      pathname === '/admin/login' || 
-      pathname === '/api/admin/login' || 
-      pathname === '/auth/login' || 
-      pathname === '/api/auth/login' || 
-      pathname === '/auth/send-otp' || 
-      pathname === '/api/auth/send-otp' || 
-      pathname === '/auth/verify-otp' || 
-      pathname === '/api/auth/verify-otp' || 
-      pathname === '/admin/send-whatsapp-otp' || 
-      pathname === '/api/admin/send-whatsapp-otp' || 
-      pathname === '/admin/verify-whatsapp-otp' || 
-      pathname === '/api/admin/verify-whatsapp-otp' || 
-      pathname === '/admin/send-2fa-otp' || 
-      pathname === '/api/admin/send-2fa-otp' || 
-      pathname === '/admin/verify-2fa-otp' || 
+    const isAuthRoute =
+      pathname === '/admin/login' ||
+      pathname === '/api/admin/login' ||
+      pathname === '/auth/login' ||
+      pathname === '/api/auth/login' ||
+      pathname === '/auth/send-otp' ||
+      pathname === '/api/auth/send-otp' ||
+      pathname === '/auth/verify-otp' ||
+      pathname === '/api/auth/verify-otp' ||
+      pathname === '/admin/send-whatsapp-otp' ||
+      pathname === '/api/admin/send-whatsapp-otp' ||
+      pathname === '/admin/verify-whatsapp-otp' ||
+      pathname === '/api/admin/verify-whatsapp-otp' ||
+      pathname === '/admin/send-2fa-otp' ||
+      pathname === '/api/admin/send-2fa-otp' ||
+      pathname === '/admin/verify-2fa-otp' ||
       pathname === '/api/admin/verify-2fa-otp' ||
       pathname === '/driver/login' ||
       pathname === '/api/driver/login' ||
@@ -1051,7 +1051,7 @@ module.exports = async (req, res) => {
         try {
           const tData = JSON.parse(fs.readFileSync(tunnelFile, 'utf8'));
           return sendJson(200, tData);
-        } catch (e) {}
+        } catch (e) { }
       }
       return sendJson(200, {
         status: 'ONLINE',
@@ -1088,8 +1088,8 @@ module.exports = async (req, res) => {
       if (!ipRateCheck.allowed || !phoneRateCheck.allowed || !phoneHourlyCheck.allowed) {
         const retryAfter = Math.max(ipRateCheck.retryAfter || 0, phoneRateCheck.retryAfter || 0, phoneHourlyCheck.retryAfter || 0, 1);
         res.setHeader('Retry-After', String(retryAfter));
-        const errorMessage = !phoneHourlyCheck.allowed 
-          ? 'Too many OTP requests for this mobile number. Please wait before requesting another code.' 
+        const errorMessage = !phoneHourlyCheck.allowed
+          ? 'Too many OTP requests for this mobile number. Please wait before requesting another code.'
           : 'Too many requests. Please try again later.';
         return sendJson(429, {
           success: false,
@@ -1133,12 +1133,27 @@ module.exports = async (req, res) => {
         smsText = `OneWayTaxi Fleet Operations 2FA Security Code: ${code}. Valid for 5 minutes. DO NOT SHARE.`;
       }
 
-      // Trigger real SMS via Fast2SMS / MSG91 / Twilio
-      const smsDispatch = await notificationService.sendSms({
-        phone: cleanPhone,
-        otp: code,
-        message: smsText
-      });
+      const requestedChannel = (body.channel || 'whatsapp').toLowerCase();
+      let waDispatch = null;
+      let smsDispatch = null;
+
+      // 1. WhatsApp Outbound: Dispatches directly to customer's WhatsApp number
+      if (requestedChannel === 'whatsapp' || requestedChannel === 'both') {
+        waDispatch = await notificationService.sendWhatsAppOtp({
+          phone: cleanPhone,
+          otp: code,
+          role
+        });
+      }
+
+      // 2. Telecom SMS Outbound: Dispatches via Fast2SMS / MSG91 / Twilio
+      if (requestedChannel === 'sms' || requestedChannel === 'both' || (requestedChannel === 'whatsapp' && !waDispatch?.success)) {
+        smsDispatch = await notificationService.sendSms({
+          phone: cleanPhone,
+          otp: code,
+          message: smsText
+        });
+      }
 
       // Auto-register customer lead in db.leads so Admin Portal displays customer inquiry (passengers only)
       if (role === 'passenger') {
@@ -1162,27 +1177,28 @@ module.exports = async (req, res) => {
         }
       }
 
-      const isLiveTelecom = smsDispatch && smsDispatch.success && !smsDispatch.isSimulated;
+      const isDelivered = (waDispatch && waDispatch.success) || (smsDispatch && smsDispatch.success && !smsDispatch.isSimulated);
+      const activeChannel = (requestedChannel === 'whatsapp' && waDispatch?.success) ? 'whatsapp' : 'sms';
 
       return sendJson(200, {
         success: true,
         phone: `+91 ${cleanPhone}`,
         cleanPhone,
         role,
+        channel: activeChannel,
         isNewUser: role === 'passenger' ? isNewUser : false,
         rewardEligible: role === 'passenger' ? isNewUser : false,
         rewardAmount: (role === 'passenger' && isNewUser) ? 100 : 0,
-        whatsappUrl: waUrl,
-        whatsappOtpUrl: waDirectOtpUrl,
+        whatsappStatus: waDispatch,
         smsStatus: smsDispatch,
-        isTelecomDelivered: isLiveTelecom,
-        provider: smsDispatch?.provider || (isLiveTelecom ? 'fast2sms' : 'telecom_simulation'),
-        route: smsDispatch?.route || 'otp',
-        cost: smsDispatch?.cost || '₹0.20',
-        devPreviewCode: (!isLiveTelecom || process.env.NODE_ENV !== 'production') ? code : undefined,
-        message: isLiveTelecom 
-          ? `Verification code dispatched to +91 ${cleanPhone} via Telecom SMS.`
-          : `Verification code generated for +91 ${cleanPhone}. Ready via SMS & WhatsApp.`
+        isTelecomDelivered: isDelivered,
+        provider: activeChannel === 'whatsapp' ? (waDispatch?.provider || 'whatsapp_cloud') : (smsDispatch?.provider || 'fast2sms'),
+        route: activeChannel === 'whatsapp' ? 'whatsapp_direct' : (smsDispatch?.route || 'otp'),
+        cost: activeChannel === 'whatsapp' ? '₹0.00' : (smsDispatch?.cost || '₹0.20'),
+        devPreviewCode: (!isDelivered || process.env.NODE_ENV !== 'production') ? code : undefined,
+        message: activeChannel === 'whatsapp'
+          ? `6-Digit OTP sent directly to your WhatsApp (+91 ${cleanPhone}). Please check your WhatsApp.`
+          : `Verification code dispatched to +91 ${cleanPhone} via Telecom SMS.`
       });
     }
 
@@ -1578,7 +1594,7 @@ module.exports = async (req, res) => {
 
         // Record in Wallet Ledger
         db.wallet_ledger.push({
-          id: `WLT_${Date.now()}_${Math.floor(Math.random()*1000)}`,
+          id: `WLT_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
           userId: user.id,
           phone: user.phone,
           type: 'CREDIT',
@@ -1735,7 +1751,7 @@ module.exports = async (req, res) => {
           phone: cleanPhone,
           otp: otpCode,
           message: `Your OneWayTaxiBihar password reset code is ${otpCode}. Valid for 10 minutes. Do not share.`
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       // Dispatch via email if email is present
@@ -1744,7 +1760,7 @@ module.exports = async (req, res) => {
           to: email,
           subject: 'OneWayTaxiBihar - Password Reset Code',
           text: `Your password reset code is ${otpCode}. Token: ${resetToken}`
-        }).catch(() => {});
+        }).catch(() => { });
       }
 
       await saveDb(db);
@@ -2435,7 +2451,7 @@ module.exports = async (req, res) => {
       const distanceKm = getRouteDistance(fromVal, toVal);
       const hatchFare = calculateServerFare(distanceKm, 'hatchback', 'oneway', fromVal, toVal);
       const sedanFare = calculateServerFare(distanceKm, 'sedan', 'oneway', fromVal, toVal);
-      const suvFare   = calculateServerFare(distanceKm, 'suv', 'oneway', fromVal, toVal);
+      const suvFare = calculateServerFare(distanceKm, 'suv', 'oneway', fromVal, toVal);
 
       const dur = hatchFare.duration;
       const c1 = resolveCoordinates(fromVal);
@@ -2607,8 +2623,8 @@ module.exports = async (req, res) => {
       }
 
       const cleanUserPhone = auth.user.phone.replace(/\D/g, '').slice(-10);
-      const customerBookings = (db.bookings || []).filter(b => 
-        b.customerId === auth.user.id || 
+      const customerBookings = (db.bookings || []).filter(b =>
+        b.customerId === auth.user.id ||
         (b.passengerPhone && b.passengerPhone.replace(/\D/g, '').slice(-10) === cleanUserPhone)
       );
 
@@ -2710,9 +2726,9 @@ module.exports = async (req, res) => {
       const packageId = String(body.packageId || body.packageCode || '').trim();
       const pkg = (db.tourism_packages || []).find(p =>
         (p.id === packageId ||
-         p.packageCode === packageId ||
-         p.slug === packageId ||
-         (packageId && p.id && p.id.toLowerCase().includes(packageId.toLowerCase().replace(/tour-|-0\d+/g, '')))) &&
+          p.packageCode === packageId ||
+          p.slug === packageId ||
+          (packageId && p.id && p.id.toLowerCase().includes(packageId.toLowerCase().replace(/tour-|-0\d+/g, '')))) &&
         (p.status === 'published' || !p.status)
       );
       if (!pkg) {
@@ -2919,8 +2935,8 @@ module.exports = async (req, res) => {
       // 3. Payment Txn Idempotency check (User refreshes after payment)
       const paymentTxnId = (body.paymentTxnId || body.razorpayPaymentId || body.upiUtr || '').toString().trim();
       if (paymentTxnId) {
-        const existingPaymentBooking = (db.bookings || []).find(b => 
-          b.paymentTxnId === paymentTxnId || 
+        const existingPaymentBooking = (db.bookings || []).find(b =>
+          b.paymentTxnId === paymentTxnId ||
           (b.upiUtr && b.upiUtr === paymentTxnId)
         );
         if (existingPaymentBooking) {
@@ -3044,7 +3060,7 @@ module.exports = async (req, res) => {
       if (cpnCode) {
         const cpn = (db.coupons || []).find(c => c.code.toUpperCase() === cpnCode && c.active);
         if (cpn && baseTotal >= (cpn.minFare || 0)) {
-          const priorUsage = (db.bookings || []).filter(b => 
+          const priorUsage = (db.bookings || []).filter(b =>
             (b.passengerPhone || '').replace(/\D/g, '').slice(-10) === cleanPhone &&
             b.couponCode === cpnCode &&
             b.bookingStatus !== 'CANCELLED'
@@ -3310,8 +3326,8 @@ module.exports = async (req, res) => {
       if (!bId) {
         return sendJson(400, { success: false, message: 'bookingId query parameter is required' });
       }
-      const booking = (db.bookings || []).find(b => 
-        (b.bookingId || '').toUpperCase() === bId || 
+      const booking = (db.bookings || []).find(b =>
+        (b.bookingId || '').toUpperCase() === bId ||
         (b.id || '').toUpperCase() === bId
       );
       if (!booking) {
@@ -3608,7 +3624,7 @@ module.exports = async (req, res) => {
         if (leadsHandler && typeof leadsHandler.invalidateCache === 'function') {
           leadsHandler.invalidateCache();
         }
-      } catch (e) {}
+      } catch (e) { }
 
       return sendJson(200, {
         success: true,
@@ -4026,7 +4042,7 @@ module.exports = async (req, res) => {
       const paymentSettings = db.settings?.payment || null;
       const defaultAmt = paymentSettings?.defaultAdvanceAmount || 299;
       const orderAmount = Number(amount || amountInRupees) || defaultAmt;
-      
+
       try {
         const orderResult = await paymentService.createRazorpayOrder({
           amountInRupees: orderAmount,
@@ -4057,7 +4073,7 @@ module.exports = async (req, res) => {
     if (['/payments/verify', '/payment/verify', '/api/payments/verify', '/api/payment/verify'].includes(pathname) && method === 'POST') {
       const { orderId, paymentId, signature, bookingId, amount } = body;
       const paymentSettings = db.settings?.payment || null;
-      
+
       const verification = paymentService.verifyRazorpayPayment({
         orderId,
         paymentId,
@@ -4137,7 +4153,7 @@ module.exports = async (req, res) => {
       const webhookSignature = req.headers['x-razorpay-signature'] || '';
       const rawBody = JSON.stringify(body);
       const paymentSettings = db.settings?.payment || null;
-      
+
       const isAuthentic = paymentService.verifyRazorpayWebhook(rawBody, webhookSignature, paymentSettings);
       if (webhookSignature && !isAuthentic) {
         return sendJson(400, { success: false, message: 'Invalid webhook signature' });
@@ -4186,7 +4202,7 @@ module.exports = async (req, res) => {
     // -------------------------------------------------------------
     // 8B-2. ADMIN PAYMENT SETTINGS (CRUD)
     // -------------------------------------------------------------
-    
+
     if (['/admin/test-razorpay', '/api/admin/test-razorpay', '/payment/test-credentials', '/api/payment/test-credentials'].includes(pathname) && method === 'POST') {
       const paymentSettings = db.settings?.payment || {};
       const keyId = body.keyId || paymentSettings.razorpayKeyId;
@@ -4335,7 +4351,7 @@ module.exports = async (req, res) => {
     if (pathname === '/notifications/test' && method === 'POST') {
       const targetPhone = body.phone || '6206494214';
       const testMsg = body.message || 'OneWayTaxiBihar Telecom Test: System ready for live operations across Bihar.';
-      
+
       const result = await notificationService.sendSms({
         phone: targetPhone,
         message: testMsg
@@ -4574,7 +4590,7 @@ module.exports = async (req, res) => {
           otp: otpReq.code,
           message: `OneWayTaxiBihar Admin Security Code: ${otpReq.code || ''}. Valid for 5 mins. DO NOT SHARE.`
         });
-      } catch (e) {}
+      } catch (e) { }
 
       const waDirectUrl = notificationService.generateWhatsAppOtpUrl({ phone: cleanPhone, otp: otpReq.code, role: 'admin' });
 
@@ -4703,7 +4719,7 @@ module.exports = async (req, res) => {
         }
       });
 
-      const customers = Array.from(customerMap.values()).sort((a,b) => b.totalTrips - a.totalTrips);
+      const customers = Array.from(customerMap.values()).sort((a, b) => b.totalTrips - a.totalTrips);
       return sendJson(200, { success: true, count: customers.length, customers });
     }
 
@@ -4885,7 +4901,7 @@ module.exports = async (req, res) => {
 
       const totalRouteCount = Object.values(routeStats).reduce((a, b) => a + b, 0) || 1;
       const topRoutes = Object.entries(routeStats)
-        .sort((a,b) => b[1] - a[1])
+        .sort((a, b) => b[1] - a[1])
         .slice(0, 8)
         .map(([routeKey, count]) => {
           const parts = routeKey.split(' ➔ ');
@@ -5109,7 +5125,7 @@ module.exports = async (req, res) => {
       const suvPrice = Math.max(500, Number(pricing.suv) || 4499);
       const innovaPrice = Math.max(500, Number(pricing.innova) || 5499);
 
-      const destinations = Array.isArray(body.destinations) 
+      const destinations = Array.isArray(body.destinations)
         ? body.destinations.map(d => securityService.sanitizeString(d, 80)).filter(Boolean)
         : [title];
 
@@ -6090,7 +6106,7 @@ module.exports = async (req, res) => {
       const cabTier = body.cabTier || body.cabType || 'sedan';
       const distanceKm = Number(body.distanceKm) || getRouteDistance(originCity, destCity);
       const serverFare = calculateServerFare(distanceKm, cabTier, 'oneway', originCity, destCity);
-      
+
       const totalFare = Number(body.totalFare) || Number(body.fare) || serverFare.totalFare;
       const advancePaid = Number(body.advancePaid) || 0;
       const balanceDue = Math.max(0, totalFare - advancePaid);
@@ -6276,8 +6292,8 @@ module.exports = async (req, res) => {
         booking = await dbService.findBooking(bId);
       }
       const cleanPhone = (body.driverPhone || body.phone || '').replace(/\D/g, '').slice(-10);
-      const driver = (db.drivers || []).find(d => 
-        (driverId && d.id === driverId) || 
+      const driver = (db.drivers || []).find(d =>
+        (driverId && d.id === driverId) ||
         (cleanPhone && d.phone && d.phone.replace(/\D/g, '').slice(-10) === cleanPhone)
       );
 
@@ -6296,7 +6312,7 @@ module.exports = async (req, res) => {
       }
 
       // Chauffeur availability check: Driver already assigned to another active trip on same day
-      const conflictingTrip = (db.bookings || []).find(b => 
+      const conflictingTrip = (db.bookings || []).find(b =>
         b.bookingId !== bookingId &&
         b.assignedDriverId === driverId &&
         b.pickupDate === booking.pickupDate &&
@@ -6451,7 +6467,7 @@ module.exports = async (req, res) => {
     if (pathname === '/admin/drivers' && method === 'GET') {
       const admin = getSessionAdmin(req, db);
       if (!admin) return sendJson(401, { success: false, message: 'Admin authentication required' });
-      
+
       const allDrivers = [...(db.drivers || [])];
       // Merge any driver applications into list if not already present
       (db.driver_applications || []).forEach(app => {
@@ -6488,14 +6504,14 @@ module.exports = async (req, res) => {
 
       const { driverId, phone, status, notes } = body;
       const cleanPhone = (phone || '').replace(/\D/g, '').slice(-10);
-      
-      let driver = (db.drivers || []).find(d => 
-        (driverId && d.id === driverId) || 
+
+      let driver = (db.drivers || []).find(d =>
+        (driverId && d.id === driverId) ||
         (cleanPhone && (d.phone || '').replace(/\D/g, '').slice(-10) === cleanPhone)
       );
 
-      const app = (db.driver_applications || []).find(a => 
-        (driverId && (a.id === driverId || a.driverId === driverId)) || 
+      const app = (db.driver_applications || []).find(a =>
+        (driverId && (a.id === driverId || a.driverId === driverId)) ||
         (cleanPhone && (a.phone || '').replace(/\D/g, '').slice(-10) === cleanPhone)
       );
 
@@ -7170,9 +7186,9 @@ module.exports = async (req, res) => {
       }
 
       if (!driver) {
-        return sendJson(404, { 
-          success: false, 
-          message: 'Mobile number not found in fleet. Please click "New Driver Sign Up" to register in 1 minute, or call 6206494214.' 
+        return sendJson(404, {
+          success: false,
+          message: 'Mobile number not found in fleet. Please click "New Driver Sign Up" to register in 1 minute, or call 6206494214.'
         });
       }
 
@@ -7181,9 +7197,9 @@ module.exports = async (req, res) => {
 
       // Verify PIN: accepts stored PIN, default last 4 digits of phone, or '1234'
       if (inputPin !== '' && driver.pin && driver.pin !== inputPin && inputPin !== cleanPhone.slice(-4) && inputPin !== '1234') {
-        return sendJson(401, { 
-          success: false, 
-          message: `Incorrect Security PIN. Tip: Use your 4-digit PIN or last 4 digits of your phone (${cleanPhone.slice(-4)}). Call 6206494214 for PIN reset.` 
+        return sendJson(401, {
+          success: false,
+          message: `Incorrect Security PIN. Tip: Use your 4-digit PIN or last 4 digits of your phone (${cleanPhone.slice(-4)}). Call 6206494214 for PIN reset.`
         });
       }
 
@@ -7285,9 +7301,9 @@ module.exports = async (req, res) => {
         if (['CANCELLED', 'REJECTED', 'COMPLETED'].includes(status)) return false;
         return ['REQUESTED', 'NEW', 'CONFIRMED', 'BROADCASTING', 'PENDING_ADMIN_DISPATCH'].includes(status);
       }).map(normalizeTrip);
-      
-      return sendJson(200, { 
-        success: true, 
+
+      return sendJson(200, {
+        success: true,
         trips: assignedTrips,
         availableTrips,
         driver: {
@@ -7318,9 +7334,9 @@ module.exports = async (req, res) => {
         await saveDb(db);
       }
 
-      return sendJson(200, { 
-        success: true, 
-        dutyStatus: targetDriver ? targetDriver.dutyStatus : dutyStatus 
+      return sendJson(200, {
+        success: true,
+        dutyStatus: targetDriver ? targetDriver.dutyStatus : dutyStatus
       });
     }
 
@@ -7581,7 +7597,7 @@ module.exports = async (req, res) => {
       }
 
       const driver = driverAuth?.driver || (db.drivers || []).find(d => (d.phone || '').replace(/\D/g, '').slice(-10) === cleanPhone);
-      const completedTrips = (db.bookings || []).filter(b => 
+      const completedTrips = (db.bookings || []).filter(b =>
         (b.assignedDriverId === driver?.id || (b.assignedDriverPhone && b.assignedDriverPhone.replace(/\D/g, '').slice(-10) === cleanPhone)) &&
         (b.bookingStatus === 'COMPLETED' || b.status === 'COMPLETED')
       );
@@ -7836,7 +7852,7 @@ module.exports = async (req, res) => {
       const { bookingId } = body;
       if (!bookingId) return sendJson(400, { success: false, message: 'bookingId is required.' });
 
-      const booking = (db.bookings || []).find(function(b) { return b.bookingId === bookingId || b.id === bookingId; });
+      const booking = (db.bookings || []).find(function (b) { return b.bookingId === bookingId || b.id === bookingId; });
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found.' });
 
       const dispatchSvc = require('../services/dispatch.js');
@@ -7925,7 +7941,7 @@ module.exports = async (req, res) => {
       dispatchSvc.checkBroadcastTimeouts(db);
 
       const offerCards = (db.bookings || [])
-        .filter(function(b) {
+        .filter(function (b) {
           if (b.dispatchStatus !== 'BROADCASTING') return false;
           if (b.broadcastCandidates && b.broadcastCandidates.length > 0) {
             if (!b.broadcastCandidates.includes(driverId)) return false;
@@ -7933,7 +7949,7 @@ module.exports = async (req, res) => {
           if ((b.rejectedDrivers || []).includes(driverId)) return false;
           return true;
         })
-        .map(function(b) { return dispatchSvc.buildTripOfferCard(b, driverId); });
+        .map(function (b) { return dispatchSvc.buildTripOfferCard(b, driverId); });
 
       return sendJson(200, {
         success: true,
@@ -7975,7 +7991,7 @@ module.exports = async (req, res) => {
       const driver = driverAuth.driver;
       const driverId = driver.id || driver.phone;
 
-      const booking = (db.bookings || []).find(function(b) { return b.bookingId === bookingId || b.id === bookingId; });
+      const booking = (db.bookings || []).find(function (b) { return b.bookingId === bookingId || b.id === bookingId; });
       if (!booking) return sendJson(404, { success: false, message: 'Booking not found.' });
 
       if (!booking.rejectedDrivers) booking.rejectedDrivers = [];
@@ -8404,7 +8420,7 @@ module.exports = async (req, res) => {
             corridorCounts[key] = (corridorCounts[key] || 0) + 1;
           }
         });
-        const topRoutes = Object.entries(corridorCounts).sort((a,b) => b[1] - a[1]);
+        const topRoutes = Object.entries(corridorCounts).sort((a, b) => b[1] - a[1]);
         const topRouteStr = topRoutes.slice(0, 3).map(([r, c]) => `${r} (${c} rides)`).join(', ') || 'Patna ➔ Gaya, Patna ➔ Muzaffarpur';
         answer = `Highest demand corridors: ${topRouteStr}. Patna is the primary central hub with 68% of dispatch departures.`;
         dataPayload = { topRoutes: topRoutes.slice(0, 5) };
@@ -8492,7 +8508,7 @@ module.exports = async (req, res) => {
       if (/otb-\d{4}-\d+/i.test(query) || (phone && (query.includes('where') || query.includes('status') || query.includes('track')))) {
         const match = query.match(/(otb-\d{4}-\d+)/i);
         const bId = match ? match[1].toUpperCase() : '';
-        const found = bId 
+        const found = bId
           ? (db.bookings || []).find(b => b.bookingId === bId)
           : (phone ? (db.bookings || []).find(b => b.passengerPhone && b.passengerPhone.includes(phone)) : null);
 
@@ -8762,7 +8778,7 @@ module.exports = async (req, res) => {
       }
 
       // Check if already mapped to a confirmed booking
-      const existing = (db.bookings || []).find(b => 
+      const existing = (db.bookings || []).find(b =>
         b.paymentTxnId === paymentTxnId || (b.upiUtr && b.upiUtr === paymentTxnId)
       );
 
@@ -9169,8 +9185,8 @@ module.exports = async (req, res) => {
       if (!fallbackDb.error_logs) fallbackDb.error_logs = [];
       fallbackDb.error_logs.unshift(errEntry);
       if (fallbackDb.error_logs.length > 200) fallbackDb.error_logs = fallbackDb.error_logs.slice(0, 200);
-      dbService.saveDbAsync(fallbackDb).catch(() => {});
-    } catch (e) {}
+      dbService.saveDbAsync(fallbackDb).catch(() => { });
+    } catch (e) { }
 
     return sendJson(500, {
       success: false,

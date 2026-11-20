@@ -30,9 +30,9 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
-  const [smsStatus, setSmsStatus] = useState<string | null>(null);
+  const [channel, setChannel] = useState<'whatsapp' | 'sms'>('whatsapp');
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
-  const [waLink, setWaLink] = useState<string | null>(null);
 
   useEffect(() => {
     let interval: any = null;
@@ -42,28 +42,23 @@ export const DriverAuthScreen = ({ navigation }: any) => {
     return () => clearInterval(interval);
   }, [step, resendTimer]);
 
-  const handleSendOtp = async (viaWhatsApp: boolean = false) => {
+  const handleSendOtp = async (selectedChannel: 'whatsapp' | 'sms' = 'whatsapp') => {
     const clean = sanitizePhoneNumber(phone);
     if (!isValidIndianMobile(clean)) {
       Alert.alert('Invalid Mobile Number', 'Please enter a valid 10-digit registered chauffeur mobile number.');
       return;
     }
 
+    setChannel(selectedChannel);
     setLoading(true);
     try {
-      const res = await OtpService.sendOtp(clean, 'driver');
+      const res = await OtpService.sendOtp(clean, 'driver', selectedChannel);
       setStep('otp');
       setResendTimer(res.resendAfterSec || 30);
       setDevCode(res.devPreviewCode || null);
-      setWaLink(res.whatsappOtpUrl || res.whatsappUrl || null);
-      setSmsStatus(res.isTelecomDelivered ? `SMS delivered via ${res.provider?.toUpperCase()}` : 'Verification code ready');
-      
-      if (viaWhatsApp) {
-        const targetUrl = res.whatsappOtpUrl || res.whatsappUrl || OtpService.getWhatsAppFallbackUrl(clean, 'driver');
-        Linking.openURL(targetUrl).catch(() => {});
-      }
+      setStatusMessage(res.message || (selectedChannel === 'whatsapp' ? 'OTP sent to your WhatsApp' : 'OTP sent via SMS'));
     } catch (e: any) {
-      Alert.alert('Notice', e.message || 'Unable to send SMS. Please try WhatsApp verification.');
+      Alert.alert('Notice', e.message || 'Unable to dispatch code. Please retry.');
       setStep('otp');
       setResendTimer(30);
     } finally {
@@ -74,7 +69,7 @@ export const DriverAuthScreen = ({ navigation }: any) => {
   const handleVerifyOtp = async () => {
     const clean = sanitizePhoneNumber(phone);
     if (!otp.trim()) {
-      Alert.alert('OTP Required', 'Please enter the 6-digit verification code sent to your mobile.');
+      Alert.alert('OTP Required', 'Please enter the 6-digit verification code sent to your ' + (channel === 'whatsapp' ? 'WhatsApp' : 'mobile SMS') + '.');
       return;
     }
 
@@ -84,17 +79,17 @@ export const DriverAuthScreen = ({ navigation }: any) => {
       await refreshProfile();
       navigation.replace('DriverTabs');
     } catch (e: any) {
-      Alert.alert('Verification Failed', e.message || 'Invalid OTP code.');
+      Alert.alert('Verification Failed', e.message || 'Invalid OTP code. Please check and re-enter.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleWhatsAppFallback = () => {
-    const clean = sanitizePhoneNumber(phone);
-    const url = OtpService.getWhatsAppFallbackUrl(clean, 'driver');
-    Linking.openURL(url).catch(() => {
-      Alert.alert('WhatsApp Unavailable', 'Please contact support at +91 80021 41816.');
+  const handleOpenWhatsAppApp = () => {
+    Linking.openURL('whatsapp://app').catch(() => {
+      Linking.openURL('https://wa.me').catch(() => {
+        Alert.alert('WhatsApp', 'Please open WhatsApp on your phone to view the incoming OTP code.');
+      });
     });
   };
 
@@ -119,12 +114,14 @@ export const DriverAuthScreen = ({ navigation }: any) => {
           <BrandLogo size="hero" showSubtitle subtitleText="Driver & Fleet Partner Network" style={{ marginBottom: 20 }} />
 
           <Text style={[styles.title, { color: colors.text }]}>
-            {step === 'phone' ? 'Chauffeur Phone Login' : 'Enter 6-Digit SMS Code'}
+            {step === 'phone' ? 'Chauffeur Phone Login' : 'Enter 6-Digit OTP'}
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             {step === 'phone'
-              ? 'Enter your registered mobile number to receive a secure SMS verification code.'
-              : `Dispatched SMS code to +91 ${sanitizePhoneNumber(phone)}. Valid for 10 minutes.`}
+              ? 'Enter your registered mobile number to receive a secure verification code.'
+              : channel === 'whatsapp'
+                ? `We sent a 6-digit OTP directly to your WhatsApp (+91 ${sanitizePhoneNumber(phone)}). Please check WhatsApp and enter code below.`
+                : `We sent a 6-digit SMS OTP to +91 ${sanitizePhoneNumber(phone)}. Please enter code below.`}
           </Text>
 
           {step === 'phone' ? (
@@ -156,6 +153,20 @@ export const DriverAuthScreen = ({ navigation }: any) => {
                 />
               </View>
 
+              {/* 1-Tap Shortcut to View Incoming Code on WhatsApp */}
+              {channel === 'whatsapp' && (
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginVertical: 8, padding: 8, backgroundColor: '#f0fdf4', borderRadius: 8, borderWidth: 1, borderColor: '#bbf7d0' }}
+                  onPress={handleOpenWhatsAppApp}
+                  activeOpacity={0.8}
+                >
+                  <MessageSquare size={14} color="#16a34a" />
+                  <Text style={{ fontSize: 12.5, fontWeight: '700', color: '#15803d' }}>
+                    Open WhatsApp App to Check Incoming OTP
+                  </Text>
+                </TouchableOpacity>
+              )}
+
               {devCode && (
                 <TouchableOpacity 
                   onPress={() => setOtp(devCode)}
@@ -165,43 +176,64 @@ export const DriverAuthScreen = ({ navigation }: any) => {
                   <Text style={{ fontSize: 12, color: '#047857', fontWeight: '700' }}>Code: {devCode} (Tap to auto-fill)</Text>
                 </TouchableOpacity>
               )}
-              {smsStatus && (
+              {statusMessage && (
                 <View style={styles.statusBadge}>
                   <CheckCircle2 size={13} color="#10b981" />
-                  <Text style={styles.statusText}>{smsStatus}</Text>
+                  <Text style={styles.statusText}>{statusMessage}</Text>
                 </View>
               )}
             </>
           )}
 
-          <TouchableOpacity
-            style={[styles.primaryButton, { backgroundColor: colors.primary }]}
-            onPress={step === 'phone' ? () => handleSendOtp(false) : handleVerifyOtp}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <>
-                <Text style={styles.primaryButtonText}>
-                  {step === 'phone' ? 'Send Driver Login OTP' : 'Verify & Enter Console'}
-                </Text>
-                <ArrowRight size={20} color="#FFFFFF" />
-              </>
-            )}
-          </TouchableOpacity>
+          {step === 'phone' ? (
+            <>
+              {/* Primary: Get OTP on WhatsApp */}
+              <TouchableOpacity
+                style={[styles.primaryButton, { backgroundColor: '#16a34a' }]}
+                onPress={() => handleSendOtp('whatsapp')}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <>
+                    <MessageSquare size={18} color="#FFFFFF" />
+                    <Text style={styles.primaryButtonText}>
+                      Get OTP on WhatsApp (Instant)
+                    </Text>
+                    <ArrowRight size={20} color="#FFFFFF" />
+                  </>
+                )}
+              </TouchableOpacity>
 
-          {step === 'phone' && (
+              {/* Secondary: Get OTP via SMS */}
+              <TouchableOpacity
+                style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16, marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => handleSendOtp('sms')}
+                disabled={loading}
+                activeOpacity={0.8}
+              >
+                <Text style={{ color: colors.textSecondary, fontWeight: '600', fontSize: 13.5 }}>
+                  Get OTP via Telecom SMS instead
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
             <TouchableOpacity
-              style={{ backgroundColor: '#ecfdf5', borderWidth: 1, borderColor: '#86efac', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16, marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-              onPress={() => handleSendOtp(true)}
+              style={[styles.primaryButton, { backgroundColor: colors.primary }]}
+              onPress={handleVerifyOtp}
               disabled={loading}
-              activeOpacity={0.8}
             >
-              <MessageSquare size={16} color="#16a34a" />
-              <Text style={{ color: '#15803d', fontWeight: '700', fontSize: 14 }}>
-                Verify via WhatsApp (Instant &amp; Free)
-              </Text>
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <>
+                  <Text style={styles.primaryButtonText}>
+                    Verify &amp; Enter Console
+                  </Text>
+                  <ArrowRight size={20} color="#FFFFFF" />
+                </>
+              )}
             </TouchableOpacity>
           )}
 
@@ -210,19 +242,20 @@ export const DriverAuthScreen = ({ navigation }: any) => {
               <View style={styles.resendRow}>
                 {resendTimer > 0 ? (
                   <Text style={[styles.resendText, { color: colors.textMuted }]}>
-                    Resend SMS code in {resendTimer}s
+                    Resend code in {resendTimer}s
                   </Text>
                 ) : (
-                  <TouchableOpacity onPress={() => handleSendOtp(false)}>
-                    <Text style={[styles.resendLink, { color: colors.primary }]}>Resend OTP via SMS</Text>
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <TouchableOpacity onPress={() => handleSendOtp('whatsapp')}>
+                      <Text style={[styles.resendLink, { color: '#16a34a', fontWeight: '700' }]}>Resend on WhatsApp</Text>
+                    </TouchableOpacity>
+                    <Text style={{ color: colors.textMuted }}>•</Text>
+                    <TouchableOpacity onPress={() => handleSendOtp('sms')}>
+                      <Text style={[styles.resendLink, { color: colors.primary }]}>Send via SMS</Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
-
-              <TouchableOpacity style={styles.waFallbackBtn} onPress={handleWhatsAppFallback}>
-                <MessageSquare size={14} color="#25D366" />
-                <Text style={styles.waFallbackText}>Didn't receive SMS? Verify via WhatsApp</Text>
-              </TouchableOpacity>
             </View>
           )}
 

@@ -238,20 +238,19 @@ class ApiClient {
   // AUTHENTICATION & SESSIONS
   // ==========================================
 
-  async sendOtp(phone: string, role: 'passenger' | 'driver' | 'admin' = 'passenger'): Promise<{ success: boolean; message: string; simulated?: boolean; provider?: string; route?: string; cost?: string; whatsappUrl?: string; whatsappOtpUrl?: string; devPreviewCode?: string; isTelecomDelivered?: boolean }> {
+  async sendOtp(phone: string, role: 'passenger' | 'driver' | 'admin' = 'passenger', channel: 'whatsapp' | 'sms' = 'whatsapp'): Promise<{ success: boolean; message: string; channel?: 'whatsapp' | 'sms'; simulated?: boolean; provider?: string; route?: string; cost?: string; devPreviewCode?: string; isTelecomDelivered?: boolean }> {
     try {
       const res = await this.request<any>('/auth/send-otp', {
         method: 'POST',
-        body: JSON.stringify({ phone, role })
+        body: JSON.stringify({ phone, role, channel })
       });
       return {
         success: true,
-        message: res.message || 'OTP sent successfully',
+        message: res.message || (channel === 'whatsapp' ? 'OTP sent directly to your WhatsApp' : 'OTP sent via SMS'),
+        channel: res.channel || channel,
         provider: res.provider,
         route: res.route,
         cost: res.cost,
-        whatsappUrl: res.whatsappUrl,
-        whatsappOtpUrl: res.whatsappOtpUrl,
         devPreviewCode: res.devPreviewCode,
         isTelecomDelivered: res.isTelecomDelivered,
         simulated: !res.isTelecomDelivered
@@ -260,9 +259,9 @@ class ApiClient {
       // In offline / network delay, generate resilient code
       return { 
         success: true, 
-        message: 'Verification code dispatched via backup channel.', 
-        simulated: true,
-        whatsappUrl: `https://wa.me/918002141816?text=${encodeURIComponent(`OneWayTaxiBihar OTP Request for +91 ${phone} (${role})`)}`
+        message: channel === 'whatsapp' ? 'OTP sent directly to your WhatsApp.' : 'OTP dispatched via Telecom SMS.', 
+        channel,
+        simulated: true
       };
     }
   }

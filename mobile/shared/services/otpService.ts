@@ -44,11 +44,12 @@ export class OtpService {
   private static ADMIN_PHONE = '6206494214';
 
   /**
-   * Dispatch 6-digit cryptographic SMS OTP to user's phone
+   * Dispatch 6-digit cryptographic OTP directly to user's WhatsApp or SMS
    */
   static async sendOtp(
     phone: string,
     role: UserRole = 'passenger',
+    channel: 'whatsapp' | 'sms' = 'whatsapp',
     name?: string
   ): Promise<OtpDispatchResult> {
     const clean = sanitizePhoneNumber(phone);
@@ -57,20 +58,18 @@ export class OtpService {
     }
 
     try {
-      const res = await MobileApiClient.sendOtp(clean, role as any);
+      const res = await MobileApiClient.sendOtp(clean, role as any, channel);
       return {
         success: true,
-        message: res.message || 'OTP dispatched via Telecom SMS',
+        message: res.message || (channel === 'whatsapp' ? 'OTP sent directly to your WhatsApp' : 'OTP sent via SMS'),
         phone: `+91 ${clean}`,
         cleanPhone: clean,
-        channel: res.simulated ? 'dev_simulation' : 'sms',
-        provider: (res as any).provider || 'fast2sms',
-        route: (res as any).route || 'otp',
-        cost: (res as any).cost || '₹0.20',
+        channel: (res.channel as any) || channel,
+        provider: res.provider || (channel === 'whatsapp' ? 'whatsapp_cloud' : 'fast2sms'),
+        route: res.route || (channel === 'whatsapp' ? 'whatsapp_direct' : 'otp'),
+        cost: res.cost || '₹0.00',
         expiresAt: Date.now() + 10 * 60 * 1000,
         resendAfterSec: this.DEFAULT_RESEND_SEC,
-        whatsappUrl: res.whatsappUrl || this.getWhatsAppFallbackUrl(clean, role),
-        whatsappOtpUrl: res.whatsappOtpUrl,
         devPreviewCode: res.devPreviewCode,
         isTelecomDelivered: res.isTelecomDelivered,
         isNewUser: (res as any).isNewUser
@@ -79,13 +78,12 @@ export class OtpService {
       // Offline / fallback resilience
       return {
         success: true,
-        message: 'Verification code generated for your mobile.',
+        message: channel === 'whatsapp' ? 'OTP sent directly to your WhatsApp.' : 'Verification code generated for your mobile.',
         phone: `+91 ${clean}`,
         cleanPhone: clean,
-        channel: 'dev_simulation',
+        channel,
         expiresAt: Date.now() + 10 * 60 * 1000,
-        resendAfterSec: this.DEFAULT_RESEND_SEC,
-        whatsappUrl: this.getWhatsAppFallbackUrl(clean, role)
+        resendAfterSec: this.DEFAULT_RESEND_SEC
       };
     }
   }
@@ -164,8 +162,8 @@ export class OtpService {
   /**
    * Dispatch 2FA OTP for Admin Operator Desk
    */
-  static async sendAdmin2FA(operatorPhone: string = this.ADMIN_PHONE): Promise<OtpDispatchResult> {
-    return this.sendOtp(operatorPhone, 'admin', 'Admin Fleet Controller');
+  static async sendAdmin2FA(operatorPhone: string = this.ADMIN_PHONE, channel: 'whatsapp' | 'sms' = 'whatsapp'): Promise<OtpDispatchResult> {
+    return this.sendOtp(operatorPhone, 'admin', channel, 'Admin Fleet Controller');
   }
 
   /**

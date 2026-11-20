@@ -959,6 +959,9 @@
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-5" inputmode="numeric">
                 <input type="text" maxlength="1" class="otp-box-digit" id="otp-6" inputmode="numeric">
               </div>
+              <div id="preview-code-banner" style="display: none; margin: 8px auto; max-width: 280px; padding: 6px 10px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; font-size: 12px; color: #047857; text-align: center; cursor: pointer;" onclick="autoFillOtpCode()">
+                Code: <strong id="preview-code-val"></strong> <span style="text-decoration: underline; font-weight: 700;">(Tap to Auto-fill)</span>
+              </div>
               <div style="text-align: center; margin: 8px 0;">
                 <a href="https://wa.me" target="_blank" id="link-open-whatsapp" style="font-size: 11.5px; color: #16a34a; font-weight: 700; text-decoration: underline;">
                   Open WhatsApp App / Web to Check Code ➔
@@ -1333,6 +1336,16 @@
             });
             if (res && res.devPreviewCode) {
               generatedOtp = res.devPreviewCode;
+              const banner = document.getElementById('preview-code-banner');
+              const codeVal = document.getElementById('preview-code-val');
+              if (banner && codeVal) {
+                codeVal.textContent = res.devPreviewCode;
+                banner.style.display = 'block';
+              }
+            }
+            if (res && res.whatsappDirectLink) {
+              const waLink = document.getElementById('link-open-whatsapp');
+              if (waLink) waLink.href = res.whatsappDirectLink;
             }
           }
         } catch (e) {
@@ -1340,6 +1353,14 @@
         } finally {
           if (triggerBtn) triggerBtn.disabled = false;
         }
+      };
+
+      window.autoFillOtpCode = function () {
+        if (!generatedOtp || generatedOtp.length !== 6) return;
+        otpInputs.forEach((inp, idx) => {
+          inp.value = generatedOtp[idx] || '';
+        });
+        window.verifyOtpCode();
       };
 
       window.verifyOtpCode = async function () {

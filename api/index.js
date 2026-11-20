@@ -1177,8 +1177,9 @@ module.exports = async (req, res) => {
         }
       }
 
-      const isDelivered = (waDispatch && waDispatch.success) || (smsDispatch && smsDispatch.success && !smsDispatch.isSimulated);
+      const isDelivered = (waDispatch && waDispatch.success && !waDispatch.isSimulated && waDispatch.isDirectDelivered) || (smsDispatch && smsDispatch.success && !smsDispatch.isSimulated);
       const activeChannel = (requestedChannel === 'whatsapp' && waDispatch?.success) ? 'whatsapp' : 'sms';
+      const waDirectChatLink = notificationService.generateWhatsAppDeepLink(cleanPhone, `Namaste! OneWayTaxiBihar Verification OTP: ${code}`);
 
       return sendJson(200, {
         success: true,
@@ -1190,15 +1191,16 @@ module.exports = async (req, res) => {
         rewardEligible: role === 'passenger' ? isNewUser : false,
         rewardAmount: (role === 'passenger' && isNewUser) ? 100 : 0,
         whatsappStatus: waDispatch,
+        whatsappDirectLink: waDirectChatLink,
         smsStatus: smsDispatch,
         isTelecomDelivered: isDelivered,
         provider: activeChannel === 'whatsapp' ? (waDispatch?.provider || 'whatsapp_cloud') : (smsDispatch?.provider || 'fast2sms'),
         route: activeChannel === 'whatsapp' ? 'whatsapp_direct' : (smsDispatch?.route || 'otp'),
         cost: activeChannel === 'whatsapp' ? '₹0.00' : (smsDispatch?.cost || '₹0.20'),
         devPreviewCode: (!isDelivered || process.env.NODE_ENV !== 'production') ? code : undefined,
-        message: activeChannel === 'whatsapp'
-          ? `6-Digit OTP sent directly to your WhatsApp (+91 ${cleanPhone}). Please check your WhatsApp.`
-          : `Verification code dispatched to +91 ${cleanPhone} via Telecom SMS.`
+        message: isDelivered
+          ? `6-Digit OTP sent directly to your ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'mobile SMS'} (+91 ${cleanPhone}). Please check your ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'SMS messages'}.`
+          : `6-Digit ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'SMS'} verification code for +91 ${cleanPhone}: ${code}`
       });
     }
 

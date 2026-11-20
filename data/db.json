@@ -10359,6 +10359,24 @@
       "isDeleted": true,
       "deletedAt": "2026-11-18T02:52:47.452Z",
       "deletionReason": "Driver partner resignation"
+    },
+    {
+      "id": "drv_9804456789",
+      "name": "Chauffeur 6789",
+      "phone": "+91 9804456789",
+      "city": "Patna",
+      "vehicleNumber": "",
+      "vehicleModel": "",
+      "isVerified": false
+    },
+    {
+      "id": "drv_adv_del",
+      "name": "Deleted Driver Partner",
+      "phone": "DELETED_DRV_987****299_1795139147717",
+      "dutyStatus": "OFF_DUTY",
+      "isDeleted": true,
+      "deletedAt": "2026-11-20T01:45:47.717Z",
+      "deletionReason": "Driver partner resignation"
     }
   ],
   "driver_applications": [],
@@ -10676,6 +10694,35 @@
       "name": "Adversarial User B",
       "email": "userb@example.com",
       "phone": "+91 9802366642",
+      "walletBalance": 300,
+      "isDeleted": false
+    },
+    {
+      "id": "usr_9801123456",
+      "name": "Valued Passenger",
+      "phone": "+91 9801123456",
+      "email": "",
+      "walletBalance": 100,
+      "rewardClaimed": true,
+      "isPhoneVerified": true,
+      "memberSince": "2026",
+      "createdAt": "2026-11-20T01:45:36.987Z"
+    },
+    {
+      "id": "usr_adv_a_147550",
+      "name": "Deleted User",
+      "email": null,
+      "phone": "DELETED_980****550_1795139147653",
+      "walletBalance": 250,
+      "isDeleted": true,
+      "deletedAt": "2026-11-20T01:45:47.653Z",
+      "deletionReason": "Statutory DPDP Right to Erasure Request"
+    },
+    {
+      "id": "usr_adv_b_147550",
+      "name": "Adversarial User B",
+      "email": "userb@example.com",
+      "phone": "+91 9802147550",
       "walletBalance": 300,
       "isDeleted": false
     }
@@ -12191,18 +12238,68 @@
       "balanceAfter": 100,
       "description": "Welcome Bonus Credit",
       "createdAt": "2026-11-17T21:49:07.644Z"
+    },
+    {
+      "id": "WLT_1795139136987",
+      "userId": "usr_9801123456",
+      "phone": "+91 9801123456",
+      "type": "CREDIT",
+      "amount": 100,
+      "balanceAfter": 100,
+      "description": "Welcome Bonus Credit (One-Time New User Reward)",
+      "createdAt": "2026-11-20T01:45:36.987Z"
     }
   ],
   "leads": [
     {
-      "id": "lead_9876543210_6800",
+      "id": "lead_9803345678_7163",
+      "phone": "+91 9803345678",
+      "cleanPhone": "9803345678",
+      "rawPhone": "9803345678",
+      "passengerName": "Valued Passenger",
+      "originCity": "Patna",
+      "destCity": "Bihar Outstation",
+      "tripType": "oneway",
+      "source": "Customer Mobile OTP Request",
+      "status": "NEW",
+      "createdAt": "2026-11-20T01:45:37.163Z"
+    },
+    {
+      "id": "lead_9802234567_7023",
+      "phone": "+91 9802234567",
+      "cleanPhone": "9802234567",
+      "rawPhone": "9802234567",
+      "passengerName": "Valued Passenger",
+      "originCity": "Patna",
+      "destCity": "Bihar Outstation",
+      "tripType": "oneway",
+      "source": "Customer Mobile OTP Request",
+      "status": "NEW",
+      "createdAt": "2026-11-20T01:45:37.023Z"
+    },
+    {
+      "id": "lead_9801123456_3605",
+      "phone": "+91 9801123456",
+      "cleanPhone": "9801123456",
+      "rawPhone": "9801123456",
+      "passengerName": "Valued Passenger",
+      "originCity": "Patna",
+      "destCity": "Bihar Outstation",
+      "tripType": "oneway",
+      "source": "Customer Verified Login",
+      "status": "NEW",
+      "createdAt": "2026-11-20T01:42:13.605Z",
+      "updatedAt": "2026-11-20T01:45:36.988Z"
+    },
+    {
+      "id": "lead_9876543210_8687",
       "bookingId": "OTB-2026-2958",
       "cabName": "Prime Sedan",
       "cabPrice": 2198,
       "cabTier": "sedan",
       "cabType": "Prime Sedan",
       "cleanPhone": "9876543210",
-      "createdAt": "2026-11-18T02:50:36.800Z",
+      "createdAt": "2026-11-20T01:45:38.687Z",
       "destCity": "Gaya",
       "distanceKm": 104,
       "duration": "2h 15m",
@@ -12213,7 +12310,7 @@
       "originCity": "Patna",
       "passengerName": "Verified Passenger Lead",
       "phone": "+91 9876543210",
-      "pickupDate": "2026-11-18",
+      "pickupDate": "2026-11-20",
       "pickupTime": "Immediate",
       "rawPhone": "9876543210",
       "selectedCab": "sedan",
@@ -12221,7 +12318,7 @@
       "status": "NEW",
       "totalFare": 2198,
       "tripType": "oneway",
-      "updatedAt": "2026-11-18T02:50:36.871Z"
+      "updatedAt": "2026-11-20T01:45:38.697Z"
     },
     {
       "id": "lead_9876543210_5561",
@@ -12264,7 +12361,7 @@
       "source": "Customer Verified Login",
       "status": "NEW",
       "tripType": "oneway",
-      "updatedAt": "2026-11-18T02:50:37.504Z"
+      "updatedAt": "2026-11-20T01:45:38.723Z"
     },
     {
       "id": "LEAD_1794819053571",
@@ -13418,6 +13515,22 @@
     }
   ],
   "notifications": [
+    {
+      "id": "ntf_1795139138723",
+      "type": "CUSTOMER_LOGIN",
+      "title": "Customer Logged In",
+      "message": "Broken Note Explorer (+91 9800012345) signed in to OneWayTaxiBihar",
+      "timestamp": "2026-11-20T01:45:38.723Z",
+      "isRead": false
+    },
+    {
+      "id": "ntf_1795139136988",
+      "type": "CUSTOMER_LOGIN",
+      "title": "Customer Logged In",
+      "message": "Valued Passenger (+91 9801123456) signed in to OneWayTaxiBihar",
+      "timestamp": "2026-11-20T01:45:36.988Z",
+      "isRead": false
+    },
     {
       "id": "ntf_1794970237504",
       "type": "CUSTOMER_LOGIN",
@@ -15646,6 +15759,32 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "audit_1795139138756_6633",
+      "actor": "admin",
+      "role": "owner",
+      "action": "ADMIN_LOGIN_FAILED",
+      "entityType": "AUTH",
+      "entityId": "admin",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Failed credentials login from IP 127.0.0.1",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-11-20T01:45:38.756Z"
+    },
+    {
+      "id": "audit_1795139137270_3380",
+      "actor": "Owner (+91 6206494214)",
+      "role": "owner",
+      "action": "ADMIN_2FA_LOGIN_SUCCESS",
+      "entityType": "AUTH",
+      "entityId": "adm_owner",
+      "oldValue": null,
+      "newValue": null,
+      "note": "Authenticated via Owner 2FA OTP",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-11-20T01:45:37.270Z"
+    },
     {
       "id": "audit_1794970237783_2655",
       "actor": "admin",
@@ -19835,6 +19974,26 @@
       "standard": "DPDP_ACT_2023",
       "details": "Driver partner resignation",
       "createdAt": "2026-11-18T02:52:47.453Z"
+    },
+    {
+      "id": "AUD_DEL_1795139147653",
+      "entity": "USER",
+      "entityId": "9801147550",
+      "action": "DPDP_ACCOUNT_DELETION",
+      "receiptId": "DPDP-DEL-1795139147653-61A5F3",
+      "standard": "DPDP_ACT_2023",
+      "details": "Statutory DPDP Right to Erasure Request",
+      "createdAt": "2026-11-20T01:45:47.653Z"
+    },
+    {
+      "id": "AUD_DEL_DRV_1795139147718",
+      "entity": "DRIVER",
+      "entityId": "9876543299",
+      "action": "DPDP_DRIVER_ACCOUNT_DELETION",
+      "receiptId": "DPDP-DEL-DRV-1795139147718-5980F2",
+      "standard": "DPDP_ACT_2023",
+      "details": "Driver partner resignation",
+      "createdAt": "2026-11-20T01:45:47.718Z"
     }
   ],
   "sessions": [
@@ -20564,6 +20723,57 @@
       "token": "otb_adv_token_user_b_1794970366642",
       "userId": "usr_adv_b_366642",
       "phone": "+91 9802366642",
+      "role": "customer"
+    },
+    {
+      "tokenHash": "ed32dc5d40a50a7cc5fde02cd1294cfdc01c0e1c6f995c2b551909774718ce90",
+      "headerHalf": "bnh_6f21a528508240d0dbb04115aa608539",
+      "legacyToken": "otb_sess_c2eb9896638a4042e75d1a6f108e8df4",
+      "userId": "usr_9801123456",
+      "phone": "+91 9801123456",
+      "role": "customer",
+      "name": "Valued Passenger",
+      "issuedOnce": true,
+      "createdAt": "2026-11-20T01:45:36.988Z",
+      "expiresAt": "2026-11-20T09:45:36.988Z"
+    },
+    {
+      "tokenHash": "6666731380449d3ed34ae7ec48572258ef05f151f0de74bbdefb620cc7a03fae",
+      "headerHalf": "bnh_49f7c0f11c29382e91fc29c2fe3da8c0",
+      "legacyToken": "otb_sess_b22852d14e50552fc5c7a7dd361960dd",
+      "userId": "drv_9804456789",
+      "phone": "+91 9804456789",
+      "role": "driver",
+      "name": "Chauffeur 6789",
+      "issuedOnce": true,
+      "createdAt": "2026-11-20T01:45:37.202Z",
+      "expiresAt": "2026-11-20T09:45:37.202Z",
+      "driverId": "drv_9804456789"
+    },
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyYjlkYmVhNzY1ODM3MTkyNjk5NTRjNDMwZmFkNjc3NCIsImFkbWluSWQiOiJhZG1fb3duZXIiLCJ1c2VybmFtZSI6Im93bmVyIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNoaWVmIE9wZXJhdGlvbnMgT2ZmaWNlciIsInBob25lIjoiKzkxIDYyMDY0OTQyMTQiLCJpYXQiOjE3OTUxMzkxMzcsImV4cCI6MTc5NTE2NzkzN30.CllImws9cOodDMdR2JRVblk0f0e3945FWoQ22TOe0-A",
+      "adminId": "adm_owner",
+      "role": "owner",
+      "phone": "+91 6206494214",
+      "authMethod": "WHATSAPP_2FA",
+      "createdAt": "2026-11-20T01:45:37.270Z"
+    },
+    {
+      "tokenHash": "92bb7db1549525fd1d0647f5f9e3170d6149ef2dca6002d204edd0557dab72fe",
+      "headerHalf": "bnh_1faacb301c9667160d4bff82e0bab8f4",
+      "legacyToken": "otb_sess_6078311730e6842cf724d45396e7b490",
+      "userId": "usr_9800012345",
+      "phone": "+91 9800012345",
+      "role": "customer",
+      "name": "Broken Note Explorer",
+      "issuedOnce": true,
+      "createdAt": "2026-11-20T01:45:38.723Z",
+      "expiresAt": "2026-11-20T09:45:38.723Z"
+    },
+    {
+      "token": "otb_adv_token_user_b_1795139147550",
+      "userId": "usr_adv_b_147550",
+      "phone": "+91 9802147550",
       "role": "customer"
     }
   ],
@@ -24640,7 +24850,9 @@
     "e3d3d3c79f8a5e2cbf241739e3c5be804089513c286dfe1a208cb546a0d3415e",
     "bnh_5615a4b1aba3a66e815d02b1eba9a1c3",
     "otb_adv_token_user_a_1794970366642",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YjgzNzIyZGNjODYyMjQ5MDRmMzg4NjNkYmRmMDU4NCIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDk3MDM2NywiZXhwIjoxNzk0OTk5MTY3fQ.azctbWlDDEQX2SDS7EjNjIPx4oFlbyZB-MULqZLeWDs"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YjgzNzIyZGNjODYyMjQ5MDRmMzg4NjNkYmRmMDU4NCIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NDk3MDM2NywiZXhwIjoxNzk0OTk5MTY3fQ.azctbWlDDEQX2SDS7EjNjIPx4oFlbyZB-MULqZLeWDs",
+    "otb_adv_token_user_a_1795139147550",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMDRiZWJhYjk2MDUyMzBlZWFjZTg0NmM1ZTcxMTkxNiIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NTEzOTE0NywiZXhwIjoxNzk1MTY3OTQ3fQ.-smElBtLilc9zxBSBEIA4XqQ19Ipnf2NoJO1rwKrcYs"
   ],
   "tourism_packages": [
     {

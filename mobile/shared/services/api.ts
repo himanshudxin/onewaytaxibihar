@@ -261,6 +261,7 @@ class ApiClient {
         success: true, 
         message: channel === 'whatsapp' ? 'OTP sent directly to your WhatsApp.' : 'OTP dispatched via Telecom SMS.', 
         channel,
+        devPreviewCode: '123456',
         simulated: true
       };
     }

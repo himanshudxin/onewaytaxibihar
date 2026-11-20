@@ -269,16 +269,17 @@ async function sendWhatsAppOtp({ phone, otp, role = 'passenger' }) {
     }
   }
 
-  // 3. Fallback / Immediate Broadcast Dispatcher
-  // Sends message to customer and returns success with 0 delays
+  // 3. Fallback / Immediate Broadcast Dispatcher (When Meta / Twilio keys are not configured in .env)
   console.log(`[WhatsApp Outbound Service] 📲 Incoming WhatsApp OTP message: "${message.replace(/\n/g, ' ')}" -> +91 ${cleanPhone}`);
   return {
     success: true,
     channel: 'whatsapp',
-    provider: 'whatsapp_direct',
+    provider: 'whatsapp_pending_key',
     cost: '₹0.00',
-    isDirectDelivered: true,
-    message: `6-digit OTP code sent directly to your WhatsApp (+91 ${cleanPhone}). Please check your WhatsApp.`
+    isDirectDelivered: false,
+    isSimulated: true,
+    notice: 'Live Meta WhatsApp Cloud API credentials missing in .env. Falling back to on-screen auto-fill & click link.',
+    message: `6-digit OTP code generated for WhatsApp (+91 ${cleanPhone}).`
   };
 }
 

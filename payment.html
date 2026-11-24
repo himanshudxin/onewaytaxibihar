@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Review &amp; Confirm Booking | OneWayTaxiBihar</title>
-  <meta name="description" content="Review your trip details, select payment preference (Cash on Ride with zero advance), and confirm your intercity cab booking instantly.">
+  <meta name="description"
+    content="Review your trip details, select payment preference (Cash on Ride with zero advance), and confirm your intercity cab booking instantly.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
   <script>
@@ -24,7 +25,8 @@
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="/css/style.css">
@@ -32,12 +34,16 @@
 
   <style>
     /* Reset & Viewport containment */
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    html, body {
+
+    html,
+    body {
       overflow-x: hidden !important;
       width: 100%;
       min-height: 100vh;
@@ -66,6 +72,7 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
+
     .checkout-nav-inner {
       display: flex;
       align-items: center;
@@ -73,6 +80,7 @@
       height: 58px;
       gap: 10px;
     }
+
     .checkout-brand {
       display: flex;
       align-items: center;
@@ -81,6 +89,7 @@
       color: var(--owc-text);
       min-width: 0;
     }
+
     .checkout-logo-img {
       width: 34px;
       height: 34px;
@@ -88,6 +97,7 @@
       object-fit: contain;
       flex-shrink: 0;
     }
+
     .checkout-brand-title {
       font-size: 16px;
       font-weight: 800;
@@ -96,15 +106,18 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .checkout-brand-highlight {
       color: var(--owc-primary);
     }
+
     .checkout-nav-actions {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
     }
+
     .btn-nav-back {
       font-size: 12px;
       font-weight: 750;
@@ -116,6 +129,7 @@
       transition: all 0.2s ease;
       white-space: nowrap;
     }
+
     .btn-nav-back:hover {
       color: var(--owc-primary);
       border-color: var(--owc-primary);
@@ -137,10 +151,12 @@
       border-radius: 9999px;
       margin: 20px auto 8px auto;
     }
+
     .step-header-wrap {
       text-align: center;
       margin-bottom: 20px;
     }
+
     .step-title {
       font-size: 22px;
       font-weight: 900;
@@ -148,6 +164,7 @@
       letter-spacing: -0.3px;
       margin-top: 4px;
     }
+
     .step-sub {
       font-size: 13px;
       color: var(--owc-text-muted);
@@ -163,6 +180,7 @@
       margin-bottom: 18px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     }
+
     .summary-route-row {
       display: flex;
       align-items: center;
@@ -170,6 +188,7 @@
       gap: 8px;
       margin-bottom: 8px;
     }
+
     .summary-route-title {
       font-size: 17px;
       font-weight: 900;
@@ -178,6 +197,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .summary-cab-badge {
       background: rgba(16, 185, 129, 0.12);
       color: var(--owc-primary);
@@ -187,12 +207,14 @@
       border-radius: 9999px;
       white-space: nowrap;
     }
+
     .summary-meta-sub {
       font-size: 12.5px;
       color: var(--owc-text-muted);
       line-height: 1.5;
       margin-bottom: 12px;
     }
+
     .fare-total-banner {
       background: var(--owc-slate-50);
       border: 1px solid var(--owc-border);
@@ -203,12 +225,14 @@
       justify-content: space-between;
       gap: 10px;
     }
+
     .fare-amount-val {
       font-size: 24px;
       font-weight: 900;
       color: var(--owc-primary);
       letter-spacing: -0.5px;
     }
+
     .fare-details-toggle {
       font-size: 12px;
       color: var(--owc-primary);
@@ -231,9 +255,11 @@
       font-size: 12.5px;
       color: var(--owc-text-muted);
     }
+
     .fare-breakdown-details.open {
       display: block;
     }
+
     .fare-row {
       display: flex;
       justify-content: space-between;
@@ -251,7 +277,7 @@
       gap: 6px;
     }
 
-    
+
     .online-tier-chip {
       border: 1.5px solid var(--owc-border);
       border-radius: 10px;
@@ -262,9 +288,11 @@
       transition: all 0.2s ease;
       user-select: none;
     }
+
     .online-tier-chip:hover {
       border-color: #10b981;
     }
+
     .online-tier-chip.active {
       border-color: #10b981;
       background: rgba(16, 185, 129, 0.12);
@@ -286,11 +314,13 @@
       transition: all 0.2s ease;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
+
     .payment-option-card.selected {
       border-color: #10b981;
       background: rgba(16, 185, 129, 0.05);
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.12);
     }
+
     .payment-option-card input[type="radio"] {
       width: 20px;
       height: 20px;
@@ -299,6 +329,7 @@
       flex-shrink: 0;
       cursor: pointer;
     }
+
     .opt-header-row {
       display: flex;
       align-items: center;
@@ -307,11 +338,13 @@
       gap: 6px;
       margin-bottom: 4px;
     }
+
     .opt-title {
       font-size: 14.5px;
       font-weight: 800;
       color: var(--owc-text);
     }
+
     .opt-tag-green {
       background: rgba(16, 185, 129, 0.15);
       color: #10b981;
@@ -321,6 +354,7 @@
       border-radius: 9999px;
       white-space: nowrap;
     }
+
     .opt-tag-muted {
       background: var(--owc-slate-200);
       color: var(--owc-text-muted);
@@ -330,6 +364,7 @@
       border-radius: 9999px;
       white-space: nowrap;
     }
+
     .opt-desc {
       font-size: 12px;
       color: var(--owc-text-muted);
@@ -344,10 +379,12 @@
       padding: 14px;
       margin-bottom: 14px;
     }
+
     .coupon-input-row {
       display: flex;
       gap: 8px;
     }
+
     .coupon-text-field {
       flex: 1;
       background: var(--owc-slate-50);
@@ -362,10 +399,12 @@
       outline: none;
       font-family: inherit;
     }
+
     .coupon-text-field:focus {
       border-color: var(--owc-primary);
       background: var(--owc-card-bg);
     }
+
     .btn-apply-coupon {
       padding: 10px 18px;
       background: var(--owc-slate-100);
@@ -378,11 +417,13 @@
       transition: all 0.2s ease;
       white-space: nowrap;
     }
+
     .btn-apply-coupon:hover {
       background: var(--owc-primary);
       color: #ffffff;
       border-color: var(--owc-primary);
     }
+
     .coupon-status-msg {
       font-size: 11.5px;
       margin-top: 6px;
@@ -398,6 +439,7 @@
       padding: 14px;
       margin-bottom: 20px;
     }
+
     .gst-checkbox-label {
       display: flex;
       align-items: center;
@@ -407,18 +449,21 @@
       font-weight: 750;
       color: var(--owc-text);
     }
+
     .gst-checkbox-label input[type="checkbox"] {
       width: 18px;
       height: 18px;
       accent-color: var(--owc-primary);
       cursor: pointer;
     }
+
     .gst-form-fields {
       display: none;
       margin-top: 12px;
       padding-top: 12px;
       border-top: 1px solid var(--owc-border);
     }
+
     .gst-input-box {
       width: 100%;
       background: var(--owc-slate-50);
@@ -432,6 +477,7 @@
       margin-bottom: 8px;
       box-sizing: border-box;
     }
+
     .gst-input-box:focus {
       border-color: var(--owc-primary);
     }
@@ -456,10 +502,12 @@
       transition: all 0.2s ease;
       box-sizing: border-box;
     }
+
     .btn-confirm-final:hover:not(:disabled) {
       filter: brightness(1.08);
       transform: translateY(-1px);
     }
+
     .btn-confirm-final:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -476,6 +524,7 @@
       color: var(--owc-text-muted);
       flex-wrap: wrap;
     }
+
     .trust-badge-item {
       display: flex;
       align-items: center;
@@ -494,6 +543,7 @@
       margin: 20px 0;
       animation: fadeIn 0.3s ease-out;
     }
+
     .success-check-badge {
       width: 60px;
       height: 60px;
@@ -507,6 +557,7 @@
       font-size: 28px;
       margin-bottom: 14px;
     }
+
     .success-booking-tag {
       display: inline-block;
       background: var(--owc-slate-50);
@@ -519,12 +570,14 @@
       margin: 10px 0 16px 0;
       letter-spacing: 0.8px;
     }
+
     .success-actions-col {
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin-top: 20px;
     }
+
     .btn-succ-wa {
       display: flex;
       align-items: center;
@@ -539,6 +592,7 @@
       text-decoration: none;
       box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
     }
+
     .btn-succ-portal {
       display: flex;
       align-items: center;
@@ -559,23 +613,29 @@
       .checkout-container {
         padding: 0 12px 50px 12px !important;
       }
+
       .trip-summary-box {
         padding: 14px !important;
         border-radius: 14px !important;
       }
+
       .summary-route-title {
         font-size: 15.5px !important;
       }
+
       .fare-amount-val {
         font-size: 21px !important;
       }
+
       .btn-confirm-final {
         height: 48px !important;
         font-size: 15px !important;
       }
+
       .payment-option-card {
         padding: 13px !important;
       }
+
       .step-title {
         font-size: 19px !important;
       }
@@ -592,12 +652,14 @@
     <div class="checkout-container" style="padding-bottom: 0;">
       <div class="checkout-nav-inner">
         <a href="index.html" class="checkout-brand" title="OneWayTaxiBihar">
-          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'" alt="OneWayTaxiBihar" class="checkout-logo-img">
+          <img src="img/logo-reframed.webp" onerror="this.onerror=null;this.src='img/logo-reframed.png'"
+            alt="OneWayTaxiBihar" class="checkout-logo-img">
           <span class="checkout-brand-title">OneWay<span class="checkout-brand-highlight">TaxiBihar</span></span>
         </a>
         <div class="checkout-nav-actions">
           <a href="booking.html" class="btn-nav-back">← Edit Details</a>
-          <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme" style="border: 1px solid var(--owc-border); background: var(--owc-slate-50); border-radius: 9999px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+          <button type="button" class="theme-switch-btn" id="theme-switch-btn" aria-label="Toggle Theme"
+            style="border: 1px solid var(--owc-border); background: var(--owc-slate-50); border-radius: 9999px; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
             <span id="theme-switch-icon" style="font-size: 13px;">☀</span>
           </button>
         </div>
@@ -610,7 +672,7 @@
 
     <!-- Active Checkout Flow -->
     <div id="checkout-main-flow">
-      
+
       <!-- Stepper Pill & Heading -->
       <div class="step-header-wrap">
         <div class="step-pill-badge">Step 4 of 4 • Review &amp; Confirm</div>
@@ -631,12 +693,14 @@
 
         <div class="summary-meta-sub">
           <span id="txt-route-sub">104 KM</span> • <span id="txt-schedule">Today at 10:00 AM</span><br>
-          Passenger: <strong id="txt-passenger-name" style="color: var(--owc-text);">Passenger</strong> (<span id="txt-passenger-phone">+91 9800000000</span>)
+          Passenger: <strong id="txt-passenger-name" style="color: var(--owc-text);">Passenger</strong> (<span
+            id="txt-passenger-phone">+91 9800000000</span>)
         </div>
 
         <div class="fare-total-banner">
           <div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase;">Total Payable Fare</div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--owc-text-muted); text-transform: uppercase;">
+              Total Payable Fare</div>
             <div class="fare-amount-val" id="txt-total-fare">₹2,998</div>
           </div>
           <button type="button" class="fare-details-toggle" onclick="toggleFareBreakdown()">
@@ -681,75 +745,34 @@
             <span class="opt-tag-green">Recommended • ₹0 Advance</span>
           </div>
           <div class="opt-desc">
-            Pay full fare directly to your driver via Cash or any UPI App (Google Pay, PhonePe, Paytm, BHIM) upon safe arrival.
+            Pay full fare directly to your driver via Cash or any UPI App (Google Pay, PhonePe, Paytm, BHIM) upon safe
+            arrival.
           </div>
         </div>
       </label>
 
-      <!-- Option 2: Direct UPI & PhonePe QR (100% Free • 0% Commission) -->
-      <label class="payment-option-card" id="opt-card-direct-upi" onclick="selectPayMethod('direct_upi')">
-        <input type="radio" name="pay_method" value="direct_upi">
-        <div style="flex: 1;">
-          <div class="opt-header-row">
-            <span class="opt-title">Direct UPI &amp; PhonePe QR</span>
-            <span class="opt-tag-green" style="background:#ecfdf5; color:#059669; border: 1px solid #a7f3d0;">0% Extra Fee • Instant Bank Transfer</span>
-          </div>
-          <div class="opt-desc">
-            Scan &amp; pay ₹299 token advance directly via PhonePe, GPay, Paytm, or BHIM. Zero payment gateway charges.
-          </div>
-
-          <!-- Direct UPI Scan & Pay Drawer -->
-          <div id="direct-upi-selector" style="display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--owc-border);" onclick="event.stopPropagation();">
-            <div style="text-align: center; margin-bottom: 12px; background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px solid #e2e8f0;">
-              <div style="font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Scan Dynamic QR to Pay ₹299 Advance</div>
-              <img id="direct-upi-qr-img" src="images/phonepe-qr.png" onerror="this.onerror=null;this.src='img/phonepe-qr.png'" alt="PhonePe QR Code" style="width: 175px; height: 175px; object-fit: contain; border-radius: 12px; border: 2px solid #cbd5e1; padding: 6px; background: #ffffff; margin: 0 auto; display: block;">
-              
-              <div style="margin-top: 10px; font-size: 13px; font-weight: 800; color: #1e293b;">
-                UPI ID: <span style="color: #2563eb; user-select: all; font-family: monospace; font-size: 14px;" id="direct-upi-vpa-text">8002141816@ybl</span>
-                <button type="button" onclick="navigator.clipboard.writeText('8002141816@ybl'); alert('UPI ID copied to clipboard!');" style="margin-left: 6px; padding: 2px 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; font-size: 11px; cursor: pointer;">📋 Copy</button>
-              </div>
-              <div style="font-size: 11.5px; color: #64748b; margin-top: 3px;">Payee: HIMANSHU KUMAR DUBEY (OneWay Taxi Bihar)</div>
-
-              <div style="display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
-                <a id="btn-upi-intent-phonepe" href="upi://pay?pa=8002141816@ybl&pn=HIMANSHU%20KUMAR%20DUBEY&am=299&cu=INR&tn=OneWayTaxiAdvance" class="btn-upi-pill" style="display:inline-flex; align-items:center; gap:6px; background:#5f259f; color:#fff; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700; text-decoration:none;">
-                  <span>📱 Open in PhonePe</span>
-                </a>
-                <a id="btn-upi-intent-gpay" href="upi://pay?pa=8002141816@ybl&pn=HIMANSHU%20KUMAR%20DUBEY&am=299&cu=INR&tn=OneWayTaxiAdvance" class="btn-upi-pill" style="display:inline-flex; align-items:center; gap:6px; background:#1a73e8; color:#fff; padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700; text-decoration:none;">
-                  <span>⚡ Open in GPay / UPI</span>
-                </a>
-              </div>
-            </div>
-
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; margin-top: 10px;">
-              <label style="font-size: 11.5px; font-weight: 750; color: var(--owc-text); display: block; margin-bottom: 4px;">
-                Enter 12-Digit UPI UTR / Transaction ID (from payment receipt):
-              </label>
-              <input type="text" id="input-upi-utr" class="coupon-text-field" placeholder="e.g. 432109876543" maxlength="16" style="width: 100%; font-family: monospace;">
-              <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Remaining balance payable to chauffeur at destination.</div>
-            </div>
-          </div>
-        </div>
-      </label>
-
-      <!-- Option 3: Razorpay / Online Gateway -->
+      <!-- Option 2: Razorpay / Online Gateway -->
       <label class="payment-option-card" id="opt-card-online" onclick="selectPayMethod('online_gateway')">
         <input type="radio" name="pay_method" value="online_gateway">
         <div style="flex: 1;">
           <div class="opt-header-row">
-            <span class="opt-title">Online Payment (Cards &amp; NetBanking)</span>
-            <span class="opt-tag-green" id="rzp-mode-badge">⚡ Razorpay Gateway</span>
+            <span class="opt-title">Online Payment (UPI, Cards, NetBanking)</span>
+            <span class="opt-tag-green" id="rzp-mode-badge">⚡ Razorpay Live</span>
           </div>
           <div class="opt-desc">
-            Pay securely via Razorpay with Credit/Debit Cards, NetBanking, or Digital Wallets.
+            Pay securely via Razorpay with Google Pay, PhonePe, Paytm, UPI, Credit/Debit Cards, or NetBanking.
           </div>
 
           <!-- Sub-options for Online Payment -->
-          <div id="online-amount-selector" style="display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--owc-border);" onclick="event.stopPropagation();">
-            <div style="font-size: 11.5px; font-weight: 750; color: var(--owc-text); margin-bottom: 8px;">Select Payment Mode / Advance:</div>
+          <div id="online-amount-selector"
+            style="display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--owc-border);"
+            onclick="event.stopPropagation();">
+            <div style="font-size: 11.5px; font-weight: 750; color: var(--owc-text); margin-bottom: 8px;">Select Payment
+              Mode / Advance:</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
-              <div class="online-tier-chip active" id="chip-token-advance" onclick="setOnlinePaymentAmount(299, event)">
-                <div style="font-weight: 800; font-size: 13px;">₹299 Token</div>
-                <div style="font-size: 10px; opacity: 0.85;">Recommended Advance</div>
+              <div class="online-tier-chip active" id="chip-token-advance" onclick="setOnlinePaymentAmount('15percent', event)">
+                <div style="font-weight: 800; font-size: 13px;" id="chip-advance-amt-txt">15% Advance</div>
+                <div style="font-size: 10px; opacity: 0.85;">Online Advance to Lock Cab</div>
               </div>
               <div class="online-tier-chip" id="chip-full-fare" onclick="setOnlinePaymentAmount('full', event)">
                 <div style="font-weight: 800; font-size: 13px;" id="chip-full-amt-txt">100% Full</div>
@@ -761,7 +784,7 @@
               </div>
             </div>
             <div style="font-size: 11px; color: var(--owc-text-muted); margin-top: 8px;" id="online-amount-note">
-              ₹299 paid now to lock cab; remaining balance payable to chauffeur at destination.
+              15% advance paid now to lock cab; remaining 85% balance payable to chauffeur at destination.
             </div>
           </div>
         </div>
@@ -769,7 +792,8 @@
 
       <!-- Promo Code Section -->
       <div class="coupon-wrap">
-        <div style="font-size: 12.5px; font-weight: 750; color: var(--owc-text); margin-bottom: 8px;">Have a Promo Coupon?</div>
+        <div style="font-size: 12.5px; font-weight: 750; color: var(--owc-text); margin-bottom: 8px;">Have a Promo
+          Coupon?</div>
         <div class="coupon-input-row">
           <input type="text" id="coupon-code-input" class="coupon-text-field" placeholder="Try BIHAR100" maxlength="15">
           <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">Apply</button>
@@ -785,7 +809,8 @@
         </label>
         <div class="gst-form-fields" id="gst-fields-box">
           <input type="text" id="gst-company-name" class="gst-input-box" placeholder="Registered Company Name">
-          <input type="text" id="gst-number" class="gst-input-box" placeholder="15-digit GSTIN (e.g., 10AAAAA0000A1Z5)" maxlength="15" style="text-transform: uppercase;">
+          <input type="text" id="gst-number" class="gst-input-box" placeholder="15-digit GSTIN (e.g., 10AAAAA0000A1Z5)"
+            maxlength="15" style="text-transform: uppercase;">
         </div>
       </div>
 
@@ -816,24 +841,33 @@
     <div class="booking-success-view" id="checkout-success-view">
       <div class="success-check-badge">✓</div>
       <h2 style="font-size: 22px; font-weight: 900; color: var(--owc-text); margin-bottom: 4px;">Booking Confirmed!</h2>
-      <p style="font-size: 13px; color: var(--owc-text-muted);">Your intercity ride has been scheduled with OneWayTaxiBihar.</p>
+      <p style="font-size: 13px; color: var(--owc-text-muted);">Your intercity ride has been scheduled with
+        OneWayTaxiBihar.</p>
 
       <div class="success-booking-tag" id="succ-booking-id">OTB-2026-1001</div>
 
-      <div style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 14px; text-align: left; font-size: 13px; line-height: 1.6; margin-bottom: 16px;">
+      <div
+        style="background: var(--owc-slate-50); border: 1px solid var(--owc-border); border-radius: 12px; padding: 14px; text-align: left; font-size: 13px; line-height: 1.6; margin-bottom: 16px;">
         <div><strong>Route:</strong> <span id="succ-route">Patna ➔ Gaya</span></div>
         <div><strong>Schedule:</strong> <span id="succ-schedule">Today at 10:00 AM</span></div>
         <div><strong>Cab Type:</strong> <span id="succ-cab">Prime Sedan</span></div>
-        <div><strong>Total Fare:</strong> <span id="succ-fare" style="color: var(--owc-primary); font-weight: 800;">₹2,998</span></div>
-        <div id="succ-pay-row"><strong>Payment Method:</strong> <span id="succ-pay-method" style="color: #10b981; font-weight: 750;">Cash on Ride (Zero Advance)</span></div>
-        <div id="succ-advance-row" style="display: none;"><strong>Advance Paid (Razorpay):</strong> <span id="succ-advance-val" style="color: #10b981; font-weight: 800;">₹299</span></div>
-        <div id="succ-balance-row" style="display: none;"><strong>Balance Due to Chauffeur:</strong> <span id="succ-balance-val" style="color: #f59e0b; font-weight: 800;">₹0</span></div>
-        <div id="succ-txnid-row" style="display: none; font-size: 11.5px; color: var(--owc-text-muted);"><strong>Gateway Txn Ref:</strong> <span id="succ-txnid-val">pay_xxx</span></div>
+        <div><strong>Total Fare:</strong> <span id="succ-fare"
+            style="color: var(--owc-primary); font-weight: 800;">₹2,998</span></div>
+        <div id="succ-pay-row"><strong>Payment Method:</strong> <span id="succ-pay-method"
+            style="color: #10b981; font-weight: 750;">Cash on Ride (Zero Advance)</span></div>
+        <div id="succ-advance-row" style="display: none;"><strong>Advance Paid (Razorpay):</strong> <span
+            id="succ-advance-val" style="color: #10b981; font-weight: 800;">₹299</span></div>
+        <div id="succ-balance-row" style="display: none;"><strong>Balance Due to Chauffeur:</strong> <span
+            id="succ-balance-val" style="color: #f59e0b; font-weight: 800;">₹0</span></div>
+        <div id="succ-txnid-row" style="display: none; font-size: 11.5px; color: var(--owc-text-muted);"><strong>Gateway
+            Txn Ref:</strong> <span id="succ-txnid-val">pay_xxx</span></div>
         <div><strong>Passenger:</strong> <span id="succ-rider">Passenger Name</span></div>
       </div>
 
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--owc-text); text-align: left; margin-bottom: 16px;">
-        ℹ️ Chauffeur details and vehicle number will be sent via SMS &amp; WhatsApp 2 to 4 hours prior to scheduled pickup.
+      <div
+        style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--owc-text); text-align: left; margin-bottom: 16px;">
+        ℹ️ Chauffeur details and vehicle number will be sent via SMS &amp; WhatsApp 2 to 4 hours prior to scheduled
+        pickup.
       </div>
 
       <div class="success-actions-col">
@@ -843,7 +877,8 @@
         <a href="passenger.html" class="btn-succ-portal">
           <span>🚖 View in Passenger Portal</span>
         </a>
-        <a href="tel:+918002141816" class="btn-succ-portal" style="border-color: rgba(16,185,129,0.3); color: var(--owc-primary);">
+        <a href="tel:+918002141816" class="btn-succ-portal"
+          style="border-color: rgba(16,185,129,0.3); color: var(--owc-primary);">
           <span>📞 Call 24×7 Hotline (+91 80021 41816)</span>
         </a>
       </div>
@@ -854,12 +889,17 @@
       <div style="font-size: 12.5px; color: var(--owc-text-muted); margin-bottom: 8px;">
         OneWayTaxiBihar Mobility Pvt Ltd • Dedicated Intercity Cab Booking across Bihar
       </div>
-      <div style="display: flex; justify-content: center; gap: 16px; align-items: center; font-size: 12.5px; flex-wrap: wrap;">
+      <div
+        style="display: flex; justify-content: center; gap: 16px; align-items: center; font-size: 12.5px; flex-wrap: wrap;">
         <a href="index.html" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">Home</a>
-        <a href="https://www.facebook.com/share/1FAuDD5Wu5/" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">Facebook</a>
-        <a href="https://www.instagram.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">Instagram</a>
-          <a href="https://x.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer" style="color: var(--owc-text-muted); text-decoration: none;">X (@onewaytaxibihar)</a>
-        <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">24x7 Helpdesk: +91 80021 41816</a>
+        <a href="https://www.facebook.com/share/1FAuDD5Wu5/" target="_blank" rel="noopener noreferrer"
+          style="color: var(--owc-text-muted); text-decoration: none;">Facebook</a>
+        <a href="https://www.instagram.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer"
+          style="color: var(--owc-text-muted); text-decoration: none;">Instagram</a>
+        <a href="https://x.com/onewaytaxibihar" target="_blank" rel="noopener noreferrer"
+          style="color: var(--owc-text-muted); text-decoration: none;">X (@onewaytaxibihar)</a>
+        <a href="tel:+918002141816" style="color: var(--owc-primary); text-decoration: none; font-weight: 700;">24x7
+          Helpdesk: +91 80021 41816</a>
       </div>
     </footer>
 
@@ -897,13 +937,13 @@
       try {
         const storedTrip = sessionStorage.getItem('otb_trip') || sessionStorage.getItem('otb_search_params');
         if (storedTrip) trip = JSON.parse(storedTrip);
-      } catch (e) {}
+      } catch (e) { }
       try {
         cab = JSON.parse(sessionStorage.getItem('otb_selected_cab'));
-      } catch (e) {}
+      } catch (e) { }
       try {
         rider = JSON.parse(sessionStorage.getItem('otb_rider_details'));
-      } catch (e) {}
+      } catch (e) { }
 
       // Fallbacks
       if (!trip) {
@@ -997,10 +1037,13 @@
           document.getElementById('chip-test-one')?.classList.add('active');
           if (note) note.textContent = `₹1 live test transaction via Razorpay. Remaining ₹${(currentFare - 1).toLocaleString('en-IN')} payable to driver.`;
         } else {
-          onlineModeType = 'token';
-          onlinePayAmount = 299;
+          onlineModeType = '15percent';
+          const calc15 = Math.max(Math.round(currentFare * 0.15), 199);
+          onlinePayAmount = calc15;
           document.getElementById('chip-token-advance')?.classList.add('active');
-          if (note) note.textContent = `₹299 advance token paid now to lock cab; remaining ₹${Math.max(0, currentFare - 299).toLocaleString('en-IN')} payable to driver at drop.`;
+          const chipTxt = document.getElementById('chip-advance-amt-txt');
+          if (chipTxt) chipTxt.textContent = `15% Advance (₹${calc15})`;
+          if (note) note.textContent = `15% advance (₹${calc15}) paid now to lock cab; remaining 85% (₹${Math.max(0, currentFare - calc15).toLocaleString('en-IN')}) payable to driver at drop.`;
         }
 
         if (selectedMethod === 'online_gateway') {
@@ -1013,8 +1056,6 @@
         if (!btnText) return;
         if (selectedMethod === 'cash_to_driver') {
           btnText.textContent = 'Confirm Booking (₹0 Advance) ➔';
-        } else if (selectedMethod === 'direct_upi') {
-          btnText.textContent = 'Confirm Ride with Direct UPI (₹299) ➔';
         } else {
           btnText.textContent = `Pay ₹${onlinePayAmount.toLocaleString('en-IN')} via Razorpay ➔`;
         }
@@ -1024,13 +1065,7 @@
       window.selectPayMethod = function (m) {
         selectedMethod = m;
         document.getElementById('opt-card-cash')?.classList.toggle('selected', m === 'cash_to_driver');
-        document.getElementById('opt-card-direct-upi')?.classList.toggle('selected', m === 'direct_upi');
         document.getElementById('opt-card-online')?.classList.toggle('selected', m === 'online_gateway');
-        
-        const directUpiSelector = document.getElementById('direct-upi-selector');
-        if (directUpiSelector) {
-          directUpiSelector.style.display = (m === 'direct_upi') ? 'block' : 'none';
-        }
 
         const onlineSelector = document.getElementById('online-amount-selector');
         if (onlineSelector) {
@@ -1109,11 +1144,9 @@
           couponCode: couponVal,
           couponDiscount: appliedDiscount || 0,
           paymentMode: selectedMethod,
-          paymentMethod: selectedMethod === 'cash_to_driver' 
-            ? 'Cash on Ride (Zero Advance)' 
-            : (selectedMethod === 'direct_upi' ? 'Direct UPI / PhonePe QR (0% Fee)' : 'Razorpay Online Gateway'),
-          advancePaid: selectedMethod === 'direct_upi' ? 299 : 0,
-          balanceDue: selectedMethod === 'direct_upi' ? Math.max(0, currentFare - 299) : currentFare,
+          paymentMethod: selectedMethod === 'cash_to_driver' ? 'Cash on Ride (Zero Advance)' : 'Razorpay Online Gateway',
+          advancePaid: 0,
+          balanceDue: currentFare,
           passengerName: rider.passengerName || 'Passenger',
           passengerPhone: rider.passengerPhone || '8002141816',
           pickupAddress: rider.pickupAddress || cleanOrigin,
@@ -1122,7 +1155,7 @@
           createdAt: new Date().toISOString()
         };
 
-        // 1. If Cash on Ride: direct immediate confirmation
+        // If Cash on Ride: direct immediate confirmation
         if (selectedMethod === 'cash_to_driver') {
           btn.innerHTML = '<span>Scheduling Cab...</span>';
           try {
@@ -1133,29 +1166,6 @@
             console.warn('Backend sync note:', e);
           }
           renderBookingSuccess(bookingPayload, 0, currentFare, 'Cash on Ride (Zero Advance)', null);
-          return;
-        }
-
-        // 2. If Direct UPI & PhonePe QR (0% Commission)
-        if (selectedMethod === 'direct_upi') {
-          btn.innerHTML = '<span>Verifying Advance &amp; Scheduling Cab...</span>';
-          const utrInput = (document.getElementById('input-upi-utr')?.value || '').trim();
-          bookingPayload.upiUtr = utrInput || 'UPI-DIRECT-TOKEN';
-          bookingPayload.paymentStatus = utrInput ? 'ADVANCE_PAID_UPI_VERIFIED' : 'ADVANCE_PAID_DIRECT_UPI';
-          try {
-            if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
-              await window.ApiClient.createBooking(bookingPayload);
-            }
-          } catch (e) {
-            console.warn('Backend sync note:', e);
-          }
-          renderBookingSuccess(
-            bookingPayload, 
-            299, 
-            Math.max(0, currentFare - 299), 
-            'Direct UPI & PhonePe QR (0% Fee)', 
-            utrInput || 'UPI Direct Advance'
-          );
           return;
         }
 
@@ -1222,21 +1232,22 @@
 
                   const advPaid = targetAmount;
                   const balDue = Math.max(0, currentFare - advPaid);
-                  const payMethodStr = advPaid >= currentFare 
-                    ? '100% Full Pre-payment Online (Razorpay Verified)' 
-                    : `Razorpay Online Advance (₹${advPaid} Paid)`;
+                  const is15 = Math.abs(advPaid - Math.round(currentFare * 0.15)) <= 10;
+                  const payMethodStr = advPaid >= currentFare
+                    ? '100% Full Pre-payment Online (Razorpay Verified)'
+                    : (is15 ? `15% Online Advance (₹${advPaid} Paid)` : `Razorpay Online Advance (₹${advPaid} Paid)`);
 
                   bookingPayload.advancePaid = advPaid;
                   bookingPayload.balanceDue = balDue;
                   bookingPayload.paymentMethod = payMethodStr;
                   bookingPayload.paymentTxnId = rzpResponse.razorpay_payment_id;
-                  bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (Advance Token)';
+                  bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (15% Advance Verified)';
 
                   try {
                     if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
                       await window.ApiClient.createBooking(bookingPayload);
                     }
-                  } catch (e) {}
+                  } catch (e) { }
 
                   renderBookingSuccess(bookingPayload, advPaid, balDue, payMethodStr, rzpResponse.razorpay_payment_id);
                 } catch (vErr) {
@@ -1281,21 +1292,22 @@
 
           const advPaid = targetAmount;
           const balDue = Math.max(0, currentFare - advPaid);
-          const payMethodStr = advPaid >= currentFare 
-            ? '100% Full Pre-payment Online (Razorpay Test Mode)' 
-            : `Razorpay Online Advance (₹${advPaid} Paid)`;
+          const is15 = Math.abs(advPaid - Math.round(currentFare * 0.15)) <= 10;
+          const payMethodStr = advPaid >= currentFare
+            ? '100% Full Pre-payment Online (Razorpay Test Mode)'
+            : (is15 ? `15% Online Advance (₹${advPaid} Paid)` : `Razorpay Online Advance (₹${advPaid} Paid)`);
 
           bookingPayload.advancePaid = advPaid;
           bookingPayload.balanceDue = balDue;
           bookingPayload.paymentMethod = payMethodStr;
           bookingPayload.paymentTxnId = simPaymentId;
-          bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (Online Verified)' : 'PARTIALLY PAID (Advance Token)';
+          bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (Online Verified)' : 'PARTIALLY PAID (15% Advance Verified)';
 
           try {
             if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
               await window.ApiClient.createBooking(bookingPayload);
             }
-          } catch (e) {}
+          } catch (e) { }
 
           renderBookingSuccess(bookingPayload, advPaid, balDue, payMethodStr, simPaymentId);
 
@@ -1316,7 +1328,7 @@
           recent.unshift(b);
           localStorage.setItem('otb_recent_bookings', JSON.stringify(recent));
           localStorage.setItem('otb_last_passenger_phone', rider.passengerPhone);
-        } catch (e) {}
+        } catch (e) { }
 
         document.getElementById('succ-booking-id').textContent = b.bookingId;
         document.getElementById('succ-route').textContent = `${cleanOrigin} ➔ ${cleanDest}`;

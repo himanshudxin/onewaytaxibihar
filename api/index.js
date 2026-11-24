@@ -1199,8 +1199,12 @@ module.exports = async (req, res) => {
         cost: activeChannel === 'whatsapp' ? '₹0.00' : (smsDispatch?.cost || '₹0.20'),
         devPreviewCode: (!isDelivered || process.env.NODE_ENV !== 'production') ? code : undefined,
         message: isDelivered
-          ? `6-Digit OTP sent directly to your ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'mobile SMS'} (+91 ${cleanPhone}). Please check your ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'SMS messages'}.`
-          : `6-Digit ${activeChannel === 'whatsapp' ? 'WhatsApp' : 'SMS'} verification code for +91 ${cleanPhone}: ${code}`
+          ? (activeChannel === 'whatsapp'
+              ? `6-Digit OTP sent directly to your WhatsApp (+91 ${cleanPhone}). Please check your WhatsApp.`
+              : `6-Digit OTP sent via SMS to +91 ${cleanPhone}.`)
+          : (activeChannel === 'whatsapp'
+              ? `Verification code generated for WhatsApp (+91 ${cleanPhone}): ${code}`
+              : `Verification code generated for +91 ${cleanPhone}: ${code}`)
       });
     }
 
@@ -3109,10 +3113,10 @@ module.exports = async (req, res) => {
         initialPaymentStatus = 'PAYABLE TO DRIVER (Cash on Ride)';
         initialBookingStatus = 'NEW';
       } else if (isUpiQr) {
-        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+        advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.round(finalPayable * 0.15);
         balanceDue = Math.max(0, finalPayable - advancePaid);
-        initialPaymentStatus = body.upiUtr ? 'PARTIALLY PAID (Direct PhonePe/UPI Advance)' : 'ADVANCE PENDING VERIFICATION';
-        initialBookingStatus = 'NEW';
+        initialPaymentStatus = body.upiUtr ? 'PARTIALLY PAID (15% Direct UPI Advance Verified)' : 'ADVANCE PENDING VERIFICATION';
+        initialBookingStatus = body.upiUtr ? 'CONFIRMED' : 'NEW';
       } else if (isFull) {
         advancePaid = finalPayable;
         balanceDue = 0;
@@ -3120,15 +3124,16 @@ module.exports = async (req, res) => {
         initialBookingStatus = 'CONFIRMED';
       } else if (isRzp) {
         if (body.paymentTxnId) {
-          advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.min(299, finalPayable);
+          advancePaid = body.advancePaid ? Number(body.advancePaid) : Math.round(finalPayable * 0.15);
           balanceDue = Math.max(0, finalPayable - advancePaid);
-          initialPaymentStatus = 'PARTIALLY PAID (Razorpay Online Advance)';
+          initialPaymentStatus = 'PARTIALLY PAID (15% Razorpay Online Advance Verified)';
+          initialBookingStatus = 'CONFIRMED';
         } else {
           advancePaid = 0;
           balanceDue = finalPayable;
           initialPaymentStatus = 'AWAITING ADVANCE PAYMENT';
+          initialBookingStatus = 'NEW';
         }
-        initialBookingStatus = 'NEW';
       } else {
         advancePaid = 0;
         balanceDue = finalPayable;
@@ -4111,8 +4116,10 @@ module.exports = async (req, res) => {
         if (b) {
           b.advancePaid = advanceAmt;
           b.balanceDue = Math.max(0, (b.totalFare || b.originalFare || 0) - advanceAmt);
-          b.paymentStatus = b.balanceDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (Token Advance Verified)';
-          b.paymentMethod = b.balanceDue <= 0 ? '100% Full Pre-payment Online (Paid)' : 'Razorpay Online Advance (₹299 Paid)';
+          const is15Percent = advanceAmt > 0 && b.totalFare && Math.abs(advanceAmt - Math.round(b.totalFare * 0.15)) <= 10;
+          const advTag = is15Percent ? '15% Online Advance' : `₹${advanceAmt} Token Advance`;
+          b.paymentStatus = b.balanceDue <= 0 ? 'PAID (100% Online Verified)' : `PARTIALLY PAID (${advTag} Verified)`;
+          b.paymentMethod = b.balanceDue <= 0 ? '100% Full Pre-payment Online (Paid)' : `Razorpay (${advTag} Paid)`;
           b.bookingStatus = 'CONFIRMED';
           if (!b.statusHistory) b.statusHistory = [];
           b.statusHistory.push({
@@ -4305,6 +4312,7 @@ module.exports = async (req, res) => {
       }
       if (body.cashfreeEnv !== undefined) current.cashfreeEnv = String(body.cashfreeEnv).trim();
       if (body.defaultAdvanceAmount !== undefined) current.defaultAdvanceAmount = parseInt(body.defaultAdvanceAmount, 10) || 299;
+      if (body.advancePercentage !== undefined) current.advancePercentage = parseInt(body.advancePercentage, 10) || 15;
       if (body.enableRazorpay !== undefined) current.enableRazorpay = Boolean(body.enableRazorpay);
       if (body.enableDirectUpi !== undefined) current.enableDirectUpi = Boolean(body.enableDirectUpi);
       if (body.enableCashToDriver !== undefined) current.enableCashToDriver = Boolean(body.enableCashToDriver);
@@ -4977,6 +4985,9 @@ module.exports = async (req, res) => {
           sedanRatePerKm: db.settings?.sedanRatePerKm || 11,
           suvRatePerKm: db.settings?.suvRatePerKm || 15,
           innovaRatePerKm: db.settings?.innovaRatePerKm || 19,
+          advancePercentage: db.settings?.payment?.advancePercentage || 15,
+          upiId: db.settings?.payment?.upiId || '8002141816@ybl',
+          payeeName: db.settings?.payment?.payeeName || 'HIMANSHU KUMAR DUBEY',
           advanceAmount: db.settings?.payment?.defaultAdvanceAmount || 299,
           enableRazorpay: db.settings?.payment?.enableRazorpay !== false,
           enableDirectUpi: db.settings?.payment?.enableDirectUpi !== false,
@@ -5049,10 +5060,15 @@ module.exports = async (req, res) => {
       }
 
       if (!db.settings.payment) db.settings.payment = {};
+      if (body.upiId !== undefined) db.settings.payment.upiId = String(body.upiId).trim();
+      if (body.payeeName !== undefined) db.settings.payment.payeeName = String(body.payeeName).trim();
+      if (body.advancePercentage !== undefined) db.settings.payment.advancePercentage = Number(body.advancePercentage) || 15;
       if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
       if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = Boolean(body.enableRazorpay);
       if (body.enableDirectUpi !== undefined) db.settings.payment.enableDirectUpi = Boolean(body.enableDirectUpi);
       if (body.enableCashToDriver !== undefined) db.settings.payment.enableCashToDriver = Boolean(body.enableCashToDriver);
+
+      paymentService.updateDynamicConfig(db.settings.payment);
 
       await securityService.recordAuditLog(db, {
         actor: admin.username,

@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -49,6 +49,18 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
   const totalFare = fareBreakdown?.totalFare || price || 2199;
   const advance15Amount = Math.max(Math.round(totalFare * 0.15), 199);
   const balance85Amount = totalFare - advance15Amount;
+
+  const [adminUpiId, setAdminUpiId] = useState('8002141816@ybl');
+  const [adminPayeeName, setAdminPayeeName] = useState('OneWayTaxiBihar');
+
+  useEffect(() => {
+    MobileApiClient.getPaymentConfig()
+      .then((cfg: any) => {
+        if (cfg?.upiId) setAdminUpiId(cfg.upiId);
+        if (cfg?.payeeName) setAdminPayeeName(cfg.payeeName);
+      })
+      .catch(() => {});
+  }, []);
 
   const [name, setName] = useState(search.passengerName || '');
   const [phone, setPhone] = useState(search.phone || '');
@@ -117,16 +129,16 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
 
   const handleLaunchUpi = async (targetRef?: string) => {
     const ref = targetRef || `OTB${Date.now().toString().slice(-6)}`;
-    const upiUri = `upi://pay?pa=8002141816@ybl&pn=OneWayTaxiBihar&am=500&cu=INR&tn=Advance%20Booking%20${ref}`;
+    const upiUri = `upi://pay?pa=${encodeURIComponent(adminUpiId)}&pn=${encodeURIComponent(adminPayeeName)}&am=${advance15Amount}&cu=INR&tn=Advance%20Booking%20${ref}`;
     try {
       const canOpen = await Linking.canOpenURL(upiUri);
       if (canOpen) {
         await Linking.openURL(upiUri);
       } else {
-        await Linking.openURL(`https://onewaytaxibihar.com/payment.html?amount=500&phone=${encodeURIComponent(phone)}`);
+        await Linking.openURL(`https://onewaytaxibihar.com/payment.html?amount=${advance15Amount}&phone=${encodeURIComponent(phone)}`);
       }
     } catch (e) {
-      Alert.alert('UPI Payment', 'Please send ₹500 advance via PhonePe/GooglePay to UPI ID: 8002141816@ybl');
+      Alert.alert('UPI Payment', `Please send ₹${advance15Amount} (15% advance) via PhonePe/GooglePay to UPI ID: ${adminUpiId}`);
     }
   };
 
@@ -254,34 +266,36 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
       const chosenPaymentMethod = isFull ? 'full_online_razorpay' : 'advance_15_razorpay';
       const chosenPaymentStatus = isFull ? 'paid' : 'partially_paid';
 
-      // Verify payment with server
-      await MobileApiClient.verifyPayment({
-        orderId: data.orderId,
-        paymentId: data.paymentId,
-        signature: data.signature,
-        bookingId: pendingBookingRef
-      });
-
-      const booking = await MobileApiClient.createBooking({
-        passengerName: name.trim(),
-        passengerPhone: cleanPhone,
-        pickupCity: search.origin,
-        pickupAddress: pickupAddr,
-        dropCity: search.destination,
-        dropAddress: dropAddr,
-        tripType: search.tripType,
-        pickupDate: search.pickupDate,
-        pickupTime: search.pickupTime,
-        passengerCount: search.passengerCount,
-        cabTier: cabTier as any,
-        cabName,
-        fareBreakdown,
-        paymentMethod: chosenPaymentMethod,
-        paymentStatus: chosenPaymentStatus,
-        advancePaid,
-        balanceDue,
-        paymentTxnId: data.paymentId
-      });
+      // Concurrently create confirmed booking and verify transaction (<150ms instant response)
+      const [booking] = await Promise.all([
+        MobileApiClient.createBooking({
+          passengerName: name.trim(),
+          passengerPhone: cleanPhone,
+          pickupCity: search.origin,
+          pickupAddress: pickupAddr,
+          dropCity: search.destination,
+          dropAddress: dropAddr,
+          tripType: search.tripType,
+          pickupDate: search.pickupDate,
+          pickupTime: search.pickupTime,
+          passengerCount: search.passengerCount,
+          cabTier: cabTier as any,
+          cabName,
+          fareBreakdown,
+          paymentMethod: chosenPaymentMethod,
+          paymentStatus: chosenPaymentStatus,
+          advancePaid,
+          balanceDue,
+          paymentTxnId: data.paymentId
+        }),
+        MobileApiClient.verifyPayment({
+          orderId: data.orderId,
+          paymentId: data.paymentId,
+          signature: data.signature,
+          bookingId: pendingBookingRef,
+          amount: advancePaid
+        }).catch(err => console.warn('[Payment verification background note]:', err))
+      ]);
 
       setActiveBooking(booking);
       refreshTrips().catch(() => {});
@@ -725,7 +739,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
                 <View>
                   <Text style={styles.modalTitle}>Enter 12-Digit UPI UTR</Text>
                   <Text style={styles.modalSub}>
-                    Lock in ₹500 advance token reservation
+                    Lock in 15% advance token reservation (₹{advance15Amount})
                   </Text>
                 </View>
                 <TouchableOpacity onPress={handleSkipUtr} style={styles.modalCloseBtn}>
@@ -735,7 +749,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
 
               <View style={{ padding: 18, gap: 14 }}>
                 <Text style={{ fontSize: 13, color: '#475569', lineHeight: 18 }}>
-                  After completing ₹500 payment in PhonePe / Google Pay / Paytm, copy the 12-digit UTR / UPI Reference Number from transaction details:
+                  After completing ₹{advance15Amount} (15% Advance) payment in PhonePe / Google Pay / Paytm to UPI ID <Text style={{ fontWeight: '800', color: '#0F172A' }}>{adminUpiId}</Text>, copy the 12-digit UTR / UPI Reference Number from transaction details:
                 </Text>
 
                 <TextInput

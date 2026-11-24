@@ -603,7 +603,7 @@ async function saveDbAsync(data) {
     savePatnaFaresJson(data.fares);
   }
 
-  await syncToRemoteCloud(data);
+  syncToRemoteCloud(data).catch(() => {});
 }
 
 // Instant Atomic Lead Creation (<15ms)

@@ -31,7 +31,7 @@ import {
 } from 'lucide-react-native';
 
 export const MyTripsScreen = ({ navigation }: any) => {
-  const { myTrips, refreshTrips, updateSearch } = usePassenger();
+  const { myTrips, refreshTrips, updateSearch, isLoggedIn } = usePassenger();
 
   const [activeTab, setActiveTab] = useState<'upcoming' | 'active' | 'completed' | 'cancelled' | 'all'>('upcoming');
   const [refreshing, setRefreshing] = useState(false);
@@ -247,6 +247,16 @@ export const MyTripsScreen = ({ navigation }: any) => {
               <Text style={styles.bookNowText}>Book an Outstation Cab</Text>
               <ArrowRight size={16} color="#0F172A" strokeWidth={2.5} />
             </TouchableOpacity>
+            {!isLoggedIn && (
+              <TouchableOpacity
+                style={[styles.bookNowBtn, { backgroundColor: '#16a34a', marginTop: 10 }]}
+                onPress={() => navigation.navigate('Auth')}
+                activeOpacity={0.88}
+              >
+                <Text style={[styles.bookNowText, { color: '#FFFFFF' }]}>Sign In with Mobile OTP</Text>
+                <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.5} />
+              </TouchableOpacity>
+            )}
           </View>
         }
       />

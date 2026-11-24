@@ -3188,12 +3188,20 @@
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px;">1. Direct UPI &amp; PhonePe QR Configuration (0 Documents)</div>
                   <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
-                      <label class="form-label">UPI VPA ID</label>
+                      <label class="form-label">Payment Collection UPI VPA ID</label>
                       <input type="text" class="form-control" id="pay-upi-id" placeholder="8002141816@ybl">
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Payee Name</label>
+                      <label class="form-label">Payee / Merchant Name</label>
                       <input type="text" class="form-control" id="pay-payee-name" placeholder="HIMANSHU KUMAR DUBEY">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Advance Booking Percentage (%)</label>
+                      <input type="number" class="form-control" id="pay-advance-percentage" placeholder="15" min="5" max="100">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Default Minimum Advance (₹)</label>
+                      <input type="number" class="form-control" id="pay-advance-amount" placeholder="299" min="99">
                     </div>
                     <div class="form-group" style="grid-column: 1/-1;">
                       <label class="form-label">PhonePe QR Code Image</label>
@@ -8274,6 +8282,7 @@
           const swRzp = document.getElementById("pay-switch-razorpay");
           if (swRzp) swRzp.checked = p.enableRazorpay !== false;
           setVal("pay-advance-amount", p.defaultAdvanceAmount || 299);
+          setVal("pay-advance-percentage", p.advancePercentage || 15);
 
           const rzpBadge = document.getElementById("badge-rzp-status");
           if (rzpBadge) {
@@ -8430,6 +8439,7 @@
       const enableDirectUpi = document.getElementById("pay-switch-direct-upi") ? document.getElementById("pay-switch-direct-upi").checked : true;
       const enableRazorpay = document.getElementById("pay-switch-razorpay") ? document.getElementById("pay-switch-razorpay").checked : true;
       const defaultAdvanceAmount = Number(document.getElementById("pay-advance-amount")?.value) || 299;
+      const advancePercentage = Number(document.getElementById("pay-advance-percentage")?.value) || 15;
 
       try {
         if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Saving..."; }
@@ -8439,7 +8449,7 @@
             upiId, payeeName, razorpayKeyId, razorpayKeySecret,
             bankName, accountHolderName, accountNumber, ifscCode,
             enableTokenAdvance, enableCashToDriver, autoConfirmOnAdvance,
-            enableDirectUpi, enableRazorpay, defaultAdvanceAmount
+            enableDirectUpi, enableRazorpay, defaultAdvanceAmount, advancePercentage
           })
         });
         const data = await res.json();

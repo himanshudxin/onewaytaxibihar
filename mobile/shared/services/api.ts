@@ -1083,6 +1083,7 @@ class ApiClient {
     paymentId: string;
     signature?: string;
     bookingId?: string;
+    amount?: number;
   }): Promise<{ success: boolean; verified: boolean; message?: string }> {
     try {
       const res = await this.request<any>('/payments/verify', {

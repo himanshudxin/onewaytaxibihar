@@ -278,7 +278,7 @@ export const HomeScreen = ({ navigation }: any) => {
         />
       </View>
 
-      {/* Layer 2: Clean Floating Header with Menu Only (No Text / Logo / AI on Map) */}
+      {/* Layer 2: Clean Floating Header with Menu and Login Button */}
       <SafeAreaView edges={['top']} pointerEvents="box-none" style={styles.floatingTopBar}>
         <TouchableOpacity
           style={[
@@ -294,6 +294,42 @@ export const HomeScreen = ({ navigation }: any) => {
         >
           <Menu size={22} color={colors.textPrimary} strokeWidth={2.4} />
         </TouchableOpacity>
+
+        {isLoggedIn ? (
+          <TouchableOpacity
+            style={[
+              styles.floatingAccountBtn,
+              {
+                backgroundColor: isDark ? 'rgba(11, 15, 25, 0.94)' : 'rgba(255, 255, 255, 0.96)',
+                borderColor: colors.cardBorder,
+              }
+            ]}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.8}
+          >
+            <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981', marginRight: 6 }} />
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.textPrimary }}>
+              +91 {userPhone?.slice(-4) || 'Account'}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={[
+              styles.floatingLoginBtn,
+              {
+                backgroundColor: '#16a34a',
+                borderColor: '#15803d',
+              }
+            ]}
+            onPress={() => navigation.navigate('Auth')}
+            activeOpacity={0.85}
+          >
+            <User size={14} color="#FFFFFF" strokeWidth={2.5} style={{ marginRight: 5 }} />
+            <Text style={{ fontSize: 12, fontWeight: '900', color: '#FFFFFF', letterSpacing: 0.2 }}>
+              Sign In / Login
+            </Text>
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
 
       {/* Layer 3: Uber Sliding Bottom Sheet Drawer */}
@@ -1216,7 +1252,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? 36 : 8,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   floatingMenuBtn: {
     width: 44,
@@ -1228,6 +1264,32 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  floatingLoginBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  floatingAccountBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 6,
   },

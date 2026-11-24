@@ -183,11 +183,19 @@ export const ProfileScreen = ({ navigation }: any) => {
 
           {!isLoggedIn ? (
             <TouchableOpacity
-              style={[styles.signInCta, { backgroundColor: colors.accentGold }]}
+              style={[styles.signInCta, { backgroundColor: '#16a34a', borderColor: '#15803d', borderWidth: 1, paddingVertical: 14, borderRadius: 12 }]}
               onPress={() => navigation.navigate('Auth')}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
-              <Text style={styles.signInCtaText}>Sign In with Mobile OTP</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <User size={18} color="#FFFFFF" strokeWidth={2.5} />
+                <Text style={[styles.signInCtaText, { color: '#FFFFFF', fontWeight: '900', fontSize: 14 }]}>
+                  Sign In with Mobile WhatsApp / SMS OTP
+                </Text>
+              </View>
+              <Text style={{ color: '#dcfce7', fontSize: 11, textAlign: 'center', marginTop: 4, fontWeight: '600' }}>
+                Instant Login • ₹100 Welcome Reward on First Intercity Ride
+              </Text>
             </TouchableOpacity>
           ) : null}
         </View>

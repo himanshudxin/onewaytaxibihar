@@ -1,6 +1,140 @@
 {
   "bookings": [
     {
+      "bookingId": "OTB-2026-6677",
+      "advancePaid": 0,
+      "balanceDue": 8999,
+      "bookingSource": "Mobile App",
+      "bookingStatus": "NEW",
+      "broadcastCandidates": [
+        "drv_9934188888",
+        "drv_814",
+        "drv_832",
+        "drv_897",
+        "drv_573",
+        "drv_887",
+        "drv_851",
+        "drv_771",
+        "drv_187",
+        "drv_742",
+        "drv_308",
+        "drv_291",
+        "drv_961",
+        "drv_722",
+        "drv_285",
+        "drv_768",
+        "drv_488",
+        "drv_359",
+        "drv_415",
+        "drv_101",
+        "drv_test_2235",
+        "drv_test_2203",
+        "drv_test_2202",
+        "drv_6206494214",
+        "drv_104",
+        "drv_102"
+      ],
+      "broadcastClaimedBy": null,
+      "broadcastStartedAt": "2026-11-24T06:22:39.598Z",
+      "broadcastTimeoutSec": 86400,
+      "cabModel": "Dzire, Etios, Amaze",
+      "cabName": "Prime Sedan",
+      "cabPrice": 8999,
+      "cabTier": "sedan",
+      "cabType": "Prime Sedan",
+      "channel": "Mobile App",
+      "couponCode": "",
+      "couponDiscount": 0,
+      "createdAt": "2026-11-24T06:22:39.597Z",
+      "customerEmail": "",
+      "customerId": "usr_6206494214",
+      "customerName": "Himanshu",
+      "customerPhone": "+91 6206494214",
+      "destCity": "Patna",
+      "dispatchStatus": "BROADCASTING",
+      "distanceKm": 601,
+      "driverDetails": null,
+      "dropAddress": "Patna City Center",
+      "dropCity": "Patna",
+      "duration": "14h 30m",
+      "fare": 8999,
+      "fareBreakdown": {
+        "distanceKm": 653,
+        "duration": "14h 30m",
+        "tierId": "sedan",
+        "tierName": "Prime Sedan",
+        "tierModel": "Dzire, Etios, Amaze",
+        "seats": 4,
+        "baseFare": 8999,
+        "perKmRate": 14,
+        "distanceCharge": 8999,
+        "driverAllowance": 0,
+        "roundTripDiscount": 0,
+        "originalFare": 8999,
+        "promoDiscount": 0,
+        "promoInfo": null,
+        "tollFastag": 513,
+        "gst": 429,
+        "totalFare": 8999,
+        "isExplicitRouteFare": true,
+        "routeId": "patna-kolkata",
+        "marketComparison": "16198–19798",
+        "inclusions": [
+          "Fuel for the quoted one-way journey",
+          "Vehicle hire charges included",
+          "Driver allowance included",
+          "Pickup and drop-off within agreed municipal city limits"
+        ],
+        "exclusions": [
+          "FASTag toll charges and toll plaza taxes",
+          "Applicable state road permits and other legally payable route charges",
+          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
+        ]
+      },
+      "fleetClass": "Prime Sedan",
+      "fleetModel": "Dzire, Etios, Amaze",
+      "id": "OTB-2026-6677",
+      "idempotencyKey": "bkg_mwub5ftu_eh3u6yz",
+      "isApp": true,
+      "originCity": "Kolkata",
+      "originalFare": 8999,
+      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
+      "passengerEmail": "",
+      "passengerName": "Himanshu",
+      "passengerPhone": "+91 6206494214",
+      "paymentMethod": "advance_15_instamojo",
+      "paymentStatus": "PAYABLE TO DRIVER",
+      "paymentTxnId": "TXN_1795501359597_1321",
+      "phoneVerified": true,
+      "pickupAddress": "B/5, Rajarhat, Kolkata, West Bengal",
+      "pickupCity": "Kolkata",
+      "pickupDate": "2026-11-24",
+      "pickupTime": "10:00 AM",
+      "rejectedDrivers": [],
+      "source": "Mobile App",
+      "status": "NEW",
+      "statusHistory": [
+        {
+          "status": "NEW",
+          "timestamp": "2026-11-24T06:22:39.597Z",
+          "actor": "Customer",
+          "note": "Booking request placed for Prime Sedan at ₹8999."
+        },
+        {
+          "status": "BROADCASTING",
+          "timestamp": "2026-11-24T06:22:39.598Z",
+          "actor": "BroadcastEngine",
+          "note": "Broadcast active for partner chauffeur fleet (persists until accepted)."
+        }
+      ],
+      "totalFare": 8999,
+      "tripOtp": "3684",
+      "vehicleModel": "Dzire, Etios, Amaze",
+      "verifiedAt": "2026-11-24T06:22:39.597Z",
+      "verifiedMethod": "Telecom SMS OTP (Verified)",
+      "walletUsed": 0
+    },
+    {
       "bookingId": "OTB-2026-6070",
       "advancePaid": 299,
       "balanceDue": 2699,
@@ -10502,140 +10636,6 @@
       "autoDispatchedAt": "2026-11-15T03:47:28.530Z",
       "escalatedAt": "2026-11-17T20:45:21.791Z",
       "escalationReason": "Broadcast timed out after 120s with no driver claiming."
-    },
-    {
-      "id": "OTB-2026-6677",
-      "bookingId": "OTB-2026-6677",
-      "tripOtp": "3684",
-      "customerId": "usr_6206494214",
-      "customerName": "Himanshu",
-      "customerPhone": "+91 6206494214",
-      "customerEmail": "",
-      "source": "Mobile App",
-      "bookingSource": "Mobile App",
-      "channel": "Mobile App",
-      "isApp": true,
-      "paymentTxnId": "TXN_1795501359597_1321",
-      "idempotencyKey": "bkg_mwub5ftu_eh3u6yz",
-      "passengerName": "Himanshu",
-      "passengerPhone": "+91 6206494214",
-      "passengerEmail": "",
-      "pickupCity": "Kolkata",
-      "dropCity": "Patna",
-      "originCity": "Kolkata",
-      "destCity": "Patna",
-      "pickupAddress": "B/5, Rajarhat, Kolkata, West Bengal",
-      "dropAddress": "Patna City Center",
-      "pickupDate": "2026-11-24",
-      "pickupTime": "10:00 AM",
-      "distanceKm": 601,
-      "duration": "14h 30m",
-      "cabTier": "sedan",
-      "cabType": "Prime Sedan",
-      "cabName": "Prime Sedan",
-      "cabModel": "Dzire, Etios, Amaze",
-      "vehicleModel": "Dzire, Etios, Amaze",
-      "fleetClass": "Prime Sedan",
-      "fleetModel": "Dzire, Etios, Amaze",
-      "fareBreakdown": {
-        "distanceKm": 653,
-        "duration": "14h 30m",
-        "tierId": "sedan",
-        "tierName": "Prime Sedan",
-        "tierModel": "Dzire, Etios, Amaze",
-        "seats": 4,
-        "baseFare": 8999,
-        "perKmRate": 14,
-        "distanceCharge": 8999,
-        "driverAllowance": 0,
-        "roundTripDiscount": 0,
-        "originalFare": 8999,
-        "promoDiscount": 0,
-        "promoInfo": null,
-        "tollFastag": 513,
-        "gst": 429,
-        "totalFare": 8999,
-        "isExplicitRouteFare": true,
-        "routeId": "patna-kolkata",
-        "marketComparison": "16198–19798",
-        "inclusions": [
-          "Fuel for the quoted one-way journey",
-          "Vehicle hire charges included",
-          "Driver allowance included",
-          "Pickup and drop-off within agreed municipal city limits"
-        ],
-        "exclusions": [
-          "FASTag toll charges and toll plaza taxes",
-          "Applicable state road permits and other legally payable route charges",
-          "Parking, waiting charges, or other extras where applicable and disclosed in advance"
-        ]
-      },
-      "fare": 8999,
-      "totalFare": 8999,
-      "cabPrice": 8999,
-      "originalFare": 8999,
-      "walletUsed": 0,
-      "couponCode": "",
-      "couponDiscount": 0,
-      "advancePaid": 0,
-      "balanceDue": 8999,
-      "paymentMethod": "advance_15_instamojo",
-      "paymentStatus": "PAYABLE TO DRIVER",
-      "bookingStatus": "NEW",
-      "status": "NEW",
-      "phoneVerified": true,
-      "verifiedMethod": "Telecom SMS OTP (Verified)",
-      "verifiedAt": "2026-11-24T06:22:39.597Z",
-      "partnerNotice": "Our verified dispatch desk or driver partner will call you to coordinate vehicle arrival.",
-      "driverDetails": null,
-      "statusHistory": [
-        {
-          "status": "NEW",
-          "timestamp": "2026-11-24T06:22:39.597Z",
-          "actor": "Customer",
-          "note": "Booking request placed for Prime Sedan at ₹8999."
-        },
-        {
-          "status": "BROADCASTING",
-          "timestamp": "2026-11-24T06:22:39.598Z",
-          "actor": "BroadcastEngine",
-          "note": "Broadcast active for partner chauffeur fleet (persists until accepted)."
-        }
-      ],
-      "createdAt": "2026-11-24T06:22:39.597Z",
-      "dispatchStatus": "BROADCASTING",
-      "broadcastCandidates": [
-        "drv_9934188888",
-        "drv_814",
-        "drv_832",
-        "drv_897",
-        "drv_573",
-        "drv_887",
-        "drv_851",
-        "drv_771",
-        "drv_187",
-        "drv_742",
-        "drv_308",
-        "drv_291",
-        "drv_961",
-        "drv_722",
-        "drv_285",
-        "drv_768",
-        "drv_488",
-        "drv_359",
-        "drv_415",
-        "drv_101",
-        "drv_test_2235",
-        "drv_test_2203",
-        "drv_test_2202",
-        "drv_6206494214",
-        "drv_104",
-        "drv_102"
-      ],
-      "broadcastStartedAt": "2026-11-24T06:22:39.598Z",
-      "broadcastTimeoutSec": 86400,
-      "broadcastClaimedBy": null,
-      "rejectedDrivers": []
     }
   ],
   "drivers": [
@@ -11257,15 +11257,6 @@
       "isDeleted": true,
       "deletedAt": "2026-11-24T06:03:30.691Z",
       "deletionReason": "Driver partner resignation"
-    },
-    {
-      "id": "drv_adv_del",
-      "name": "Deleted Driver Partner",
-      "phone": "DELETED_DRV_987****299_1795501664976",
-      "dutyStatus": "OFF_DUTY",
-      "isDeleted": true,
-      "deletedAt": "2026-11-24T06:27:44.976Z",
-      "deletionReason": "Driver partner resignation"
     }
   ],
   "driver_applications": [],
@@ -11413,25 +11404,7 @@
       "rewardClaimed": true,
       "isPhoneVerified": true,
       "memberSince": "2026",
-      "createdAt": "2026-11-24T06:26:35.745Z"
-    },
-    {
-      "id": "usr_adv_a_664727",
-      "name": "Deleted User",
-      "email": null,
-      "phone": "DELETED_980****727_1795501664890",
-      "walletBalance": 250,
-      "isDeleted": true,
-      "deletedAt": "2026-11-24T06:27:44.890Z",
-      "deletionReason": "Statutory DPDP Right to Erasure Request"
-    },
-    {
-      "id": "usr_adv_b_664727",
-      "name": "Adversarial User B",
-      "email": "userb@example.com",
-      "phone": "+91 9802664727",
-      "walletBalance": 300,
-      "isDeleted": false
+      "createdAt": "2026-11-24T06:36:23.056Z"
     }
   ],
   "vehicles": [
@@ -11926,6 +11899,25 @@
     }
   ],
   "payments": [
+    {
+      "id": "TXN_1795501359597_1321",
+      "advancePaid": 0,
+      "amount": 8999,
+      "balanceDue": 8999,
+      "bookingId": "OTB-2026-6677",
+      "couponDiscount": 0,
+      "createdAt": "2026-11-24T06:22:39.597Z",
+      "customerId": "usr_6206494214",
+      "method": "advance_15_instamojo",
+      "originalAmount": 8999,
+      "passengerPhone": "+91 6206494214",
+      "provider": "DIRECT_UPI",
+      "status": "PAYABLE TO DRIVER",
+      "upiUtr": "",
+      "verifiedAt": null,
+      "verifiedBy": null,
+      "walletDeducted": 0
+    },
     {
       "id": "TXN_1795498299710_1067",
       "advancePaid": 0,
@@ -12830,17 +12822,6 @@
       "updatedAt": "2026-11-24T05:04:41.330Z"
     },
     {
-      "id": "order_upi_1795496588224",
-      "amount": 1350,
-      "bookingId": null,
-      "currency": "INR",
-      "isSandbox": false,
-      "orderId": "order_upi_1795496588224",
-      "passengerPhone": "6206494214",
-      "provider": "direct_upi",
-      "status": "ORDER_CREATED"
-    },
-    {
       "id": "order_upi_1795495794817",
       "amount": 1350,
       "bookingId": null,
@@ -12853,6 +12834,17 @@
       "paymentId": "pay_upi_1795495844613",
       "signature": "sig_verified_1795495845821",
       "verifiedAt": "2026-11-24T04:50:45.933Z"
+    },
+    {
+      "id": "order_upi_1795496588224",
+      "amount": 1350,
+      "bookingId": null,
+      "currency": "INR",
+      "isSandbox": false,
+      "orderId": "order_upi_1795496588224",
+      "passengerPhone": "6206494214",
+      "provider": "direct_upi",
+      "status": "ORDER_CREATED"
     },
     {
       "id": "order_upi_1795498294140",
@@ -12877,7 +12869,10 @@
       "orderId": "imojo_req_1795501342923",
       "passengerPhone": "6206494214",
       "provider": "instamojo",
-      "status": "ORDER_CREATED"
+      "status": "ORDER_CREATED",
+      "paymentId": "pay_im_simulated_1795501359717",
+      "signature": "sig_im_verified_1795501360946",
+      "verifiedAt": "2026-11-24T06:22:40.823Z"
     }
   ],
   "wallet_ledger": [
@@ -13052,14 +13047,14 @@
       "userId": "usr_9800012345"
     },
     {
-      "id": "WLT_1795501595749",
+      "id": "WLT_1795502183062",
       "userId": "usr_9801123456",
       "phone": "+91 9801123456",
       "type": "CREDIT",
       "amount": 100,
       "balanceAfter": 100,
       "description": "Welcome Bonus Credit (One-Time New User Reward)",
-      "createdAt": "2026-11-24T06:26:35.749Z"
+      "createdAt": "2026-11-24T06:36:23.062Z"
     }
   ],
   "leads": [
@@ -13165,7 +13160,7 @@
       "status": "CONVERTED",
       "totalFare": 14264,
       "tripType": "oneway",
-      "updatedAt": "2026-11-24T06:19:00.231Z",
+      "updatedAt": "2026-11-24T06:32:44.619Z",
       "source": "Customer Verified Login"
     },
     {
@@ -13258,7 +13253,7 @@
       "source": "Customer Verified Login",
       "status": "NEW",
       "tripType": "oneway",
-      "updatedAt": "2026-11-24T06:26:35.750Z"
+      "updatedAt": "2026-11-24T06:36:23.065Z"
     },
     {
       "id": "lead_9876543210_0612",
@@ -14485,29 +14480,37 @@
   ],
   "notifications": [
     {
-      "id": "ntf_1795501595750",
+      "id": "ntf_1795502183065",
       "type": "CUSTOMER_LOGIN",
       "title": "Customer Logged In",
       "message": "Valued Passenger (+91 9801123456) signed in to OneWayTaxiBihar",
-      "timestamp": "2026-11-24T06:26:35.750Z",
+      "timestamp": "2026-11-24T06:36:23.065Z",
       "isRead": false
     },
     {
-      "id": "NOTIF_BOOK_1795501359598",
-      "type": "NEW_BOOKING_REQUEST",
-      "title": "New Cab Booking: OTB-2026-6677",
-      "message": "Himanshu (+91 6206494214) requested Kolkata → Patna (Prime Sedan). Total Fare: ₹8999.",
-      "bookingId": "OTB-2026-6677",
-      "createdAt": "2026-11-24T06:22:39.598Z"
+      "id": "ntf_1795501964619",
+      "type": "CUSTOMER_LOGIN",
+      "title": "Customer Logged In",
+      "message": "Valued Passenger (+91 6206494214) signed in to OneWayTaxiBihar",
+      "timestamp": "2026-11-24T06:32:44.619Z",
+      "isRead": false
     },
     {
       "id": "NOTIF_DISPATCH_1795501359598_OTB-2026-6677",
-      "type": "DRIVER_BROADCAST_OFFER",
+      "bookingId": "OTB-2026-6677",
+      "createdAt": "2026-11-24T06:22:39.598Z",
+      "message": "Pickup: 2026-11-24 10:00 AM | Fare: ₹8999 | Cab: sedan",
       "priority": "HIGH",
       "title": "New Trip Available: Kolkata → Patna",
-      "message": "Pickup: 2026-11-24 10:00 AM | Fare: ₹8999 | Cab: sedan",
+      "type": "DRIVER_BROADCAST_OFFER"
+    },
+    {
+      "id": "NOTIF_BOOK_1795501359598",
       "bookingId": "OTB-2026-6677",
-      "createdAt": "2026-11-24T06:22:39.598Z"
+      "createdAt": "2026-11-24T06:22:39.598Z",
+      "message": "Himanshu (+91 6206494214) requested Kolkata → Patna (Prime Sedan). Total Fare: ₹8999.",
+      "title": "New Cab Booking: OTB-2026-6677",
+      "type": "NEW_BOOKING_REQUEST"
     },
     {
       "id": "NOTIF_BOOK_1795498299710",
@@ -14534,75 +14537,12 @@
       "type": "NEW_BOOKING_REQUEST"
     },
     {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-4577",
-      "bookingId": "OTB-2026-4577",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4577",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-1736",
-      "bookingId": "OTB-2026-1736",
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-8389",
+      "bookingId": "OTB-2026-8389",
       "createdAt": "2026-11-17T20:45:21.791Z",
       "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-1736",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-5389",
-      "bookingId": "OTB-2026-5389",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-5389",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-4598",
-      "bookingId": "OTB-2026-4598",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Bhagalpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4598",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-1804",
-      "bookingId": "OTB-2026-1804",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Bhagalpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-1804",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-9550",
-      "bookingId": "OTB-2026-9550",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-9550",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-9139",
-      "bookingId": "OTB-2026-9139",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-9139",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-5712",
-      "bookingId": "OTB-2026-5712",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-5712",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-8389",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
@@ -14615,30 +14555,12 @@
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-6162",
-      "bookingId": "OTB-2026-6162",
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-4577",
+      "bookingId": "OTB-2026-4577",
       "createdAt": "2026-11-17T20:45:21.791Z",
       "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-6162",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-2958",
-      "bookingId": "OTB-2026-2958",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-2958",
-      "type": "BROADCAST_TIMEOUT_ESCALATION"
-    },
-    {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-4360",
-      "bookingId": "OTB-2026-4360",
-      "createdAt": "2026-11-17T20:45:21.791Z",
-      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
-      "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4360",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4577",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
@@ -14651,30 +14573,84 @@
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-6675",
-      "bookingId": "OTB-2026-6675",
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-4360",
+      "bookingId": "OTB-2026-4360",
       "createdAt": "2026-11-17T20:45:21.791Z",
       "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-6675",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4360",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-8389",
-      "bookingId": "OTB-2026-8389",
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-2958",
+      "bookingId": "OTB-2026-2958",
       "createdAt": "2026-11-17T20:45:21.791Z",
       "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-8389",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-2958",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
-      "id": "NOTIF_ESC_1794948321791_OTB-2026-3565",
-      "bookingId": "OTB-2026-3565",
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-6162",
+      "bookingId": "OTB-2026-6162",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-6162",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-5712",
+      "bookingId": "OTB-2026-5712",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-5712",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-9139",
+      "bookingId": "OTB-2026-9139",
       "createdAt": "2026-11-17T20:45:21.791Z",
       "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
-      "title": "BROADCAST TIMEOUT: Booking OTB-2026-3565",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-9139",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-9550",
+      "bookingId": "OTB-2026-9550",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Muzaffarpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-9550",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-1804",
+      "bookingId": "OTB-2026-1804",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Bhagalpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-1804",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-4598",
+      "bookingId": "OTB-2026-4598",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Bhagalpur broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-4598",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-5389",
+      "bookingId": "OTB-2026-5389",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-5389",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
@@ -14723,6 +14699,15 @@
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-3565",
+      "bookingId": "OTB-2026-3565",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-3565",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
       "id": "NOTIF_ESC_1794948321791_OTB-2026-8222",
       "bookingId": "OTB-2026-8222",
       "createdAt": "2026-11-17T20:45:21.791Z",
@@ -14756,6 +14741,24 @@
       "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
       "priority": "URGENT",
       "title": "BROADCAST TIMEOUT: Booking OTB-2026-5004",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-1736",
+      "bookingId": "OTB-2026-1736",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-1736",
+      "type": "BROADCAST_TIMEOUT_ESCALATION"
+    },
+    {
+      "id": "NOTIF_ESC_1794948321791_OTB-2026-6675",
+      "bookingId": "OTB-2026-6675",
+      "createdAt": "2026-11-17T20:45:21.791Z",
+      "message": "Booking Patna to Gaya broadcast expired. No driver accepted. Immediate manual dispatch required.",
+      "priority": "URGENT",
+      "title": "BROADCAST TIMEOUT: Booking OTB-2026-6675",
       "type": "BROADCAST_TIMEOUT_ESCALATION"
     },
     {
@@ -16150,18 +16153,18 @@
       "type": "NEW_BOOKING_REQUEST"
     },
     {
-      "id": "ntf_1794823219965",
-      "isRead": false,
-      "message": "Valued Passenger (+91 9876543210) signed in to OneWayTaxiBihar",
-      "timestamp": "2026-11-16T10:00:19.965Z",
-      "title": "Customer Logged In",
-      "type": "CUSTOMER_LOGIN"
-    },
-    {
       "id": "ntf_1795501140231",
       "isRead": false,
       "message": "Valued Passenger (+91 6206494214) signed in to OneWayTaxiBihar",
       "timestamp": "2026-11-24T06:19:00.231Z",
+      "title": "Customer Logged In",
+      "type": "CUSTOMER_LOGIN"
+    },
+    {
+      "id": "ntf_1794823219965",
+      "isRead": false,
+      "message": "Valued Passenger (+91 9876543210) signed in to OneWayTaxiBihar",
+      "timestamp": "2026-11-16T10:00:19.965Z",
       "title": "Customer Logged In",
       "type": "CUSTOMER_LOGIN"
     }
@@ -16338,7 +16341,7 @@
   ],
   "audit_logs": [
     {
-      "id": "audit_1795501595961_6908",
+      "id": "audit_1795502183430_6366",
       "actor": "Owner (+91 6206494214)",
       "role": "owner",
       "action": "ADMIN_2FA_LOGIN_SUCCESS",
@@ -16348,23 +16351,7 @@
       "newValue": null,
       "note": "Authenticated via Owner 2FA OTP",
       "ip": "127.0.0.1",
-      "timestamp": "2026-11-24T06:26:35.961Z"
-    },
-    {
-      "id": "log_1795501360848_986",
-      "action": "PAYMENT_VERIFIED",
-      "actor": "OTB-468122",
-      "details": "Advance ₹1350 verified",
-      "timestamp": "2026-11-24T06:22:40.848Z",
-      "_id": "6b052d30af9a1a268a546740"
-    },
-    {
-      "id": "log_1795501359740_145",
-      "action": "PAYMENT_VERIFIED",
-      "actor": "OTB-468122",
-      "details": "Advance ₹1350 verified",
-      "timestamp": "2026-11-24T06:22:39.740Z",
-      "_id": "6b052d2faf9a1a268a54673f"
+      "timestamp": "2026-11-24T06:36:23.430Z"
     },
     {
       "id": "audit_1792227545868_2333",
@@ -20265,35 +20252,6 @@
       "note": "Operator logged in from IP 127.0.0.1",
       "ip": "127.0.0.1",
       "timestamp": "2026-10-18T09:48:19.137Z"
-    },
-    {
-      "id": "AUD_1795501359598",
-      "entity": "BOOKING",
-      "entityId": "OTB-2026-6677",
-      "action": "CREATE_REQUEST",
-      "actor": "+91 6206494214",
-      "details": "Kolkata → Patna for ₹8999 (advance_15_instamojo)",
-      "createdAt": "2026-11-24T06:22:39.598Z"
-    },
-    {
-      "id": "AUD_DEL_1795501664891",
-      "entity": "USER",
-      "entityId": "9801664727",
-      "action": "DPDP_ACCOUNT_DELETION",
-      "receiptId": "DPDP-DEL-1795501664891-D132D0",
-      "standard": "DPDP_ACT_2023",
-      "details": "Statutory DPDP Right to Erasure Request",
-      "createdAt": "2026-11-24T06:27:44.891Z"
-    },
-    {
-      "id": "AUD_DEL_DRV_1795501664976",
-      "entity": "DRIVER",
-      "entityId": "9876543299",
-      "action": "DPDP_DRIVER_ACCOUNT_DELETION",
-      "receiptId": "DPDP-DEL-DRV-1795501664976-786295",
-      "standard": "DPDP_ACT_2023",
-      "details": "Driver partner resignation",
-      "createdAt": "2026-11-24T06:27:44.976Z"
     }
   ],
   "sessions": [
@@ -20630,43 +20588,49 @@
       "role": "admin"
     },
     {
-      "tokenHash": "9fbb2fb92cb5a22652d893a78df9382a96ab0fa5d213da89842602b528eaf5fd",
-      "headerHalf": "bnh_e7100a454e28b117cc70cebca6956ff0",
-      "legacyToken": "otb_sess_5a59c53ed5257201563ce88ea70d07b2",
+      "tokenHash": "b7a647646d00e799cf96ead5448ee09a6d0775aecd0757fd3e9cabd33c58ffb0",
+      "headerHalf": "bnh_b8f6dffe409a5ec62745c621b656af53",
+      "legacyToken": "otb_sess_7fa24326610b244a3abeed647dc172c1",
+      "userId": "usr_6206494214",
+      "phone": "+91 6206494214",
+      "role": "customer",
+      "name": "yuyuy",
+      "issuedOnce": true,
+      "createdAt": "2026-11-24T06:32:44.619Z",
+      "expiresAt": "2026-11-24T14:32:44.619Z"
+    },
+    {
+      "tokenHash": "eb6a03b226a9b648cf002f2720d51d66a578eb843ce77f5726d7c5847a0ee15d",
+      "headerHalf": "bnh_592639fdd3b431ea8de63c1db6c21a5e",
+      "legacyToken": "otb_sess_37570de78eda63b546368cfe4d495396",
       "userId": "usr_9801123456",
       "phone": "+91 9801123456",
       "role": "customer",
       "name": "Valued Passenger",
       "issuedOnce": true,
-      "createdAt": "2026-11-24T06:26:35.750Z",
-      "expiresAt": "2026-11-24T14:26:35.750Z"
+      "createdAt": "2026-11-24T06:36:23.064Z",
+      "expiresAt": "2026-11-24T14:36:23.065Z"
     },
     {
-      "tokenHash": "67e48d4649475ddb044d54b5745ffa8837d1502c34e24ca1da2ba492fd3040f4",
-      "headerHalf": "bnh_64757301c3b7d9d49470249c88fcf679",
-      "legacyToken": "otb_sess_2b152bb4a4477045ddf91a12b7778e0a",
+      "tokenHash": "6e9382d8293479c336aae87d88021f1c87394258ea218680ac7c6419d4229642",
+      "headerHalf": "bnh_816b306fce91fc7502c928a3ecfcc0a5",
+      "legacyToken": "otb_sess_214c170074a0fa7eb70ff409d2d74144",
       "userId": "drv_9804456789",
       "phone": "+91 9804456789",
       "role": "driver",
       "name": "Chauffeur 6789",
       "issuedOnce": true,
-      "createdAt": "2026-11-24T06:26:35.913Z",
-      "expiresAt": "2026-11-24T14:26:35.913Z",
+      "createdAt": "2026-11-24T06:36:23.358Z",
+      "expiresAt": "2026-11-24T14:36:23.358Z",
       "driverId": "drv_9804456789"
     },
     {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhZGEzNDMxMzk4YzM5MDNkM2ZiNjk4NTg0YmE1NzljYiIsImFkbWluSWQiOiJhZG1fb3duZXIiLCJ1c2VybmFtZSI6Im93bmVyIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNoaWVmIE9wZXJhdGlvbnMgT2ZmaWNlciIsInBob25lIjoiKzkxIDYyMDY0OTQyMTQiLCJpYXQiOjE3OTU1MDE1OTUsImV4cCI6MTc5NTUzMDM5NX0.YRLATHN1DAzXWf5AMBWyTdR_jcQBUH7je1HJWFigk5k",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzNzkxZDFlY2ZkZGRmOTc5NTcwMDZjOGIzMzk0OTQzNCIsImFkbWluSWQiOiJhZG1fb3duZXIiLCJ1c2VybmFtZSI6Im93bmVyIiwicm9sZSI6Im93bmVyIiwibmFtZSI6IkNoaWVmIE9wZXJhdGlvbnMgT2ZmaWNlciIsInBob25lIjoiKzkxIDYyMDY0OTQyMTQiLCJpYXQiOjE3OTU1MDIxODMsImV4cCI6MTc5NTUzMDk4M30.0IK6_j9463rXj9dfLpC_M9rY_dJhav-CA1CLBcMYtH8",
       "adminId": "adm_owner",
       "role": "owner",
       "phone": "+91 6206494214",
       "authMethod": "WHATSAPP_2FA",
-      "createdAt": "2026-11-24T06:26:35.961Z"
-    },
-    {
-      "token": "otb_adv_token_user_b_1795501664727",
-      "userId": "usr_adv_b_664727",
-      "phone": "+91 9802664727",
-      "role": "customer"
+      "createdAt": "2026-11-24T06:36:23.430Z"
     }
   ],
   "settings": {
@@ -24748,9 +24712,7 @@
     "otb_adv_token_user_a_1795498653227",
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyZWU2ZTYyNWMzZjliY2JjZDRmZDczNWQ2YTFhZDE3ZiIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NTQ5ODY1MywiZXhwIjoxNzk1NTI3NDUzfQ.4U_k_Z3klup_6rvG3KkVjUAYgpM7P9_uTtdMVmKHx8Y",
     "otb_adv_token_user_a_1795500210519",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0YjA3MjNhMGI1NzBmM2UxMzg3OTUyZTkzNTk1ZDUyYiIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NTUwMDIxMCwiZXhwIjoxNzk1NTI5MDEwfQ.2k-22xQpegSURml6lMrBiaoM4X95SWPjRZRpVvbjqMw",
-    "otb_adv_token_user_a_1795501664727",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyOTBkOTgwOGNkMWI2ZGE0ZDA2MWE1NjZjNjU0ZDdhMSIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NTUwMTY2NCwiZXhwIjoxNzk1NTMwNDY0fQ.7QUxysK8lYberQsHxQEYkD2r2c9DQoa61m3Jv3756dg"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0YjA3MjNhMGI1NzBmM2UxMzg3OTUyZTkzNTk1ZDUyYiIsImRyaXZlcklkIjoiZHJ2X2Fkdl9kZWwiLCJwaG9uZSI6Iis5MSA5ODc2NTQzMjk5Iiwicm9sZSI6ImRyaXZlciIsImlhdCI6MTc5NTUwMDIxMCwiZXhwIjoxNzk1NTI5MDEwfQ.2k-22xQpegSURml6lMrBiaoM4X95SWPjRZRpVvbjqMw"
   ],
   "tourism_packages": [
     {

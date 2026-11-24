@@ -278,7 +278,7 @@ export const HomeScreen = ({ navigation }: any) => {
         />
       </View>
 
-      {/* Layer 2: Clean Floating Header with Menu and Login Button */}
+      {/* Layer 2: Clean Minimalist Floating Header with Menu Button */}
       <SafeAreaView edges={['top']} pointerEvents="box-none" style={styles.floatingTopBar}>
         <TouchableOpacity
           style={[
@@ -294,42 +294,6 @@ export const HomeScreen = ({ navigation }: any) => {
         >
           <Menu size={22} color={colors.textPrimary} strokeWidth={2.4} />
         </TouchableOpacity>
-
-        {isLoggedIn ? (
-          <TouchableOpacity
-            style={[
-              styles.floatingAccountBtn,
-              {
-                backgroundColor: isDark ? 'rgba(11, 15, 25, 0.94)' : 'rgba(255, 255, 255, 0.96)',
-                borderColor: colors.cardBorder,
-              }
-            ]}
-            onPress={() => navigation.navigate('Profile')}
-            activeOpacity={0.8}
-          >
-            <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981', marginRight: 6 }} />
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.textPrimary }}>
-              +91 {userPhone ? userPhone.slice(-10) : 'Account'}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[
-              styles.floatingAccountBtn,
-              {
-                backgroundColor: isDark ? 'rgba(11, 15, 25, 0.94)' : 'rgba(255, 255, 255, 0.96)',
-                borderColor: colors.cardBorder,
-              }
-            ]}
-            onPress={() => navigation.navigate('Support')}
-            activeOpacity={0.8}
-          >
-            <PhoneCall size={13} color={colors.accentGold} style={{ marginRight: 6 }} />
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.textPrimary }}>
-              24×7 Help
-            </Text>
-          </TouchableOpacity>
-        )}
       </SafeAreaView>
 
       {/* Layer 3: Uber Sliding Bottom Sheet Drawer */}

@@ -309,24 +309,24 @@ export const HomeScreen = ({ navigation }: any) => {
           >
             <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: '#10B981', marginRight: 6 }} />
             <Text style={{ fontSize: 12, fontWeight: '800', color: colors.textPrimary }}>
-              +91 {userPhone?.slice(-4) || 'Account'}
+              +91 {userPhone ? userPhone.slice(-10) : 'Account'}
             </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
             style={[
-              styles.floatingLoginBtn,
+              styles.floatingAccountBtn,
               {
-                backgroundColor: '#16a34a',
-                borderColor: '#15803d',
+                backgroundColor: isDark ? 'rgba(11, 15, 25, 0.94)' : 'rgba(255, 255, 255, 0.96)',
+                borderColor: colors.cardBorder,
               }
             ]}
-            onPress={() => navigation.navigate('Auth')}
-            activeOpacity={0.85}
+            onPress={() => navigation.navigate('Support')}
+            activeOpacity={0.8}
           >
-            <User size={14} color="#FFFFFF" strokeWidth={2.5} style={{ marginRight: 5 }} />
-            <Text style={{ fontSize: 12, fontWeight: '900', color: '#FFFFFF', letterSpacing: 0.2 }}>
-              Sign In / Login
+            <PhoneCall size={13} color={colors.accentGold} style={{ marginRight: 6 }} />
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.textPrimary }}>
+              24×7 Help
             </Text>
           </TouchableOpacity>
         )}

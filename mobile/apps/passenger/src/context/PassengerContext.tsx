@@ -37,6 +37,7 @@ interface PassengerContextType {
   userPhone: string;
   setUserPhone: (phone: string) => void;
   isLoggedIn: boolean;
+  login: (phone: string, token?: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -122,8 +123,35 @@ export const PassengerProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
+  const login = async (phone: string, token?: string) => {
+    const clean = phone.replace(/\D/g, '').slice(-10);
+    setUserPhone(clean);
+    setIsLoggedIn(true);
+    await StorageService.setItem('otb_user_phone', clean);
+    if (token) {
+      await StorageService.setItem('otb_auth_token', token);
+    }
+    setSearch(prev => ({ ...prev, phone: clean }));
+    try {
+      const trips = await MobileApiClient.getPassengerTrips(clean);
+      setMyTrips(trips);
+    } catch (e) {}
+  };
+
+  const handleSetUserPhone = (phone: string) => {
+    const clean = phone.replace(/\D/g, '').slice(-10);
+    setUserPhone(clean);
+    if (clean.length === 10) {
+      setIsLoggedIn(true);
+      StorageService.setItem('otb_user_phone', clean).catch(() => {});
+      setSearch(prev => ({ ...prev, phone: clean }));
+    }
+  };
+
   const logout = async () => {
     await MobileApiClient.logout();
+    await StorageService.removeItem('otb_user_phone');
+    await StorageService.removeItem('otb_auth_token');
     setUserPhone('');
     setIsLoggedIn(false);
     setMyTrips([]);
@@ -144,8 +172,9 @@ export const PassengerProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         activeBooking,
         setActiveBooking,
         userPhone,
-        setUserPhone,
+        setUserPhone: handleSetUserPhone,
         isLoggedIn,
+        login,
         logout
       }}
     >

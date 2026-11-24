@@ -14,17 +14,25 @@ import {
   Linking
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { PassengerColors, PassengerTheme } from '../../../../shared/theme/colors';
-import { useTheme } from '../../../../shared/theme/ThemeContext';
-import { BrandLogo } from '../../../../shared/components/BrandLogo';
 import { OtpService } from '../../../../shared/services/otpService';
 import { usePassenger } from '../context/PassengerContext';
 import { isValidIndianMobile, sanitizePhoneNumber } from '../../../../shared/utils/formatters';
-import { ShieldCheck, Phone, KeyRound, ArrowRight, ArrowLeft, CheckCircle2, Sparkles, MessageSquare } from 'lucide-react-native';
+import {
+  ShieldCheck,
+  KeyRound,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Sparkles,
+  MessageSquare,
+  Smartphone,
+  Car,
+  Headphones,
+  Check
+} from 'lucide-react-native';
 
 export const AuthScreen = ({ navigation }: any) => {
-  const { setUserPhone, updateSearch } = usePassenger();
-  const { isDark } = useTheme();
+  const { updateSearch, login } = usePassenger();
 
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
@@ -69,7 +77,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
   const handleVerifyOtp = async () => {
     if (!otp.trim()) {
-      Alert.alert('OTP Required', 'Please enter the 6-digit verification code received on your ' + (channel === 'whatsapp' ? 'WhatsApp' : 'SMS') + '.');
+      Alert.alert('OTP Required', `Please enter the 6-digit verification code received on your ${channel === 'whatsapp' ? 'WhatsApp' : 'SMS'}.`);
       return;
     }
 
@@ -77,17 +85,14 @@ export const AuthScreen = ({ navigation }: any) => {
     try {
       const clean = sanitizePhoneNumber(phone);
       const res = await OtpService.verifyOtp(clean, otp.trim(), 'passenger');
-      setUserPhone(clean);
+      await login(clean, res.token);
       updateSearch({ phone: clean });
-      Alert.alert('Verified! 🎉', res.message || 'Welcome to OneWayTaxiBihar.', [
-        {
-          text: 'Continue',
-          onPress: () => {
-            if (navigation.canGoBack()) navigation.goBack();
-            else navigation.replace('MainTabs');
-          }
-        }
-      ]);
+
+      // Seamlessly navigate to map as authenticated user
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainTabs' }]
+      });
     } catch (e: any) {
       Alert.alert('Verification Failed', e.message || 'Invalid verification code. Please check your WhatsApp/SMS and re-enter.');
     } finally {
@@ -113,54 +118,82 @@ export const AuthScreen = ({ navigation }: any) => {
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          {/* Top Bar with Back Button */}
+          {/* Top Bar with Security Badge */}
           <View style={styles.topBar}>
-            <TouchableOpacity
-              onPress={() => {
-                if (step === 'otp') setStep('phone');
-                else if (navigation.canGoBack()) navigation.goBack();
-                else navigation.replace('MainTabs');
-              }}
-              style={styles.backButton}
-              activeOpacity={0.7}
-            >
-              <ArrowLeft size={22} color="#0F172A" />
-            </TouchableOpacity>
+            {step === 'otp' ? (
+              <TouchableOpacity
+                onPress={() => setStep('phone')}
+                style={styles.backButton}
+                activeOpacity={0.7}
+              >
+                <ArrowLeft size={20} color="#0F172A" />
+              </TouchableOpacity>
+            ) : (
+              <View style={{ width: 36 }} />
+            )}
             <View style={styles.secureBadge}>
-              <ShieldCheck size={14} color="#059669" />
+              <ShieldCheck size={13} color="#059669" />
               <Text style={styles.secureText}>256-Bit SSL Encrypted</Text>
             </View>
           </View>
 
-          {/* Hero Header */}
-          <View style={styles.header}>
-            <BrandLogo size="hero" showSubtitle subtitleText="Intercity Cabs & Airport Transfers" style={{ marginBottom: 12 }} />
-            <Text style={styles.title}>
-              {step === 'phone' ? 'Welcome to OneWayTaxi' : 'Enter 6-Digit OTP'}
+          {/* Executive Brand Hero Header */}
+          <View style={styles.heroSection}>
+            <View style={styles.brandEmblemWrap}>
+              <View style={styles.emblemIconCircle}>
+                <Car size={26} color="#FFFFFF" strokeWidth={2.5} />
+              </View>
+              <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Text style={styles.brandTitlePrimary}>OneWay</Text>
+                  <Text style={styles.brandTitleAccent}>Taxi</Text>
+                  <Text style={styles.brandTitleState}>Bihar</Text>
+                </View>
+                <Text style={styles.brandSubtitle}>OFFICIAL INTERCITY MOBILITY</Text>
+              </View>
+            </View>
+
+            <Text style={styles.headline}>
+              {step === 'phone' ? 'Sign In or Register' : 'Enter 6-Digit Code'}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={styles.subheadline}>
               {step === 'phone'
-                ? 'Sign in to access lowest fixed tariffs, live radar trip tracking, and GST invoicing.'
+                ? 'Bihar’s trusted outstation network. Guaranteed fixed tariffs, commercial fleet & zero surge pricing.'
                 : channel === 'whatsapp'
-                  ? `We sent a 6-digit code directly to your WhatsApp (+91 ${sanitizePhoneNumber(phone)}). Please check your WhatsApp and enter code below.`
-                  : `We sent a 6-digit SMS code to +91 ${sanitizePhoneNumber(phone)}. Please enter code below.`}
+                  ? `6-digit verification code sent to your WhatsApp at +91 ${sanitizePhoneNumber(phone)}.`
+                  : `6-digit SMS verification code sent to +91 ${sanitizePhoneNumber(phone)}.`}
             </Text>
+
+            {/* Trust Metric Chips */}
+            {step === 'phone' && (
+              <View style={styles.trustChipsRow}>
+                <View style={styles.trustChip}>
+                  <Check size={11} color="#059669" strokeWidth={3} />
+                  <Text style={styles.trustChipText}>Guaranteed Fixed Rates</Text>
+                </View>
+                <View style={styles.trustChip}>
+                  <Check size={11} color="#059669" strokeWidth={3} />
+                  <Text style={styles.trustChipText}>Zero Cancellation Fee</Text>
+                </View>
+                <View style={styles.trustChip}>
+                  <Check size={11} color="#059669" strokeWidth={3} />
+                  <Text style={styles.trustChipText}>24x7 Patna Helpdesk</Text>
+                </View>
+              </View>
+            )}
           </View>
 
-          {/* Welcome Bonus Strip */}
-          <View style={styles.bonusStrip}>
-            <Sparkles size={16} color="#D97706" />
-            <Text style={styles.bonusText}>
-              <Text style={{ fontWeight: '800' }}>₹100 Welcome Credit</Text> auto-credited to wallet on new mobile verification!
-            </Text>
-          </View>
-
-          {/* Auth Card */}
+          {/* Main Auth Form Card */}
           <View style={styles.authCard}>
             {step === 'phone' ? (
-              <View style={styles.fieldGroup}>
-                <Text style={styles.inputLabel}>YOUR 10-DIGIT MOBILE NUMBER</Text>
+              <View style={styles.fieldSection}>
+                <View style={styles.inputHeaderRow}>
+                  <Text style={styles.inputHeaderLabel}>ENTER MOBILE NUMBER</Text>
+                  <Text style={styles.inputHeaderSub}>Valid 10-Digit Phone</Text>
+                </View>
+
                 <View style={styles.phoneInputRow}>
                   <View style={styles.flagBox}>
                     <Text style={styles.flagIcon}>🇮🇳</Text>
@@ -168,7 +201,7 @@ export const AuthScreen = ({ navigation }: any) => {
                   </View>
                   <TextInput
                     style={styles.phoneInput}
-                    placeholder="Enter mobile number"
+                    placeholder="Enter 10-digit number"
                     placeholderTextColor="#94A3B8"
                     keyboardType="phone-pad"
                     maxLength={10}
@@ -177,12 +210,84 @@ export const AuthScreen = ({ navigation }: any) => {
                     autoFocus
                   />
                 </View>
+
+                <Text style={styles.otpNoticeHint}>
+                  We’ll send a secure one-time passcode to verify your account.
+                </Text>
+
+                {/* Primary CTA: WhatsApp OTP (Fastest) */}
+                <TouchableOpacity
+                  style={styles.btnPrimaryWhatsApp}
+                  onPress={() => handleSendOtp('whatsapp')}
+                  disabled={loading}
+                  activeOpacity={0.85}
+                >
+                  {loading && channel === 'whatsapp' ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <MessageSquare size={18} color="#FFFFFF" />
+                      <Text style={styles.btnPrimaryText}>
+                        Get OTP on WhatsApp (Instant)
+                      </Text>
+                      <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.5} />
+                    </>
+                  )}
+                </TouchableOpacity>
+
+                {/* Secondary CTA: SMS OTP */}
+                <TouchableOpacity
+                  style={styles.btnSecondarySms}
+                  onPress={() => handleSendOtp('sms')}
+                  disabled={loading}
+                  activeOpacity={0.8}
+                >
+                  {loading && channel === 'sms' ? (
+                    <ActivityIndicator color="#0F172A" />
+                  ) : (
+                    <>
+                      <Smartphone size={16} color="#475569" />
+                      <Text style={styles.btnSecondaryText}>
+                        Receive OTP via Telecom SMS instead
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+
+                {/* Divider Line */}
+                <View style={styles.dividerRow}>
+                  <View style={styles.dividerLine} />
+                  <Text style={styles.dividerText}>OR</Text>
+                  <View style={styles.dividerLine} />
+                </View>
+
+                {/* Guest Browsing Link */}
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'MainTabs' }]
+                    });
+                  }}
+                  style={styles.btnGuestLink}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.btnGuestText}>
+                    Skip &amp; Browse Outstation Routes as Guest ➔
+                  </Text>
+                </TouchableOpacity>
               </View>
             ) : (
-              <View style={styles.fieldGroup}>
-                <Text style={styles.inputLabel}>ENTER 6-DIGIT VERIFICATION CODE</Text>
+              <View style={styles.fieldSection}>
+                <View style={styles.inputHeaderRow}>
+                  <Text style={styles.inputHeaderLabel}>ENTER 6-DIGIT CODE</Text>
+                  <TouchableOpacity onPress={() => setStep('phone')} activeOpacity={0.7}>
+                    <Text style={styles.editPhoneLink}>Change Number</Text>
+                  </TouchableOpacity>
+                </View>
+
                 <View style={styles.otpInputRow}>
-                  <KeyRound size={20} color="#059669" style={{ marginLeft: 16 }} />
+                  <KeyRound size={20} color="#059669" style={{ marginLeft: 14 }} />
                   <TextInput
                     style={styles.otpInput}
                     placeholder="• • • • • •"
@@ -195,45 +300,45 @@ export const AuthScreen = ({ navigation }: any) => {
                   />
                 </View>
 
-                {/* 1-Tap Shortcut to View Incoming Code on WhatsApp */}
+                {/* WhatsApp App Quick Link */}
                 {channel === 'whatsapp' && (
                   <TouchableOpacity
-                    style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginVertical: 10, padding: 8, backgroundColor: '#f0fdf4', borderRadius: 8, borderWidth: 1, borderColor: '#bbf7d0' }}
+                    style={styles.openWhatsAppBanner}
                     onPress={handleOpenWhatsAppApp}
                     activeOpacity={0.8}
                   >
-                    <MessageSquare size={14} color="#16a34a" />
-                    <Text style={{ fontSize: 12.5, fontWeight: '700', color: '#15803d' }}>
-                      Open WhatsApp App to Check Incoming OTP
+                    <MessageSquare size={15} color="#16a34a" />
+                    <Text style={styles.openWhatsAppText}>
+                      Open WhatsApp App to Check Incoming Code
                     </Text>
                   </TouchableOpacity>
                 )}
 
+                {/* Dev Code Auto-Fill Chip */}
                 {devCode && (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setOtp(devCode)}
-                    style={{ marginTop: 8, padding: 8, backgroundColor: '#ecfdf5', borderRadius: 8, borderWidth: 1, borderColor: '#a7f3d0', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                    style={styles.devCodeChip}
+                    activeOpacity={0.8}
                   >
                     <CheckCircle2 size={13} color="#059669" />
-                    <Text style={{ fontSize: 12, color: '#047857', fontWeight: '700' }}>Code: {devCode} (Tap to auto-fill)</Text>
+                    <Text style={styles.devCodeText}>
+                      Test Code: {devCode} (Tap to auto-fill)
+                    </Text>
                   </TouchableOpacity>
                 )}
+
                 {statusMessage && (
                   <View style={styles.statusBadge}>
                     <CheckCircle2 size={13} color="#10b981" />
                     <Text style={styles.statusBadgeText}>{statusMessage}</Text>
                   </View>
                 )}
-              </View>
-            )}
 
-            {/* CTAs */}
-            {step === 'phone' ? (
-              <>
-                {/* Primary: Get OTP on WhatsApp */}
+                {/* Verify Submit Button */}
                 <TouchableOpacity
-                  style={[styles.primaryButton, { backgroundColor: '#16a34a' }]}
-                  onPress={() => handleSendOtp('whatsapp')}
+                  style={styles.btnPrimaryVerify}
+                  onPress={handleVerifyOtp}
                   disabled={loading}
                   activeOpacity={0.85}
                 >
@@ -241,73 +346,28 @@ export const AuthScreen = ({ navigation }: any) => {
                     <ActivityIndicator color="#FFFFFF" />
                   ) : (
                     <>
-                      <MessageSquare size={18} color="#FFFFFF" />
-                      <Text style={[styles.primaryButtonText, { color: '#FFFFFF' }]}>
-                        Get OTP on WhatsApp (Instant)
+                      <Text style={styles.btnPrimaryVerifyText}>
+                        Verify Code &amp; Continue
                       </Text>
                       <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.5} />
                     </>
                   )}
                 </TouchableOpacity>
 
-                {/* Secondary: Get OTP via SMS */}
-                <TouchableOpacity
-                  style={[styles.quickDemoBtn, { backgroundColor: '#f8fafc', borderColor: '#cbd5e1', marginTop: 10 }]}
-                  onPress={() => handleSendOtp('sms')}
-                  disabled={loading}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.quickDemoText, { color: '#334155', fontWeight: '600' }]}>
-                    Get OTP via Telecom SMS instead
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Skip as Guest */}
-                <TouchableOpacity
-                  onPress={() => navigation.replace('MainTabs')}
-                  style={{ marginTop: 18, alignItems: 'center', paddingVertical: 8 }}
-                  activeOpacity={0.7}
-                >
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#059669', textDecorationLine: 'underline' }}>
-                    Skip &amp; Browse Outstation Routes as Guest ➔
-                  </Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={handleVerifyOtp}
-                disabled={loading}
-                activeOpacity={0.85}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#0F172A" />
-                ) : (
-                  <>
-                    <Text style={styles.primaryButtonText}>
-                      Verify &amp; Continue
-                    </Text>
-                    <ArrowRight size={18} color="#0F172A" strokeWidth={2.5} />
-                  </>
-                )}
-              </TouchableOpacity>
-            )}
-
-            {step === 'otp' && (
-              <View style={styles.otpActions}>
-                <View style={styles.resendRow}>
+                {/* Resend Actions */}
+                <View style={styles.resendContainer}>
                   {resendTimer > 0 ? (
-                    <Text style={styles.resendText}>
-                      Resend code in <Text style={{ fontWeight: '700', color: '#D97706' }}>{resendTimer}s</Text>
+                    <Text style={styles.resendWaitText}>
+                      Resend code in <Text style={{ fontWeight: '800', color: '#0F172A' }}>{resendTimer}s</Text>
                     </Text>
                   ) : (
-                    <View style={{ flexDirection: 'row', gap: 12 }}>
-                      <TouchableOpacity onPress={() => handleSendOtp('whatsapp')}>
-                        <Text style={[styles.resendLink, { color: '#16a34a', fontWeight: '700' }]}>Resend on WhatsApp</Text>
+                    <View style={styles.resendButtonsRow}>
+                      <TouchableOpacity onPress={() => handleSendOtp('whatsapp')} activeOpacity={0.7}>
+                        <Text style={styles.resendActionWhatsApp}>Resend on WhatsApp</Text>
                       </TouchableOpacity>
-                      <Text style={{ color: '#94a3b8' }}>•</Text>
-                      <TouchableOpacity onPress={() => handleSendOtp('sms')}>
-                        <Text style={styles.resendLink}>Send via SMS</Text>
+                      <Text style={styles.resendDot}>•</Text>
+                      <TouchableOpacity onPress={() => handleSendOtp('sms')} activeOpacity={0.7}>
+                        <Text style={styles.resendActionSms}>Send via SMS</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -316,10 +376,23 @@ export const AuthScreen = ({ navigation }: any) => {
             )}
           </View>
 
-          {/* Privacy & Statutory DPDP Notice */}
-          <View style={styles.disclaimerBox}>
-            <ShieldCheck size={16} color="#059669" />
-            <Text style={styles.disclaimerText}>
+          {/* Welcome Bonus Callout */}
+          <View style={styles.bonusCallout}>
+            <View style={styles.bonusIconWrap}>
+              <Sparkles size={16} color="#D97706" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.bonusTitle}>₹100 First Ride Welcome Reward</Text>
+              <Text style={styles.bonusDesc}>
+                Applied automatically to your wallet on mobile verification.
+              </Text>
+            </View>
+          </View>
+
+          {/* Statutory Protection Notice */}
+          <View style={styles.statutoryFooter}>
+            <ShieldCheck size={15} color="#059669" />
+            <Text style={styles.statutoryText}>
               Statutory Protection: Your data is protected under India DPDP Act 2023. We never share customer records with third-party advertisers. 24×7 Passenger Helpline: +91 80021 41816.
             </Text>
           </View>
@@ -340,18 +413,18 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 32
+    paddingBottom: 36
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16
+    marginBottom: 14
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
@@ -370,7 +443,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ECFDF5',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: '#A7F3D0'
   },
@@ -379,41 +452,92 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#059669'
   },
-  header: {
+  heroSection: {
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 18
   },
-  title: {
-    fontSize: 24,
+  brandEmblemWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16
+  },
+  emblemIconCircle: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    backgroundColor: '#059669',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3
+  },
+  brandTitlePrimary: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#0F172A',
+    letterSpacing: -0.3
+  },
+  brandTitleAccent: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#D97706',
+    letterSpacing: -0.3
+  },
+  brandTitleState: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#059669',
+    letterSpacing: -0.3
+  },
+  brandSubtitle: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#64748B',
+    letterSpacing: 1.2,
+    marginTop: 1
+  },
+  headline: {
+    fontSize: 23,
     fontWeight: '900',
     color: '#0F172A',
     marginBottom: 6,
-    textAlign: 'center'
+    textAlign: 'center',
+    letterSpacing: -0.3
   },
-  subtitle: {
-    fontSize: 13.5,
+  subheadline: {
+    fontSize: 13,
     color: '#64748B',
     textAlign: 'center',
-    lineHeight: 20,
-    maxWidth: 320
+    lineHeight: 19,
+    maxWidth: 320,
+    marginBottom: 12
   },
-  bonusStrip: {
+  trustChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 2
+  },
+  trustChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#FEF3C7',
+    gap: 5,
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#FDE68A',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 20
+    borderColor: '#E2E8F0'
   },
-  bonusText: {
-    fontSize: 12.5,
-    color: '#92400E',
-    flex: 1,
-    lineHeight: 17
+  trustChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#334155'
   },
   authCard: {
     backgroundColor: '#FFFFFF',
@@ -423,19 +547,34 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.05,
     shadowRadius: 12,
-    elevation: 3
-  },
-  fieldGroup: {
+    elevation: 3,
     marginBottom: 16
   },
-  inputLabel: {
+  fieldSection: {
+    gap: 12
+  },
+  inputHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  inputHeaderLabel: {
     fontSize: 11,
     fontWeight: '800',
     color: '#475569',
-    letterSpacing: 0.8,
-    marginBottom: 8
+    letterSpacing: 0.6
+  },
+  inputHeaderSub: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#94A3B8'
+  },
+  editPhoneLink: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#059669'
   },
   phoneInputRow: {
     flexDirection: 'row',
@@ -443,43 +582,112 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#CBD5E1',
     borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden'
   },
   flagBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 14,
     paddingVertical: 14,
     borderRightWidth: 1.5,
-    borderRightColor: '#CBD5E1'
+    borderRightColor: '#E2E8F0'
   },
   flagIcon: {
     fontSize: 18
   },
   countryCode: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#0F172A'
   },
   phoneInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: '#0F172A',
     paddingHorizontal: 14,
-    paddingVertical: 12
+    paddingVertical: 12,
+    letterSpacing: 1
+  },
+  otpNoticeHint: {
+    fontSize: 11.5,
+    color: '#64748B',
+    lineHeight: 16
+  },
+  btnPrimaryWhatsApp: {
+    backgroundColor: '#16a34a',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 50,
+    borderRadius: 12,
+    shadowColor: '#16a34a',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 3,
+    marginTop: 4
+  },
+  btnPrimaryText: {
+    fontSize: 14.5,
+    fontWeight: '800',
+    color: '#FFFFFF'
+  },
+  btnSecondarySms: {
+    backgroundColor: '#F8FAFC',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 46,
+    borderRadius: 12,
+    borderWidth: 1.2,
+    borderColor: '#CBD5E1'
+  },
+  btnSecondaryText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#334155'
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginVertical: 4
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E2E8F0'
+  },
+  dividerText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#94A3B8'
+  },
+  btnGuestLink: {
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9'
+  },
+  btnGuestText: {
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#059669'
   },
   otpInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: '#CBD5E1',
+    borderColor: '#059669',
     borderRadius: 12,
     backgroundColor: '#FFFFFF',
-    height: 54
+    height: 52
   },
   otpInput: {
     flex: 1,
@@ -489,98 +697,140 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0F172A'
   },
-  statusBadge: {
+  openWhatsAppBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    marginTop: 8
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#F0FDF4',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#BBF7D0'
+  },
+  openWhatsAppText: {
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#15803D'
+  },
+  devCodeChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6
+  },
+  devCodeText: {
+    fontSize: 12,
+    color: '#047857',
+    fontWeight: '700'
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6
   },
   statusBadgeText: {
     fontSize: 11.5,
     fontWeight: '700',
-    color: '#10b981'
+    color: '#10B981'
   },
-  primaryButton: {
-    backgroundColor: PassengerColors.primary,
+  btnPrimaryVerify: {
+    backgroundColor: '#059669',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    height: 52,
+    height: 50,
     borderRadius: 12,
-    marginTop: 6,
-    shadowColor: PassengerColors.primary,
+    shadowColor: '#059669',
     shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.35,
+    shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 3
+    elevation: 3,
+    marginTop: 4
   },
-  primaryButtonText: {
+  btnPrimaryVerifyText: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#0F172A'
+    color: '#FFFFFF'
   },
-  quickDemoBtn: {
-    flexDirection: 'row',
+  resendContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    height: 44,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: '#059669',
-    borderStyle: 'dashed',
-    marginTop: 12,
-    backgroundColor: 'rgba(5, 150, 105, 0.04)'
+    marginTop: 6
   },
-  quickDemoText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#059669'
-  },
-  otpActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 14,
-    paddingHorizontal: 4
-  },
-  resendRow: {},
-  resendText: {
-    fontSize: 12.5,
+  resendWaitText: {
+    fontSize: 12,
     color: '#64748B'
   },
-  resendLink: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#D97706'
-  },
-  waBtn: {
+  resendButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4
+    gap: 10
   },
-  waText: {
-    fontSize: 12,
+  resendActionWhatsApp: {
+    fontSize: 12.5,
     fontWeight: '700',
-    color: '#25D366'
+    color: '#16A34A'
   },
-  disclaimerBox: {
+  resendDot: {
+    color: '#94A3B8'
+  },
+  resendActionSms: {
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#334155'
+  },
+  bonusCallout: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 10,
-    marginTop: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#FFFBEB',
+    borderRadius: 14,
     padding: 14,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    marginBottom: 16
+  },
+  bonusIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FEF3C7',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  bonusTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#92400E'
+  },
+  bonusDesc: {
+    fontSize: 11.5,
+    color: '#B45309',
+    marginTop: 2,
+    lineHeight: 16
+  },
+  statutoryFooter: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0'
   },
-  disclaimerText: {
-    fontSize: 11,
-    lineHeight: 16,
+  statutoryText: {
+    flex: 1,
+    fontSize: 10.5,
     color: '#64748B',
-    flex: 1
+    lineHeight: 15
   }
 });

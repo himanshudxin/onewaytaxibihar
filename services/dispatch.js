@@ -403,7 +403,7 @@ function broadcastBooking(db, bookingOrId) {
   booking.dispatchStatus = 'BROADCASTING';
   booking.broadcastCandidates = candidateIds;
   booking.broadcastStartedAt = new Date().toISOString();
-  booking.broadcastTimeoutSec = BROADCAST_TIMEOUT_SEC;
+  booking.broadcastTimeoutSec = 86400; // Open persistent broadcast until claimed
   booking.broadcastClaimedBy = null;
   if (!booking.rejectedDrivers) booking.rejectedDrivers = [];
 
@@ -412,7 +412,18 @@ function broadcastBooking(db, bookingOrId) {
     status: 'BROADCASTING',
     timestamp: booking.broadcastStartedAt,
     actor: 'BroadcastEngine',
-    note: 'Broadcast sent to ' + candidateIds.length + ' eligible chauffeur(s).'
+    note: 'Broadcast active for partner chauffeur fleet (persists until accepted).'
+  });
+
+  if (!db.notifications) db.notifications = [];
+  db.notifications.unshift({
+    id: 'NOTIF_DISPATCH_' + Date.now() + '_' + (booking.bookingId || booking.id),
+    type: 'DRIVER_BROADCAST_OFFER',
+    priority: 'HIGH',
+    title: 'New Trip Available: ' + (booking.originCity || 'Patna') + ' → ' + (booking.destCity || 'Gaya'),
+    message: 'Pickup: ' + (booking.pickupDate || 'Today') + ' ' + (booking.pickupTime || '') + ' | Fare: ₹' + (booking.totalFare || '') + ' | Cab: ' + (booking.cabTier || 'Sedan'),
+    bookingId: booking.bookingId || booking.id,
+    createdAt: booking.broadcastStartedAt
   });
 
   return {
@@ -433,26 +444,23 @@ function claimBookingAtomic(db, bookingId, driverId) {
     return { success: false, error: 'Booking not found.' };
   }
 
-  if (booking.dispatchStatus === 'ASSIGNED' || booking.broadcastClaimedBy) {
+  if (booking.dispatchStatus === 'ASSIGNED' || booking.broadcastClaimedBy || booking.assignedDriverId) {
     return {
       success: false,
       alreadyClaimed: true,
-      claimedBy: booking.broadcastClaimedBy,
+      claimedBy: booking.broadcastClaimedBy || booking.assignedDriverId,
       message: 'Trip accepted by another driver.'
     };
   }
 
-  if (booking.dispatchStatus !== 'BROADCASTING') {
+  const bStatus = String(booking.bookingStatus || booking.status || '').toUpperCase();
+  if (['COMPLETED', 'CANCELLED', 'DRIVER_ASSIGNED', 'DRIVER ASSIGNED', 'ACCEPTED'].includes(bStatus)) {
     return {
       success: false,
-      error: 'Booking is not in BROADCASTING state (current: ' + booking.dispatchStatus + ').'
+      alreadyClaimed: true,
+      claimedBy: booking.assignedDriverId || booking.broadcastClaimedBy,
+      message: 'Trip accepted by another driver.'
     };
-  }
-
-  if (booking.broadcastCandidates && booking.broadcastCandidates.length > 0) {
-    if (!booking.broadcastCandidates.includes(driverId)) {
-      return { success: false, error: 'You are not in the broadcast list for this booking.' };
-    }
   }
 
   const driver = (db.drivers || []).find(function(d) { return d.id === driverId || d.phone === driverId; });
@@ -510,37 +518,31 @@ function claimBookingAtomic(db, bookingId, driverId) {
 }
 
 /**
- * checkBroadcastTimeouts() — Scans BROADCASTING bookings and escalates timed-out ones.
+ * checkBroadcastTimeouts() — Monitors broadcasting bookings and notifies admin if unclaimed,
+ * while keeping the booking BROADCASTING and actively visible to all partner drivers until accepted.
  */
 function checkBroadcastTimeouts(db) {
   var escalated = [];
   var now = Date.now();
   (db.bookings || []).forEach(function(booking) {
     if (booking.dispatchStatus !== 'BROADCASTING') return;
+    if (booking.assignedDriverId || booking.broadcastClaimedBy) return;
     if (!booking.broadcastStartedAt) return;
-    var timeoutMs = (booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC) * 1000;
-    var startedMs = new Date(booking.broadcastStartedAt).getTime();
-    if (now - startedMs >= timeoutMs) {
-      booking.dispatchStatus = 'ESCALATED_TO_ADMIN';
-      booking.bookingStatus = 'PENDING_ADMIN_DISPATCH';
-      booking.escalatedAt = new Date().toISOString();
-      booking.escalationReason = 'Broadcast timed out after ' + (booking.broadcastTimeoutSec || BROADCAST_TIMEOUT_SEC) + 's with no driver claiming.';
 
-      if (!booking.statusHistory) booking.statusHistory = [];
-      booking.statusHistory.push({
-        status: 'ESCALATED_TO_ADMIN',
-        timestamp: booking.escalatedAt,
-        actor: 'BroadcastTimeoutWatcher',
-        note: booking.escalationReason
-      });
+    // Check if unclaimed after 10 minutes to notify admin central desk
+    var timeoutMs = 600 * 1000;
+    var startedMs = new Date(booking.broadcastStartedAt).getTime();
+    if (now - startedMs >= timeoutMs && !booking.adminNotifiedUnclaimed) {
+      booking.adminNotifiedUnclaimed = true;
+      booking.escalatedAt = new Date().toISOString();
 
       if (!db.notifications) db.notifications = [];
       db.notifications.unshift({
-        id: 'NOTIF_ESC_' + Date.now() + '_' + booking.bookingId,
-        type: 'BROADCAST_TIMEOUT_ESCALATION',
-        priority: 'URGENT',
-        title: 'BROADCAST TIMEOUT: Booking ' + booking.bookingId,
-        message: 'Booking ' + booking.originCity + ' to ' + booking.destCity + ' broadcast expired. No driver accepted. Immediate manual dispatch required.',
+        id: 'NOTIF_UNCLAIMED_' + Date.now() + '_' + booking.bookingId,
+        type: 'BROADCAST_UNCLAIMED_STATUS',
+        priority: 'MEDIUM',
+        title: 'Broadcast Open: Booking ' + booking.bookingId,
+        message: 'Booking ' + booking.originCity + ' to ' + booking.destCity + ' remains open in broadcast feed for partner drivers.',
         bookingId: booking.bookingId,
         createdAt: booking.escalatedAt
       });

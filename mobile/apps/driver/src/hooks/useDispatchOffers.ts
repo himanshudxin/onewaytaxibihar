@@ -8,6 +8,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { StorageService } from '../../../../shared/services/storage';
 import { resolveApiBaseUrl } from '../../../../shared/services/api';
+import { NotificationService } from '../../../../shared/services/notifications';
 
 const POLL_INTERVAL_MS = 6000; // 6-second polling
 
@@ -69,6 +70,8 @@ export function useDispatchOffers(isDutyOnline: boolean) {
   const [error, setError] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isMountedRef = useRef(true);
+  const knownOfferIdsRef = useRef<Set<string>>(new Set());
+  const initialFetchDoneRef = useRef<boolean>(false);
 
   const fetchOffers = useCallback(async () => {
     if (!isDutyOnline) return;
@@ -95,7 +98,23 @@ export function useDispatchOffers(isDutyOnline: boolean) {
 
       const data = await res.json();
       if (data.success && isMountedRef.current) {
-        setOffers(data.offers || []);
+        const fetchedOffers: BroadcastOffer[] = data.offers || [];
+        const prevIds = knownOfferIdsRef.current;
+        const freshOffers = fetchedOffers.filter(o => !prevIds.has(o.bookingId));
+
+        // When fresh trip arrives in broadcast, play audible notification siren alert
+        if (freshOffers.length > 0 && initialFetchDoneRef.current) {
+          try {
+            NotificationService.startUrgentDispatchAlert();
+            setTimeout(() => {
+              NotificationService.stopUrgentDispatchAlert();
+            }, 8000);
+          } catch (e) {}
+        }
+
+        knownOfferIdsRef.current = new Set(fetchedOffers.map(o => o.bookingId));
+        initialFetchDoneRef.current = true;
+        setOffers(fetchedOffers);
         setError(null);
       }
     } catch (err: any) {
@@ -161,6 +180,7 @@ export function useDispatchOffers(isDutyOnline: boolean) {
   }, []);
 
   const claimOffer = useCallback(async (bookingId: string): Promise<ClaimResult> => {
+    NotificationService.stopUrgentDispatchAlert();
     const token = await getDriverToken();
     if (!token) return { success: false, message: 'Not authenticated.' };
 
@@ -194,6 +214,7 @@ export function useDispatchOffers(isDutyOnline: boolean) {
   }, []);
 
   const rejectOffer = useCallback(async (bookingId: string, reason?: string): Promise<boolean> => {
+    NotificationService.stopUrgentDispatchAlert();
     const token = await getDriverToken();
     if (!token) return false;
 

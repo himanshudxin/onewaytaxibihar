@@ -245,21 +245,11 @@ export const TripOfferModal = ({ navigation, route }: TripOfferModalProps) => {
     };
   }, []);
 
-  // Legacy countdown timer
+  // Persistent broadcast timer (remains active until accepted or skipped)
   useEffect(() => {
     if (!legacyOffer) return;
     const timer = setInterval(() => {
-      setLegacyTimeLeft(t => {
-        if (t <= 1) {
-          clearInterval(timer);
-          NotificationService.stopUrgentDispatchAlert();
-          setActiveOffer(null);
-          Alert.alert('Offer Expired', 'No driver claimed this trip in time. Re-broadcasting.');
-          navigation.goBack();
-          return 0;
-        }
-        return t - 1;
-      });
+      setLegacyTimeLeft(t => (t > 0 ? t - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
   }, [legacyOffer]);

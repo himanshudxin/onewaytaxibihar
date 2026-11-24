@@ -114,55 +114,12 @@ function expandBroadcastRadius(db, booking) {
 }
 
 /**
- * 2. Guaranteed Auto-Allotment Fallback
- * If a broadcast reaches 90s without an atomic claim, auto-matches and assigns the #1 scored available chauffeur.
+ * 2. Guaranteed Persistent Broadcast
+ * Ensures trip remains open and broadcasted to all partner drivers until accepted by a driver.
  */
 function autoAllotFallback(db, booking) {
-  if (booking.dispatchStatus !== 'BROADCASTING' || !booking.broadcastStartedAt) return false;
-  if (booking.assignedDriverId) return false;
-
-  const elapsedSec = (Date.now() - new Date(booking.broadcastStartedAt).getTime()) / 1000;
-  if (elapsedSec < AUTO_CONFIG.AUTO_ALLOT_THRESHOLD_SEC) return false;
-
-  const eligibleDrivers = dispatch.findEligibleDrivers(db, booking)
-    .filter(d => !(booking.rejectedDrivers || []).includes(d.id));
-
-  if (!eligibleDrivers.length) return false;
-
-  const ranked = dispatch.rankDrivers(eligibleDrivers, booking);
-  if (!ranked.length) return false;
-
-  const bestMatch = ranked[0];
-  const now = new Date().toISOString();
-
-  booking.dispatchStatus = 'ASSIGNED';
-  booking.broadcastClaimedBy = bestMatch.driverId;
-  booking.assignedDriverId = bestMatch.driverId;
-  booking.assignedDriverName = bestMatch.name;
-  booking.assignedDriverPhone = bestMatch.phone;
-  booking.assignedDriverCarNo = bestMatch.vehicleNumber;
-  booking.driverDetails = {
-    id: bestMatch.driverId,
-    name: bestMatch.name,
-    phone: bestMatch.phone,
-    vehicleNumber: bestMatch.vehicleNumber,
-    vehicleModel: bestMatch.vehicleModel,
-    rating: bestMatch.rating || 4.88
-  };
-  booking.bookingStatus = 'DRIVER ASSIGNED';
-  booking.status = 'DRIVER ASSIGNED';
-  booking.autoDispatched = true;
-  booking.autoDispatchedAt = now;
-  booking.autoDispatchReason = `Autonomous direct match fallback triggered after ${Math.round(elapsedSec)}s broadcast timeout. Best score: ${bestMatch.suitabilityScore}%.`;
-
-  pushStatusHistory(booking, {
-    status: 'DRIVER_ASSIGNED',
-    timestamp: now,
-    actor: 'AutonomousMatchFallback',
-    note: booking.autoDispatchReason
-  });
-
-  return true;
+  // Respect operator mandate: booking shows until accepted by a partner driver
+  return false;
 }
 
 /**

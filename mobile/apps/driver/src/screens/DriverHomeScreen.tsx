@@ -20,6 +20,7 @@ import { UberMapView } from '../../../../shared/components/UberMapView';
 import { useDriver } from '../context/DriverContext';
 import { FleetSyncService } from '../../../../shared/services/fleetSync';
 import { ForegroundTrackingService } from '../services/ForegroundTrackingService';
+import { NotificationService } from '../../../../shared/services/notifications';
 import { formatCurrency, formatDistance } from '../../../../shared/utils/formatters';
 import {
   Power,
@@ -192,6 +193,85 @@ export const DriverHomeScreen = ({ navigation }: any) => {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
+        {/* Urgent Incoming Ride Broadcast Alert Card */}
+        {broadcastOffers.length > 0 && (
+          <View style={{
+            backgroundColor: '#DC2626',
+            borderRadius: 14,
+            padding: 12,
+            marginBottom: 14,
+            borderWidth: 1,
+            borderColor: '#EF4444',
+            shadowColor: '#DC2626',
+            shadowOpacity: 0.35,
+            shadowRadius: 8,
+            elevation: 5
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#FFFFFF' }} />
+                <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '900', letterSpacing: 0.5 }}>
+                  NEW RIDE AVAILABLE • {broadcastOffers.length} TRIP{broadcastOffers.length > 1 ? 'S' : ''} OPEN
+                </Text>
+              </View>
+              <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6 }}>
+                <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>LIVE BROADCAST</Text>
+              </View>
+            </View>
+            <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '900', marginBottom: 2 }}>
+              {broadcastOffers[0].originCity} → {broadcastOffers[0].destCity}
+            </Text>
+            <Text style={{ color: '#FEE2E2', fontSize: 12, fontWeight: '600', marginBottom: 8 }}>
+              {broadcastOffers[0].pickupDateTimeFormatted} • Total: ₹{broadcastOffers[0].totalFare} (Your Net: ₹{broadcastOffers[0].driverNetEarnings})
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  NotificationService.stopUrgentDispatchAlert();
+                  rejectOffer(broadcastOffers[0].bookingId);
+                }}
+                style={{
+                  flex: 1,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  backgroundColor: 'rgba(255,255,255,0.15)',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '700' }}>Skip</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  NotificationService.stopUrgentDispatchAlert();
+                  const res = await claimOffer(broadcastOffers[0].bookingId);
+                  if (res.alreadyClaimed) {
+                    Alert.alert('Trip Claim Notice', 'This trip has already been accepted by another partner driver.');
+                  } else if (res.success) {
+                    Alert.alert('Trip Claimed! 🎉', `You have accepted the trip from ${broadcastOffers[0].originCity} to ${broadcastOffers[0].destCity}.`);
+                    FleetSyncService.init().catch(() => {});
+                  } else {
+                    Alert.alert('Claim Error', res.message || 'Unable to claim trip.');
+                  }
+                }}
+                style={{
+                  flex: 2,
+                  paddingVertical: 8,
+                  borderRadius: 8,
+                  backgroundColor: '#FFFFFF',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6
+                }}
+              >
+                <Zap size={14} color="#DC2626" />
+                <Text style={{ color: '#DC2626', fontSize: 12, fontWeight: '900' }}>CLAIM TRIP NOW</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
         {/* Live Chauffeur Telemetry & Highway Beacon Map */}
         <View style={[styles.mapCard, { backgroundColor: colors.surface, borderColor: isDutyOnline ? colors.primary : colors.border }]}>
           <View style={styles.mapHeaderRow}>
@@ -276,7 +356,10 @@ export const DriverHomeScreen = ({ navigation }: any) => {
                   {/* Action Row */}
                   <View style={{ flexDirection: 'row', gap: 10 }}>
                     <TouchableOpacity
-                      onPress={() => rejectOffer(offer.bookingId)}
+                      onPress={() => {
+                        NotificationService.stopUrgentDispatchAlert();
+                        rejectOffer(offer.bookingId);
+                      }}
                       style={{ flex: 1, paddingVertical: 11, borderRadius: 10, borderWidth: 1, borderColor: colors.danger, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}
                       activeOpacity={0.8}
                     >
@@ -284,13 +367,15 @@ export const DriverHomeScreen = ({ navigation }: any) => {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={async () => {
+                        NotificationService.stopUrgentDispatchAlert();
                         const res = await claimOffer(offer.bookingId);
                         if (res.alreadyClaimed) {
-                          Alert.alert('Claimed', 'Trip accepted by another driver.');
+                          Alert.alert('Trip Claim Notice', 'This trip has already been accepted by another partner driver.');
                         } else if (res.success) {
-                          Alert.alert('Claimed', 'You successfully claimed the trip!');
+                          Alert.alert('Trip Claimed Successfully! 🎉', `You claimed the trip from ${offer.originCity} to ${offer.destCity}. Pickup scheduled for ${offer.pickupDateTimeFormatted}.`);
+                          FleetSyncService.init().catch(() => {});
                         } else {
-                          Alert.alert('Error', res.message || 'Try again.');
+                          Alert.alert('Claim Error', res.message || 'Unable to claim trip. Please try again.');
                         }
                       }}
                       style={{ flex: 2, paddingVertical: 11, borderRadius: 10, backgroundColor: colors.primary, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6 }}

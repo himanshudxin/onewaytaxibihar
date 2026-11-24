@@ -6230,6 +6230,13 @@ module.exports = async (req, res) => {
       if (!db.bookings) db.bookings = [];
       db.bookings.unshift(manualBooking);
 
+      if (!manualBooking.assignedDriverId) {
+        try {
+          const _dispSvc = require('../services/dispatch.js');
+          _dispSvc.broadcastBooking(db, manualBooking);
+        } catch (bErr) { }
+      }
+
       if (!db.audit_logs) db.audit_logs = [];
       db.audit_logs.unshift({
         id: `AUD_${Date.now()}`,
@@ -7961,11 +7968,21 @@ module.exports = async (req, res) => {
 
       const offerCards = (db.bookings || [])
         .filter(function (b) {
-          if (b.dispatchStatus !== 'BROADCASTING') return false;
-          if (b.broadcastCandidates && b.broadcastCandidates.length > 0) {
-            if (!b.broadcastCandidates.includes(driverId)) return false;
-          }
+          // Must not already be assigned or claimed by any driver
+          if (b.assignedDriverId || b.broadcastClaimedBy) return false;
+
+          // Must not be completed or cancelled
+          const bStatus = String(b.bookingStatus || b.status || '').toUpperCase();
+          if (['COMPLETED', 'CANCELLED', 'DRIVER_ASSIGNED', 'DRIVER ASSIGNED', 'ACCEPTED'].includes(bStatus)) return false;
+
+          // Must not have been skipped/rejected by this specific driver
           if ((b.rejectedDrivers || []).includes(driverId)) return false;
+
+          // Open for broadcast: shows until accepted by any partner driver
+          const dStatus = String(b.dispatchStatus || '').toUpperCase();
+          const isOpen = dStatus === 'BROADCASTING' || dStatus === 'SEARCHING_DRIVER' || dStatus === 'PENDING' || dStatus === '' || !b.assignedDriverId;
+          if (!isOpen) return false;
+
           return true;
         })
         .map(function (b) { return dispatchSvc.buildTripOfferCard(b, driverId); });

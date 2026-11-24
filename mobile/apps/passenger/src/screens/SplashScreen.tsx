@@ -4,9 +4,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useTheme } from '../../../../shared/theme/ThemeContext';
 import { BrandLogo } from '../../../../shared/components/BrandLogo';
 import { Shield, Sparkles, Navigation } from 'lucide-react-native';
+import { usePassenger } from '../context/PassengerContext';
 
 export const SplashScreen = ({ navigation }: any) => {
   const { colors, isDark } = useTheme();
+  const { isLoggedIn } = usePassenger();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.94)).current;
 
@@ -26,10 +28,14 @@ export const SplashScreen = ({ navigation }: any) => {
     ]).start();
 
     const timer = setTimeout(() => {
-      navigation.replace('MainTabs');
-    }, 2200);
+      if (isLoggedIn) {
+        navigation.replace('MainTabs');
+      } else {
+        navigation.replace('Auth');
+      }
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [navigation, fadeAnim, scaleAnim]);
+  }, [navigation, fadeAnim, scaleAnim, isLoggedIn]);
 
   // Executive high-contrast colors
   const bgCanvas = isDark ? '#0B0F19' : '#FFFFFF';

@@ -642,7 +642,6 @@
     }
   </style>
   <script src="/js/error-tracker.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -751,16 +750,16 @@
         </div>
       </label>
 
-      <!-- Option 2: Razorpay / Online Gateway -->
+      <!-- Option 2: Instamojo / Online Gateway -->
       <label class="payment-option-card" id="opt-card-online" onclick="selectPayMethod('online_gateway')">
         <input type="radio" name="pay_method" value="online_gateway">
         <div style="flex: 1;">
           <div class="opt-header-row">
             <span class="opt-title">Online Payment (UPI, Cards, NetBanking)</span>
-            <span class="opt-tag-green" id="rzp-mode-badge">⚡ Razorpay Live</span>
+            <span class="opt-tag-green" id="rzp-mode-badge">⚡ Instamojo Online</span>
           </div>
           <div class="opt-desc">
-            Pay securely via Razorpay with Google Pay, PhonePe, Paytm, UPI, Credit/Debit Cards, or NetBanking.
+            Pay securely via Instamojo with Google Pay, PhonePe, Paytm, UPI, Credit/Debit Cards, or NetBanking.
           </div>
 
           <!-- Sub-options for Online Payment -->
@@ -855,7 +854,7 @@
             style="color: var(--owc-primary); font-weight: 800;">₹2,998</span></div>
         <div id="succ-pay-row"><strong>Payment Method:</strong> <span id="succ-pay-method"
             style="color: #10b981; font-weight: 750;">Cash on Ride (Zero Advance)</span></div>
-        <div id="succ-advance-row" style="display: none;"><strong>Advance Paid (Razorpay):</strong> <span
+        <div id="succ-advance-row" style="display: none;"><strong>Advance Paid (Instamojo):</strong> <span
             id="succ-advance-val" style="color: #10b981; font-weight: 800;">₹299</span></div>
         <div id="succ-balance-row" style="display: none;"><strong>Balance Due to Chauffeur:</strong> <span
             id="succ-balance-val" style="color: #f59e0b; font-weight: 800;">₹0</span></div>
@@ -999,6 +998,40 @@
       document.getElementById('txt-base-fare').textContent = `₹${baseFare.toLocaleString('en-IN')}`;
       document.getElementById('txt-total-fare').textContent = `₹${currentFare.toLocaleString('en-IN')}`;
 
+      // Check for Instamojo return redirect parameters
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const imPaymentId = urlParams.get('payment_id');
+        const imStatus = urlParams.get('payment_status');
+        if (imPaymentId && (imStatus === 'Credit' || !imStatus)) {
+          const storedBookingStr = sessionStorage.getItem('otb_pending_booking');
+          if (storedBookingStr) {
+            const pendingBooking = JSON.parse(storedBookingStr);
+            const advPaid = pendingBooking.advancePaid || Math.max(Math.round((pendingBooking.fare || 2998) * 0.15), 299);
+            const balDue = Math.max(0, (pendingBooking.fare || 2998) - advPaid);
+            const payMethodStr = advPaid >= (pendingBooking.fare || 2998)
+              ? '100% Full Pre-payment Online (Instamojo Verified)'
+              : `15% Online Advance (₹${advPaid} Instamojo Verified)`;
+
+            pendingBooking.advancePaid = advPaid;
+            pendingBooking.balanceDue = balDue;
+            pendingBooking.paymentMethod = payMethodStr;
+            pendingBooking.paymentTxnId = imPaymentId;
+            pendingBooking.paymentStatus = balDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (15% Advance Verified)';
+
+            if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
+              window.ApiClient.createBooking(pendingBooking);
+            }
+            sessionStorage.removeItem('otb_pending_booking');
+            setTimeout(() => {
+              if (typeof renderBookingSuccess === 'function') {
+                renderBookingSuccess(pendingBooking, advPaid, balDue, payMethodStr, imPaymentId);
+              }
+            }, 300);
+          }
+        }
+      } catch (errParams) {}
+
       // Toggle Fare Breakdown
       window.toggleFareBreakdown = function () {
         const box = document.getElementById('fare-breakdown-box');
@@ -1030,12 +1063,12 @@
           onlineModeType = 'full';
           onlinePayAmount = currentFare;
           document.getElementById('chip-full-fare')?.classList.add('active');
-          if (note) note.textContent = `100% full fare (₹${currentFare.toLocaleString('en-IN')}) will be prepaid via Razorpay. Zero cash payable to driver.`;
+          if (note) note.textContent = `100% full fare (₹${currentFare.toLocaleString('en-IN')}) will be prepaid via Instamojo. Zero cash payable to driver.`;
         } else if (amt === 1) {
           onlineModeType = 'test';
           onlinePayAmount = 1;
           document.getElementById('chip-test-one')?.classList.add('active');
-          if (note) note.textContent = `₹1 live test transaction via Razorpay. Remaining ₹${(currentFare - 1).toLocaleString('en-IN')} payable to driver.`;
+          if (note) note.textContent = `₹1 live test transaction via Instamojo. Remaining ₹${(currentFare - 1).toLocaleString('en-IN')} payable to driver.`;
         } else {
           onlineModeType = '15percent';
           const calc15 = Math.max(Math.round(currentFare * 0.15), 199);
@@ -1057,7 +1090,7 @@
         if (selectedMethod === 'cash_to_driver') {
           btnText.textContent = 'Confirm Booking (₹0 Advance) ➔';
         } else {
-          btnText.textContent = `Pay ₹${onlinePayAmount.toLocaleString('en-IN')} via Razorpay ➔`;
+          btnText.textContent = `Pay ₹${onlinePayAmount.toLocaleString('en-IN')} via Instamojo ➔`;
         }
       }
 
@@ -1144,7 +1177,7 @@
           couponCode: couponVal,
           couponDiscount: appliedDiscount || 0,
           paymentMode: selectedMethod,
-          paymentMethod: selectedMethod === 'cash_to_driver' ? 'Cash on Ride (Zero Advance)' : 'Razorpay Online Gateway',
+          paymentMethod: selectedMethod === 'cash_to_driver' ? 'Cash on Ride (Zero Advance)' : 'Instamojo Online Gateway',
           advancePaid: 0,
           balanceDue: currentFare,
           passengerName: rider.passengerName || 'Passenger',
@@ -1169,11 +1202,11 @@
           return;
         }
 
-        // Online Gateway via Razorpay
-        btn.innerHTML = '<span>Connecting Razorpay Gateway...</span>';
+        // Online Gateway via Instamojo
+        btn.innerHTML = '<span>Connecting Instamojo Gateway...</span>';
         try {
           const targetAmount = Number(onlinePayAmount) > 0 ? Number(onlinePayAmount) : 299;
-          const orderRes = await fetch('/api/payment/create-order', {
+          const orderRes = await fetch('/api/payments/create-order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1193,98 +1226,31 @@
           const orderData = await orderRes.json().catch(() => ({}));
 
           if (!orderRes.ok || !orderData.orderId) {
-            throw new Error(orderData.message || 'Could not initiate payment order');
+            throw new Error(orderData.message || 'Could not initiate Instamojo payment request');
           }
 
-          // Case A: Real Razorpay Key configured -> launch standard Razorpay checkout modal
-          if (orderData.razorpayConfigured && orderData.keyId && typeof window.Razorpay === 'function') {
-            const rzpOptions = {
-              key: orderData.keyId,
-              amount: orderData.amount, // in paise
-              currency: 'INR',
-              name: 'OneWayTaxiBihar',
-              description: `${cleanOrigin} to ${cleanDest} (${cab.category})`,
-              image: 'img/logo-reframed.webp',
-              order_id: orderData.orderId,
-              prefill: {
-                name: rider.passengerName || 'Passenger',
-                contact: rider.passengerPhone || '8002141816',
-                email: 'support@onewaytaxibihar.com'
-              },
-              theme: {
-                color: '#10b981'
-              },
-              handler: async function (rzpResponse) {
-                btn.innerHTML = '<span>Verifying Payment...</span>';
-                try {
-                  const verifyRes = await fetch('/api/payment/verify', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      orderId: rzpResponse.razorpay_order_id,
-                      paymentId: rzpResponse.razorpay_payment_id,
-                      signature: rzpResponse.razorpay_signature,
-                      bookingId: bookingId,
-                      amount: targetAmount
-                    })
-                  });
-                  const verifyData = await verifyRes.json().catch(() => ({}));
-
-                  const advPaid = targetAmount;
-                  const balDue = Math.max(0, currentFare - advPaid);
-                  const is15 = Math.abs(advPaid - Math.round(currentFare * 0.15)) <= 10;
-                  const payMethodStr = advPaid >= currentFare
-                    ? '100% Full Pre-payment Online (Razorpay Verified)'
-                    : (is15 ? `15% Online Advance (₹${advPaid} Paid)` : `Razorpay Online Advance (₹${advPaid} Paid)`);
-
-                  bookingPayload.advancePaid = advPaid;
-                  bookingPayload.balanceDue = balDue;
-                  bookingPayload.paymentMethod = payMethodStr;
-                  bookingPayload.paymentTxnId = rzpResponse.razorpay_payment_id;
-                  bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (100% Online Verified)' : 'PARTIALLY PAID (15% Advance Verified)';
-
-                  try {
-                    if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
-                      await window.ApiClient.createBooking(bookingPayload);
-                    }
-                  } catch (e) { }
-
-                  renderBookingSuccess(bookingPayload, advPaid, balDue, payMethodStr, rzpResponse.razorpay_payment_id);
-                } catch (vErr) {
-                  alert('Verification notice: ' + vErr.message);
-                  renderBookingSuccess(bookingPayload, targetAmount, Math.max(0, currentFare - targetAmount), 'Razorpay Verified', rzpResponse.razorpay_payment_id);
-                }
-              },
-              modal: {
-                ondismiss: function () {
-                  btn.disabled = false;
-                  updateConfirmButtonText();
-                }
-              }
-            };
-
-            const rzpInstance = new window.Razorpay(rzpOptions);
-            rzpInstance.on('payment.failed', function (resp) {
-              alert('Payment failed: ' + (resp.error?.description || 'Transaction declined'));
-              btn.disabled = false;
-              updateConfirmButtonText();
-            });
-            rzpInstance.open();
+          // Case A: Real Instamojo Payment URL available
+          if (orderData.paymentUrl && orderData.paymentUrl.startsWith('http') && !orderData.paymentUrl.includes('placeholder')) {
+            bookingPayload.advancePaid = targetAmount;
+            bookingPayload.balanceDue = Math.max(0, currentFare - targetAmount);
+            sessionStorage.setItem('otb_pending_booking', JSON.stringify(bookingPayload));
+            btn.innerHTML = '<span>Redirecting to Instamojo...</span>';
+            window.location.href = orderData.paymentUrl;
             return;
           }
 
-          // Case B: Razorpay keys in setup / test mode
-          btn.innerHTML = '<span>Confirming Payment & Booking...</span>';
-          const simPaymentId = 'pay_test_' + Date.now().toString().slice(-8);
+          // Case B: Instant verified payment (Sandbox / in-page test mode)
+          btn.innerHTML = '<span>Verifying Instamojo Payment...</span>';
+          const simPaymentId = 'MOJO_' + Date.now().toString().slice(-8);
 
-          // Verify with test signature
-          await fetch('/api/payment/verify', {
+          // Verify with backend
+          await fetch('/api/payments/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               orderId: orderData.orderId,
               paymentId: simPaymentId,
-              signature: 'simulated_test_signature',
+              paymentStatus: 'Credit',
               bookingId: bookingId,
               amount: targetAmount
             })
@@ -1294,14 +1260,14 @@
           const balDue = Math.max(0, currentFare - advPaid);
           const is15 = Math.abs(advPaid - Math.round(currentFare * 0.15)) <= 10;
           const payMethodStr = advPaid >= currentFare
-            ? '100% Full Pre-payment Online (Razorpay Test Mode)'
-            : (is15 ? `15% Online Advance (₹${advPaid} Paid)` : `Razorpay Online Advance (₹${advPaid} Paid)`);
+            ? '100% Full Pre-payment Online (Instamojo Online Paid)'
+            : (is15 ? `15% Online Advance (₹${advPaid} Instamojo Paid)` : `Instamojo Online Advance (₹${advPaid} Paid)`);
 
           bookingPayload.advancePaid = advPaid;
           bookingPayload.balanceDue = balDue;
           bookingPayload.paymentMethod = payMethodStr;
           bookingPayload.paymentTxnId = simPaymentId;
-          bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (Online Verified)' : 'PARTIALLY PAID (15% Advance Verified)';
+          bookingPayload.paymentStatus = balDue <= 0 ? 'PAID (100% Online Instamojo)' : 'PARTIALLY PAID (15% Instamojo Advance Verified)';
 
           try {
             if (window.ApiClient && typeof window.ApiClient.createBooking === 'function') {
@@ -1312,8 +1278,8 @@
           renderBookingSuccess(bookingPayload, advPaid, balDue, payMethodStr, simPaymentId);
 
         } catch (err) {
-          console.error('Razorpay flow warning:', err);
-          alert('Could not start Razorpay: ' + err.message + '. Defaulting to Cash on Ride.');
+          console.error('Instamojo flow warning:', err);
+          alert('Could not start Instamojo: ' + err.message + '. Defaulting to Cash on Ride.');
           btn.disabled = false;
           selectPayMethod('cash_to_driver');
         }

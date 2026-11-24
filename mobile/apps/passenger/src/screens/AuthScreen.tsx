@@ -79,8 +79,14 @@ export const AuthScreen = ({ navigation }: any) => {
       const res = await OtpService.verifyOtp(clean, otp.trim(), 'passenger');
       setUserPhone(clean);
       updateSearch({ phone: clean });
-      Alert.alert('Verified!', res.message || 'Welcome to OneWayTaxiBihar.', [
-        { text: 'Continue', onPress: () => navigation.goBack() }
+      Alert.alert('Verified! 🎉', res.message || 'Welcome to OneWayTaxiBihar.', [
+        {
+          text: 'Continue',
+          onPress: () => {
+            if (navigation.canGoBack()) navigation.goBack();
+            else navigation.replace('MainTabs');
+          }
+        }
       ]);
     } catch (e: any) {
       Alert.alert('Verification Failed', e.message || 'Invalid verification code. Please check your WhatsApp/SMS and re-enter.');
@@ -111,7 +117,11 @@ export const AuthScreen = ({ navigation }: any) => {
           {/* Top Bar with Back Button */}
           <View style={styles.topBar}>
             <TouchableOpacity
-              onPress={() => (step === 'otp' ? setStep('phone') : navigation.goBack())}
+              onPress={() => {
+                if (step === 'otp') setStep('phone');
+                else if (navigation.canGoBack()) navigation.goBack();
+                else navigation.replace('MainTabs');
+              }}
               style={styles.backButton}
               activeOpacity={0.7}
             >
@@ -249,6 +259,17 @@ export const AuthScreen = ({ navigation }: any) => {
                 >
                   <Text style={[styles.quickDemoText, { color: '#334155', fontWeight: '600' }]}>
                     Get OTP via Telecom SMS instead
+                  </Text>
+                </TouchableOpacity>
+
+                {/* Skip as Guest */}
+                <TouchableOpacity
+                  onPress={() => navigation.replace('MainTabs')}
+                  style={{ marginTop: 18, alignItems: 'center', paddingVertical: 8 }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#059669', textDecorationLine: 'underline' }}>
+                    Skip &amp; Browse Outstation Routes as Guest ➔
                   </Text>
                 </TouchableOpacity>
               </>

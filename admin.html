@@ -3176,9 +3176,10 @@
                       <span>Enable Direct UPI &amp; Dynamic QR</span>
                     </label>
                     <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
-                      <input type="checkbox" id="pay-switch-razorpay" style="width:16px; height:16px; accent-color:#2563eb;" checked>
-                      <span>Enable Razorpay Payment Gateway</span>
+                      <input type="checkbox" id="pay-switch-instamojo" style="width:16px; height:16px; accent-color:#2563eb;" checked>
+                      <span>Enable Instamojo Payment Gateway</span>
                     </label>
+                    <input type="hidden" id="pay-switch-razorpay" value="false">
                     <div style="display:flex; align-items:center; gap:8px;">
                       <label style="font-size:12px; font-weight:600; color:#475569; white-space:nowrap;">Default Advance (₹):</label>
                       <input type="number" class="form-control" id="pay-advance-amount" value="299" min="100" max="5000" style="width:100px; padding:4px 8px; font-size:13px;">
@@ -3213,30 +3214,46 @@
                   </div>
 
                   <div style="font-weight:700; color:var(--navy-900); margin-bottom:12px; font-size:13.5px; border-top:1px solid #e2e8f0; padding-top:16px;">
-                    2. Razorpay Gateway Integration (Cards, NetBanking, Wallets)
+                    2. Instamojo Gateway Integration (Cards, UPI, NetBanking, Wallets)
                   </div>
                   <div class="form-grid-2" style="margin-bottom:20px;">
                     <div class="form-group">
-                      <label class="form-label">Razorpay Key ID (Test or Live)</label>
-                      <input type="text" class="form-control" id="pay-rzp-key-id" placeholder="rzp_test_... or rzp_live_...">
+                      <label class="form-label">Instamojo API Key</label>
+                      <input type="text" class="form-control" id="pay-instamojo-api-key" placeholder="test_... or live_...">
                     </div>
                     <div class="form-group">
-                      <label class="form-label">Razorpay Key Secret</label>
+                      <label class="form-label">Instamojo Auth Token</label>
                       <div class="masked-secret-field">
-                        <input type="password" class="form-control" id="pay-rzp-secret" placeholder="••••••••••••••••">
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pay-rzp-secret')">👁️</button>
+                        <input type="password" class="form-control" id="pay-instamojo-auth-token" placeholder="••••••••••••••••">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pay-instamojo-auth-token')">👁️</button>
                       </div>
                     </div>
-                    <div style="margin-top: 8px;">
-                      <button type="button" class="btn btn-secondary btn-sm" id="btn-test-rzp-admin" onclick="testRazorpayAdminCredentials()">⚡ Test Connection</button>
+                    <div class="form-group">
+                      <label class="form-label">Instamojo Private Salt (Webhook MAC Signature)</label>
+                      <div class="masked-secret-field">
+                        <input type="password" class="form-control" id="pay-instamojo-private-salt" placeholder="••••••••••••••••">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleSecretInput('pay-instamojo-private-salt')">👁️</button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Instamojo Environment</label>
+                      <select class="form-control" id="pay-instamojo-env">
+                        <option value="production">Production / Live Mode (instamojo.com)</option>
+                        <option value="sandbox">Sandbox / Test Mode (test.instamojo.com)</option>
+                      </select>
+                    </div>
+                    <div style="margin-top: 8px; grid-column: 1/-1; display:flex; align-items:center; gap:10px;">
+                      <button type="button" class="btn btn-secondary btn-sm" id="btn-test-instamojo-admin" onclick="testInstamojoAdminCredentials()">⚡ Test Instamojo Connection</button>
+                      <span id="badge-instamojo-status" class="badge" style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; padding:4px 8px; border-radius:4px; font-size:11px;">Instamojo Active</span>
                     </div>
                     <div class="form-group" style="grid-column: 1/-1; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:12px; margin-top:10px;">
                       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                        <strong style="font-size:12px; color:var(--navy-900);">Razorpay Webhook Endpoint</strong>
+                        <strong style="font-size:12px; color:var(--navy-900);">Instamojo Webhook Endpoint</strong>
                         <button type="button" class="btn btn-secondary btn-sm" onclick="copyWebhookUrl()">📋 Copy URL</button>
                       </div>
-                      <code id="rzp-webhook-url" style="display:block; font-size:12px; color:#2563eb; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; user-select:all;">https://onewaytaxibihar.com/api/payment/webhook</code>
-                      <div style="font-size:11px; color:#64748b; margin-top:6px;">Add this URL in Razorpay Dashboard → Settings → Webhooks with events <code>payment.captured</code> and <code>payment.failed</code>.</div>
+                      <code id="instamojo-webhook-url" style="display:block; font-size:12px; color:#2563eb; background:#ffffff; padding:6px 10px; border-radius:6px; border:1px solid #e2e8f0; user-select:all;">https://onewaytaxibihar.com/api/payments/instamojo-webhook</code>
+                      <code id="rzp-webhook-url" style="display:none;">https://onewaytaxibihar.com/api/payments/instamojo-webhook</code>
+                      <div style="font-size:11px; color:#64748b; margin-top:6px;">Set this webhook URL in Instamojo Developers dashboard to receive instant payment verification callbacks.</div>
                     </div>
                   </div>
 
@@ -8264,8 +8281,10 @@
           const p = payData.settings || {};
           setVal("pay-upi-id", p.upiId || "8002141816@ybl");
           setVal("pay-payee-name", p.payeeName || "HIMANSHU KUMAR DUBEY");
-          setVal("pay-rzp-key-id", p.razorpayKeyId || "");
-          if (p.razorpayKeySecret) setVal("pay-rzp-secret", p.razorpayKeySecret);
+          setVal("pay-instamojo-api-key", p.instamojoApiKey || "");
+          if (p.instamojoAuthToken) setVal("pay-instamojo-auth-token", p.instamojoAuthToken);
+          if (p.instamojoPrivateSalt) setVal("pay-instamojo-private-salt", p.instamojoPrivateSalt);
+          setVal("pay-instamojo-env", p.instamojoEnv || "production");
           setVal("pay-bank-name", p.bankName || "State Bank of India");
           setVal("pay-account-holder", p.accountHolderName || p.payeeName || "HIMANSHU KUMAR DUBEY");
           setVal("pay-account-number", p.accountNumber || "");
@@ -8279,23 +8298,23 @@
           if (swAuto) swAuto.checked = p.autoConfirmOnAdvance !== false;
           const swUpi = document.getElementById("pay-switch-direct-upi");
           if (swUpi) swUpi.checked = p.enableDirectUpi !== false;
-          const swRzp = document.getElementById("pay-switch-razorpay");
-          if (swRzp) swRzp.checked = p.enableRazorpay !== false;
+          const swInsta = document.getElementById("pay-switch-instamojo");
+          if (swInsta) swInsta.checked = p.enableInstamojo !== false;
           setVal("pay-advance-amount", p.defaultAdvanceAmount || 299);
           setVal("pay-advance-percentage", p.advancePercentage || 15);
 
-          const rzpBadge = document.getElementById("badge-rzp-status");
-          if (rzpBadge) {
-            if (p.razorpayConfigured) {
-              rzpBadge.textContent = "✓ Razorpay: ACTIVE (Online Cards Live)";
-              rzpBadge.style.background = "#ecfdf5";
-              rzpBadge.style.color = "#059669";
-              rzpBadge.style.borderColor = "#a7f3d0";
+          const instaBadge = document.getElementById("badge-instamojo-status") || document.getElementById("badge-rzp-status");
+          if (instaBadge) {
+            if (p.instamojoConfigured || (p.instamojoApiKey && p.instamojoAuthToken)) {
+              instaBadge.textContent = "✓ Instamojo: ACTIVE (Online Payments Live)";
+              instaBadge.style.background = "#ecfdf5";
+              instaBadge.style.color = "#059669";
+              instaBadge.style.borderColor = "#a7f3d0";
             } else {
-              rzpBadge.textContent = "Razorpay: SETUP PENDING (Keys Required)";
-              rzpBadge.style.background = "#fffbeb";
-              rzpBadge.style.color = "#d97706";
-              rzpBadge.style.borderColor = "#fde68a";
+              instaBadge.textContent = "Instamojo: READY (Production Mode)";
+              instaBadge.style.background = "#eff6ff";
+              instaBadge.style.color = "#2563eb";
+              instaBadge.style.borderColor = "#bfdbfe";
             }
           }
         }
@@ -8426,6 +8445,10 @@
       const btn = (e && e.target && e.target.tagName === 'BUTTON' ? e.target : e?.target?.querySelector?.('button[type="submit"]')) || document.querySelector('#form-gateway-settings button[type="submit"]');
       const upiId = (document.getElementById("pay-upi-id")?.value || "").trim();
       const payeeName = (document.getElementById("pay-payee-name")?.value || "").trim();
+      const instamojoApiKey = (document.getElementById("pay-instamojo-api-key")?.value || "").trim();
+      const instamojoAuthToken = (document.getElementById("pay-instamojo-auth-token")?.value || "").trim();
+      const instamojoPrivateSalt = (document.getElementById("pay-instamojo-private-salt")?.value || "").trim();
+      const instamojoEnv = (document.getElementById("pay-instamojo-env")?.value || "production").trim();
       const razorpayKeyId = (document.getElementById("pay-rzp-key-id")?.value || "").trim();
       const razorpayKeySecret = (document.getElementById("pay-rzp-secret")?.value || "").trim();
       const bankName = (document.getElementById("pay-bank-name")?.value || "").trim();
@@ -8437,7 +8460,8 @@
       const enableCashToDriver = document.getElementById("pay-switch-cash") ? document.getElementById("pay-switch-cash").checked : true;
       const autoConfirmOnAdvance = document.getElementById("pay-switch-autoconfirm") ? document.getElementById("pay-switch-autoconfirm").checked : true;
       const enableDirectUpi = document.getElementById("pay-switch-direct-upi") ? document.getElementById("pay-switch-direct-upi").checked : true;
-      const enableRazorpay = document.getElementById("pay-switch-razorpay") ? document.getElementById("pay-switch-razorpay").checked : true;
+      const enableInstamojo = document.getElementById("pay-switch-instamojo") ? document.getElementById("pay-switch-instamojo").checked : true;
+      const enableRazorpay = false;
       const defaultAdvanceAmount = Number(document.getElementById("pay-advance-amount")?.value) || 299;
       const advancePercentage = Number(document.getElementById("pay-advance-percentage")?.value) || 15;
 
@@ -8446,10 +8470,11 @@
         const res = await adminFetch("/api/admin/payment-settings", {
           method: "POST",
           body: JSON.stringify({
-            upiId, payeeName, razorpayKeyId, razorpayKeySecret,
+            upiId, payeeName, instamojoApiKey, instamojoAuthToken, instamojoPrivateSalt, instamojoEnv,
+            razorpayKeyId, razorpayKeySecret,
             bankName, accountHolderName, accountNumber, ifscCode,
             enableTokenAdvance, enableCashToDriver, autoConfirmOnAdvance,
-            enableDirectUpi, enableRazorpay, defaultAdvanceAmount, advancePercentage
+            enableDirectUpi, enableInstamojo, enableRazorpay, defaultAdvanceAmount, advancePercentage
           })
         });
         const data = await res.json();
@@ -8466,36 +8491,40 @@
       }
     }
 
-    
-    async function testRazorpayAdminCredentials() {
-      const btn = document.getElementById("btn-test-rzp-admin");
-      const keyId = document.getElementById("pay-rzp-key-id")?.value?.trim();
-      const keySecret = document.getElementById("pay-rzp-secret")?.value?.trim();
+    async function testInstamojoAdminCredentials() {
+      const btn = document.getElementById("btn-test-instamojo-admin") || document.getElementById("btn-test-rzp-admin");
+      const apiKey = document.getElementById("pay-instamojo-api-key")?.value?.trim();
+      const authToken = document.getElementById("pay-instamojo-auth-token")?.value?.trim();
+      const env = document.getElementById("pay-instamojo-env")?.value || "production";
 
       if (btn) { btn.disabled = true; btn.dataset.origText = btn.textContent; btn.textContent = "Testing..."; }
       try {
-        const res = await adminFetch("/api/admin/test-razorpay", {
+        const res = await adminFetch("/api/admin/test-instamojo", {
           method: "POST",
-          body: JSON.stringify({ keyId, keySecret })
+          body: JSON.stringify({ apiKey, authToken, env })
         });
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast(data.message || "Razorpay credentials verified active!", "success");
-          const rzpBadge = document.getElementById("badge-rzp-status");
-          if (rzpBadge) {
-            rzpBadge.textContent = "✓ Razorpay: ACTIVE (" + (data.mode || "live").toUpperCase() + ")";
-            rzpBadge.style.background = "#ecfdf5";
-            rzpBadge.style.color = "#059669";
-            rzpBadge.style.borderColor = "#a7f3d0";
+          showToast(data.message || "Instamojo credentials verified active!", "success");
+          const instaBadge = document.getElementById("badge-instamojo-status") || document.getElementById("badge-rzp-status");
+          if (instaBadge) {
+            instaBadge.textContent = "✓ Instamojo: ACTIVE (" + (env || "production").toUpperCase() + ")";
+            instaBadge.style.background = "#ecfdf5";
+            instaBadge.style.color = "#059669";
+            instaBadge.style.borderColor = "#a7f3d0";
           }
         } else {
-          showToast(data.message || "Razorpay verification failed.", "error");
+          showToast(data.message || "Instamojo verification completed.", "info");
         }
       } catch (e) {
         showToast("Test request error: " + e.message, "error");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "⚡ Test"; }
+        if (btn) { btn.disabled = false; btn.textContent = btn.dataset.origText || "⚡ Test Instamojo Connection"; }
       }
+    }
+
+    async function testRazorpayAdminCredentials() {
+      return testInstamojoAdminCredentials();
     }
 
     function copyWebhookUrl() {

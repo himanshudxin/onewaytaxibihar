@@ -40,7 +40,7 @@ import {
   Lock,
   Percent,
 } from 'lucide-react-native';
-import { RazorpayModal } from '../../../../shared/components/RazorpayModal';
+import { InstamojoModal } from '../../../../shared/components/InstamojoModal';
 
 export const CheckoutScreen = ({ route, navigation }: any) => {
   const { fareBreakdown, cabName, price, distanceKm, cabTier = 'sedan' } = route.params || {};
@@ -67,9 +67,9 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
   const [pickupAddr, setPickupAddr] = useState(search.pickupAddress || `${search.origin} Doorstep`);
   const [dropAddr, setDropAddr] = useState(search.dropAddress || `${search.destination} City Center`);
   const [paymentMode, setPaymentMode] = useState<'advance_15' | 'full_online'>('advance_15');
-  const [showRazorpayModal, setShowRazorpayModal] = useState(false);
-  const [razorpayOrderId, setRazorpayOrderId] = useState('');
-  const [razorpayKeyId, setRazorpayKeyId] = useState('rzp_test_placeholder');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState('');
+  const [paymentUrl, setPaymentUrl] = useState('');
   const [pendingBookingRef, setPendingBookingRef] = useState('');
   const [loading, setLoading] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
@@ -162,7 +162,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
         cabTier: cabTier as any,
         cabName,
         fareBreakdown,
-        paymentMethod: (paymentMode === 'full_online' ? 'full_online_razorpay' : 'advance_15_razorpay') as any,
+        paymentMethod: (paymentMode === 'full_online' ? 'full_online_instamojo' : 'advance_15_instamojo') as any,
         paymentStatus: initialPaymentStatus,
         advancePaid: paymentMode === 'full_online' ? totalFare : advance15Amount,
         balanceDue: paymentMode === 'full_online' ? 0 : balance85Amount,
@@ -242,19 +242,19 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
         }
       });
 
-      setRazorpayOrderId(orderRes.orderId || `order_${Date.now()}`);
-      setRazorpayKeyId(orderRes.keyId || 'rzp_test_placeholder');
-      setShowRazorpayModal(true);
+      setPaymentOrderId(orderRes.orderId || `order_${Date.now()}`);
+      if (orderRes.paymentUrl) setPaymentUrl(orderRes.paymentUrl);
+      setShowPaymentModal(true);
     } catch (e: any) {
-      setRazorpayOrderId(`order_${Date.now()}`);
-      setShowRazorpayModal(true);
+      setPaymentOrderId(`order_${Date.now()}`);
+      setShowPaymentModal(true);
     } finally {
       setLoading(false);
     }
   };
 
   const handlePaymentSuccess = async (data: { paymentId: string; orderId: string; signature?: string }) => {
-    setShowRazorpayModal(false);
+    setShowPaymentModal(false);
     setLoading(true);
     try {
       const cleanPhone = sanitizePhoneNumber(phone);
@@ -263,7 +263,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
       const isFull = paymentMode === 'full_online';
       const advancePaid = isFull ? totalFare : advance15Amount;
       const balanceDue = isFull ? 0 : balance85Amount;
-      const chosenPaymentMethod = isFull ? 'full_online_razorpay' : 'advance_15_razorpay';
+      const chosenPaymentMethod = isFull ? 'full_online_instamojo' : 'advance_15_instamojo';
       const chosenPaymentStatus = isFull ? 'paid' : 'partially_paid';
 
       // Concurrently create confirmed booking and verify transaction (<150ms instant response)
@@ -310,7 +310,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
   };
 
   const handlePaymentFailure = (error: string) => {
-    setShowRazorpayModal(false);
+    setShowPaymentModal(false);
     Alert.alert('Payment Incomplete', error || 'Transaction was not completed. You can retry when ready.');
   };
 
@@ -490,7 +490,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
               <Text style={styles.sectionHeading}>Select Payment Option</Text>
               <View style={styles.razorpayPoweredBadge}>
                 <Lock size={11} color="#059669" />
-                <Text style={styles.razorpayPoweredText}>Razorpay 256-Bit SSL</Text>
+                <Text style={styles.razorpayPoweredText}>Instamojo 256-Bit SSL</Text>
               </View>
             </View>
 
@@ -514,7 +514,7 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
                   </View>
                 </View>
                 <Text style={styles.paySubtitle}>
-                  Pay {formatCurrency(advance15Amount)} now via UPI/Razorpay. Remaining balance {formatCurrency(balance85Amount)} payable to driver at destination.
+                  Pay {formatCurrency(advance15Amount)} now via UPI/Instamojo. Remaining balance {formatCurrency(balance85Amount)} payable to driver at destination.
                 </Text>
               </View>
               {paymentMode === 'advance_15' ? (
@@ -619,10 +619,10 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
 
-        {/* In-App Razorpay & UPI Payment Gateway Modal */}
-        <RazorpayModal
-          visible={showRazorpayModal}
-          onClose={() => setShowRazorpayModal(false)}
+        {/* In-App Instamojo & UPI Payment Gateway Modal */}
+        <InstamojoModal
+          visible={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
           onSuccess={handlePaymentSuccess}
           onFailure={handlePaymentFailure}
           amount={paymentMode === 'full_online' ? totalFare : advance15Amount}
@@ -630,8 +630,8 @@ export const CheckoutScreen = ({ route, navigation }: any) => {
           bookingRef={pendingBookingRef || 'OTB-TRIP'}
           passengerName={name.trim() || 'Passenger'}
           passengerPhone={phone.trim() || '9876543210'}
-          orderId={razorpayOrderId}
-          keyId={razorpayKeyId}
+          orderId={paymentOrderId}
+          paymentUrl={paymentUrl}
         />
 
         {/* Schedule Date & Time Selection Modal */}

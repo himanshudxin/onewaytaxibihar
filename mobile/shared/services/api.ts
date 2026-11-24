@@ -1052,8 +1052,12 @@ class ApiClient {
   }): Promise<{
     success: boolean;
     razorpayConfigured?: boolean;
+    instamojoConfigured?: boolean;
     provider?: string;
+    gateway?: string;
     keyId?: string;
+    paymentUrl?: string;
+    longurl?: string;
     orderId: string;
     amount: number;
     advanceAmount: number;
@@ -1069,7 +1073,7 @@ class ApiClient {
       const offlineOrderId = `order_${Date.now()}`;
       return {
         success: true,
-        provider: 'razorpay',
+        provider: 'instamojo',
         orderId: offlineOrderId,
         amount: Math.round(params.amountInRupees * 100),
         advanceAmount: params.amountInRupees,

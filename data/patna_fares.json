@@ -420,32 +420,32 @@
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-darjeeling",
+    "id": "patna-kolkata",
     "active": true,
-    "destCity": "Darjeeling",
-    "destination": "Darjeeling",
-    "distanceKm": 650,
-    "district": "Darjeeling",
-    "execSedan": 15249,
-    "hatchback": 14799,
-    "luxSuv": 15699,
-    "marketComparison": "26998–32998",
-    "note": "Planning estimate; verify with live route planner",
+    "destCity": "Kolkata",
+    "destination": "Kolkata",
+    "distanceKm": 653,
+    "district": "Kolkata",
+    "execSedan": 9249,
+    "hatchback": 8799,
+    "luxSuv": 9699,
+    "marketComparison": "16198–19798",
+    "note": "Source-checked reference; route may vary",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 22.77,
-      "sedan": 23.08,
-      "suv": 23.69
+      "hatchback": 13.47,
+      "sedan": 13.78,
+      "suv": 14.39
     },
     "region": "West Bengal",
-    "sedan": 14999,
-    "suv": 15399,
+    "sedan": 8999,
+    "suv": 9399,
     "twoWay": {
-      "hatchback": 29198,
-      "sedan": 29598,
-      "execSedan": 30098,
-      "suv": 30398,
-      "luxSuv": 30998
+      "hatchback": 17198,
+      "sedan": 17598,
+      "execSedan": 18098,
+      "suv": 18398,
+      "luxSuv": 18998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
@@ -480,32 +480,32 @@
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-siliguri",
+    "id": "patna-howrah",
     "active": true,
-    "destCity": "Siliguri",
-    "destination": "Siliguri",
-    "distanceKm": 560,
-    "district": "Siliguri",
-    "execSedan": 12249,
-    "hatchback": 11799,
-    "luxSuv": 12699,
-    "marketComparison": "21598–26398",
+    "destCity": "Howrah",
+    "destination": "Howrah",
+    "distanceKm": 658,
+    "district": "Howrah",
+    "execSedan": 9249,
+    "hatchback": 8799,
+    "luxSuv": 9699,
+    "marketComparison": "16198–19798",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 21.07,
-      "sedan": 21.43,
-      "suv": 22.14
+      "hatchback": 13.37,
+      "sedan": 13.68,
+      "suv": 14.28
     },
     "region": "West Bengal",
-    "sedan": 11999,
-    "suv": 12399,
+    "sedan": 8999,
+    "suv": 9399,
     "twoWay": {
-      "hatchback": 23198,
-      "sedan": 23598,
-      "execSedan": 24098,
-      "suv": 24398,
-      "luxSuv": 24998
+      "hatchback": 17198,
+      "sedan": 17598,
+      "execSedan": 18098,
+      "suv": 18398,
+      "luxSuv": 18998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
@@ -600,32 +600,32 @@
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-malda",
+    "id": "patna-tarapith",
     "active": true,
-    "destCity": "Malda",
-    "destination": "Malda",
+    "destCity": "Tarapith",
+    "destination": "Tarapith",
     "distanceKm": 350,
-    "district": "Malda",
-    "execSedan": 8249,
-    "hatchback": 7799,
-    "luxSuv": 8699,
-    "marketComparison": "14398–17598",
+    "district": "Tarapith",
+    "execSedan": 7249,
+    "hatchback": 6799,
+    "luxSuv": 7699,
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 22.28,
-      "sedan": 22.85,
-      "suv": 24
+      "hatchback": 19.43,
+      "sedan": 20,
+      "suv": 21.14
     },
     "region": "West Bengal",
-    "sedan": 7999,
-    "suv": 8399,
+    "sedan": 6999,
+    "suv": 7399,
     "twoWay": {
-      "hatchback": 15198,
-      "sedan": 15598,
-      "execSedan": 16098,
-      "suv": 16398,
-      "luxSuv": 16998
+      "hatchback": 13198,
+      "sedan": 13598,
+      "execSedan": 14098,
+      "suv": 14398,
+      "luxSuv": 14998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
@@ -690,62 +690,92 @@
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-howrah",
+    "id": "patna-digha",
     "active": true,
-    "destCity": "Howrah",
-    "destination": "Howrah",
-    "distanceKm": 658,
-    "district": "Howrah",
-    "execSedan": 9249,
-    "hatchback": 8799,
-    "luxSuv": 9699,
-    "marketComparison": "16198–19798",
+    "destCity": "Digha",
+    "destination": "Digha",
+    "distanceKm": 650,
+    "district": "Digha",
+    "execSedan": 12249,
+    "hatchback": 11799,
+    "luxSuv": 12699,
+    "marketComparison": "21598–26398",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 13.37,
-      "sedan": 13.68,
-      "suv": 14.28
+      "hatchback": 18.15,
+      "sedan": 18.46,
+      "suv": 19.08
     },
     "region": "West Bengal",
-    "sedan": 8999,
-    "suv": 9399,
+    "sedan": 11999,
+    "suv": 12399,
     "twoWay": {
-      "hatchback": 17198,
-      "sedan": 17598,
-      "execSedan": 18098,
-      "suv": 18398,
-      "luxSuv": 18998
+      "hatchback": 23198,
+      "sedan": 23598,
+      "execSedan": 24098,
+      "suv": 24398,
+      "luxSuv": 24998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-kolkata",
+    "id": "patna-darjeeling",
     "active": true,
-    "destCity": "Kolkata",
-    "destination": "Kolkata",
-    "distanceKm": 653,
-    "district": "Kolkata",
-    "execSedan": 9249,
-    "hatchback": 8799,
-    "luxSuv": 9699,
-    "marketComparison": "16198–19798",
-    "note": "Source-checked reference; route may vary",
+    "destCity": "Darjeeling",
+    "destination": "Darjeeling",
+    "distanceKm": 650,
+    "district": "Darjeeling",
+    "execSedan": 15249,
+    "hatchback": 14799,
+    "luxSuv": 15699,
+    "marketComparison": "26998–32998",
+    "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 13.47,
-      "sedan": 13.78,
-      "suv": 14.39
+      "hatchback": 22.77,
+      "sedan": 23.08,
+      "suv": 23.69
     },
     "region": "West Bengal",
-    "sedan": 8999,
-    "suv": 9399,
+    "sedan": 14999,
+    "suv": 15399,
     "twoWay": {
-      "hatchback": 17198,
-      "sedan": 17598,
-      "execSedan": 18098,
-      "suv": 18398,
-      "luxSuv": 18998
+      "hatchback": 29198,
+      "sedan": 29598,
+      "execSedan": 30098,
+      "suv": 30398,
+      "luxSuv": 30998
+    },
+    "updatedAt": "2026-10-19T07:27:58.138Z"
+  },
+  {
+    "id": "patna-siliguri",
+    "active": true,
+    "destCity": "Siliguri",
+    "destination": "Siliguri",
+    "distanceKm": 560,
+    "district": "Siliguri",
+    "execSedan": 12249,
+    "hatchback": 11799,
+    "luxSuv": 12699,
+    "marketComparison": "21598–26398",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 21.07,
+      "sedan": 21.43,
+      "suv": 22.14
+    },
+    "region": "West Bengal",
+    "sedan": 11999,
+    "suv": 12399,
+    "twoWay": {
+      "hatchback": 23198,
+      "sedan": 23598,
+      "execSedan": 24098,
+      "suv": 24398,
+      "luxSuv": 24998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
@@ -780,92 +810,62 @@
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-digha",
+    "id": "patna-malda",
     "active": true,
-    "destCity": "Digha",
-    "destination": "Digha",
-    "distanceKm": 650,
-    "district": "Digha",
-    "execSedan": 12249,
-    "hatchback": 11799,
-    "luxSuv": 12699,
-    "marketComparison": "21598–26398",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 18.15,
-      "sedan": 18.46,
-      "suv": 19.08
-    },
-    "region": "West Bengal",
-    "sedan": 11999,
-    "suv": 12399,
-    "twoWay": {
-      "hatchback": 23198,
-      "sedan": 23598,
-      "execSedan": 24098,
-      "suv": 24398,
-      "luxSuv": 24998
-    },
-    "updatedAt": "2026-10-19T07:27:58.138Z"
-  },
-  {
-    "id": "patna-tarapith",
-    "active": true,
-    "destCity": "Tarapith",
-    "destination": "Tarapith",
+    "destCity": "Malda",
+    "destination": "Malda",
     "distanceKm": 350,
-    "district": "Tarapith",
-    "execSedan": 7249,
-    "hatchback": 6799,
-    "luxSuv": 7699,
-    "marketComparison": "12598–15398",
+    "district": "Malda",
+    "execSedan": 8249,
+    "hatchback": 7799,
+    "luxSuv": 8699,
+    "marketComparison": "14398–17598",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 19.43,
-      "sedan": 20,
-      "suv": 21.14
+      "hatchback": 22.28,
+      "sedan": 22.85,
+      "suv": 24
     },
     "region": "West Bengal",
-    "sedan": 6999,
-    "suv": 7399,
+    "sedan": 7999,
+    "suv": 8399,
     "twoWay": {
-      "hatchback": 13198,
-      "sedan": 13598,
-      "execSedan": 14098,
-      "suv": 14398,
-      "luxSuv": 14998
+      "hatchback": 15198,
+      "sedan": 15598,
+      "execSedan": 16098,
+      "suv": 16398,
+      "luxSuv": 16998
     },
     "updatedAt": "2026-10-19T07:27:58.138Z"
   },
   {
-    "id": "patna-lucknow",
+    "id": "patna-prayagraj",
     "active": true,
-    "destCity": "Lucknow",
-    "destination": "Lucknow",
-    "distanceKm": 540,
-    "district": "Lucknow",
-    "execSedan": 7249,
-    "hatchback": 6799,
-    "luxSuv": 7699,
-    "marketComparison": "12598–15398",
+    "destCity": "Prayagraj",
+    "destination": "Prayagraj",
+    "distanceKm": 370,
+    "district": "Prayagraj",
+    "execSedan": 5249,
+    "hatchback": 4799,
+    "luxSuv": 5699,
+    "marketComparison": "8998–10998",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 12.59,
-      "sedan": 12.96,
-      "suv": 13.7
+      "hatchback": 12.97,
+      "sedan": 13.51,
+      "suv": 14.59
     },
     "region": "Uttar Pradesh",
-    "sedan": 6999,
-    "suv": 7399,
+    "sedan": 4999,
+    "suv": 5399,
     "twoWay": {
-      "hatchback": 13198,
-      "sedan": 13598,
-      "execSedan": 14098,
-      "suv": 14398,
-      "luxSuv": 14998
+      "hatchback": 9198,
+      "sedan": 9598,
+      "execSedan": 10098,
+      "suv": 10398,
+      "luxSuv": 10998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1020,36 +1020,6 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-mundeshwaritemple",
-    "active": true,
-    "destCity": "Mundeshwari Temple",
-    "destination": "Mundeshwari Temple",
-    "distanceKm": 200,
-    "district": "Mundeshwari Temple",
-    "execSedan": 3249,
-    "hatchback": 2799,
-    "luxSuv": 3699,
-    "marketComparison": "5398–6598",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 13.99,
-      "sedan": 14.99,
-      "suv": 17
-    },
-    "region": "Bihar tourist destinations",
-    "sedan": 2999,
-    "suv": 3399,
-    "twoWay": {
-      "hatchback": 5198,
-      "sedan": 5598,
-      "execSedan": 6098,
-      "suv": 6398,
-      "luxSuv": 6998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
     "id": "patna-dehrionsone",
     "active": true,
     "destCity": "Dehri-on-Sone",
@@ -1076,6 +1046,36 @@
       "execSedan": 5698,
       "suv": 5998,
       "luxSuv": 6598
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-mundeshwaritemple",
+    "active": true,
+    "destCity": "Mundeshwari Temple",
+    "destination": "Mundeshwari Temple",
+    "distanceKm": 200,
+    "district": "Mundeshwari Temple",
+    "execSedan": 3249,
+    "hatchback": 2799,
+    "luxSuv": 3699,
+    "marketComparison": "5398–6598",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 13.99,
+      "sedan": 14.99,
+      "suv": 17
+    },
+    "region": "Bihar tourist destinations",
+    "sedan": 2999,
+    "suv": 3399,
+    "twoWay": {
+      "hatchback": 5198,
+      "sedan": 5598,
+      "execSedan": 6098,
+      "suv": 6398,
+      "luxSuv": 6998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1140,22 +1140,52 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-valmikitigerreserve",
+    "id": "patna-simultala",
     "active": true,
-    "destCity": "Valmiki Tiger Reserve",
-    "destination": "Valmiki Tiger Reserve",
-    "distanceKm": 310,
-    "district": "Valmiki Tiger Reserve",
+    "destCity": "Simultala",
+    "destination": "Simultala",
+    "distanceKm": 220,
+    "district": "Simultala",
+    "execSedan": 3549,
+    "hatchback": 3099,
+    "luxSuv": 3999,
+    "marketComparison": "5938–7258",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 14.09,
+      "sedan": 15,
+      "suv": 16.81
+    },
+    "region": "Bihar tourist destinations",
+    "sedan": 3299,
+    "suv": 3699,
+    "twoWay": {
+      "hatchback": 5798,
+      "sedan": 6198,
+      "execSedan": 6698,
+      "suv": 6998,
+      "luxSuv": 7598
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-vikramshilauniversity",
+    "active": true,
+    "destCity": "Vikramshila University",
+    "destination": "Vikramshila University",
+    "distanceKm": 260,
+    "district": "Vikramshila University",
     "execSedan": 4249,
     "hatchback": 3799,
     "luxSuv": 4699,
     "marketComparison": "7198–8798",
-    "note": "Source-checked reference; route may vary",
+    "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 12.25,
-      "sedan": 12.9,
-      "suv": 14.19
+      "hatchback": 14.61,
+      "sedan": 15.38,
+      "suv": 16.92
     },
     "region": "Bihar tourist destinations",
     "sedan": 3999,
@@ -1170,52 +1200,22 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-kesariastupa",
+    "id": "patna-barabarcaves",
     "active": true,
-    "destCity": "Kesaria Stupa",
-    "destination": "Kesaria Stupa",
-    "distanceKm": 125,
-    "district": "Kesaria Stupa",
-    "execSedan": 3049,
-    "hatchback": 2599,
-    "luxSuv": 3499,
-    "marketComparison": "5038–6158",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 20.79,
-      "sedan": 22.39,
-      "suv": 25.59
-    },
-    "region": "Bihar tourist destinations",
-    "sedan": 2799,
-    "suv": 3199,
-    "twoWay": {
-      "hatchback": 4798,
-      "sedan": 5198,
-      "execSedan": 5698,
-      "suv": 5998,
-      "luxSuv": 6598
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-nalandauniversity",
-    "active": true,
-    "destCity": "Nalanda University",
-    "destination": "Nalanda University",
-    "distanceKm": 95,
-    "district": "Nalanda University",
+    "destCity": "Barabar Caves",
+    "destination": "Barabar Caves",
+    "distanceKm": 100,
+    "district": "Barabar Caves",
     "execSedan": 2249,
     "hatchback": 1799,
     "luxSuv": 2699,
     "marketComparison": "3598–4398",
-    "note": "Source-checked reference; route may vary",
+    "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 18.94,
-      "sedan": 21.04,
-      "suv": 25.25
+      "hatchback": 17.99,
+      "sedan": 19.99,
+      "suv": 23.99
     },
     "region": "Bihar tourist destinations",
     "sedan": 1999,
@@ -1230,32 +1230,32 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-prayagraj",
+    "id": "patna-lucknow",
     "active": true,
-    "destCity": "Prayagraj",
-    "destination": "Prayagraj",
-    "distanceKm": 370,
-    "district": "Prayagraj",
-    "execSedan": 5249,
-    "hatchback": 4799,
-    "luxSuv": 5699,
-    "marketComparison": "8998–10998",
+    "destCity": "Lucknow",
+    "destination": "Lucknow",
+    "distanceKm": 540,
+    "district": "Lucknow",
+    "execSedan": 7249,
+    "hatchback": 6799,
+    "luxSuv": 7699,
+    "marketComparison": "12598–15398",
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 12.97,
-      "sedan": 13.51,
-      "suv": 14.59
+      "hatchback": 12.59,
+      "sedan": 12.96,
+      "suv": 13.7
     },
     "region": "Uttar Pradesh",
-    "sedan": 4999,
-    "suv": 5399,
+    "sedan": 6999,
+    "suv": 7399,
     "twoWay": {
-      "hatchback": 9198,
-      "sedan": 9598,
-      "execSedan": 10098,
-      "suv": 10398,
-      "luxSuv": 10998
+      "hatchback": 13198,
+      "sedan": 13598,
+      "execSedan": 14098,
+      "suv": 14398,
+      "luxSuv": 14998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1286,6 +1286,36 @@
       "execSedan": 18098,
       "suv": 18398,
       "luxSuv": 18998
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-agra",
+    "active": true,
+    "destCity": "Agra",
+    "destination": "Agra",
+    "distanceKm": 900,
+    "district": "Agra",
+    "execSedan": 12249,
+    "hatchback": 11799,
+    "luxSuv": 12699,
+    "marketComparison": "21598–26398",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 13.11,
+      "sedan": 13.33,
+      "suv": 13.78
+    },
+    "region": "Uttar Pradesh",
+    "sedan": 11999,
+    "suv": 12399,
+    "twoWay": {
+      "hatchback": 23198,
+      "sedan": 23598,
+      "execSedan": 24098,
+      "suv": 24398,
+      "luxSuv": 24998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1380,42 +1410,12 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-agra",
+    "id": "patna-vindhyachal",
     "active": true,
-    "destCity": "Agra",
-    "destination": "Agra",
-    "distanceKm": 900,
-    "district": "Agra",
-    "execSedan": 12249,
-    "hatchback": 11799,
-    "luxSuv": 12699,
-    "marketComparison": "21598–26398",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 13.11,
-      "sedan": 13.33,
-      "suv": 13.78
-    },
-    "region": "Uttar Pradesh",
-    "sedan": 11999,
-    "suv": 12399,
-    "twoWay": {
-      "hatchback": 23198,
-      "sedan": 23598,
-      "execSedan": 24098,
-      "suv": 24398,
-      "luxSuv": 24998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-deoghar",
-    "active": true,
-    "destCity": "Deoghar",
-    "destination": "Deoghar",
-    "distanceKm": 270,
-    "district": "Deoghar",
+    "destCity": "Vindhyachal",
+    "destination": "Vindhyachal",
+    "distanceKm": 300,
+    "district": "Vindhyachal",
     "execSedan": 4249,
     "hatchback": 3799,
     "luxSuv": 4699,
@@ -1423,11 +1423,11 @@
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 14.07,
-      "sedan": 14.81,
-      "suv": 16.29
+      "hatchback": 12.66,
+      "sedan": 13.33,
+      "suv": 14.66
     },
-    "region": "Jharkhand",
+    "region": "Uttar Pradesh",
     "sedan": 3999,
     "suv": 4399,
     "twoWay": {
@@ -1436,66 +1436,6 @@
       "execSedan": 8098,
       "suv": 8398,
       "luxSuv": 8998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-ranchi",
-    "active": true,
-    "destCity": "Ranchi",
-    "destination": "Ranchi",
-    "distanceKm": 335,
-    "district": "Ranchi",
-    "execSedan": 5249,
-    "hatchback": 4799,
-    "luxSuv": 5699,
-    "marketComparison": "8998–10998",
-    "note": "Source-checked reference; route may vary",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 14.33,
-      "sedan": 14.92,
-      "suv": 16.12
-    },
-    "region": "Jharkhand",
-    "sedan": 4999,
-    "suv": 5399,
-    "twoWay": {
-      "hatchback": 9198,
-      "sedan": 9598,
-      "execSedan": 10098,
-      "suv": 10398,
-      "luxSuv": 10998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-vaishalistupa",
-    "active": true,
-    "destCity": "Vaishali Stupa",
-    "destination": "Vaishali Stupa",
-    "distanceKm": 56,
-    "district": "Vaishali Stupa",
-    "execSedan": 1749,
-    "hatchback": 1299,
-    "luxSuv": 2199,
-    "marketComparison": "2698–3298",
-    "note": "Source-checked reference; route may vary",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 23.2,
-      "sedan": 26.77,
-      "suv": 33.91
-    },
-    "region": "Bihar tourist destinations",
-    "sedan": 1499,
-    "suv": 1899,
-    "twoWay": {
-      "hatchback": 2198,
-      "sedan": 2598,
-      "execSedan": 3098,
-      "suv": 3398,
-      "luxSuv": 3998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1560,36 +1500,6 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-vindhyachal",
-    "active": true,
-    "destCity": "Vindhyachal",
-    "destination": "Vindhyachal",
-    "distanceKm": 300,
-    "district": "Vindhyachal",
-    "execSedan": 4249,
-    "hatchback": 3799,
-    "luxSuv": 4699,
-    "marketComparison": "7198–8798",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 12.66,
-      "sedan": 13.33,
-      "suv": 14.66
-    },
-    "region": "Uttar Pradesh",
-    "sedan": 3999,
-    "suv": 4399,
-    "twoWay": {
-      "hatchback": 7198,
-      "sedan": 7598,
-      "execSedan": 8098,
-      "suv": 8398,
-      "luxSuv": 8998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
     "id": "patna-noida",
     "active": true,
     "destCity": "Noida",
@@ -1620,42 +1530,42 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-barabarcaves",
+    "id": "patna-ranchi",
     "active": true,
-    "destCity": "Barabar Caves",
-    "destination": "Barabar Caves",
-    "distanceKm": 100,
-    "district": "Barabar Caves",
-    "execSedan": 2249,
-    "hatchback": 1799,
-    "luxSuv": 2699,
-    "marketComparison": "3598–4398",
-    "note": "Planning estimate; verify with live route planner",
+    "destCity": "Ranchi",
+    "destination": "Ranchi",
+    "distanceKm": 335,
+    "district": "Ranchi",
+    "execSedan": 5249,
+    "hatchback": 4799,
+    "luxSuv": 5699,
+    "marketComparison": "8998–10998",
+    "note": "Source-checked reference; route may vary",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 17.99,
-      "sedan": 19.99,
-      "suv": 23.99
+      "hatchback": 14.33,
+      "sedan": 14.92,
+      "suv": 16.12
     },
-    "region": "Bihar tourist destinations",
-    "sedan": 1999,
-    "suv": 2399,
+    "region": "Jharkhand",
+    "sedan": 4999,
+    "suv": 5399,
     "twoWay": {
-      "hatchback": 3198,
-      "sedan": 3598,
-      "execSedan": 4098,
-      "suv": 4398,
-      "luxSuv": 4998
+      "hatchback": 9198,
+      "sedan": 9598,
+      "execSedan": 10098,
+      "suv": 10398,
+      "luxSuv": 10998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-vikramshilauniversity",
+    "id": "patna-deoghar",
     "active": true,
-    "destCity": "Vikramshila University",
-    "destination": "Vikramshila University",
-    "distanceKm": 260,
-    "district": "Vikramshila University",
+    "destCity": "Deoghar",
+    "destination": "Deoghar",
+    "distanceKm": 270,
+    "district": "Deoghar",
     "execSedan": 4249,
     "hatchback": 3799,
     "luxSuv": 4699,
@@ -1663,11 +1573,11 @@
     "note": "Planning estimate; verify with live route planner",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 14.61,
-      "sedan": 15.38,
-      "suv": 16.92
+      "hatchback": 14.07,
+      "sedan": 14.81,
+      "suv": 16.29
     },
-    "region": "Bihar tourist destinations",
+    "region": "Jharkhand",
     "sedan": 3999,
     "suv": 4399,
     "twoWay": {
@@ -1676,36 +1586,6 @@
       "execSedan": 8098,
       "suv": 8398,
       "luxSuv": 8998
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-simultala",
-    "active": true,
-    "destCity": "Simultala",
-    "destination": "Simultala",
-    "distanceKm": 220,
-    "district": "Simultala",
-    "execSedan": 3549,
-    "hatchback": 3099,
-    "luxSuv": 3999,
-    "marketComparison": "5938–7258",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 14.09,
-      "sedan": 15,
-      "suv": 16.81
-    },
-    "region": "Bihar tourist destinations",
-    "sedan": 3299,
-    "suv": 3699,
-    "twoWay": {
-      "hatchback": 5798,
-      "sedan": 6198,
-      "execSedan": 6698,
-      "suv": 6998,
-      "luxSuv": 7598
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1740,122 +1620,32 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-pawapuri",
+    "id": "patna-valmikitigerreserve",
     "active": true,
-    "destCity": "Pawapuri",
-    "destination": "Pawapuri",
-    "distanceKm": 90,
-    "district": "Pawapuri",
-    "execSedan": 2049,
-    "hatchback": 1599,
-    "luxSuv": 2499,
-    "marketComparison": "3238–3958",
+    "destCity": "Valmiki Tiger Reserve",
+    "destination": "Valmiki Tiger Reserve",
+    "distanceKm": 310,
+    "district": "Valmiki Tiger Reserve",
+    "execSedan": 4249,
+    "hatchback": 3799,
+    "luxSuv": 4699,
+    "marketComparison": "7198–8798",
     "note": "Source-checked reference; route may vary",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 17.77,
-      "sedan": 19.99,
-      "suv": 24.43
+      "hatchback": 12.25,
+      "sedan": 12.9,
+      "suv": 14.19
     },
     "region": "Bihar tourist destinations",
-    "sedan": 1799,
-    "suv": 2199,
+    "sedan": 3999,
+    "suv": 4399,
     "twoWay": {
-      "hatchback": 2798,
-      "sedan": 3198,
-      "execSedan": 3698,
-      "suv": 3998,
-      "luxSuv": 4598
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-bodhgaya",
-    "active": true,
-    "destCity": "Bodh Gaya",
-    "destination": "Bodh Gaya",
-    "distanceKm": 135,
-    "district": "Bodh Gaya",
-    "execSedan": 2449,
-    "hatchback": 1999,
-    "luxSuv": 2899,
-    "marketComparison": "3958–4838",
-    "note": "Source-checked reference; route may vary",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 14.81,
-      "sedan": 16.29,
-      "suv": 19.25
-    },
-    "region": "Bihar tourist destinations",
-    "sedan": 2199,
-    "suv": 2599,
-    "twoWay": {
-      "hatchback": 3598,
-      "sedan": 3998,
-      "execSedan": 4498,
-      "suv": 4798,
-      "luxSuv": 5398
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-westchamparan",
-    "active": true,
-    "destCity": "West Champaran",
-    "destination": "West Champaran (Bettiah)",
-    "distanceKm": 240,
-    "district": "Bettiah",
-    "execSedan": 3549,
-    "hatchback": 3099,
-    "luxSuv": 3999,
-    "marketComparison": "5938–7258",
-    "note": "Planning estimate; verify with live route planner",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 12.91,
-      "sedan": 13.75,
-      "suv": 15.41
-    },
-    "region": "Bihar districts",
-    "sedan": 3299,
-    "suv": 3699,
-    "twoWay": {
-      "hatchback": 5798,
-      "sedan": 6198,
-      "execSedan": 6698,
-      "suv": 6998,
-      "luxSuv": 7598
-    },
-    "updatedAt": "2026-10-19T07:27:58.137Z"
-  },
-  {
-    "id": "patna-vaishali",
-    "active": true,
-    "destCity": "Vaishali",
-    "destination": "Vaishali (Hajipur)",
-    "distanceKm": 25,
-    "district": "Hajipur",
-    "execSedan": 1749,
-    "hatchback": 1299,
-    "luxSuv": 2199,
-    "marketComparison": "2698–3298",
-    "note": "Source-checked reference; route may vary",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 51.96,
-      "sedan": 59.96,
-      "suv": 75.96
-    },
-    "region": "Bihar districts",
-    "sedan": 1499,
-    "suv": 1899,
-    "twoWay": {
-      "hatchback": 2198,
-      "sedan": 2598,
-      "execSedan": 3098,
-      "suv": 3398,
-      "luxSuv": 3998
+      "hatchback": 7198,
+      "sedan": 7598,
+      "execSedan": 8098,
+      "suv": 8398,
+      "luxSuv": 8998
     },
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
@@ -1890,56 +1680,146 @@
     "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-saharsa",
-    "origin": "Patna",
-    "destination": "Saharsa",
-    "destCity": "Saharsa",
-    "district": "Saharsa",
-    "distanceKm": 220,
-    "hatchback": 3299,
-    "sedan": 3499,
-    "suv": 3899,
-    "marketComparison": "6298–7698",
+    "id": "patna-vaishali",
     "active": true,
-    "execSedan": 3749,
-    "luxSuv": 4199,
-    "note": "Planning estimate; verify with live route planner",
+    "destCity": "Vaishali",
+    "destination": "Vaishali (Hajipur)",
+    "distanceKm": 25,
+    "district": "Hajipur",
+    "execSedan": 1749,
+    "hatchback": 1299,
+    "luxSuv": 2199,
+    "marketComparison": "2698–3298",
+    "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
     "perKm": {
-      "hatchback": 15,
-      "sedan": 15.9,
-      "suv": 17.72
+      "hatchback": 51.96,
+      "sedan": 59.96,
+      "suv": 75.96
     },
     "region": "Bihar districts",
+    "sedan": 1499,
+    "suv": 1899,
     "twoWay": {
-      "hatchback": 6198,
-      "sedan": 6598,
-      "execSedan": 7098,
-      "suv": 7398,
-      "luxSuv": 7998
+      "hatchback": 2198,
+      "sedan": 2598,
+      "execSedan": 3098,
+      "suv": 3398,
+      "luxSuv": 3998
     },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-gaya",
-    "origin": "Patna",
-    "destination": "Gaya",
-    "destCity": "Gaya",
-    "district": "Gaya",
-    "distanceKm": 120,
-    "hatchback": 1799,
-    "sedan": 1999,
-    "suv": 2399,
-    "marketComparison": "3598–4398",
+    "id": "patna-westchamparan",
     "active": true,
-    "execSedan": 2249,
-    "luxSuv": 2699,
-    "note": "Source-checked reference; route may vary",
+    "destCity": "West Champaran",
+    "destination": "West Champaran (Bettiah)",
+    "distanceKm": 240,
+    "district": "Bettiah",
+    "execSedan": 3549,
+    "hatchback": 3099,
+    "luxSuv": 3999,
+    "marketComparison": "5938–7258",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
     "perKm": {
-      "hatchback": 14.99,
-      "sedan": 16.66,
-      "suv": 19.99
+      "hatchback": 12.91,
+      "sedan": 13.75,
+      "suv": 15.41
     },
     "region": "Bihar districts",
+    "sedan": 3299,
+    "suv": 3699,
+    "twoWay": {
+      "hatchback": 5798,
+      "sedan": 6198,
+      "execSedan": 6698,
+      "suv": 6998,
+      "luxSuv": 7598
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-bodhgaya",
+    "active": true,
+    "destCity": "Bodh Gaya",
+    "destination": "Bodh Gaya",
+    "distanceKm": 135,
+    "district": "Bodh Gaya",
+    "execSedan": 2449,
+    "hatchback": 1999,
+    "luxSuv": 2899,
+    "marketComparison": "3958–4838",
+    "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 14.81,
+      "sedan": 16.29,
+      "suv": 19.25
+    },
+    "region": "Bihar tourist destinations",
+    "sedan": 2199,
+    "suv": 2599,
+    "twoWay": {
+      "hatchback": 3598,
+      "sedan": 3998,
+      "execSedan": 4498,
+      "suv": 4798,
+      "luxSuv": 5398
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-pawapuri",
+    "active": true,
+    "destCity": "Pawapuri",
+    "destination": "Pawapuri",
+    "distanceKm": 90,
+    "district": "Pawapuri",
+    "execSedan": 2049,
+    "hatchback": 1599,
+    "luxSuv": 2499,
+    "marketComparison": "3238–3958",
+    "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 17.77,
+      "sedan": 19.99,
+      "suv": 24.43
+    },
+    "region": "Bihar tourist destinations",
+    "sedan": 1799,
+    "suv": 2199,
+    "twoWay": {
+      "hatchback": 2798,
+      "sedan": 3198,
+      "execSedan": 3698,
+      "suv": 3998,
+      "luxSuv": 4598
+    },
+    "updatedAt": "2026-10-19T07:27:58.137Z"
+  },
+  {
+    "id": "patna-nalandauniversity",
+    "active": true,
+    "destCity": "Nalanda University",
+    "destination": "Nalanda University",
+    "distanceKm": 95,
+    "district": "Nalanda University",
+    "execSedan": 2249,
+    "hatchback": 1799,
+    "luxSuv": 2699,
+    "marketComparison": "3598–4398",
+    "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 18.94,
+      "sedan": 21.04,
+      "suv": 25.25
+    },
+    "region": "Bihar tourist destinations",
+    "sedan": 1999,
+    "suv": 2399,
     "twoWay": {
       "hatchback": 3198,
       "sedan": 3598,
@@ -1947,149 +1827,59 @@
       "suv": 4398,
       "luxSuv": 4998
     },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-madhubani",
-    "origin": "Patna",
-    "destination": "Madhubani",
-    "destCity": "Madhubani",
-    "district": "Madhubani",
-    "distanceKm": 185,
-    "hatchback": 2799,
-    "sedan": 2999,
-    "suv": 3399,
-    "marketComparison": "5398–6598",
+    "id": "patna-vaishalistupa",
     "active": true,
-    "execSedan": 3249,
-    "luxSuv": 3699,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 15.13,
-      "sedan": 16.21,
-      "suv": 18.37
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 5198,
-      "sedan": 5598,
-      "execSedan": 6098,
-      "suv": 6398,
-      "luxSuv": 6998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-nawada",
-    "origin": "Patna",
-    "destination": "Nawada",
-    "destCity": "Nawada",
-    "district": "Nawada",
-    "distanceKm": 110,
-    "hatchback": 2399,
-    "sedan": 2599,
-    "suv": 2999,
-    "marketComparison": "4678–5718",
-    "active": true,
-    "execSedan": 2849,
-    "luxSuv": 3299,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 21.81,
-      "sedan": 23.63,
-      "suv": 27.26
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4398,
-      "sedan": 4798,
-      "execSedan": 5298,
-      "suv": 5598,
-      "luxSuv": 6198
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-jehanabad",
-    "origin": "Patna",
-    "destination": "Jehanabad",
-    "destCity": "Jehanabad",
-    "district": "Jehanabad",
-    "distanceKm": 55,
-    "hatchback": 1499,
-    "sedan": 1699,
-    "suv": 2099,
-    "marketComparison": "3058–3738",
-    "active": true,
-    "execSedan": 1949,
-    "luxSuv": 2399,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 27.25,
-      "sedan": 30.89,
-      "suv": 38.16
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 2598,
-      "sedan": 2998,
-      "execSedan": 3498,
-      "suv": 3798,
-      "luxSuv": 4398
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-muzaffarpur",
-    "origin": "Patna",
-    "destination": "Muzaffarpur",
-    "destCity": "Muzaffarpur",
-    "district": "Muzaffarpur",
-    "distanceKm": 78,
-    "hatchback": 1600,
-    "sedan": 1800,
-    "suv": 2200,
-    "marketComparison": "3240–3960",
-    "active": true,
-    "execSedan": 2050,
-    "luxSuv": 2500,
+    "destCity": "Vaishali Stupa",
+    "destination": "Vaishali Stupa",
+    "distanceKm": 56,
+    "district": "Vaishali Stupa",
+    "execSedan": 1749,
+    "hatchback": 1299,
+    "luxSuv": 2199,
+    "marketComparison": "2698–3298",
     "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
     "perKm": {
-      "hatchback": 20.51,
-      "sedan": 23.08,
-      "suv": 28.21
+      "hatchback": 23.2,
+      "sedan": 26.77,
+      "suv": 33.91
     },
-    "region": "Bihar districts",
+    "region": "Bihar tourist destinations",
+    "sedan": 1499,
+    "suv": 1899,
     "twoWay": {
-      "hatchback": 2800,
-      "sedan": 3200,
-      "execSedan": 3700,
-      "suv": 4000,
-      "luxSuv": 4600
+      "hatchback": 2198,
+      "sedan": 2598,
+      "execSedan": 3098,
+      "suv": 3398,
+      "luxSuv": 3998
     },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
-    "id": "patna-gopalganj",
-    "origin": "Patna",
-    "destination": "Gopalganj",
-    "destCity": "Gopalganj",
-    "district": "Gopalganj",
-    "distanceKm": 165,
+    "id": "patna-kesariastupa",
+    "active": true,
+    "destCity": "Kesaria Stupa",
+    "destination": "Kesaria Stupa",
+    "distanceKm": 125,
+    "district": "Kesaria Stupa",
+    "execSedan": 3049,
     "hatchback": 2599,
+    "luxSuv": 3499,
+    "marketComparison": "5038–6158",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 20.79,
+      "sedan": 22.39,
+      "suv": 25.59
+    },
+    "region": "Bihar tourist destinations",
     "sedan": 2799,
     "suv": 3199,
-    "marketComparison": "5038–6158",
-    "active": true,
-    "execSedan": 3049,
-    "luxSuv": 3499,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 15.75,
-      "sedan": 16.96,
-      "suv": 19.39
-    },
-    "region": "Bihar districts",
     "twoWay": {
       "hatchback": 4798,
       "sedan": 5198,
@@ -2097,217 +1887,7 @@
       "suv": 5998,
       "luxSuv": 6598
     },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-munger",
-    "origin": "Patna",
-    "destination": "Munger",
-    "destCity": "Munger",
-    "district": "Munger",
-    "distanceKm": 190,
-    "hatchback": 2699,
-    "sedan": 2899,
-    "suv": 3299,
-    "marketComparison": "5218–6378",
-    "active": true,
-    "execSedan": 3149,
-    "luxSuv": 3599,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 14.21,
-      "sedan": 15.26,
-      "suv": 17.36
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4998,
-      "sedan": 5398,
-      "execSedan": 5898,
-      "suv": 6198,
-      "luxSuv": 6798
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-siwan",
-    "origin": "Patna",
-    "destination": "Siwan",
-    "destCity": "Siwan",
-    "district": "Siwan",
-    "distanceKm": 135,
-    "hatchback": 2299,
-    "sedan": 2499,
-    "suv": 2899,
-    "marketComparison": "4498–5498",
-    "active": true,
-    "execSedan": 2749,
-    "luxSuv": 3199,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 17.03,
-      "sedan": 18.51,
-      "suv": 21.47
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4198,
-      "sedan": 4598,
-      "execSedan": 5098,
-      "suv": 5398,
-      "luxSuv": 5998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-kishanganj",
-    "origin": "Patna",
-    "destination": "Kishanganj",
-    "destCity": "Kishanganj",
-    "district": "Kishanganj",
-    "distanceKm": 400,
-    "hatchback": 4799,
-    "sedan": 4999,
-    "suv": 5399,
-    "marketComparison": "8998–10998",
-    "active": true,
-    "execSedan": 5249,
-    "luxSuv": 5699,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 12,
-      "sedan": 12.5,
-      "suv": 13.5
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 9198,
-      "sedan": 9598,
-      "execSedan": 10098,
-      "suv": 10398,
-      "luxSuv": 10998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-sitamarhi",
-    "origin": "Patna",
-    "destination": "Sitamarhi",
-    "destCity": "Sitamarhi",
-    "district": "Sitamarhi",
-    "distanceKm": 135,
-    "hatchback": 2299,
-    "sedan": 2499,
-    "suv": 2899,
-    "marketComparison": "4498–5498",
-    "active": true,
-    "execSedan": 2749,
-    "luxSuv": 3199,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 17.03,
-      "sedan": 18.51,
-      "suv": 21.47
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4198,
-      "sedan": 4598,
-      "execSedan": 5098,
-      "suv": 5398,
-      "luxSuv": 5998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-supaul",
-    "origin": "Patna",
-    "destination": "Supaul",
-    "destCity": "Supaul",
-    "district": "Supaul",
-    "distanceKm": 225,
-    "hatchback": 3499,
-    "sedan": 3699,
-    "suv": 4099,
-    "marketComparison": "6658–8138",
-    "active": true,
-    "execSedan": 3949,
-    "luxSuv": 4399,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 15.55,
-      "sedan": 16.44,
-      "suv": 18.22
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 6598,
-      "sedan": 6998,
-      "execSedan": 7498,
-      "suv": 7798,
-      "luxSuv": 8398
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-jamui",
-    "origin": "Patna",
-    "destination": "Jamui",
-    "destCity": "Jamui",
-    "district": "Jamui",
-    "distanceKm": 185,
-    "hatchback": 2799,
-    "sedan": 2999,
-    "suv": 3399,
-    "marketComparison": "5398–6598",
-    "active": true,
-    "execSedan": 3249,
-    "luxSuv": 3699,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 15.13,
-      "sedan": 16.21,
-      "suv": 18.37
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 5198,
-      "sedan": 5598,
-      "execSedan": 6098,
-      "suv": 6398,
-      "luxSuv": 6998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-samastipur",
-    "origin": "Patna",
-    "destination": "Samastipur",
-    "destCity": "Samastipur",
-    "district": "Samastipur",
-    "distanceKm": 100,
-    "hatchback": 1699,
-    "sedan": 1899,
-    "suv": 2299,
-    "marketComparison": "3418–4178",
-    "active": true,
-    "execSedan": 2149,
-    "luxSuv": 2599,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 16.99,
-      "sedan": 18.99,
-      "suv": 22.99
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 2998,
-      "sedan": 3398,
-      "execSedan": 3898,
-      "suv": 4198,
-      "luxSuv": 4798
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
+    "updatedAt": "2026-10-19T07:27:58.137Z"
   },
   {
     "id": "patna-madhepura",
@@ -2370,32 +1950,422 @@
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-katihar",
+    "id": "patna-supaul",
     "origin": "Patna",
-    "destination": "Katihar",
-    "destCity": "Katihar",
-    "district": "Katihar",
-    "distanceKm": 300,
-    "hatchback": 4299,
-    "sedan": 4499,
-    "suv": 4899,
-    "marketComparison": "8098–9898",
+    "destination": "Supaul",
+    "destCity": "Supaul",
+    "district": "Supaul",
+    "distanceKm": 225,
+    "hatchback": 3499,
+    "sedan": 3699,
+    "suv": 4099,
+    "marketComparison": "6658–8138",
     "active": true,
-    "execSedan": 4749,
-    "luxSuv": 5199,
+    "execSedan": 3949,
+    "luxSuv": 4399,
     "note": "Planning estimate; verify with live route planner",
     "perKm": {
-      "hatchback": 14.33,
-      "sedan": 15,
-      "suv": 16.33
+      "hatchback": 15.55,
+      "sedan": 16.44,
+      "suv": 18.22
     },
     "region": "Bihar districts",
     "twoWay": {
-      "hatchback": 8198,
-      "sedan": 8598,
-      "execSedan": 9098,
-      "suv": 9398,
-      "luxSuv": 9998
+      "hatchback": 6598,
+      "sedan": 6998,
+      "execSedan": 7498,
+      "suv": 7798,
+      "luxSuv": 8398
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-saharsa",
+    "origin": "Patna",
+    "destination": "Saharsa",
+    "destCity": "Saharsa",
+    "district": "Saharsa",
+    "distanceKm": 220,
+    "hatchback": 3299,
+    "sedan": 3499,
+    "suv": 3899,
+    "marketComparison": "6298–7698",
+    "active": true,
+    "execSedan": 3749,
+    "luxSuv": 4199,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 15,
+      "sedan": 15.9,
+      "suv": 17.72
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 6198,
+      "sedan": 6598,
+      "execSedan": 7098,
+      "suv": 7398,
+      "luxSuv": 7998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-jamui",
+    "origin": "Patna",
+    "destination": "Jamui",
+    "destCity": "Jamui",
+    "district": "Jamui",
+    "distanceKm": 185,
+    "hatchback": 2799,
+    "sedan": 2999,
+    "suv": 3399,
+    "marketComparison": "5398–6598",
+    "active": true,
+    "execSedan": 3249,
+    "luxSuv": 3699,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 15.13,
+      "sedan": 16.21,
+      "suv": 18.37
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 5198,
+      "sedan": 5598,
+      "execSedan": 6098,
+      "suv": 6398,
+      "luxSuv": 6998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-gopalganj",
+    "origin": "Patna",
+    "destination": "Gopalganj",
+    "destCity": "Gopalganj",
+    "district": "Gopalganj",
+    "distanceKm": 165,
+    "hatchback": 2599,
+    "sedan": 2799,
+    "suv": 3199,
+    "marketComparison": "5038–6158",
+    "active": true,
+    "execSedan": 3049,
+    "luxSuv": 3499,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 15.75,
+      "sedan": 16.96,
+      "suv": 19.39
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4798,
+      "sedan": 5198,
+      "execSedan": 5698,
+      "suv": 5998,
+      "luxSuv": 6598
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-sitamarhi",
+    "origin": "Patna",
+    "destination": "Sitamarhi",
+    "destCity": "Sitamarhi",
+    "district": "Sitamarhi",
+    "distanceKm": 135,
+    "hatchback": 2299,
+    "sedan": 2499,
+    "suv": 2899,
+    "marketComparison": "4498–5498",
+    "active": true,
+    "execSedan": 2749,
+    "luxSuv": 3199,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 17.03,
+      "sedan": 18.51,
+      "suv": 21.47
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4198,
+      "sedan": 4598,
+      "execSedan": 5098,
+      "suv": 5398,
+      "luxSuv": 5998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-munger",
+    "origin": "Patna",
+    "destination": "Munger",
+    "destCity": "Munger",
+    "district": "Munger",
+    "distanceKm": 190,
+    "hatchback": 2699,
+    "sedan": 2899,
+    "suv": 3299,
+    "marketComparison": "5218–6378",
+    "active": true,
+    "execSedan": 3149,
+    "luxSuv": 3599,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 14.21,
+      "sedan": 15.26,
+      "suv": 17.36
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4998,
+      "sedan": 5398,
+      "execSedan": 5898,
+      "suv": 6198,
+      "luxSuv": 6798
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-madhubani",
+    "origin": "Patna",
+    "destination": "Madhubani",
+    "destCity": "Madhubani",
+    "district": "Madhubani",
+    "distanceKm": 185,
+    "hatchback": 2799,
+    "sedan": 2999,
+    "suv": 3399,
+    "marketComparison": "5398–6598",
+    "active": true,
+    "execSedan": 3249,
+    "luxSuv": 3699,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 15.13,
+      "sedan": 16.21,
+      "suv": 18.37
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 5198,
+      "sedan": 5598,
+      "execSedan": 6098,
+      "suv": 6398,
+      "luxSuv": 6998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-siwan",
+    "origin": "Patna",
+    "destination": "Siwan",
+    "destCity": "Siwan",
+    "district": "Siwan",
+    "distanceKm": 135,
+    "hatchback": 2299,
+    "sedan": 2499,
+    "suv": 2899,
+    "marketComparison": "4498–5498",
+    "active": true,
+    "execSedan": 2749,
+    "luxSuv": 3199,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 17.03,
+      "sedan": 18.51,
+      "suv": 21.47
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4198,
+      "sedan": 4598,
+      "execSedan": 5098,
+      "suv": 5398,
+      "luxSuv": 5998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-nawada",
+    "origin": "Patna",
+    "destination": "Nawada",
+    "destCity": "Nawada",
+    "district": "Nawada",
+    "distanceKm": 110,
+    "hatchback": 2399,
+    "sedan": 2599,
+    "suv": 2999,
+    "marketComparison": "4678–5718",
+    "active": true,
+    "execSedan": 2849,
+    "luxSuv": 3299,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 21.81,
+      "sedan": 23.63,
+      "suv": 27.26
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4398,
+      "sedan": 4798,
+      "execSedan": 5298,
+      "suv": 5598,
+      "luxSuv": 6198
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-gaya",
+    "origin": "Patna",
+    "destination": "Gaya",
+    "destCity": "Gaya",
+    "district": "Gaya",
+    "distanceKm": 120,
+    "hatchback": 1799,
+    "sedan": 1999,
+    "suv": 2399,
+    "marketComparison": "3598–4398",
+    "active": true,
+    "execSedan": 2249,
+    "luxSuv": 2699,
+    "note": "Source-checked reference; route may vary",
+    "perKm": {
+      "hatchback": 14.99,
+      "sedan": 16.66,
+      "suv": 19.99
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 3198,
+      "sedan": 3598,
+      "execSedan": 4098,
+      "suv": 4398,
+      "luxSuv": 4998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-samastipur",
+    "origin": "Patna",
+    "destination": "Samastipur",
+    "destCity": "Samastipur",
+    "district": "Samastipur",
+    "distanceKm": 100,
+    "hatchback": 1699,
+    "sedan": 1899,
+    "suv": 2299,
+    "marketComparison": "3418–4178",
+    "active": true,
+    "execSedan": 2149,
+    "luxSuv": 2599,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 16.99,
+      "sedan": 18.99,
+      "suv": 22.99
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 2998,
+      "sedan": 3398,
+      "execSedan": 3898,
+      "suv": 4198,
+      "luxSuv": 4798
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-muzaffarpur",
+    "origin": "Patna",
+    "destination": "Muzaffarpur",
+    "destCity": "Muzaffarpur",
+    "district": "Muzaffarpur",
+    "distanceKm": 78,
+    "hatchback": 1600,
+    "sedan": 1800,
+    "suv": 2200,
+    "marketComparison": "3240–3960",
+    "active": true,
+    "execSedan": 2050,
+    "luxSuv": 2500,
+    "note": "Source-checked reference; route may vary",
+    "perKm": {
+      "hatchback": 20.51,
+      "sedan": 23.08,
+      "suv": 28.21
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 2800,
+      "sedan": 3200,
+      "execSedan": 3700,
+      "suv": 4000,
+      "luxSuv": 4600
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-jehanabad",
+    "origin": "Patna",
+    "destination": "Jehanabad",
+    "destCity": "Jehanabad",
+    "district": "Jehanabad",
+    "distanceKm": 55,
+    "hatchback": 1499,
+    "sedan": 1699,
+    "suv": 2099,
+    "marketComparison": "3058–3738",
+    "active": true,
+    "execSedan": 1949,
+    "luxSuv": 2399,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 27.25,
+      "sedan": 30.89,
+      "suv": 38.16
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 2598,
+      "sedan": 2998,
+      "execSedan": 3498,
+      "suv": 3798,
+      "luxSuv": 4398
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-sheohar",
+    "active": true,
+    "destCity": "Sheohar",
+    "destination": "Sheohar",
+    "distanceKm": 125,
+    "district": "Sheohar",
+    "execSedan": 2749,
+    "hatchback": 2299,
+    "luxSuv": 3199,
+    "marketComparison": "4498–5498",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 18.39,
+      "sedan": 19.99,
+      "suv": 23.19
+    },
+    "region": "Bihar districts",
+    "sedan": 2499,
+    "suv": 2899,
+    "twoWay": {
+      "hatchback": 4198,
+      "sedan": 4598,
+      "execSedan": 5098,
+      "suv": 5398,
+      "luxSuv": 5998
     },
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
@@ -2460,32 +2430,32 @@
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-sheohar",
+    "id": "patna-rohtas",
     "active": true,
-    "destCity": "Sheohar",
-    "destination": "Sheohar",
-    "distanceKm": 125,
-    "district": "Sheohar",
-    "execSedan": 2749,
-    "hatchback": 2299,
-    "luxSuv": 3199,
-    "marketComparison": "4498–5498",
-    "note": "Planning estimate; verify with live route planner",
+    "destCity": "Rohtas",
+    "destination": "Rohtas (Sasaram)",
+    "distanceKm": 152,
+    "district": "Sasaram",
+    "execSedan": 3249,
+    "hatchback": 2799,
+    "luxSuv": 3699,
+    "marketComparison": "5398–6598",
+    "note": "Source-checked reference; route may vary",
     "origin": "Patna",
     "perKm": {
-      "hatchback": 18.39,
-      "sedan": 19.99,
-      "suv": 23.19
+      "hatchback": 18.41,
+      "sedan": 19.73,
+      "suv": 22.36
     },
     "region": "Bihar districts",
-    "sedan": 2499,
-    "suv": 2899,
+    "sedan": 2999,
+    "suv": 3399,
     "twoWay": {
-      "hatchback": 4198,
-      "sedan": 4598,
-      "execSedan": 5098,
-      "suv": 5398,
-      "luxSuv": 5998
+      "hatchback": 5198,
+      "sedan": 5598,
+      "execSedan": 6098,
+      "suv": 6398,
+      "luxSuv": 6998
     },
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
@@ -2520,62 +2490,62 @@
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-rohtas",
-    "active": true,
-    "destCity": "Rohtas",
-    "destination": "Rohtas (Sasaram)",
-    "distanceKm": 152,
-    "district": "Sasaram",
-    "execSedan": 3249,
-    "hatchback": 2799,
-    "luxSuv": 3699,
-    "marketComparison": "5398–6598",
-    "note": "Source-checked reference; route may vary",
+    "id": "patna-katihar",
     "origin": "Patna",
+    "destination": "Katihar",
+    "destCity": "Katihar",
+    "district": "Katihar",
+    "distanceKm": 300,
+    "hatchback": 4299,
+    "sedan": 4499,
+    "suv": 4899,
+    "marketComparison": "8098–9898",
+    "active": true,
+    "execSedan": 4749,
+    "luxSuv": 5199,
+    "note": "Planning estimate; verify with live route planner",
     "perKm": {
-      "hatchback": 18.41,
-      "sedan": 19.73,
-      "suv": 22.36
+      "hatchback": 14.33,
+      "sedan": 15,
+      "suv": 16.33
     },
     "region": "Bihar districts",
-    "sedan": 2999,
-    "suv": 3399,
     "twoWay": {
-      "hatchback": 5198,
-      "sedan": 5598,
-      "execSedan": 6098,
-      "suv": 6398,
-      "luxSuv": 6998
+      "hatchback": 8198,
+      "sedan": 8598,
+      "execSedan": 9098,
+      "suv": 9398,
+      "luxSuv": 9998
     },
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-eastchamparan",
-    "active": true,
-    "destCity": "East Champaran",
-    "destination": "East Champaran (Motihari)",
-    "distanceKm": 160,
-    "district": "Motihari",
-    "execSedan": 2849,
-    "hatchback": 2399,
-    "luxSuv": 3299,
-    "marketComparison": "4678–5718",
-    "note": "Planning estimate; verify with live route planner",
+    "id": "patna-kishanganj",
     "origin": "Patna",
+    "destination": "Kishanganj",
+    "destCity": "Kishanganj",
+    "district": "Kishanganj",
+    "distanceKm": 400,
+    "hatchback": 4799,
+    "sedan": 4999,
+    "suv": 5399,
+    "marketComparison": "8998–10998",
+    "active": true,
+    "execSedan": 5249,
+    "luxSuv": 5699,
+    "note": "Planning estimate; verify with live route planner",
     "perKm": {
-      "hatchback": 14.99,
-      "sedan": 16.24,
-      "suv": 18.74
+      "hatchback": 12,
+      "sedan": 12.5,
+      "suv": 13.5
     },
     "region": "Bihar districts",
-    "sedan": 2599,
-    "suv": 2999,
     "twoWay": {
-      "hatchback": 4398,
-      "sedan": 4798,
-      "execSedan": 5298,
-      "suv": 5598,
-      "luxSuv": 6198
+      "hatchback": 9198,
+      "sedan": 9598,
+      "execSedan": 10098,
+      "suv": 10398,
+      "luxSuv": 10998
     },
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
@@ -2606,6 +2576,66 @@
       "execSedan": 2498,
       "suv": 2798,
       "luxSuv": 3398
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-nalanda",
+    "active": true,
+    "destCity": "Nalanda",
+    "destination": "Nalanda (Bihar Sharif)",
+    "distanceKm": 95,
+    "district": "Bihar Sharif",
+    "execSedan": 2249,
+    "hatchback": 1799,
+    "luxSuv": 2699,
+    "marketComparison": "3598–4398",
+    "note": "Source-checked reference; route may vary",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 18.94,
+      "sedan": 21.04,
+      "suv": 25.25
+    },
+    "region": "Bihar districts",
+    "sedan": 1999,
+    "suv": 2399,
+    "twoWay": {
+      "hatchback": 3198,
+      "sedan": 3598,
+      "execSedan": 4098,
+      "suv": 4398,
+      "luxSuv": 4998
+    },
+    "updatedAt": "2026-10-19T07:27:58.136Z"
+  },
+  {
+    "id": "patna-eastchamparan",
+    "active": true,
+    "destCity": "East Champaran",
+    "destination": "East Champaran (Motihari)",
+    "distanceKm": 160,
+    "district": "Motihari",
+    "execSedan": 2849,
+    "hatchback": 2399,
+    "luxSuv": 3299,
+    "marketComparison": "4678–5718",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 14.99,
+      "sedan": 16.24,
+      "suv": 18.74
+    },
+    "region": "Bihar districts",
+    "sedan": 2599,
+    "suv": 2999,
+    "twoWay": {
+      "hatchback": 4398,
+      "sedan": 4798,
+      "execSedan": 5298,
+      "suv": 5598,
+      "luxSuv": 6198
     },
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
@@ -2670,126 +2700,6 @@
     "updatedAt": "2026-10-19T07:27:58.136Z"
   },
   {
-    "id": "patna-nalanda",
-    "active": true,
-    "destCity": "Nalanda",
-    "destination": "Nalanda (Bihar Sharif)",
-    "distanceKm": 95,
-    "district": "Bihar Sharif",
-    "execSedan": 2249,
-    "hatchback": 1799,
-    "luxSuv": 2699,
-    "marketComparison": "3598–4398",
-    "note": "Source-checked reference; route may vary",
-    "origin": "Patna",
-    "perKm": {
-      "hatchback": 18.94,
-      "sedan": 21.04,
-      "suv": 25.25
-    },
-    "region": "Bihar districts",
-    "sedan": 1999,
-    "suv": 2399,
-    "twoWay": {
-      "hatchback": 3198,
-      "sedan": 3598,
-      "execSedan": 4098,
-      "suv": 4398,
-      "luxSuv": 4998
-    },
-    "updatedAt": "2026-10-19T07:27:58.136Z"
-  },
-  {
-    "id": "patna-bhagalpur",
-    "origin": "Patna",
-    "destination": "Bhagalpur",
-    "destCity": "Bhagalpur",
-    "district": "Bhagalpur",
-    "distanceKm": 235,
-    "hatchback": 3299,
-    "sedan": 3499,
-    "suv": 3899,
-    "marketComparison": "6298–7698",
-    "active": true,
-    "execSedan": 3749,
-    "luxSuv": 4199,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 14.04,
-      "sedan": 14.89,
-      "suv": 16.59
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 6198,
-      "sedan": 6598,
-      "execSedan": 7098,
-      "suv": 7398,
-      "luxSuv": 7998
-    },
-    "updatedAt": "2026-10-19T07:27:58.135Z"
-  },
-  {
-    "id": "patna-buxar",
-    "origin": "Patna",
-    "destination": "Buxar",
-    "destCity": "Buxar",
-    "district": "Buxar",
-    "distanceKm": 125,
-    "hatchback": 2599,
-    "sedan": 2799,
-    "suv": 3199,
-    "marketComparison": "5038–6158",
-    "active": true,
-    "execSedan": 3049,
-    "luxSuv": 3499,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 20.79,
-      "sedan": 22.39,
-      "suv": 25.59
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4798,
-      "sedan": 5198,
-      "execSedan": 5698,
-      "suv": 5998,
-      "luxSuv": 6598
-    },
-    "updatedAt": "2026-10-19T07:27:58.135Z"
-  },
-  {
-    "id": "patna-darbhanga",
-    "origin": "Patna",
-    "destination": "Darbhanga",
-    "destCity": "Darbhanga",
-    "district": "Darbhanga",
-    "distanceKm": 145,
-    "hatchback": 2399,
-    "sedan": 2599,
-    "suv": 2999,
-    "marketComparison": "4678–5718",
-    "active": true,
-    "execSedan": 2849,
-    "luxSuv": 3299,
-    "note": "Planning estimate; verify with live route planner",
-    "perKm": {
-      "hatchback": 16.54,
-      "sedan": 17.92,
-      "suv": 20.68
-    },
-    "region": "Bihar districts",
-    "twoWay": {
-      "hatchback": 4398,
-      "sedan": 4798,
-      "execSedan": 5298,
-      "suv": 5598,
-      "luxSuv": 6198
-    },
-    "updatedAt": "2026-10-19T07:27:58.135Z"
-  },
-  {
     "id": "patna-banka",
     "origin": "Patna",
     "destination": "Banka",
@@ -2850,32 +2760,32 @@
     "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
-    "id": "patna-bhojpur",
-    "active": true,
-    "destCity": "Bhojpur",
-    "destination": "Bhojpur (Ara)",
-    "distanceKm": 60,
-    "district": "Ara",
-    "execSedan": 2050,
-    "hatchback": 1600,
-    "luxSuv": 2500,
-    "marketComparison": "3240–3960",
-    "note": "Planning estimate; verify with live route planner",
+    "id": "patna-darbhanga",
     "origin": "Patna",
+    "destination": "Darbhanga",
+    "destCity": "Darbhanga",
+    "district": "Darbhanga",
+    "distanceKm": 145,
+    "hatchback": 2399,
+    "sedan": 2599,
+    "suv": 2999,
+    "marketComparison": "4678–5718",
+    "active": true,
+    "execSedan": 2849,
+    "luxSuv": 3299,
+    "note": "Planning estimate; verify with live route planner",
     "perKm": {
-      "hatchback": 26.67,
-      "sedan": 30,
-      "suv": 36.67
+      "hatchback": 16.54,
+      "sedan": 17.92,
+      "suv": 20.68
     },
     "region": "Bihar districts",
-    "sedan": 1800,
-    "suv": 2200,
     "twoWay": {
-      "hatchback": 2800,
-      "sedan": 3200,
-      "execSedan": 3700,
-      "suv": 4000,
-      "luxSuv": 4600
+      "hatchback": 4398,
+      "sedan": 4798,
+      "execSedan": 5298,
+      "suv": 5598,
+      "luxSuv": 6198
     },
     "updatedAt": "2026-10-19T07:27:58.135Z"
   },
@@ -2910,6 +2820,36 @@
     "updatedAt": "2026-10-19T07:27:58.135Z"
   },
   {
+    "id": "patna-bhojpur",
+    "active": true,
+    "destCity": "Bhojpur",
+    "destination": "Bhojpur (Ara)",
+    "distanceKm": 60,
+    "district": "Ara",
+    "execSedan": 2050,
+    "hatchback": 1600,
+    "luxSuv": 2500,
+    "marketComparison": "3240–3960",
+    "note": "Planning estimate; verify with live route planner",
+    "origin": "Patna",
+    "perKm": {
+      "hatchback": 26.67,
+      "sedan": 30,
+      "suv": 36.67
+    },
+    "region": "Bihar districts",
+    "sedan": 1800,
+    "suv": 2200,
+    "twoWay": {
+      "hatchback": 2800,
+      "sedan": 3200,
+      "execSedan": 3700,
+      "suv": 4000,
+      "luxSuv": 4600
+    },
+    "updatedAt": "2026-10-19T07:27:58.135Z"
+  },
+  {
     "id": "patna-arwal",
     "active": true,
     "destCity": "Arwal",
@@ -2936,6 +2876,66 @@
       "execSedan": 3698,
       "suv": 3998,
       "luxSuv": 4598
+    },
+    "updatedAt": "2026-10-19T07:27:58.135Z"
+  },
+  {
+    "id": "patna-buxar",
+    "origin": "Patna",
+    "destination": "Buxar",
+    "destCity": "Buxar",
+    "district": "Buxar",
+    "distanceKm": 125,
+    "hatchback": 2599,
+    "sedan": 2799,
+    "suv": 3199,
+    "marketComparison": "5038–6158",
+    "active": true,
+    "execSedan": 3049,
+    "luxSuv": 3499,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 20.79,
+      "sedan": 22.39,
+      "suv": 25.59
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 4798,
+      "sedan": 5198,
+      "execSedan": 5698,
+      "suv": 5998,
+      "luxSuv": 6598
+    },
+    "updatedAt": "2026-10-19T07:27:58.135Z"
+  },
+  {
+    "id": "patna-bhagalpur",
+    "origin": "Patna",
+    "destination": "Bhagalpur",
+    "destCity": "Bhagalpur",
+    "district": "Bhagalpur",
+    "distanceKm": 235,
+    "hatchback": 3299,
+    "sedan": 3499,
+    "suv": 3899,
+    "marketComparison": "6298–7698",
+    "active": true,
+    "execSedan": 3749,
+    "luxSuv": 4199,
+    "note": "Planning estimate; verify with live route planner",
+    "perKm": {
+      "hatchback": 14.04,
+      "sedan": 14.89,
+      "suv": 16.59
+    },
+    "region": "Bihar districts",
+    "twoWay": {
+      "hatchback": 6198,
+      "sedan": 6598,
+      "execSedan": 7098,
+      "suv": 7398,
+      "luxSuv": 7998
     },
     "updatedAt": "2026-10-19T07:27:58.135Z"
   },
@@ -2985,32 +2985,6 @@
     "updatedBy": "admin"
   },
   {
-    "id": "patna-chapra",
-    "origin": "Patna",
-    "destination": "Chapra (Saran)",
-    "destCity": "Chapra",
-    "district": "Saran",
-    "distanceKm": 70,
-    "hatchback": 1099,
-    "sedan": 1199,
-    "suv": 1699,
-    "marketComparison": "2200–2500",
-    "active": true
-  },
-  {
-    "id": "patna-arrah",
-    "origin": "Patna",
-    "destination": "Arrah (Bhojpur)",
-    "destCity": "Arrah",
-    "district": "Bhojpur",
-    "distanceKm": 55,
-    "hatchback": 899,
-    "sedan": 999,
-    "suv": 1399,
-    "marketComparison": "2000–2200",
-    "active": true
-  },
-  {
     "id": "patna-sasaram",
     "origin": "Patna",
     "destination": "Sasaram (Rohtas)",
@@ -3021,32 +2995,6 @@
     "sedan": 1999,
     "suv": 2799,
     "marketComparison": "3500–4000",
-    "active": true
-  },
-  {
-    "id": "patna-purnea",
-    "origin": "Patna",
-    "destination": "Purnea",
-    "destCity": "Purnea",
-    "district": "Purnea",
-    "distanceKm": 290,
-    "hatchback": 3299,
-    "sedan": 3649,
-    "suv": 5099,
-    "marketComparison": "6500–7200",
-    "active": true
-  },
-  {
-    "id": "patna-bettiah",
-    "origin": "Patna",
-    "destination": "Bettiah (West Champaran)",
-    "destCity": "Bettiah",
-    "district": "West Champaran",
-    "distanceKm": 205,
-    "hatchback": 2399,
-    "sedan": 2649,
-    "suv": 3699,
-    "marketComparison": "4800–5400",
     "active": true
   },
   {
@@ -3076,6 +3024,19 @@
     "active": true
   },
   {
+    "id": "patna-bettiah",
+    "origin": "Patna",
+    "destination": "Bettiah (West Champaran)",
+    "destCity": "Bettiah",
+    "district": "West Champaran",
+    "distanceKm": 205,
+    "hatchback": 2399,
+    "sedan": 2649,
+    "suv": 3699,
+    "marketComparison": "4800–5400",
+    "active": true
+  },
+  {
     "id": "patna-biharsharif",
     "origin": "Patna",
     "destination": "Bihar Sharif (Nalanda)",
@@ -3086,6 +3047,45 @@
     "sedan": 1249,
     "suv": 1749,
     "marketComparison": "2200–2500",
+    "active": true
+  },
+  {
+    "id": "patna-chapra",
+    "origin": "Patna",
+    "destination": "Chapra (Saran)",
+    "destCity": "Chapra",
+    "district": "Saran",
+    "distanceKm": 70,
+    "hatchback": 1099,
+    "sedan": 1199,
+    "suv": 1699,
+    "marketComparison": "2200–2500",
+    "active": true
+  },
+  {
+    "id": "patna-purnea",
+    "origin": "Patna",
+    "destination": "Purnea",
+    "destCity": "Purnea",
+    "district": "Purnea",
+    "distanceKm": 290,
+    "hatchback": 3299,
+    "sedan": 3649,
+    "suv": 5099,
+    "marketComparison": "6500–7200",
+    "active": true
+  },
+  {
+    "id": "patna-arrah",
+    "origin": "Patna",
+    "destination": "Arrah (Bhojpur)",
+    "destCity": "Arrah",
+    "district": "Bhojpur",
+    "distanceKm": 55,
+    "hatchback": 899,
+    "sedan": 999,
+    "suv": 1399,
+    "marketComparison": "2000–2200",
     "active": true
   }
 ]

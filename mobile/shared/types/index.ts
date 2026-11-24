@@ -32,7 +32,7 @@ export type BookingStatus =
   | 'cancelled'
   | 'failed';
 
-export type PaymentMethod = 'driver_cash' | 'driver_upi' | 'advance_token' | 'full_prepaid' | 'advance_15_razorpay' | 'full_online_razorpay';
+export type PaymentMethod = 'driver_cash' | 'driver_upi' | 'advance_token' | 'full_prepaid' | 'advance_15_razorpay' | 'full_online_razorpay' | 'advance_15_instamojo' | 'full_online_instamojo';
 export type PaymentStatus = 'pending' | 'partially_paid' | 'completed' | 'refunded' | 'failed' | 'paid' | string;
 
 export interface FareBreakdown {

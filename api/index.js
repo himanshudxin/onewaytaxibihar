@@ -4051,7 +4051,7 @@ module.exports = async (req, res) => {
       const orderAmount = Number(amount || amountInRupees) || defaultAmt;
 
       try {
-        const orderResult = await paymentService.createRazorpayOrder({
+        const orderResult = await paymentService.createInstamojoOrder({
           amountInRupees: orderAmount,
           bookingId: bookingId || `OTB_${Date.now()}`,
           passengerName: passengerName || 'Passenger',
@@ -4066,7 +4066,7 @@ module.exports = async (req, res) => {
           passengerPhone: passengerPhone || '',
           amount: orderAmount,
           currency: 'INR',
-          provider: orderResult.provider,
+          provider: orderResult.provider || 'instamojo',
           status: 'ORDER_CREATED',
           isSandbox: !!orderResult.isSandbox
         });
@@ -4078,14 +4078,20 @@ module.exports = async (req, res) => {
     }
 
     if (['/payments/verify', '/payment/verify', '/api/payments/verify', '/api/payment/verify'].includes(pathname) && method === 'POST') {
-      const { orderId, paymentId, signature, bookingId, amount } = body;
+      const { orderId, paymentId, paymentRequestId, signature, bookingId, amount } = body;
       const paymentSettings = db.settings?.payment || null;
 
-      const verification = paymentService.verifyRazorpayPayment({
+      // Verify payment via Instamojo service (or legacy adapter fallback)
+      let verification = await paymentService.verifyInstamojoPayment({
         orderId,
         paymentId,
+        paymentRequestId: paymentRequestId || orderId,
         signature
       }, paymentSettings);
+
+      if (!verification.verified && signature) {
+        verification = paymentService.verifyRazorpayPayment({ orderId, paymentId, signature }, paymentSettings);
+      }
 
       if (!verification.verified) {
         return sendJson(400, {
@@ -4100,7 +4106,7 @@ module.exports = async (req, res) => {
 
       // Update payment record in database
       await dbService.recordPayment({
-        orderId,
+        orderId: orderId || paymentRequestId,
         paymentId,
         bookingId,
         amount: advanceAmt,
@@ -4119,14 +4125,14 @@ module.exports = async (req, res) => {
           const is15Percent = advanceAmt > 0 && b.totalFare && Math.abs(advanceAmt - Math.round(b.totalFare * 0.15)) <= 10;
           const advTag = is15Percent ? '15% Online Advance' : `₹${advanceAmt} Token Advance`;
           b.paymentStatus = b.balanceDue <= 0 ? 'PAID (100% Online Verified)' : `PARTIALLY PAID (${advTag} Verified)`;
-          b.paymentMethod = b.balanceDue <= 0 ? '100% Full Pre-payment Online (Paid)' : `Razorpay (${advTag} Paid)`;
+          b.paymentMethod = b.balanceDue <= 0 ? '100% Full Pre-payment Online (Paid)' : `Instamojo Gateway (${advTag} Paid)`;
           b.bookingStatus = 'CONFIRMED';
           if (!b.statusHistory) b.statusHistory = [];
           b.statusHistory.push({
             status: 'CONFIRMED',
             timestamp: new Date().toISOString(),
             actor: 'Payment Gateway',
-            note: `Online advance ₹${advanceAmt} received via ${orderId}`
+            note: `Online advance ₹${advanceAmt} received via ${orderId || paymentId}`
           });
           await saveDb(db);
           updatedBooking = b;
@@ -4149,6 +4155,34 @@ module.exports = async (req, res) => {
         booking: updatedBooking,
         message: 'Payment verified and booking confirmed successfully.'
       });
+    }
+
+    // Instamojo Webhook Notification
+    if ((pathname === '/payments/instamojo-webhook' || pathname === '/api/payments/instamojo-webhook') && method === 'POST') {
+      const isAuthentic = paymentService.verifyInstamojoWebhook(body, db.settings?.payment);
+      if (!isAuthentic) {
+        return sendJson(400, { success: false, message: 'Invalid Instamojo webhook MAC signature' });
+      }
+
+      const pId = body.payment_id;
+      const bId = body.purpose ? (body.purpose.match(/#(BK_[a-zA-Z0-9_-]+|OTB_[a-zA-Z0-9_-]+)/) || [])[1] : null;
+      const status = body.status;
+
+      if (status === 'Credit' && bId) {
+        const b = (db.bookings || []).find(x => x.bookingId === bId || x.id === bId);
+        if (b) {
+          const advAmt = Number(body.amount) || Math.round((b.totalFare || 0) * 0.15);
+          b.advancePaid = advAmt;
+          b.balanceDue = Math.max(0, (b.totalFare || 0) - advAmt);
+          b.paymentStatus = 'PARTIALLY PAID (15% Instamojo Online Advance Verified)';
+          b.paymentMethod = 'Instamojo Payment Gateway (Online Paid)';
+          b.bookingStatus = 'CONFIRMED';
+          b.paymentTxnId = pId;
+          await saveDb(db);
+        }
+      }
+
+      return sendJson(200, { success: true, message: 'Instamojo webhook processed.' });
     }
 
     if ((pathname === '/payments/webhook' || pathname === '/api/payments/webhook' || pathname === '/payment/webhook' || pathname === '/api/payment/webhook') && method === 'POST') {
@@ -4218,6 +4252,16 @@ module.exports = async (req, res) => {
       const keySecret = body.keySecret || paymentSettings.razorpayKeySecret;
 
       const result = await paymentService.testRazorpayCredentials({ keyId, keySecret });
+      return sendJson(result.valid ? 200 : 400, result);
+    }
+
+    if (['/admin/test-instamojo', '/api/admin/test-instamojo', '/payment/test-instamojo', '/api/payment/test-instamojo'].includes(pathname) && method === 'POST') {
+      const paymentSettings = db.settings?.payment || {};
+      const apiKey = body.apiKey || paymentSettings.instamojoApiKey;
+      const authToken = body.authToken || paymentSettings.instamojoAuthToken;
+      const env = body.env || paymentSettings.instamojoEnv || 'production';
+
+      const result = await paymentService.testInstamojoCredentials({ apiKey, authToken, env });
       return sendJson(result.valid ? 200 : 400, result);
     }
 
@@ -4299,6 +4343,15 @@ module.exports = async (req, res) => {
       if (body.ifscCode !== undefined) current.ifscCode = String(body.ifscCode).trim().toUpperCase();
       if (body.branchName !== undefined) current.branchName = String(body.branchName).trim();
       if (body.accountType !== undefined) current.accountType = String(body.accountType).trim();
+      if (body.instamojoApiKey !== undefined) current.instamojoApiKey = String(body.instamojoApiKey).trim();
+      if (body.instamojoAuthToken !== undefined && !isMasked(body.instamojoAuthToken)) {
+        current.instamojoAuthToken = String(body.instamojoAuthToken).trim();
+      }
+      if (body.instamojoPrivateSalt !== undefined && !isMasked(body.instamojoPrivateSalt)) {
+        current.instamojoPrivateSalt = String(body.instamojoPrivateSalt).trim();
+      }
+      if (body.instamojoEnv !== undefined) current.instamojoEnv = String(body.instamojoEnv).trim();
+      if (body.enableInstamojo !== undefined) current.enableInstamojo = Boolean(body.enableInstamojo);
       if (body.razorpayKeyId !== undefined) current.razorpayKeyId = String(body.razorpayKeyId).trim();
       if (body.razorpayKeySecret !== undefined && !isMasked(body.razorpayKeySecret)) {
         current.razorpayKeySecret = String(body.razorpayKeySecret).trim();
@@ -5064,6 +5117,11 @@ module.exports = async (req, res) => {
       if (body.payeeName !== undefined) db.settings.payment.payeeName = String(body.payeeName).trim();
       if (body.advancePercentage !== undefined) db.settings.payment.advancePercentage = Number(body.advancePercentage) || 15;
       if (body.advanceAmount) db.settings.payment.defaultAdvanceAmount = Number(body.advanceAmount);
+      if (body.instamojoApiKey !== undefined) db.settings.payment.instamojoApiKey = String(body.instamojoApiKey).trim();
+      if (body.instamojoAuthToken !== undefined) db.settings.payment.instamojoAuthToken = String(body.instamojoAuthToken).trim();
+      if (body.instamojoPrivateSalt !== undefined) db.settings.payment.instamojoPrivateSalt = String(body.instamojoPrivateSalt).trim();
+      if (body.instamojoEnv !== undefined) db.settings.payment.instamojoEnv = String(body.instamojoEnv).trim();
+      if (body.enableInstamojo !== undefined) db.settings.payment.enableInstamojo = Boolean(body.enableInstamojo);
       if (body.enableRazorpay !== undefined) db.settings.payment.enableRazorpay = Boolean(body.enableRazorpay);
       if (body.enableDirectUpi !== undefined) db.settings.payment.enableDirectUpi = Boolean(body.enableDirectUpi);
       if (body.enableCashToDriver !== undefined) db.settings.payment.enableCashToDriver = Boolean(body.enableCashToDriver);
